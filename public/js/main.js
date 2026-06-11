@@ -363,6 +363,9 @@ const KROW_ROLES = {
     
   estudiante: {
     nav: [
+        { label: 'Inicio',                url: '/',                             active: true },           
+        { label: 'Empresas',              url: '/estudiante/empresas',          active: false },    
+        { label: 'Mis Postulaciones',     url: '/estudiante/home',              active: false },
         { label: 'Inicio',                url: '/inicio',              active: true },           
         { label: 'Empresas',              url: '/estudiante/empresas',          active: false },    
         { label: 'Mis Postulaciones',     url: '/estudiante/home',     active: false },
@@ -410,6 +413,9 @@ const KROW_ROLES = {
 
   empresa: {
     nav: [
+      { label: 'Inicio',            url: '/',         active: true },
+      { label: 'Panel Empresa',     url: '/empresa/home',        active: false },
+      { label: 'Mis Ofertas',       url: '/empresa/ofertas',      active: false },
       { label: 'Inicio',            url: '/inicio',         active: true },
       { label: 'Panel Empresa',     url: '/empresa/home',        active: false },
       { label: 'Mis Ofertas',       url: '/empresa/panel',      active: false },
