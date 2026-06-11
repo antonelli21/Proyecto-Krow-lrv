@@ -8,6 +8,7 @@ use App\Models\Estudiante;
 use App\Models\Empresa;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Carbon\Carbon;
 
 class UsuarioTestSeeder extends Seeder
 {
@@ -33,6 +34,9 @@ class UsuarioTestSeeder extends Seeder
                 'name'     => 'Juan Pérez',
                 'password' => Hash::make('password123'),
                 'rol'      => 'estudiante',
+                'email_verified_at' => Carbon::now(), // Marca el email como verificado
+                'email_verification_code' => null,     // Sin código pendiente
+                'email_verification_expires' => null,  // Sin fecha de expiración
             ]
         );
 
@@ -69,6 +73,9 @@ class UsuarioTestSeeder extends Seeder
                 'name'     => 'Tech Solutions S.A.',
                 'password' => Hash::make('password123'),
                 'rol'      => 'empresa',
+                'email_verified_at' => Carbon::now(), // Marca el email como verificado
+                'email_verification_code' => null,     // Sin código pendiente
+                'email_verification_expires' => null,  // Sin fecha de expiraci
             ]
         );
 
@@ -104,6 +111,9 @@ class UsuarioTestSeeder extends Seeder
                 'name'     => 'Administrador General',
                 'password' => Hash::make('password123'),
                 'rol'      => 'admin',
+                'email_verified_at' => Carbon::now(), // Marca el email como verificado
+                'email_verification_code' => null,     // Sin código pendiente
+                'email_verification_expires' => null,  // Sin fecha de expiracion
             ]
         );
     }
