@@ -110,6 +110,8 @@ Route::prefix('empresa')
         Route::get('/perfil',      function () { return view('empresa.perfil-empresa');     })->name('perfil');
         Route::get('/mensajes',    function () { return view('empresa.mensajes-empresa');   })->name('mensajes');
         Route::get('/postulantes', function () { return view('empresa.postulantes-empresa'); })->name('postulantes');
+
+        Route::get('/lista', [App\Http\Controllers\EmpresaController::class, 'lista'])->name('lista');
 });
 
 /* ════════════════════════════════════════
@@ -141,6 +143,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
    FORMULARIO DE CONTACTO (público)
    Procesa el formulario de contacto de la página de ayuda.
 ════════════════════════════════════════ */
+
+// Ruta para mostrar la página de ayuda
+Route::get('/ayuda', function () {
+    return view('ayuda'); // Asegurate que el nombre coincida con tu archivo Blade
+})->name('ayuda');
+
 Route::post('/ayuda/contacto', function(Request $request) {
     $request->validate([
         'nombre'  => 'required|min:2',
