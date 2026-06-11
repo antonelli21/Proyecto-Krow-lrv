@@ -508,31 +508,38 @@ function krowSetRole(role) {
     if (labelEl)  labelEl.textContent  = labelMap[role] || 'Mi Cuenta';
     if (perfilEl) perfilEl.href = `/proyecto_krow/vistas/${role}/perfil-${role}.php`;
  
-    // Actualizar menu items del dropdown con los 4 items fijos
+    // No sobreescribimos el menú generado por Blade. En su lugar, actualizamos
+    // los hrefs existentes si están en el DOM para apuntar a las rutas del
+    // backend (evita enlaces a archivos estáticos como '/guardalo_aca/...').
     const menu = document.getElementById('account-menu');
     if (menu) {
-      menu.innerHTML = `
-        <a href="/guardalo_aca/proyecto_krow/vistas/${role}/perfil-${role}.php" id="link-perfil" class="dropdown-item" role="menuitem">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
-          Mi Perfil
-        </a>
-        <a href="/guardalo_aca/proyecto_krow/vistas/mensajes.php" class="dropdown-item" role="menuitem">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-          Mensajes
-        </a>
-        <a href="/guardalo_aca/proyecto_krow/vistas/notificaciones.php" class="dropdown-item" role="menuitem">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-          Notificaciones
-        </a>
-        <a href="/guardalo_aca/proyecto_krow/vistas/configuracion.php" class="dropdown-item" role="menuitem">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="3"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
-          Configuración
-        </a>
-        <hr class="dropdown-divider">
-        <a href="/guardalo_aca/proyecto_krow/src/logout.php" class="dropdown-item dropdown-item-danger" role="menuitem">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-          Cerrar sesión
-        </a>`;
+      // Perfil: /estudiante/perfil or /empresa/perfil depending on role
+      const perfilAnchor = menu.querySelector('#link-perfil') || menu.querySelector('a[href*="perfil-"]');
+      if (perfilAnchor) perfilAnchor.setAttribute('href', `/${role}/perfil`);
+
+      // Mensajes, Notificaciones, Configuración: rutas compartidas
+      const mensajesAnchor = menu.querySelector('a[href*="mensajes"]');
+      if (mensajesAnchor) mensajesAnchor.setAttribute('href', '/mensajes');
+
+      const notiAnchor = menu.querySelector('a[href*="notificaciones"]');
+      if (notiAnchor) notiAnchor.setAttribute('href', '/notificaciones');
+
+      const configAnchor = menu.querySelector('a[href*="configuracion"]');
+      if (configAnchor) configAnchor.setAttribute('href', '/configuracion');
+
+      // Cerrar sesión: usar el form existente con id 'logout-form' si existe
+      const logoutAnchor = menu.querySelector('a[href*="logout"]') || menu.querySelector('.dropdown-item-danger');
+      if (logoutAnchor) {
+        logoutAnchor.addEventListener('click', function(e) {
+          e.preventDefault();
+          const logoutForm = document.getElementById('logout-form');
+          if (logoutForm) logoutForm.submit();
+          else {
+            // Fallback: enviar POST simple a /logout (requiere CSRF token)
+            fetch('/logout', { method: 'POST', headers: { 'X-Requested-With': 'XMLHttpRequest' } }).then(()=> window.location.reload());
+          }
+        });
+      }
     }
   }
  
