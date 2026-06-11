@@ -337,107 +337,138 @@ if (document.readyState === 'loading') {
 const KROW_ROLES = {
   invitado: {
     nav: [
-      { label: 'Inicio',           url: '/guardalo_aca/proyecto_krow/index.php',              active: true  },
-      { label: 'Empresas',         url: '/guardalo_aca/proyecto_krow/vistas/auth/login.php',  active: false },
-      { label: 'Mis Postulaciones',url: '/guardalo_aca/proyecto_krow/vistas/auth/login.php',  active: false },
-      { label: 'Ayuda',            url: '/guardalo_aca/proyecto_krow/vistas/ayuda.php',        active: false },
+      { label: 'Inicio',              url: '/',             active: true  },
+      { label: 'Empresas',            url: '/login',        active: false },
+      { label: 'Mis Postulaciones',   url: '/login',        active: false },
+      { label: 'Ayuda',               url: '/ayuda',        active: false },
             
 
     ],
-    rightPanel: () => `
-      <div class="panel-card cta-card">
-        <p class="panel-card-title">Encontrá tu primer trabajo</p>
-        <p>Registrate gratis y accedé a cientos de ofertas para estudiantes UTN.</p>
-        <a href="/proyecto_krow/vistas/auth/registro-estudiante.php" class="btn-primary-sm">Crear cuenta</a>
-        <a href="/proyecto_krow/vistas/auth/login.php" class="btn-ghost-sm" style="display:block;text-align:center;margin-top:6px">Ya tengo cuenta</a>
-      </div>
-      <div class="panel-card featured-card">
-        <div class="featured-badge"><i class="bi bi-star-fill"></i> Destacado</div>
-        <p class="featured-title">Senior Backend Engineer</p>
-        <p class="featured-company">MegaCorp Technologies</p>
-        <button class="btn-quick-apply" onclick="location.href='/proyecto_krow/vistas/auth/login.php'">Postularme rápido</button>
-      </div>
-    `,
-  },
+    rightPanel: () => {
+            return `
+                <div class="panel-card cta-card">
+                    <p class="panel-card-title">Encontrá tu primer trabajo</p>
+                    <p>Regístrate gratis y accedé a cientos de ofertas para estudiantes UTN.</p>
+                    <a href="/register" class="btn-primary-sm">Crear cuenta</a>
+                    <a href="/login" class="btn-ghost-sm" style="display:block;text-align:center;margin-top:6px">Ya tengo cuenta</a>
+                </div>
+                <div class="panel-card featured-card">
+                    <div class="featured-badge"><i class="bi bi-star-full"></i> Destacado</div>
+                    <p class="featured-title">Senior Backend Engineer</p>
+                    <p class="featured-company">MegaCorp Technologies</p>
+                    <button class="btn-quick-apply" onclick="location.href='/login'">Postularme rápido</button>
+                </div>
+            `;
+        },
+    },
+    
   estudiante: {
     nav: [
-      { label: 'Inicio',           url: '/guardalo_aca/proyecto_krow/index.php',                                            active: true  },
-      { label: 'Empresas',         url: '/proyecto_krow/vistas/empresas-lista.php',                            active: false },
-      { label: 'Mis Postulaciones',url: '/guardalo_aca/proyecto_krow/vistas/estudiante/home-estudiante.php',   active: false },
-      { label: 'Ayuda',            url: '/guardalo_aca/proyecto_krow/vistas/ayuda.php',                        active: false },
+        { label: 'Inicio',                url: '/estudiante/home',              active: true },           
+        { label: 'Empresas',              url: '/estudiante/empresas',          active: false },    
+        { label: 'Mis Postulaciones',     url: '/estudiante/postulaciones',     active: false },
+        { label: 'Ayuda',                 url: '/ayuda',                        active: false },                      
 
     ],
-    rightPanel: () => `
-      <div class="panel-card">
-        <p class="panel-card-title">Mis Estadísticas</p>
-        <div class="stat-row"><span class="stat-label">Postulaciones enviadas</span><span class="stat-value">24</span></div>
-        <div class="stat-row"><span class="stat-label">Empresas que te aceptaron</span><span class="stat-value">8</span></div>
-        <div class="stat-row"><span class="stat-label">En revisión</span><span class="stat-value">12</span></div>
-      </div>
-      <div class="panel-card featured-card">
-        <div class="featured-badge"><i class="bi bi-star-fill"></i> Destacado</div>
-        <p class="featured-title">Senior Backend Engineer</p>
-        <p class="featured-company">MegaCorp Technologies</p>
-        <button class="btn-quick-apply">Postularme rápido</button>
-      </div>
-      <div class="panel-card">
-        <p class="panel-card-title">Últimas empresas vistas</p>
-        <div class="companies-grid">
-          <div class="company-thumb"><span>TC</span></div>
-          <div class="company-thumb"><span>DS</span></div>
-          <div class="company-thumb"><span>MC</span></div>
-          <div class="company-thumb"><span>DC</span></div>
-        </div>
-      </div>
-    `,
-  },
+
+
+    rightPanel: () => {
+        return `  
+            <div class="panel-card">
+                <p class="panel-card-title">Mis Estadísticas</p>
+                <div class="stat-row">
+                    <span class="stat-label">Postulaciones enviadas</span>
+                    <span class="stat-value">24</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Empresas que te aceptaron</span>
+                    <span class="stat-value">8</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">En revisión</span>
+                    <span class="stat-value">12</span>
+                </div>
+            </div>
+            <div class="panel-card featured-card">
+                <div class="featured-badge"><i class="bi bi-star-fill"></i> Destacado</div>
+                <p class="featured-title">Senior Backend Engineer</p>
+                <p class="featured-company">MegaCorp Technologies</p>
+                <button class="btn-quick-apply" onclick="location.href='/estudiante/ofertas/1/postular'">Postularme rápido</button>
+            </div>
+            <div class="panel-card">
+                <p class="panel-card-title">Últimas empresas vistas</p>
+                <div class="companies-grid">
+                    <div class="company-thumb"><span>TC</span></div>
+                    <div class="company-thumb"><span>DS</span></div>
+                    <div class="company-thumb"><span>MC</span></div>
+                    <div class="company-thumb"><span>DC</span></div>
+                </div>
+            </div>
+            `;
+        },
+    },
+
+
   empresa: {
     nav: [
-      { label: 'Inicio',       url: '/guardalo_aca/proyecto_krow/index.php',                                                active: true  },
-      { label: 'Panel Empresa',url: '/guardalo_aca/proyecto_krow/vistas/empresa/home-empresa.php/',                         active: false },
-      { label: 'Empresas',     url: 'guardalo_aca/proyecto_krow/vistas/empresas-lista.php',                                 active: false },
-      { label: 'Ayuda',        url: '/proyecto_krow/vistas/ayuda.php',                                                      active: false },
+      { label: 'Inicio',            url: '/empresa/home',         active: true },
+      { label: 'Panel Empresa',     url: '/empresa/panel',        active: false },
+      { label: 'Mis Ofertas',       url: '/empresa/ofertas',      active: false },
+      { label: 'Ayuda',             url: '/ayuda',                active: false },
     ],
-    rightPanel: () => `
-      <div class="panel-card">
-        <p class="panel-card-title">Panel Empresa</p>
-        <div class="stat-row"><span class="stat-label">Ofertas activas</span><span class="stat-value" style="color:#2ECC9A">7</span></div>
-        <div class="stat-row"><span class="stat-label">Postulantes recibidos</span><span class="stat-value" style="color:#2ECC9A">143</span></div>
-        <div class="stat-row"><span class="stat-label">Entrevistas pautadas</span><span class="stat-value" style="color:#2ECC9A">12</span></div>
-        <button class="btn-new-offer">+ Nueva Oferta</button>
-      </div>
-      <div class="panel-card">
-        <p class="panel-card-title">Postulantes destacados</p>
-        <div class="companies-grid">
-          <div class="company-thumb"><span>MA</span></div>
-          <div class="company-thumb"><span>LG</span></div>
-          <div class="company-thumb"><span>RD</span></div>
-          <div class="company-thumb"><span>SV</span></div>
-        </div>
-      </div>
-    `,
-  },
+
+    rightPanel: () => {
+        return `  // ← IMPORTANTE: return
+            <div class="panel-card">
+                <p class="panel-card-title">Panel Empresa</p>
+                <div class="stat-row">
+                    <span class="stat-label">Ofertas activas</span>
+                    <span class="stat-value" style="color:#2ECC9A">8</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Postulantes recibidos</span>
+                    <span class="stat-value" style="color:#2ECC9A">143</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Entrevistas pautadas</span>
+                    <span class="stat-value" style="color:#2ECC9A">12</span>
+                </div>
+            </div>
+            <div class="panel-card">
+                <p class="panel-card-title">Acciones rápidas</p>
+                <a href="/empresa/ofertas/crear" class="btn-primary-sm" style="display:block;text-align:center;">+ Nueva Oferta</a>
+                <a href="/empresa/postulantes" class="btn-ghost-sm" style="display:block;text-align:center;margin-top:10px;">Ver Postulantes</a>
+            </div>
+            `;
+        },
+    },
   admin: {
     nav: [
-      { label: 'Inicio',      url: '/proyecto_krow/index.php',          active: true  },
-      { label: 'Administrar', url: '#',                                  active: false },
-      { label: 'Usuarios',    url: '#',                                  active: false },
-      { label: 'Reportes',    url: '#',                                  active: false },
-      { label: 'Ayuda',       url: '/proyecto_krow/vistas/ayuda.php',    active: false },
+      { label: 'Dashboard', url: '/admin/home', active: true },
+      { label: 'Usuarios', url: '/admin/usuarios', active: false },
+      { label: 'Ofertas', url: '/admin/ofertas', active: false },
+      { label: 'Ayuda', url: '/ayuda', active: false },
     ],
-    rightPanel: () => `
-      <div class="panel-card">
-        <p class="panel-card-title">Administración</p>
-        <div class="admin-alert"><i class="bi bi-exclamation-triangle-fill"></i> 3 ofertas pendientes de revisión</div>
-        <div class="admin-alert" style="background:rgba(46,204,154,.08);border-color:rgba(46,204,154,.3);color:#2ECC9A">
-          <i class="bi bi-people-fill"></i> 8 nuevos registros hoy
-        </div>
-        <div class="stat-row"><span class="stat-label">Usuarios totales</span><span class="stat-value">1.2k</span></div>
-        <div class="stat-row"><span class="stat-label">Empresas activas</span><span class="stat-value">38</span></div>
-        <div class="stat-row"><span class="stat-label">Ofertas publicadas</span><span class="stat-value">124</span></div>
-      </div>
-    `,
-  },
+    rightPanel: () => {
+        return `
+            <div class="panel-card">
+                <p class="panel-card-title">Panel Admin</p>
+                <div class="stat-row">
+                    <span class="stat-label">Usuarios registrados</span>
+                    <span class="stat-value">1,234</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Ofertas publicadas</span>
+                    <span class="stat-value">156</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Postulaciones</span>
+                    <span class="stat-value">2,891</span>
+                </div>
+            </div>
+            `;
+        },
+    },
 };
  
 /**
