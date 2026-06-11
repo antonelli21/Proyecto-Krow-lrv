@@ -1,4 +1,4 @@
-<aside class="sidebar-filtros">
+<aside class="sidebar-filtros" style="position: sticky; top: 70px; height: calc(100vh - 90px); overflow-y: auto; scrollbar-width: none; -ms-overflow-style: none; background: transparent; border: none; box-shadow: none; padding-left: 0;">
   <button class="sidebar-toggle-btn" id="sidebar-toggle" aria-label="Colapsar filtros">
     <span>Filtros</span>
     <span class="sidebar-toggle-icon" id="sidebar-toggle-symbol" style="font-size:1.3rem; font-weight:700; line-height:1;">−</span>
@@ -162,9 +162,10 @@
       </div>
     </div>
 
-    <div class="filters-actions">
-      <button type="submit" class="btn-aplicar-filtros">Aplicar filtros</button>
-    </div>
-
+  <div class="filters-actions" style="margin-top: 20px; width: 100%;">
+  <button type="submit" class="btn-aplicar-filtros" style="width: 100%; padding: 10px; background: var(--accent, #FFC107); color: #0D1A13; font-family: var(--font-display); font-weight: 800; border: none; border-radius: var(--radius, 6px); cursor: pointer; transition: background 0.2s;">
+    Aplicar filtros
+  </button>
+</div>
   </form>
 </aside>

@@ -1,4 +1,3 @@
- 
 document.addEventListener('DOMContentLoaded', () => {
  
   /* ════════════════════════════════════════
@@ -367,6 +366,9 @@ const KROW_ROLES = {
         { label: 'Inicio',                url: '/',                             active: true },           
         { label: 'Empresas',              url: '/estudiante/empresas',          active: false },    
         { label: 'Mis Postulaciones',     url: '/estudiante/home',              active: false },
+        { label: 'Inicio',                url: '/inicio',              active: true },           
+        { label: 'Empresas',              url: '/estudiante/empresas',          active: false },    
+        { label: 'Mis Postulaciones',     url: '/estudiante/home',     active: false },
         { label: 'Ayuda',                 url: '/ayuda',                        active: false },                      
 
     ],
@@ -414,6 +416,9 @@ const KROW_ROLES = {
       { label: 'Inicio',            url: '/',         active: true },
       { label: 'Panel Empresa',     url: '/empresa/home',        active: false },
       { label: 'Mis Ofertas',       url: '/empresa/ofertas',      active: false },
+      { label: 'Inicio',            url: '/inicio',         active: true },
+      { label: 'Panel Empresa',     url: '/empresa/home',        active: false },
+      { label: 'Mis Ofertas',       url: '/empresa/panel',      active: false },
       { label: 'Ayuda',             url: '/ayuda',                active: false },
     ],
 
@@ -444,7 +449,7 @@ const KROW_ROLES = {
     },
   admin: {
     nav: [
-      { label: 'Dashboard', url: '/admin/home', active: true },
+      { label: 'Dashboard', url: '/inicio', active: true },
       { label: 'Usuarios', url: '/admin/usuarios', active: false },
       { label: 'Ofertas', url: '/admin/ofertas', active: false },
       { label: 'Ayuda', url: '/ayuda', active: false },
@@ -625,6 +630,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const btn = document.getElementById('btn-enviar');
         const status = document.getElementById('form-status');
 
+        if (!form) return;
         form.addEventListener('submit', function(e) {
             e.preventDefault();
 
@@ -680,6 +686,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         (function() {
         const grid = document.getElementById('grid-empresas');
+        if (!grid) return;
         const cards = Array.from(grid.querySelectorAll('.empresa-card'));
         const empty = document.getElementById('empty-state');
         const contador = document.getElementById('contador');
@@ -782,6 +789,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const formCand = document.getElementById('formCandidato');
             const formEmp = document.getElementById('formEmpresa');
 
+            if (!formCand && !formEmp) return;
             tabs.forEach(tab => {
                 tab.addEventListener('click', () => {
                     tabs.forEach(t => t.classList.remove('active'));
@@ -967,27 +975,10 @@ document.addEventListener('DOMContentLoaded', () => {
 /* ════════════════════════════════════════
    Login BETA.PHP 
 ════════════════════════════════════════ */
-       /* ── Toggle password (global) ── */
-        window.togglePass = function(inputId, btn) {
-            const input = document.getElementById(inputId);
-            if (!input || !btn) return;
-            const open = btn.querySelector('.icon-open');
-            const closed = btn.querySelector('.icon-closed');
-            if (input.type === 'password') {
-                input.type = 'text';
-                if (open) open.style.display = 'none';
-                if (closed) closed.style.display = 'inline';
-                btn.setAttribute('aria-label', 'Ocultar contraseña');
-            } else {
-                input.type = 'password';
-                if (open) open.style.display = 'inline';
-                if (closed) closed.style.display = 'none';
-                btn.setAttribute('aria-label', 'Mostrar contraseña');
-            }
-        };
 
         (function() {
             const form = document.getElementById('loginForm');
+            if (!form) return;
             const email = document.getElementById('email');
             const password = document.getElementById('password');
             const errEmail = document.getElementById('err-email');
@@ -1033,16 +1024,14 @@ document.addEventListener('DOMContentLoaded', () => {
         })();
 
 /* ════════════════════════════════════════
-   ADMIN PANEL — main JS
-   Tabs / Filtros / Detalle expandible
+   ADMIN PANEL — Tabs / Filtros / Detalle
 ════════════════════════════════════════ */
- 
-document.addEventListener('DOMContentLoaded', () => {
- 
+(function initAdmin() {
   /* ── TABS ── */
-  const tabs      = document.querySelectorAll('.admin-tab');
-  const panels    = document.querySelectorAll('.admin-tab-panel');
- 
+  const tabs   = document.querySelectorAll('.admin-tab');
+  const panels = document.querySelectorAll('.admin-tab-panel');
+  if (!tabs.length) return;
+
   tabs.forEach(tab => {
     tab.addEventListener('click', () => {
       tabs.forEach(t => t.classList.remove('active'));
@@ -1052,81 +1041,67 @@ document.addEventListener('DOMContentLoaded', () => {
       if (target) target.classList.add('active');
     });
   });
- 
+
   /* ── DETALLE EXPANDIBLE ── */
   window.toggleAdminDetalle = (id, btn) => {
-    const row   = document.getElementById('admin-det-' + id);
+    const row = document.getElementById('admin-det-' + id);
     if (!row) return;
     const isOpen = row.classList.toggle('open');
-    btn.querySelector('.det-label').textContent = isOpen ? 'Cerrar ↑' : 'Ver perfil ↓';
+    const label  = btn.querySelector('.det-label');
+    if (label) label.textContent = isOpen ? 'Cerrar ↑' : 'Ver perfil ↓';
   };
- 
+
   /* ── FILTRO GENÉRICO ── */
-  // Cada tabla tiene: input.admin-search-input, select.admin-filter-*, tbody con tr[data-*]
   document.querySelectorAll('.admin-table-wrap').forEach(wrap => {
     const searchInput = wrap.closest('.admin-tab-panel')?.querySelector('.admin-search input');
     const selects     = wrap.closest('.admin-tab-panel')?.querySelectorAll('.admin-filter-select');
     const rows        = wrap.querySelectorAll('tbody tr:not(.admin-detalle-row)');
     const emptyState  = wrap.closest('.admin-tab-panel')?.querySelector('.admin-empty');
- 
+
     const applyFilters = () => {
       const query = searchInput?.value.toLowerCase() ?? '';
- 
-      // Recoger valores de todos los selects con data-filter
       const activeFilters = {};
       selects?.forEach(sel => {
         if (sel.dataset.filter) activeFilters[sel.dataset.filter] = sel.value.toLowerCase();
       });
- 
+
       let visible = 0;
       rows.forEach(row => {
-        const text = row.dataset.search?.toLowerCase() ?? '';
-        const matchSearch = !query || text.includes(query);
- 
-        const matchFilters = Object.entries(activeFilters).every(([key, val]) => {
-          if (!val) return true;
-          return (row.dataset[key] ?? '').toLowerCase() === val;
-        });
- 
+        const matchSearch  = !query || (row.dataset.search?.toLowerCase() ?? '').includes(query);
+        const matchFilters = Object.entries(activeFilters).every(([key, val]) =>
+          !val || (row.dataset[key] ?? '').toLowerCase() === val
+        );
         const show = matchSearch && matchFilters;
         row.style.display = show ? '' : 'none';
- 
-        // Ocultar también la fila de detalle si la fila está oculta
         const det = document.getElementById('admin-det-' + row.dataset.id);
         if (det) det.style.display = show ? '' : 'none';
- 
         if (show) visible++;
       });
- 
       if (emptyState) emptyState.style.display = visible === 0 ? 'block' : 'none';
     };
- 
+
     searchInput?.addEventListener('input', applyFilters);
     selects?.forEach(sel => sel.addEventListener('change', applyFilters));
   });
- 
+
   /* ── CHECKBOX SELECCIONAR TODOS ── */
   document.querySelectorAll('.check-all').forEach(chkAll => {
     chkAll.addEventListener('change', () => {
-      const panel = chkAll.closest('.admin-tab-panel');
-      panel?.querySelectorAll('.check-row').forEach(chk => {
+      chkAll.closest('.admin-tab-panel')?.querySelectorAll('.check-row').forEach(chk => {
         chk.checked = chkAll.checked;
       });
     });
   });
- 
-  /* ── ACCIONES INLINE (aprobar / suspender / rechazar) ── */
-  // Se delega al document para que funcione con filas dinámicas también
+
+  /* ── ACCIONES INLINE — delegadas al document una sola vez ── */
   document.addEventListener('click', e => {
     const btn = e.target.closest('[data-action]');
     if (!btn) return;
- 
     const action = btn.dataset.action;
     const id     = btn.dataset.id;
     const row    = document.querySelector(`tr[data-id="${id}"]`);
     const badge  = row?.querySelector('.badge-admin');
- 
-    const mapaClase = {
+    const mapa   = {
       aprobar:   ['badge-aprobado',   'Aprobado'],
       activar:   ['badge-activo',     'Activo'],
       suspender: ['badge-suspendido', 'Suspendido'],
@@ -1134,18 +1109,12 @@ document.addEventListener('DOMContentLoaded', () => {
       pausar:    ['badge-pausada',    'Pausada'],
       publicar:  ['badge-publicada',  'Publicada'],
     };
- 
-    if (badge && mapaClase[action]) {
-      // Limpiar clases de estado anteriores
+    if (badge && mapa[action]) {
       badge.className = 'badge-admin';
-      badge.classList.add(mapaClase[action][0]);
-      badge.textContent = mapaClase[action][1];
+      badge.classList.add(mapa[action][0]);
+      badge.textContent = mapa[action][1];
     }
- 
-    // Cerrar detalle si estaba abierto
     const det = document.getElementById('admin-det-' + id);
     if (det) det.classList.remove('open');
   });
- 
-});
- 
+})();

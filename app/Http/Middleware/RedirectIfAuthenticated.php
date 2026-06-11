@@ -24,19 +24,18 @@ class RedirectIfAuthenticated
      * @param  Closure  $next     El siguiente middleware o controlador
      * @return Response
      */
-    public function handle(Request $request, Closure $next): Response
-    {
-        // Si el usuario ya está autenticado, redirigir a su panel
-        if ($request->user()) {
-            // Redirigir según el rol del usuario
-            return match ($request->user()->rol) {
-                'estudiante' => redirect()->route('estudiante.home'),
-                'empresa'    => redirect()->route('empresa.home'),
-                'admin'      => redirect()->route('admin.home'),
-                default      => redirect()->route('inicio'),
-            };
-        }
 
-        return $next($request);
+public function handle(Request $request, Closure $next): Response
+{
+    // Solo redirigimos SI el usuario intenta entrar a paginas de "invitado" (login/registro)
+    // Si intenta entrar a cualquier otra parte, lo dejamos pasar.
+    if ($request->user()) {
+        if ($request->is('login') || $request->is('registro')) {
+            return redirect()->route('inicio');
+        }
     }
+
+    return $next($request);
 }
+    }
+

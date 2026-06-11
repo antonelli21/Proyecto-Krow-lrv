@@ -113,8 +113,7 @@
   </div>
 </header>
 
-{{-- ════ CONTENIDO ════ --}}
-<main>
+<main style="flex:1; display:flex; flex-direction:column; overflow:hidden;">
   @yield('content')
 </main>
 

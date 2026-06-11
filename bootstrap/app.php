@@ -10,25 +10,19 @@ return Application::configure(basePath: dirname(__DIR__))
         commands: __DIR__.'/../routes/console.php',
         health: '/up',
     )
-    ->withMiddleware(function (Middleware $middleware): void {
-        // ═══════════════════════════════════════════════════════════
-        // Registrar alias de middleware personalizados.
-        // Estos alias se usan en las rutas con ->middleware('alias')
-        // ═══════════════════════════════════════════════════════════
-
+->withMiddleware(function (Middleware $middleware): void {
+        
         $middleware->alias([
-            // Middleware que verifica que el email del usuario esté verificado
-            // Uso: ->middleware('verified')
             'verified' => \App\Http\Middleware\EnsureEmailIsVerified::class,
-
-            // Middleware que verifica el rol del usuario (estudiante, empresa, admin)
-            // Uso: ->middleware('role:estudiante') o ->middleware('role:admin,empresa')
             'role' => \App\Http\Middleware\CheckRole::class,
-
-            // Middleware que redirige a usuarios ya logueados (para login/registro)
-            // Uso: ->middleware('guest')
             'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
         ]);
+
+        // 🌟 AGREGA ESTA LÍNEA JUSTO ACÁ ABAJO:
+        $middleware->redirectTo(
+            guests: '/login',
+            users: '/inicio'
+        );
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //
