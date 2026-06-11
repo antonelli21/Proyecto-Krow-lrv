@@ -472,7 +472,7 @@ p {
   padding: 2rem 1.5rem;
   border-top: 0.5px solid var(--border);
   gap: 2rem;
-  min-height: 100vh;
+  min-height: unset;
 }
 main{
   flex: 1;

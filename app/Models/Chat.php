@@ -26,15 +26,15 @@ class Chat extends Model
         'fecha_creacion' => 'datetime',
     ];
 
-    public function usuario1(): BelongsTo
-    {
-        return $this->belongsTo(User::class, 'id_usuario_1', 'id');
-    }
+public function usuario1()
+{
+    return $this->belongsTo(User::class, 'id_usuario_1');
+}
 
-    public function usuario2(): BelongsTo
-    {
-        return $this->belongsTo(User::class, 'id_usuario_2', 'id');
-    }
+public function usuario2()
+{
+    return $this->belongsTo(User::class, 'id_usuario_2');
+}
 
     public function mensajes(): HasMany
     {

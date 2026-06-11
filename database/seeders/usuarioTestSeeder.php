@@ -26,7 +26,7 @@ class UsuarioTestSeeder extends Seeder
         ]);
 
         // ═════════════════════════════════════════════
-        // 1. ROL: ESTUDIANTE
+        // 1. ROL: ESTUDIANTE 1 (Juan Pérez)
         // ═════════════════════════════════════════════
         $userEstudiante = User::updateOrCreate(
             ['email' => 'estudiante@krow.com'],
@@ -34,9 +34,9 @@ class UsuarioTestSeeder extends Seeder
                 'name'     => 'Juan Pérez',
                 'password' => Hash::make('password123'),
                 'rol'      => 'estudiante',
-                'email_verified_at' => Carbon::now(), // Marca el email como verificado
-                'email_verification_code' => null,     // Sin código pendiente
-                'email_verification_expires' => null,  // Sin fecha de expiración
+                'email_verified_at' => Carbon::now(),
+                'email_verification_code' => null,
+                'email_verification_expires' => null,
             ]
         );
 
@@ -63,9 +63,46 @@ class UsuarioTestSeeder extends Seeder
             'fecha_creacion'         => now(),
         ]);
 
+        // ═════════════════════════════════════════════
+        // 1b. ROL: ESTUDIANTE 2 (José Mendoza) 🆕
+        // ═════════════════════════════════════════════
+        $userEstudiante2 = User::updateOrCreate(
+            ['email' => 'jose@krow.com'], // Email único para loguearse
+            [
+                'name'     => 'José Mendoza',
+                'password' => Hash::make('123'), // Contraseña configurada en '123'
+                'rol'      => 'estudiante',
+                'email_verified_at' => Carbon::now(),
+                'email_verification_code' => null,
+                'email_verification_expires' => null,
+            ]
+        );
+
+        DB::table('estudiante')->insertOrIgnore([
+            'id_estudiante'          => 2, // ID diferente para no chocar con Juan
+            'id_usuario'             => $userEstudiante2->id,
+            'nombre'                 => 'José',
+            'apellido'               => 'Mendoza',
+            'dni'                    => 42345678,
+            'legajo'                 => '54321',
+            'fecha_nacimiento'       => '2002-09-20',
+            'telefono'               => '1199887766',
+            'id_carrera'             => 1,
+            'descripcion'            => 'Desarrollador Junior entusiasmado por los desafíos backend.',
+            'modalidad_deseada'      => 'Presencial',
+            'disponibilidad_horaria' => 'Tarde',
+            'foto_perfil'            => null,
+            'cv'                     => null,
+            'portfolio'              => 'https://josemendoza.dev',
+            'linkedin'               => 'https://linkedin.com/in/josemendoza',
+            'github'                 => 'https://github.com/josemendoza',
+            'id_localidad'           => null,
+            'id_provincia'           => null,
+            'fecha_creacion'         => now(),
+        ]);
 
         // ═════════════════════════════════════════════
-        // 2. ROL: EMPRESA (Limpiado de campos dudosos)
+        // 2. ROL: EMPRESA
         // ═════════════════════════════════════════════
         $userEmpresa = User::updateOrCreate(
             ['email' => 'empresa@krow.com'],
@@ -73,9 +110,9 @@ class UsuarioTestSeeder extends Seeder
                 'name'     => 'Tech Solutions S.A.',
                 'password' => Hash::make('password123'),
                 'rol'      => 'empresa',
-                'email_verified_at' => Carbon::now(), // Marca el email como verificado
-                'email_verification_code' => null,     // Sin código pendiente
-                'email_verification_expires' => null,  // Sin fecha de expiraci
+                'email_verified_at' => Carbon::now(),
+                'email_verification_code' => null,
+                'email_verification_expires' => null,
             ]
         );
 
@@ -97,10 +134,8 @@ class UsuarioTestSeeder extends Seeder
             'linkedin'            => 'https://linkedin.com/company/techsolutions',
             'instagram'           => null,
             'facebook'            => null,
-            // Quitamos tamanio_empresa, id_localidad e id_provincias para asegurar el éxito
             'fecha_creacion'      => now(),
         ]);
-
 
         // ═════════════════════════════════════════════
         // 3. ROL: ADMIN
@@ -111,9 +146,9 @@ class UsuarioTestSeeder extends Seeder
                 'name'     => 'Administrador General',
                 'password' => Hash::make('password123'),
                 'rol'      => 'admin',
-                'email_verified_at' => Carbon::now(), // Marca el email como verificado
-                'email_verification_code' => null,     // Sin código pendiente
-                'email_verification_expires' => null,  // Sin fecha de expiracion
+                'email_verified_at' => Carbon::now(),
+                'email_verification_code' => null,
+                'email_verification_expires' => null,
             ]
         );
     }
