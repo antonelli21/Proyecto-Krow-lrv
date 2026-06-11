@@ -79,6 +79,6 @@ class LoginController extends Controller
         // Regenerar el token CSRF para seguridad
         $request->session()->regenerateToken();
 
-        return redirect()->route('inciio');
+        return redirect()->route('inicio');
     }
 }
