@@ -993,3 +993,121 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
         })();
+
+/* ════════════════════════════════════════
+   ADMIN PANEL — main JS
+   Tabs / Filtros / Detalle expandible
+════════════════════════════════════════ */
+ 
+document.addEventListener('DOMContentLoaded', () => {
+ 
+  /* ── TABS ── */
+  const tabs      = document.querySelectorAll('.admin-tab');
+  const panels    = document.querySelectorAll('.admin-tab-panel');
+ 
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      tabs.forEach(t => t.classList.remove('active'));
+      panels.forEach(p => p.classList.remove('active'));
+      tab.classList.add('active');
+      const target = document.getElementById('panel-' + tab.dataset.tab);
+      if (target) target.classList.add('active');
+    });
+  });
+ 
+  /* ── DETALLE EXPANDIBLE ── */
+  window.toggleAdminDetalle = (id, btn) => {
+    const row   = document.getElementById('admin-det-' + id);
+    if (!row) return;
+    const isOpen = row.classList.toggle('open');
+    btn.querySelector('.det-label').textContent = isOpen ? 'Cerrar ↑' : 'Ver perfil ↓';
+  };
+ 
+  /* ── FILTRO GENÉRICO ── */
+  // Cada tabla tiene: input.admin-search-input, select.admin-filter-*, tbody con tr[data-*]
+  document.querySelectorAll('.admin-table-wrap').forEach(wrap => {
+    const searchInput = wrap.closest('.admin-tab-panel')?.querySelector('.admin-search input');
+    const selects     = wrap.closest('.admin-tab-panel')?.querySelectorAll('.admin-filter-select');
+    const rows        = wrap.querySelectorAll('tbody tr:not(.admin-detalle-row)');
+    const emptyState  = wrap.closest('.admin-tab-panel')?.querySelector('.admin-empty');
+ 
+    const applyFilters = () => {
+      const query = searchInput?.value.toLowerCase() ?? '';
+ 
+      // Recoger valores de todos los selects con data-filter
+      const activeFilters = {};
+      selects?.forEach(sel => {
+        if (sel.dataset.filter) activeFilters[sel.dataset.filter] = sel.value.toLowerCase();
+      });
+ 
+      let visible = 0;
+      rows.forEach(row => {
+        const text = row.dataset.search?.toLowerCase() ?? '';
+        const matchSearch = !query || text.includes(query);
+ 
+        const matchFilters = Object.entries(activeFilters).every(([key, val]) => {
+          if (!val) return true;
+          return (row.dataset[key] ?? '').toLowerCase() === val;
+        });
+ 
+        const show = matchSearch && matchFilters;
+        row.style.display = show ? '' : 'none';
+ 
+        // Ocultar también la fila de detalle si la fila está oculta
+        const det = document.getElementById('admin-det-' + row.dataset.id);
+        if (det) det.style.display = show ? '' : 'none';
+ 
+        if (show) visible++;
+      });
+ 
+      if (emptyState) emptyState.style.display = visible === 0 ? 'block' : 'none';
+    };
+ 
+    searchInput?.addEventListener('input', applyFilters);
+    selects?.forEach(sel => sel.addEventListener('change', applyFilters));
+  });
+ 
+  /* ── CHECKBOX SELECCIONAR TODOS ── */
+  document.querySelectorAll('.check-all').forEach(chkAll => {
+    chkAll.addEventListener('change', () => {
+      const panel = chkAll.closest('.admin-tab-panel');
+      panel?.querySelectorAll('.check-row').forEach(chk => {
+        chk.checked = chkAll.checked;
+      });
+    });
+  });
+ 
+  /* ── ACCIONES INLINE (aprobar / suspender / rechazar) ── */
+  // Se delega al document para que funcione con filas dinámicas también
+  document.addEventListener('click', e => {
+    const btn = e.target.closest('[data-action]');
+    if (!btn) return;
+ 
+    const action = btn.dataset.action;
+    const id     = btn.dataset.id;
+    const row    = document.querySelector(`tr[data-id="${id}"]`);
+    const badge  = row?.querySelector('.badge-admin');
+ 
+    const mapaClase = {
+      aprobar:   ['badge-aprobado',   'Aprobado'],
+      activar:   ['badge-activo',     'Activo'],
+      suspender: ['badge-suspendido', 'Suspendido'],
+      rechazar:  ['badge-rechazado',  'Rechazado'],
+      pausar:    ['badge-pausada',    'Pausada'],
+      publicar:  ['badge-publicada',  'Publicada'],
+    };
+ 
+    if (badge && mapaClase[action]) {
+      // Limpiar clases de estado anteriores
+      badge.className = 'badge-admin';
+      badge.classList.add(mapaClase[action][0]);
+      badge.textContent = mapaClase[action][1];
+    }
+ 
+    // Cerrar detalle si estaba abierto
+    const det = document.getElementById('admin-det-' + id);
+    if (det) det.classList.remove('open');
+  });
+ 
+});
+ 
