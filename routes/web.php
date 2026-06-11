@@ -95,6 +95,8 @@ Route::prefix('estudiante')
         Route::get('/perfil',      function () { return view('estudiante.perfil-estudiante'); })->name('perfil');
         Route::get('/mensajes',    function () { return view('estudiante.mensajes-estudiante'); })->name('mensajes');
         Route::get('/oferta/{id}', function ($id) { return view('estudiante.oferta-detalle', compact('id')); })->name('oferta');
+
+         Route::get('/lista', [App\Http\Controllers\EstudianteController::class, 'lista'])->name('lista');
 });
 
 /* ════════════════════════════════════════
@@ -146,7 +148,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 // Ruta para mostrar la página de ayuda
 Route::get('/ayuda', function () {
-    return view('ayuda'); // Asegurate que el nombre coincida con tu archivo Blade
+    return view('ayuda'); 
 })->name('ayuda');
 
 Route::post('/ayuda/contacto', function(Request $request) {
