@@ -792,8 +792,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 nacimiento: document.getElementById('c-nacimiento'),
                 carrera: document.getElementById('c-carrera'),
                 pass: document.getElementById('c-password'),
-                pass2: document.getElementById('c-password2'),
-                terms: document.getElementById('c-terms'),
+                pass2: document.getElementById('c-password2')
             };
             const ce = {
                 nombre: document.getElementById('err-c-nombre'),
@@ -803,8 +802,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 nacimiento: document.getElementById('err-c-nacimiento'),
                 carrera: document.getElementById('err-c-carrera'),
                 pass: document.getElementById('err-c-password'),
-                pass2: document.getElementById('err-c-password2'),
-                terms: document.getElementById('err-c-terms'),
+                pass2: document.getElementById('err-c-password2')
             };
             Object.keys(c).forEach(k => {
                 const el = c[k];
@@ -847,12 +845,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     showError(c.pass2, ce.pass2, true);
                     ok = false;
                 }
-                if (!c.terms.checked) {
-                    showError(c.terms, ce.terms, true);
-                    ok = false;
-                }
                 if (ok) {
-                    console.log('Registro candidato OK', Object.fromEntries(new FormData(formCand)));
+                    // console.log('Registro candidato OK', Object.fromEntries(new FormData(formCand)));
+                    formCand.submit(); // Enviar a Laravel
                 }
             });
 
@@ -865,8 +860,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 telefono: document.getElementById('e-telefono'),
                 ubicacion: document.getElementById('e-ubicacion'),
                 pass: document.getElementById('e-password'),
-                pass2: document.getElementById('e-password2'),
-                terms: document.getElementById('e-terms'),
+                pass2: document.getElementById('e-password2')
             };
             const ee = {
                 nombre: document.getElementById('err-e-nombre'),
@@ -876,8 +870,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 telefono: document.getElementById('err-e-telefono'),
                 ubicacion: document.getElementById('err-e-ubicacion'),
                 pass: document.getElementById('err-e-password'),
-                pass2: document.getElementById('err-e-password2'),
-                terms: document.getElementById('err-e-terms'),
+                pass2: document.getElementById('err-e-password2')
             };
             Object.keys(e).forEach(k => {
                 const el = e[k];
@@ -926,12 +919,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     showError(e.pass2, ee.pass2, true);
                     ok = false;
                 }
-                if (!e.terms.checked) {
-                    showError(e.terms, ee.terms, true);
-                    ok = false;
-                }
                 if (ok) {
-                    console.log('Registro empresa OK', Object.fromEntries(new FormData(formEmp)));
+                    // console.log('Registro empresa OK', Object.fromEntries(new FormData(formEmp)));
+                    formEmp.submit(); // Enviar a Laravel
                 }
             });
         })();
@@ -999,10 +989,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
 
                 if (ok) {
-                    console.log('Login OK', {
-                        email: vEmail,
-                        remember: document.getElementById('remember').checked
-                    });
+                    form.submit(); // Enviar login a Laravel
                 }
             });
         })();

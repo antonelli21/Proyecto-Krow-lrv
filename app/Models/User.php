@@ -23,6 +23,8 @@ class User extends Authenticatable
 
     /**
      * The attributes that are mass assignable.
+     * Se agregaron email_verification_code y email_verification_expires
+     * para el sistema de verificación de email por código.
      *
      * @var list<string>
      */
@@ -31,20 +33,27 @@ class User extends Authenticatable
         'email',
         'password',
         'rol',
+        // Campos para verificación de email por código de 6 dígitos
+        'email_verification_code',
+        'email_verification_expires',
     ];
 
     /**
      * The attributes that should be hidden for serialization.
+     * Se ocultó email_verification_code para que no se exponga en APIs/JSON.
      *
      * @var list<string>
      */
     protected $hidden = [
         'password',
         'remember_token',
+        // Ocultar el código de verificación en las respuestas JSON
+        'email_verification_code',
     ];
 
     /**
      * Get the attributes that should be cast.
+     * Se agregó el cast de email_verification_expires a datetime.
      *
      * @return array<string, string>
      */
@@ -54,6 +63,8 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'fecha_creacion' => 'datetime',
             'password' => 'hashed',
+            // Cast para que la fecha de expiración del código se maneje como Carbon
+            'email_verification_expires' => 'datetime',
         ];
     }
 
