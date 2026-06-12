@@ -14,7 +14,7 @@ class EstudianteController extends Controller
 
     public function show(Estudiante $estudiante)
     {
-        return response()->json($estudiante->load(['user', 'carrera', 'localidad', 'provincia', 'habilidades']));
+        return response()->json($estudiante->load(['user', 'carrera', 'localidad', 'provincia', 'habilidades', 'postulaciones.oferta.empresa', 'postulaciones.oferta.habilidades']));
     }
 
     public function store(Request $request)
