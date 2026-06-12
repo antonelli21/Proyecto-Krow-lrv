@@ -125,9 +125,9 @@ Route::prefix('admin')
     ->name('admin.')
     ->middleware(['auth', 'verified', 'role:admin'])
     ->group(function () {
-        Route::get('/home',       function () { return view('admin.admin-empresas-ofertas'); })->name('home');
-        Route::get('/empresas',   function () { return view('admin.admin-empresas-ofertas'); })->name('empresas');
-        Route::get('/estudiantes',function () { return view('admin.admin-estudiantes');      })->name('estudiantes');
+        Route::get('/home',       function () { return view('admin.admin'); })->name('home');
+        Route::get('/empresas',   function () { return view('admin.admin'); })->name('empresas');
+        Route::get('/estudiantes',function () { return view('admin.admin');      })->name('estudiantes');
 });
 
 /* ════════════════════════════════════════
@@ -145,12 +145,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
    FORMULARIO DE CONTACTO (público)
    Procesa el formulario de contacto de la página de ayuda.
 ════════════════════════════════════════ */
-
-// Ruta para mostrar la página de ayuda
-Route::get('/ayuda', function () {
-    return view('ayuda'); 
-})->name('ayuda');
-
 Route::post('/ayuda/contacto', function(Request $request) {
     $request->validate([
         'nombre'  => 'required|min:2',

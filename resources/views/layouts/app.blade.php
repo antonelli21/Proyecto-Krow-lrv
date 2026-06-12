@@ -73,7 +73,12 @@
             </svg>
           </button>
           <div class="dropdown-menu" id="account-menu" role="menu">
-            <a href="{{ route($rol . '.perfil') }}" class="dropdown-item" role="menuitem">
+                  @if(Route::has($rol . '.perfil'))
+                <a href="{{ route($rol . '.perfil') }}" class="dropdown-item" role="menuitem">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+                    Mi Perfil
+                </a>
+            @endif
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
               Mi Perfil
             </a>
