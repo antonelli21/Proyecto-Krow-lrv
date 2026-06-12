@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Empresa;
 use Illuminate\Http\Request;
+use App\Models\Oferta;
+use App\Models\Postulacion;
 
 class EmpresaController extends Controller
 {
@@ -79,5 +81,30 @@ class EmpresaController extends Controller
         $empresa->delete();
 
         return response()->noContent();
+    }
+
+    public function home()
+    {
+        $empresaId = auth()->user()->empresa->id_empresa;
+        $ofertas = Oferta::where('id_empresa', $empresaId)->withCount('postulaciones')->get();
+        
+        return view('empresa.home-empresa', compact('ofertas'));
+    }
+
+
+        public function verPostulantes($id)
+    {
+        // Buscar la oferta con sus postulantes y la relación con estudiante
+        $oferta = Oferta::with(['postulaciones.estudiante.user'])->findOrFail($id);
+        
+        // Verificar que la oferta pertenece a la empresa logueada
+        $empresaId = auth()->user()->empresa->id_empresa;
+        if ($oferta->id_empresa != $empresaId) {
+            abort(403, 'No tenés permiso para ver estos postulantes');
+        }
+        
+        $postulantes = $oferta->postulaciones;
+        
+        return view('empresa.postulantes-empresa', compact('oferta', 'postulantes', 'id'));
     }
 }

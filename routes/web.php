@@ -119,22 +119,11 @@ Route::prefix('empresa')
     ->name('empresa.')
     ->middleware(['auth', 'verified', 'role:empresa'])
     ->group(function () {
-        Route::get('/home',        function () {
-            return view('empresa.home-empresa');
-        })->name('home');
-        Route::get('/perfil',      function () {
-            return view('empresa.perfil-empresa');
-        })->name('perfil');
-        Route::get('/mensajes',    function () {
-            return view('empresa.mensajes-empresa');
-        })->name('mensajes');
-        Route::get('/postulantes', function () {
-            return view('empresa.postulantes-empresa');
-        })->name('postulantes');
-        Route::get('/crear-oferta', function () {
-            return view('empresa.crear-oferta');
-        })->name('crear-oferta');
-
+        Route::get('/home', [App\Http\Controllers\EmpresaController::class, 'home'])->name('home');
+        Route::get('/perfil',      function () { return view('empresa.perfil-empresa');     })->name('perfil');
+        Route::get('/mensajes',    function () { return view('empresa.mensajes-empresa');   })->name('mensajes');
+        Route::get('/postulantes', function () { return view('empresa.postulantes-empresa'); })->name('postulantes');
+        Route::get('/ofertas/{id}/postulantes', [EmpresaController::class, 'verPostulantes'])->name('ofertas.postulantes');
         Route::get('/lista', [App\Http\Controllers\EmpresaController::class, 'lista'])->name('lista');
     });
 
