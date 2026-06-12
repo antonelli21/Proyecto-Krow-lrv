@@ -17,6 +17,7 @@ class UsuarioTestSeeder extends Seeder
      */
     public function run(): void
     {
+        DB::statement('SET FOREIGN_KEY_CHECKS = 0;');
         // ═════════════════════════════════════════════
         // 0. CARRERA DE PRUEBA
         // ═════════════════════════════════════════════
@@ -151,5 +152,6 @@ class UsuarioTestSeeder extends Seeder
                 'email_verification_expires' => null,
             ]
         );
+        DB::statement('SET FOREIGN_KEY_CHECKS = 1;');
     }
 }
