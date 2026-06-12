@@ -465,11 +465,11 @@ p {
 
 /* Footer simple */
 .site-footer{
-  background-color: var(--bg);
+  background-color: var(--surface);
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  padding: 0.75rem 1.5rem;
+  padding: 2rem 1.5rem;
   border-top: 0.5px solid var(--border);
   gap: 2rem;
   min-height: unset;
@@ -517,8 +517,10 @@ main{
 .footer-bottom {
   text-align: center;
   padding: 1rem 0;
+  border-top: 0.5px solid var(--border);
   color: var(--primary);
   font-size: 0.875rem;
+  margin-top: 2rem;
 }
 
 /* =============================================

@@ -55,33 +55,27 @@
         </tr>
       </thead>
       <tbody>
+        @forelse($ofertas as $oferta)
         <tr>
-          <td class="td-puesto">Desarrollador Full Stack</td>
-          <td class="td-ubicacion">Buenos Aires, Argentina</td>
-          <td><span class="badge-tipo">Tiempo completo</span></td>
-          <td>USD 3000–5000</td>
-          <td><span class="td-postulantes"><i class="bi bi-people-fill"></i> 24</span></td>
-          <td class="td-fecha">14/1/2024</td>
-          <td><a href="#" class="link-accion">Ver postulantes →</a></td>
+          <td class="td-puesto">{{ $oferta->titulo }}</td>
+          <td class="td-ubicacion">{{ $oferta->ubicacion ?? 'No especificada' }}</td>
+          <td><span class="badge-tipo">{{ $oferta->tipo_contrato ?? 'No especificado' }}</span></td>
+          <td>{{ $oferta->salario ?? 'A convenir' }}</td>
+          <td><span class="td-postulantes"><i class="bi bi-people-fill"></i> {{ $oferta->postulaciones_count ?? 0 }}</span></td>
+          <td class="td-fecha">{{ $oferta->created_at->format('d/m/Y') }}</td>
+          <td>
+            <a href="{{ route('empresa.ofertas.postulantes', $oferta->id_oferta) }}" class="link-accion">
+              Ver postulantes →
+            </a>
+          </td>
         </tr>
+        @empty
         <tr>
-          <td class="td-puesto">Diseñador UX/UI Senior</td>
-          <td class="td-ubicacion">Remoto</td>
-          <td><span class="badge-tipo">Tiempo completo</span></td>
-          <td>USD 2500–4000</td>
-          <td><span class="td-postulantes"><i class="bi bi-people-fill"></i> 18</span></td>
-          <td class="td-fecha">9/1/2024</td>
-          <td><a href="#" class="link-accion">Ver postulantes →</a></td>
+          <td colspan="7" style="text-align: center; padding: 2rem;">
+            No tenés ofertas publicadas aún.
+          </td>
         </tr>
-        <tr>
-          <td class="td-puesto">Data Analyst</td>
-          <td class="td-ubicacion">Córdoba, Argentina</td>
-          <td><span class="badge-tipo">Medio tiempo</span></td>
-          <td>USD 1500–2500</td>
-          <td><span class="td-postulantes"><i class="bi bi-people-fill"></i> 12</span></td>
-          <td class="td-fecha">4/1/2024</td>
-          <td><a href="#" class="link-accion">Ver postulantes →</a></td>
-        </tr>
+        @endforelse
       </tbody>
     </table>
 
