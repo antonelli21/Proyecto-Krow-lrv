@@ -91,24 +91,14 @@ Route::prefix('estudiante')
     ->name('estudiante.')
     ->middleware(['auth', 'verified', 'role:estudiante'])
     ->group(function () {
-        Route::get('/home',        function () {
-            return view('estudiante.home-estudiante');
-        })->name('home');
-        Route::get('/empresas',    function () {
-            return view('estudiante.empresas-lista');
-        })->name('empresas');
-        Route::get('/perfil',      function () {
-            return view('estudiante.perfil-estudiante');
-        })->name('perfil');
-        Route::get('/mensajes',    function () {
-            return view('estudiante.mensajes-estudiante');
-        })->name('mensajes');
-        Route::get('/oferta/{id}', function ($id) {
-            return view('estudiante.oferta-detalle', compact('id'));
-        })->name('oferta');
-
+        Route::get('/home',        function () {    return view('estudiante.home-estudiante');})->name('home');
+        Route::get('/empresas',    function () {    return view('empresas');})->name('empresas');
+        Route::get('/perfil',      function () {    return view('estudiante.perfil-estudiante');})->name('perfil');
+        Route::get('/mensajes',    function () {    return view('estudiante.mensajes-estudiante');})->name('mensajes');
+        Route::get('/oferta/{id}', function ($id) { return view('estudiante.oferta-detalle', compact('id'));})->name('oferta');
         Route::get('/lista', [App\Http\Controllers\EstudianteController::class, 'lista'])->name('lista');
-    });
+
+});
 
 /* ════════════════════════════════════════
    EMPRESA
