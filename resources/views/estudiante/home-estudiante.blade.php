@@ -14,21 +14,21 @@
     <div class="stat-card">
       <div>
         <p class="stat-card-label">Postulaciones Activas</p>
-        <span class="stat-card-value">4</span>
+        <span class="stat-card-value" id="stat-activas">0</span>
       </div>
       <i class="bi bi-send stat-card-icon"></i>
     </div>
     <div class="stat-card">
       <div>
         <p class="stat-card-label">Total Postulaciones</p>
-        <span class="stat-card-value">12</span>
+        <span class="stat-card-value" id="stat-totales">0</span>
       </div>
       <i class="bi bi-clipboard-check stat-card-icon"></i>
     </div>
     <div class="stat-card">
       <div>
         <p class="stat-card-label">Mensajes</p>
-        <span class="stat-card-value">3</span>
+        <span class="stat-card-value">0</span>
       </div>
       <i class="bi bi-chat-dots stat-card-icon"></i>
     </div>
@@ -55,186 +55,118 @@
         <th>Detalle</th>
       </tr>
     </thead>
-    <tbody>
-
-      <!-- Postulación 1 -->
+    <tbody id="tabla-postulaciones">
       <tr>
-        <td>
-          <div class="td-puesto">Desarrollador Full Stack</div>
-          <div class="td-empresa">MegaCorp Technologies</div>
-        </td>
-        <td>
-          <span class="badge-tipo" style="border:0.5px solid var(--border);color:var(--muted);padding:3px 10px;border-radius:20px;font-size:11.5px;">Tiempo completo</span>
-        </td>
-        <td>USD 3000–5000</td>
-        <td><span class="badge-estado estado-contacto">En contacto</span></td>
-        <td class="td-fecha">14/1/2024</td>
-        <td><button class="toggle-detalle" onclick="toggleDetalle('d1', this)">Ver detalle ↓</button></td>
+        <td colspan="6" style="text-align: center; padding: 2rem;">Cargando postulaciones...</td>
       </tr>
-      <tr class="detalle-row" id="d1">
-        <td colspan="6">
-          <div class="detalle-inner">
-            <div>
-              <p class="detalle-block-title">Descripción de la oferta</p>
-              <p class="detalle-desc">Buscamos un desarrollador proactivo orientado a resultados para sumarse al equipo de core-banking. Trabajo 100% remoto con equipo distribuido en LATAM.</p>
-              <a href="#" class="btn-ver-oferta"><i class="bi bi-box-arrow-up-right"></i> Ver oferta completa</a>
-            </div>
-            <div>
-              <p class="detalle-block-title">Tecnologías requeridas</p>
-              <div class="detalle-tags">
-                <span class="detalle-tag">Node.js</span>
-                <span class="detalle-tag">React</span>
-                <span class="detalle-tag">PostgreSQL</span>
-                <span class="detalle-tag">Docker</span>
-                <span class="detalle-tag">Git</span>
-              </div>
-            </div>
-          </div>
-        </td>
-      </tr>
-
-      <!-- Postulación 2 -->
-      <tr>
-        <td>
-          <div class="td-puesto">Analista de Datos</div>
-          <div class="td-empresa">DataSoft S.A.</div>
-        </td>
-        <td>
-          <span class="badge-tipo" style="border:0.5px solid var(--border);color:var(--muted);padding:3px 10px;border-radius:20px;font-size:11.5px;">Tiempo completo</span>
-        </td>
-        <td>USD 2000–3000</td>
-        <td><span class="badge-estado estado-preseleccionado">Preseleccionado</span></td>
-        <td class="td-fecha">10/1/2024</td>
-        <td><button class="toggle-detalle" onclick="toggleDetalle('d2', this)">Ver detalle ↓</button></td>
-      </tr>
-      <tr class="detalle-row" id="d2">
-        <td colspan="6">
-          <div class="detalle-inner">
-            <div>
-              <p class="detalle-block-title">Descripción de la oferta</p>
-              <p class="detalle-desc">Posición para analista junior con experiencia en Python y SQL. Se valorará conocimiento en visualización de datos con Tableau o Power BI.</p>
-              <a href="#" class="btn-ver-oferta"><i class="bi bi-box-arrow-up-right"></i> Ver oferta completa</a>
-            </div>
-            <div>
-              <p class="detalle-block-title">Tecnologías requeridas</p>
-              <div class="detalle-tags">
-                <span class="detalle-tag">Python</span>
-                <span class="detalle-tag">SQL</span>
-                <span class="detalle-tag">Power BI</span>
-                <span class="detalle-tag">Excel</span>
-              </div>
-            </div>
-          </div>
-        </td>
-      </tr>
-
-      <!-- Postulación 3 -->
-      <tr>
-        <td>
-          <div class="td-puesto">Pasantía Ingeniería Industrial</div>
-          <div class="td-empresa">Grupo Metálico</div>
-        </td>
-        <td>
-          <span class="badge-tipo" style="border:0.5px solid var(--border);color:var(--muted);padding:3px 10px;border-radius:20px;font-size:11.5px;">Pasantía</span>
-        </td>
-        <td>$180.000 / mes</td>
-        <td><span class="badge-estado estado-revision">En revisión</span></td>
-        <td class="td-fecha">5/1/2024</td>
-        <td><button class="toggle-detalle" onclick="toggleDetalle('d3', this)">Ver detalle ↓</button></td>
-      </tr>
-      <tr class="detalle-row" id="d3">
-        <td colspan="6">
-          <div class="detalle-inner">
-            <div>
-              <p class="detalle-block-title">Descripción de la oferta</p>
-              <p class="detalle-desc">Pasantía de 6 meses para estudiantes avanzados de Ingeniería Industrial. Participación en proyectos de mejora continua y optimización de procesos productivos.</p>
-              <a href="#" class="btn-ver-oferta"><i class="bi bi-box-arrow-up-right"></i> Ver oferta completa</a>
-            </div>
-            <div>
-              <p class="detalle-block-title">Modalidad</p>
-              <div class="detalle-tags">
-                <span class="detalle-tag">Presencial</span>
-                <span class="detalle-tag">Buenos Aires</span>
-                <span class="detalle-tag">Lunes a Viernes</span>
-              </div>
-            </div>
-          </div>
-        </td>
-      </tr>
-
-      <!-- Postulación 4 -->
-      <tr>
-        <td>
-          <div class="td-puesto">Técnico en Programación</div>
-          <div class="td-empresa">StartupX</div>
-        </td>
-        <td>
-          <span class="badge-tipo" style="border:0.5px solid var(--border);color:var(--muted);padding:3px 10px;border-radius:20px;font-size:11.5px;">Part-time</span>
-        </td>
-        <td>$220.000 / mes</td>
-        <td><span class="badge-estado estado-postulado">Postulado</span></td>
-        <td class="td-fecha">2/1/2024</td>
-        <td><button class="toggle-detalle" onclick="toggleDetalle('d4', this)">Ver detalle ↓</button></td>
-      </tr>
-      <tr class="detalle-row" id="d4">
-        <td colspan="6">
-          <div class="detalle-inner">
-            <div>
-              <p class="detalle-block-title">Descripción de la oferta</p>
-              <p class="detalle-desc">Buscamos estudiantes de TUP o carreras afines para sumarse al equipo de desarrollo web. Posibilidad de continuar con relación de dependencia al finalizar los estudios.</p>
-              <a href="#" class="btn-ver-oferta"><i class="bi bi-box-arrow-up-right"></i> Ver oferta completa</a>
-            </div>
-            <div>
-              <p class="detalle-block-title">Tecnologías requeridas</p>
-              <div class="detalle-tags">
-                <span class="detalle-tag">PHP</span>
-                <span class="detalle-tag">JavaScript</span>
-                <span class="detalle-tag">MySQL</span>
-                <span class="detalle-tag">HTML/CSS</span>
-              </div>
-            </div>
-          </div>
-        </td>
-      </tr>
-
-      <!-- Postulación 5 - rechazada -->
-      <tr>
-        <td>
-          <div class="td-puesto">Diseñador UI Junior</div>
-          <div class="td-empresa">CreativeAgency</div>
-        </td>
-        <td>
-          <span class="badge-tipo" style="border:0.5px solid var(--border);color:var(--muted);padding:3px 10px;border-radius:20px;font-size:11.5px;">Tiempo completo</span>
-        </td>
-        <td>USD 1200–1800</td>
-        <td><span class="badge-estado estado-rechazado">Rechazado</span></td>
-        <td class="td-fecha">20/12/2023</td>
-        <td><button class="toggle-detalle" onclick="toggleDetalle('d5', this)">Ver detalle ↓</button></td>
-      </tr>
-      <tr class="detalle-row" id="d5">
-        <td colspan="6">
-          <div class="detalle-inner">
-            <div>
-              <p class="detalle-block-title">Descripción de la oferta</p>
-              <p class="detalle-desc">Posición para diseñador con conocimientos en Figma y sistemas de diseño. Se requería portfolio con al menos 3 proyectos de UI/UX.</p>
-              <a href="#" class="btn-ver-oferta"><i class="bi bi-box-arrow-up-right"></i> Ver oferta completa</a>
-            </div>
-            <div>
-              <p class="detalle-block-title">Herramientas</p>
-              <div class="detalle-tags">
-                <span class="detalle-tag">Figma</span>
-                <span class="detalle-tag">Adobe XD</span>
-                <span class="detalle-tag">Illustrator</span>
-              </div>
-            </div>
-          </div>
-        </td>
-      </tr>
-
     </tbody>
   </table>
+
+  @include('estudiante.oferta-detalle')
 
 </div>
 
 @endsection
 
+@section('scripts')
+<script>
+  const estudianteId = "{{ auth()->user()->estudiante?->id_estudiante ?? '' }}";
+  document.addEventListener('DOMContentLoaded', () => {
+    if (!estudianteId) return;
+
+    fetch(`/api/estudiantes/${estudianteId}`)
+      .then(r => r.json())
+      .then(data => {
+        const postulaciones = data.postulaciones || [];
+        renderStats(postulaciones);
+        renderTable(postulaciones);
+      })
+      .catch(err => {
+        console.error("Error cargando postulaciones:", err);
+        document.getElementById('tabla-postulaciones').innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 2rem; color: var(--danger);">Error cargando postulaciones</td></tr>';
+      });
+  });
+
+  function renderStats(postulaciones) {
+    document.getElementById('stat-totales').innerText = postulaciones.length;
+    document.getElementById('stat-activas').innerText = postulaciones.filter(p => p.estado && p.estado.toLowerCase() !== 'rechazado').length;
+  }
+
+  function renderTable(postulaciones) {
+    const tbody = document.getElementById('tabla-postulaciones');
+    if (postulaciones.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 2rem;">No tienes postulaciones activas.</td></tr>';
+      return;
+    }
+
+    let html = '';
+    postulaciones.forEach(p => {
+      const oferta = p.oferta;
+      if (!oferta) return;
+
+      const estadoLimpio = p.estado ? p.estado.trim().toLowerCase() : '';
+      let estadoClase = 'postulado';
+      if (estadoLimpio === 'en contacto') estadoClase = 'contacto';
+      else if (estadoLimpio === 'en revisión' || estadoLimpio === 'en revision') estadoClase = 'revision';
+      else if (estadoLimpio === 'preseleccionado') estadoClase = 'preseleccionado';
+      else if (estadoLimpio === 'rechazado') estadoClase = 'rechazado';
+
+      const d = new Date(p.fecha_postulacion);
+      const fecha = isNaN(d.getTime()) ? '-' : d.toLocaleDateString('es-AR');
+      const salario = oferta.salario_min ? `USD ${oferta.salario_min}–${oferta.salario_max}` : 'No especificado';
+      const empresa = oferta.empresa ? oferta.empresa.nombre_empresa : 'Confidencial';
+      const estadoMayus = p.estado ? p.estado.charAt(0).toUpperCase() + p.estado.slice(1) : 'Postulado';
+
+      const ofertaEncoded = encodeURIComponent(JSON.stringify(oferta));
+
+      html += `
+            <tr>
+                <td>
+                    <div class="td-puesto">${oferta.titulo}</div>
+                    <div class="td-empresa">${empresa}</div>
+                </td>
+                <td>
+                    <span class="badge-tipo" style="border:0.5px solid var(--border);color:var(--muted);padding:3px 10px;border-radius:20px;font-size:11.5px;">${oferta.tipo_oferta}</span>
+                </td>
+                <td>${salario}</td>
+                <td>
+                    <span class="badge-estado estado-${estadoClase}">${estadoMayus}</span>
+                </td>
+                <td class="td-fecha">${fecha}</td>
+                <td>
+                    <button class="toggle-detalle" onclick="openModalOferta(decodeURIComponent('${ofertaEncoded}'))" style="text-decoration: underline; text-underline-offset: 3px; border: none; background: transparent; cursor: pointer; color: var(--primary);">Ver Oferta</button>
+                </td>
+            </tr>`;
+    });
+    tbody.innerHTML = html;
+  }
+
+  window.openModalOferta = function(ofertaStr) {
+    const oferta = JSON.parse(ofertaStr);
+    document.getElementById('modal-titulo').innerText = oferta.titulo || '';
+    document.getElementById('modal-empresa').innerText = oferta.empresa ? oferta.empresa.nombre_empresa : 'Confidencial';
+    document.getElementById('modal-descripcion').innerText = oferta.descripcion || '';
+
+    if (oferta.requisitos) {
+      document.getElementById('modal-requisitos-container').style.display = 'block';
+      document.getElementById('modal-requisitos').innerText = oferta.requisitos;
+    } else {
+      document.getElementById('modal-requisitos-container').style.display = 'none';
+    }
+
+    document.getElementById('modal-modalidad').innerText = oferta.modalidad || '';
+    document.getElementById('modal-tipo').innerText = oferta.tipo_oferta || '';
+
+    const habContainer = document.getElementById('modal-habilidades-container');
+    const habDiv = document.getElementById('modal-habilidades');
+    if (oferta.habilidades && oferta.habilidades.length > 0) {
+      habContainer.style.display = 'block';
+      habDiv.innerHTML = oferta.habilidades.map(h => `<span style="background: var(--bg-body); border: 1px solid var(--primary); color: var(--primary); padding: 4px 10px; border-radius: 20px; font-size: 0.85rem;">${h.nombre}</span>`).join('');
+    } else {
+      habContainer.style.display = 'none';
+    }
+
+    document.getElementById('modalOferta').showModal();
+  };
+</script>
+@endsection

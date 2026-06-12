@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Route;
    RUTAS PÚBLICAS
    Accesibles por cualquier visitante sin necesidad de autenticación.
 ════════════════════════════════════════ */
+
 Route::get('/', function () {
     return view('index');
 })->name('inicio');
@@ -90,14 +91,24 @@ Route::prefix('estudiante')
     ->name('estudiante.')
     ->middleware(['auth', 'verified', 'role:estudiante'])
     ->group(function () {
-        Route::get('/home',        function () { return view('estudiante.home-estudiante'); })->name('home');
-        Route::get('/empresas',    function () { return view('estudiante.empresas-lista');  })->name('empresas');
-        Route::get('/perfil',      function () { return view('estudiante.perfil-estudiante'); })->name('perfil');
-        Route::get('/mensajes',    function () { return view('estudiante.mensajes-estudiante'); })->name('mensajes');
-        Route::get('/oferta/{id}', function ($id) { return view('estudiante.oferta-detalle', compact('id')); })->name('oferta');
+        Route::get('/home',        function () {
+            return view('estudiante.home-estudiante');
+        })->name('home');
+        Route::get('/empresas',    function () {
+            return view('estudiante.empresas-lista');
+        })->name('empresas');
+        Route::get('/perfil',      function () {
+            return view('estudiante.perfil-estudiante');
+        })->name('perfil');
+        Route::get('/mensajes',    function () {
+            return view('estudiante.mensajes-estudiante');
+        })->name('mensajes');
+        Route::get('/oferta/{id}', function ($id) {
+            return view('estudiante.oferta-detalle', compact('id'));
+        })->name('oferta');
 
-         Route::get('/lista', [App\Http\Controllers\EstudianteController::class, 'lista'])->name('lista');
-});
+        Route::get('/lista', [App\Http\Controllers\EstudianteController::class, 'lista'])->name('lista');
+    });
 
 /* ════════════════════════════════════════
    EMPRESA
@@ -114,7 +125,7 @@ Route::prefix('empresa')
         Route::get('/postulantes', function () { return view('empresa.postulantes-empresa'); })->name('postulantes');
         Route::get('/ofertas/{id}/postulantes', [EmpresaController::class, 'verPostulantes'])->name('ofertas.postulantes');
         Route::get('/lista', [App\Http\Controllers\EmpresaController::class, 'lista'])->name('lista');
-});
+    });
 
 /* ════════════════════════════════════════
    ADMIN
@@ -125,10 +136,16 @@ Route::prefix('admin')
     ->name('admin.')
     ->middleware(['auth', 'verified', 'role:admin'])
     ->group(function () {
-        Route::get('/home',       function () { return view('admin.admin'); })->name('home');
-        Route::get('/empresas',   function () { return view('admin.admin'); })->name('empresas');
-        Route::get('/estudiantes',function () { return view('admin.admin');      })->name('estudiantes');
-});
+        Route::get('/home',       function () {
+            return view('admin.admin');
+        })->name('home');
+        Route::get('/empresas',   function () {
+            return view('admin.admin');
+        })->name('empresas');
+        Route::get('/estudiantes', function () {
+            return view('admin.admin');
+        })->name('estudiantes');
+    });
 
 /* ════════════════════════════════════════
    COMPARTIDAS (LOGUEADOS)
@@ -136,16 +153,22 @@ Route::prefix('admin')
    sin importar su rol (estudiante, empresa o admin).
 ════════════════════════════════════════ */
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('/mensajes',      function () { return view('mensajes');      })->name('mensajes');
-    Route::get('/notificaciones',function () { return view('notificaciones'); })->name('notificaciones');
-    Route::get('/configuracion', function () { return view('configuracion');  })->name('configuracion');
+    Route::get('/mensajes',      function () {
+        return view('mensajes');
+    })->name('mensajes');
+    Route::get('/notificaciones', function () {
+        return view('notificaciones');
+    })->name('notificaciones');
+    Route::get('/configuracion', function () {
+        return view('configuracion');
+    })->name('configuracion');
 });
 
 /* ════════════════════════════════════════
    FORMULARIO DE CONTACTO (público)
    Procesa el formulario de contacto de la página de ayuda.
 ════════════════════════════════════════ */
-Route::post('/ayuda/contacto', function(Request $request) {
+Route::post('/ayuda/contacto', function (Request $request) {
     $request->validate([
         'nombre'  => 'required|min:2',
         'email'   => 'required|email',
@@ -162,10 +185,10 @@ Route::post('/ayuda/contacto', function(Request $request) {
    Usadas por el frontend con fetch/AJAX.
 ════════════════════════════════════════ */
 Route::prefix('api')->group(function () {
-    Route::apiResource('estudiantes', EstudianteController::class)->only(['index','show','store','update','destroy']);
-    Route::apiResource('empresas', EmpresaController::class)->only(['index','show','store','update','destroy']);
-    Route::apiResource('ofertas', OfertaController::class)->only(['index','show','store','update','destroy']);
-    Route::apiResource('chats', ChatController::class)->only(['index','show','store','destroy']);
-    Route::apiResource('mensajes', MensajeController::class)->only(['index','show','store','update','destroy']);
-    Route::apiResource('tickets', TicketSoporteController::class)->only(['index','show','store','update','destroy']);
+    Route::apiResource('estudiantes', EstudianteController::class)->only(['index', 'show', 'store', 'update', 'destroy']);
+    Route::apiResource('empresas', EmpresaController::class)->only(['index', 'show', 'store', 'update', 'destroy']);
+    Route::apiResource('ofertas', OfertaController::class)->only(['index', 'show', 'store', 'update', 'destroy']);
+    Route::apiResource('chats', ChatController::class)->only(['index', 'show', 'store', 'destroy']);
+    Route::apiResource('mensajes', MensajeController::class)->only(['index', 'show', 'store', 'update', 'destroy']);
+    Route::apiResource('tickets', TicketSoporteController::class)->only(['index', 'show', 'store', 'update', 'destroy']);
 });
