@@ -37,8 +37,8 @@
     <div class="section-header">
       <h2 class="section-title">Mis Ofertas</h2>
       <div class="section-actions">
-        <a href="#" class="btn-outline"><i class="bi bi-chat-dots"></i> Mensajes</a>
-        <a href="#" class="btn-accent"><i class="bi bi-plus-lg"></i> Nueva Oferta</a>
+        <a href="{{ route('mensajes') }}" class="btn-outline"><i class="bi bi-chat-dots"></i> Mensajes</a>
+        <a href="{{ route('empresa.crear-oferta') }}" class="btn-accent"><i class="bi bi-plus-lg"></i> Nueva Oferta</a>
       </div>
     </div>
 
