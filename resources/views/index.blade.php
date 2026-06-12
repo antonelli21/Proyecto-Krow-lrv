@@ -1,7 +1,7 @@
 @extends('layouts.app')
  
 @section('title', 'KROW — Portal de Empleos')
- 
+
 @section('content')
  
 <div class="page-body">
@@ -30,9 +30,7 @@
           <h3 class="job-title">Fullstack Developer Node/React</h3>
           <p class="job-meta"><span>MegaCorp</span> • <span>Remoto</span></p>
         </div>
-        <div class="job-actions">
-          <button class="btn-bookmark"><i class="bi bi-bookmark"></i></button>
-        </div>
+
       </div>
       <div class="job-badges">
         <span class="badge badge-salary">$450.000 / mes</span>
@@ -59,13 +57,6 @@
  
 </div>
  
-{{-- Role switcher demo --}}
-<div class="role-switcher">
-  <p class="role-switcher-title">Modo de Vista (Demo)</p>
-  <button class="role-btn" data-role="invitado">Invitado</button>
-  <button class="role-btn" data-role="estudiante">Estudiante</button>
-  <button class="role-btn" data-role="empresa">Empresa</button>
-  <button class="role-btn" data-role="admin">Admin</button>
-</div>
+
  
 @endsection
