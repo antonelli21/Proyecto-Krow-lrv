@@ -71,13 +71,13 @@
                             <span>{{ $empresa }}</span> &bull; <span>{{ $modalidad }}</span>
                         </p>
                     </div>
-                    <button
+                    <!-- <button
                         class="btn-bookmark{{ $guardado ? ' saved' : '' }}"
                         aria-label="Guardar oferta"
                         data-oferta-id="{{ $id }}"
                     >
                         <i class="bi bi-bookmark{{ $guardado ? '-fill' : '' }}"></i>
-                    </button>
+                    </button> -->
                 </div>
 
                 <div class="job-badges">
@@ -116,9 +116,9 @@
                         <h3 class="job-title">Fullstack Developer Node / React</h3>
                         <p class="job-meta"><span>MegaCorp</span> &bull; <span>Remoto</span></p>
                     </div>
-                    <button class="btn-bookmark" aria-label="Guardar oferta">
+                    <!-- <button class="btn-bookmark" aria-label="Guardar oferta">
                         <i class="bi bi-bookmark"></i>
-                    </button>
+                    </button> -->
                 </div>
                 <div class="job-badges">
                     <span class="badge badge-salary">$450.000 / mes</span>
@@ -141,9 +141,9 @@
                         <h3 class="job-title">Analista QA Semi-Senior</h3>
                         <p class="job-meta"><span>DevSoft</span> &bull; <span>Híbrido</span></p>
                     </div>
-                    <button class="btn-bookmark" aria-label="Guardar oferta">
+                    <!-- <button class="btn-bookmark" aria-label="Guardar oferta">
                         <i class="bi bi-bookmark"></i>
-                    </button>
+                    </button> -->
                 </div>
                 <div class="job-badges">
                     <span class="badge badge-salary">$300.000 / mes</span>
@@ -183,6 +183,7 @@
 
     {{-- RIGHT PANEL --}}
     <aside id="right-panel" class="right-panel" aria-label="Panel lateral"></aside>
+
 
 </div>{{-- /page-body --}}
 

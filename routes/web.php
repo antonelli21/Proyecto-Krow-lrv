@@ -97,9 +97,9 @@ Route::prefix('estudiante')
         Route::get('/mensajes',    function () {    return view('estudiante.mensajes-estudiante');})->name('mensajes');
         Route::get('/oferta/{id}', function ($id) { return view('estudiante.oferta-detalle', compact('id'));})->name('oferta');
         Route::get('/lista', [App\Http\Controllers\EstudianteController::class, 'lista'])->name('lista');
-
-});
-
+        Route::get('/perfil/editar',  function () { return view('estudiante.perfil-estudiante-editar'); })->name('perfil.editar');
+        Route::put('/perfil/update',  [EstudianteController::class, 'updatePerfil'])->name('perfil.update');
+    });
 /* ════════════════════════════════════════
    EMPRESA
    Rutas protegidas para usuarios con rol 'empresa'.
@@ -116,6 +116,8 @@ Route::prefix('empresa')
         Route::get('/oferta/{id}/postulantes', [EmpresaController::class, 'verPostulantes'])->name('postulantes'); 
         Route::get('/crear-oferta', function () {       return view('empresa.crear-oferta');})->name('crear-oferta');
         Route::put('/postulacion/{id}/estado', [EmpresaController::class, 'actualizarEstadoPostulante'])->name('actualizar-estado');
+        Route::get('/perfil/editar',  function () { return view('empresa.perfil-empresa-editar'); })->name('perfil.editar');
+        Route::put('/perfil/update',  [EmpresaController::class, 'updatePerfil'])->name('perfil.update');
     });
 
 /* ════════════════════════════════════════
@@ -144,17 +146,18 @@ Route::prefix('admin')
    sin importar su rol (estudiante, empresa o admin).
 ════════════════════════════════════════ */
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('/mensajes',      function () {
-        return view('mensajes');
-    })->name('mensajes');
-    Route::get('/notificaciones', function () {
-        return view('notificaciones');
-    })->name('notificaciones');
-    Route::get('/configuracion', function () {
-        return view('configuracion');
-    })->name('configuracion');
-});
+    Route::get('/mensajes',      function () { return view('mensajes'); })->name('mensajes');
+    Route::get('/notificaciones', function () { return view('notificaciones'); })->name('notificaciones');
+    Route::get('/configuracion', function () { return view('configuracion'); })->name('configuracion');
 
+    Route::put('/configuracion/password',    function () {
+        return back()->with('password_ok', true);
+    })->name('configuracion.password');
+
+    Route::post('/configuracion/logout-all', function () {
+        return redirect()->route('inicio');
+    })->name('configuracion.logout-all');
+});
 /* ════════════════════════════════════════
    FORMULARIO DE CONTACTO (público)
    Procesa el formulario de contacto de la página de ayuda.

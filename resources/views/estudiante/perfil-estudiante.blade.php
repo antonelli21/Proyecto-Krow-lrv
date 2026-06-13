@@ -46,7 +46,7 @@ $idiomas_array = !empty($estudiante['idiomas'])
         <p class="panel-page-sub" style="margin-bottom:2px;">{{ $estudiante['carrera'] }}</p>
         <p class="panel-page-sub">Legajo: {{ $estudiante['legajo'] }}</p>
       </div>
-      <a href="{{ route('configuracion') }}" class="btn-accent">
+      <a href="{{ route('estudiante.perfil.editar') }}" class="btn-accent">
         <i class="bi bi-pencil"></i> Editar perfil
       </a>    
     </div>

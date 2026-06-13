@@ -125,10 +125,9 @@
   </div>
 </header>
 
-<main style="flex:1; display:flex; flex-direction:column; overflow:hidden;">
+<main style="flex:1; display:flex; flex-direction:column; overflow:auto;">
   @yield('content')
 </main>
-
 {{-- ════ FOOTER ════ --}}
 <footer>
   <div class="site-footer">
