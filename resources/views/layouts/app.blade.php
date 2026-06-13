@@ -31,15 +31,17 @@
       <a href="{{ route('inicio') }}" class="nav-link {{ request()->routeIs('inicio') ? 'active' : '' }}">Inicio</a>
 
       @if($rol === 'estudiante')
-        <a href="{{ route('estudiante.empresas') }}" class="nav-link {{ request()->routeIs('estudiante.empresas') ? 'active' : '' }}">Empresas</a>
-        <a href="{{ route('estudiante.home') }}"     class="nav-link {{ request()->routeIs('estudiante.home') ? 'active' : '' }}">Mis Postulaciones</a>
+          <a href="{{ route('empresas') }}" class="nav-link {{ request()->routeIs('empresas') ? 'active' : '' }}">Empresas</a>
+          <a href="{{ route('estudiante.home') }}" class="nav-link {{ request()->routeIs('estudiante.home') ? 'active' : '' }}">Mis Postulaciones</a>
       @elseif($rol === 'empresa')
-        <a href="{{ route('empresa.home') }}"        class="nav-link {{ request()->routeIs('empresa.home') ? 'active' : '' }}">Panel Empresa</a>
+          <a href="{{ route('empresas') }}" class="nav-link {{ request()->routeIs('empresas') ? 'active' : '' }}">Empresas</a>
+          <a href="{{ route('empresa.home') }}" class="nav-link {{ request()->routeIs('empresa.home') ? 'active' : '' }}">Panel Empresa</a>
       @elseif($rol === 'admin')
-        <a href="{{ route('admin.home') }}"          class="nav-link {{ request()->routeIs('admin.*') ? 'active' : '' }}">Administrar</a>
+          <a href="{{ route('empresas') }}" class="nav-link {{ request()->routeIs('empresas') ? 'active' : '' }}">Empresas</a>
+          <a href="{{ route('admin.home') }}" class="nav-link {{ request()->routeIs('admin.*') ? 'active' : '' }}">Administrar</a>
       @else
-        <a href="{{ route('login') }}"               class="nav-link">Empresas</a>
-        <a href="{{ route('login') }}"               class="nav-link">Mis Postulaciones</a>
+          <a href="{{ route('empresas') }}" class="nav-link {{ request()->routeIs('empresas') ? 'active' : '' }}">Empresas</a>
+          <a href="{{ route('login') }}" class="nav-link">Mis Postulaciones</a>
       @endif
 
       <a href="{{ route('ayuda') }}" class="nav-link {{ request()->routeIs('ayuda') ? 'active' : '' }}">Ayuda</a>
@@ -92,8 +94,12 @@
               Notificaciones
             </a>
             <a href="{{ route('configuracion') }}" class="dropdown-item" role="menuitem">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="3"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
-              Configuración
+             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+               <path d="M12 3L5 6v6c0 5 3.5 8 7 9 3.5-1 7-4 7-9V6l-7-3z"/>
+              <path d="M10 11V9a2 2 0 1 1 4 0v2"/>
+              <rect x="9" y="11" width="6" height="5" rx="1"/>
+              </svg>
+              Seguridad
             </a>
             <hr class="dropdown-divider">
             <a href="{{ route('logout') }}" class="dropdown-item dropdown-item-danger" role="menuitem"
