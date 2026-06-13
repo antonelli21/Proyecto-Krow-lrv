@@ -1,140 +1,188 @@
 @extends('layouts.app')
-
+ 
 @section('title', 'Perfil Empresa - Krow')
-
+ 
 @section('content')
-  @php
-    // Mock (modo desarrollo): datos de empresa sin base de datos
+ 
+@php
     $empresa = $empresa ?? [
-      'nombre' => 'ACME S.A.',
-      'rubro' => 'Software / Tecnología',
-      'email' => 'contacto@acme.example',
-      'telefono' => '+54 9 11 9876 5432',
-      'direccion' => 'Av. Siempreviva 742',
-      'localidad' => 'Ciudad Ficticia',
-      'provincia' => 'Provincia Ejemplo',
-      'sitio_web' => 'https://acme.example',
-      'descripcion' => 'Empresa dedicada a soluciones de software y consultoría tecnológica.',
-      'linkedin' => 'https://linkedin.com/company/acme',
-      'facebook' => '',
+        'nombre'      => 'ACME S.A.',
+        'rubro'       => 'Software / Tecnología',
+        'email'       => 'contacto@acme.example',
+        'telefono'    => '+54 9 11 9876 5432',
+        'direccion'   => 'Av. Siempreviva 742',
+        'localidad'   => 'Ciudad Ficticia',
+        'provincia'   => 'Provincia Ejemplo',
+        'sitio_web'   => 'https://acme.example',
+        'descripcion' => 'Empresa dedicada a soluciones de software y consultoría tecnológica.',
+        'linkedin'    => 'https://linkedin.com/company/acme',
+        'facebook'    => '',
     ];
-
+ 
     $ofertas = $ofertas ?? [
-      ['titulo' => 'Desarrollador Full Stack', 'modalidad' => 'Híbrido', 'salario' => 'AR$ 250.000'],
-      ['titulo' => 'Analista QA', 'modalidad' => 'Remoto', 'salario' => 'AR$ 180.000'],
+        ['titulo' => 'Desarrollador Full Stack', 'modalidad' => 'Híbrido', 'salario' => 'AR$ 250.000'],
+        ['titulo' => 'Analista QA',              'modalidad' => 'Remoto',  'salario' => 'AR$ 180.000'],
     ];
-  @endphp
-
-  <div class="container mt-4">
-    <div class="card perfil-header-card shadow-sm mb-4">
-      <div class="card-body">
-        <div class="row align-items-center gy-3">
-          <div class="col-auto">
+@endphp
+ 
+<div class="panel-page">
+ 
+    {{-- ══════════════════════════════════════════
+         HEADER: Avatar + Info + Acciones
+    ══════════════════════════════════════════ --}}
+    <div class="perfil-header-card">
+        <div class="perfil-header-inner">
+ 
+            {{-- Avatar --}}
             <div class="perfil-avatar">
-              {{ strtoupper(substr($empresa['nombre'] ?? 'E', 0, 1)) }}
+                {{ strtoupper(substr($empresa['nombre'] ?? 'E', 0, 1)) }}
             </div>
-          </div>
-
-          <div class="col">
-            <h1 class="h4 mb-1">{{ $empresa['nombre'] ?? '' }}</h1>
-            <p class="mb-1 text-muted">{{ $empresa['rubro'] ?? '' }}</p>
-            <p class="mb-0 text-muted">
-              {{ $empresa['direccion'] ?? '' }} — {{ $empresa['localidad'] ?? '' }}
-            </p>
-          </div>
-
-          <div class="col-auto">
-            <a href="{{ url('empresa/perfil-empresa-editar') }}" class="btn btn-warning btn-sm">
-              <i class="fas fa-edit me-1"></i> Editar perfil
-            </a>
-          </div>
+ 
+            {{-- Información principal --}}
+            <div class="perfil-header-info" style="flex: 1;">
+                <h1 class="panel-page-title">{{ $empresa['nombre'] ?? '' }}</h1>
+                <p class="panel-page-sub" style="margin-bottom: 2px;">{{ $empresa['rubro'] ?? '' }}</p>
+                <p class="panel-page-sub">{{ $empresa['direccion'] ?? '' }} — {{ $empresa['localidad'] ?? '' }}</p>
+            </div>
+ 
+            {{-- Acciones --}}
+            <div style="display: flex; flex-direction: column; gap: 10px; min-width: 160px;">
+                <a href="{{ url('empresa/perfil-empresa-editar') }}" class="btn-accent" style="justify-content: center; text-align: center;">
+                    <i class="fas fa-edit"></i> Editar perfil
+                </a>
+                <a href="{{ url('empresa/ofertas') }}" class="btn-outline" style="justify-content: center; text-align: center;">
+                    <i class="fas fa-eye"></i> Ver ofertas
+                </a>
+            </div>
+ 
         </div>
-      </div>
     </div>
-
-    <div class="row g-4">
-      <div class="col-12">
-        <div class="card perfil-card shadow-sm">
-          <div class="card-header"><i class="fas fa-building me-2"></i> Datos de la Empresa</div>
-          <div class="card-body">
-            <dl class="row mb-0">
-              <dt class="col-sm-4 text-muted">Rubro</dt>
-              <dd class="col-sm-8 mb-2">{{ $empresa['rubro'] ?? '' }}</dd>
-
-              <dt class="col-sm-4 text-muted">Descripción</dt>
-              <dd class="col-sm-8 mb-0">{{ $empresa['descripcion'] ?? '' }}</dd>
-            </dl>
-          </div>
+ 
+    {{-- ══════════════════════════════════════════
+         SECCIONES DE DATOS
+    ══════════════════════════════════════════ --}}
+    <div class="perfil-sections">
+ 
+        {{-- ── Datos de la Empresa ── --}}
+        <div class="perfil-card">
+            <div class="perfil-card-header">
+                <i class="fas fa-building"></i> Datos de la Empresa
+            </div>
+            <div class="perfil-grid">
+ 
+                <div class="info-item">
+                    <div class="info-label">Rubro principal</div>
+                    <div class="info-value">{{ $empresa['rubro'] ?? 'No especificado' }}</div>
+                </div>
+ 
+                <div class="info-item" style="grid-column: 1 / -1;">
+                    <div class="info-label">Descripción de la organización</div>
+                    <div class="info-value">{{ $empresa['descripcion'] ?? 'Sin descripción' }}</div>
+                </div>
+ 
+            </div>
         </div>
-      </div>
-
-      <div class="col-12">
-        <div class="card perfil-card shadow-sm">
-          <div class="card-header"><i class="fas fa-map-marker-alt me-2"></i> Ubicación</div>
-          <div class="card-body">
-            <dl class="row mb-0">
-              <dt class="col-sm-4 text-muted">Dirección</dt>
-              <dd class="col-sm-8 mb-2">{{ $empresa['direccion'] ?? '' }}</dd>
-
-              <dt class="col-sm-4 text-muted">Localidad / Provincia</dt>
-              <dd class="col-sm-8 mb-0">{{ $empresa['localidad'] ?? '' }} — {{ $empresa['provincia'] ?? '' }}</dd>
-            </dl>
-          </div>
+ 
+        {{-- ── Ubicación ── --}}
+        <div class="perfil-card">
+            <div class="perfil-card-header">
+                <i class="fas fa-map-marker-alt"></i> Ubicación
+            </div>
+            <div class="perfil-grid">
+ 
+                <div class="info-item">
+                    <div class="info-label">Dirección</div>
+                    <div class="info-value">{{ $empresa['direccion'] ?? 'No especificada' }}</div>
+                </div>
+ 
+                <div class="info-item">
+                    <div class="info-label">Localidad / Provincia</div>
+                    <div class="info-value">{{ $empresa['localidad'] ?? '' }} — {{ $empresa['provincia'] ?? '' }}</div>
+                </div>
+ 
+            </div>
         </div>
-      </div>
-
-      <div class="col-12">
-        <div class="card perfil-card shadow-sm">
-          <div class="card-header"><i class="fas fa-briefcase me-2"></i> Ofertas publicadas</div>
-          <div class="card-body">
-            @if(!empty($ofertas))
-              <ul class="list-unstyled">
-                @foreach($ofertas as $of)
-                  <li class="mb-3">
-                    <strong>{{ $of['titulo'] ?? '' }}</strong>
-                    <div class="text-muted small">{{ $of['modalidad'] ?? '' }} · {{ $of['salario'] ?? '' }}</div>
-                  </li>
-                @endforeach
-              </ul>
+ 
+        {{-- ── Ofertas publicadas ── --}}
+        <div class="perfil-card">
+            <div class="perfil-card-header">
+                <i class="fas fa-briefcase"></i> Ofertas publicadas
+            </div>
+ 
+            @if (!empty($ofertas))
+                <div class="perfil-grid">
+                    @foreach ($ofertas as $of)
+                        <div class="info-item" style="border-left-color: var(--accent);">
+                            <div class="info-label">{{ $of['modalidad'] ?? 'No especificada' }}</div>
+                            <div class="info-value" style="font-weight: 700;">{{ $of['titulo'] ?? '' }}</div>
+                            <div class="info-label" style="color: var(--accent); margin-top: 4px;">
+                                {{ $of['salario'] ?? '' }}
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
             @else
-              <div class="text-muted">No hay ofertas publicadas</div>
+                <div class="info-item" style="grid-column: 1 / -1;">
+                    <div class="info-value">No hay ofertas publicadas actualmente.</div>
+                </div>
             @endif
-          </div>
+ 
         </div>
-      </div>
-
-      <div class="col-12">
-        <div class="card perfil-card shadow-sm">
-          <div class="card-header"><i class="fas fa-address-book me-2"></i> Contacto y Redes</div>
-          <div class="card-body">
-            <dl class="row mb-0">
-              <dt class="col-sm-4 text-muted">Correo</dt>
-              <dd class="col-sm-8 mb-2">{{ $empresa['email'] ?? '' }}</dd>
-
-              <dt class="col-sm-4 text-muted">Teléfono</dt>
-              <dd class="col-sm-8 mb-2">{{ $empresa['telefono'] ?? '' }}</dd>
-
-              <dt class="col-sm-4 text-muted">Sitio web</dt>
-              <dd class="col-sm-8 mb-2">
-                @if(!empty($empresa['sitio_web']))
-                  <a href="{{ $empresa['sitio_web'] }}" target="_blank">{{ $empresa['sitio_web'] }}</a>
-                @endif
-              </dd>
-
-              <dt class="col-sm-4 text-muted">Redes</dt>
-              <dd class="col-sm-8 mb-0">
-                @if(!empty($empresa['linkedin']))
-                  <a href="{{ $empresa['linkedin'] }}" target="_blank" class="me-2"><i class="fab fa-linkedin fa-lg"></i></a>
-                @endif
-                @if(!empty($empresa['facebook']))
-                  <a href="{{ $empresa['facebook'] }}" target="_blank" class="me-2"><i class="fab fa-facebook fa-lg"></i></a>
-                @endif
-              </dd>
-            </dl>
-          </div>
+ 
+        {{-- ── Contacto y Redes Profesionales ── --}}
+        <div class="perfil-card">
+            <div class="perfil-card-header">
+                <i class="fas fa-address-book"></i> Contacto y Redes Profesionales
+            </div>
+            <div class="perfil-grid">
+ 
+                <div class="info-item">
+                    <div class="info-label">Correo electrónico</div>
+                    <div class="info-value">{{ $empresa['email'] ?? 'No especificado' }}</div>
+                </div>
+ 
+                <div class="info-item">
+                    <div class="info-label">Teléfono de contacto</div>
+                    <div class="info-value">{{ $empresa['telefono'] ?? 'No especificado' }}</div>
+                </div>
+ 
+                <div class="info-item">
+                    <div class="info-label">Sitio web oficial</div>
+                    <div class="info-value">
+                        @if (!empty($empresa['sitio_web']))
+                            <a href="{{ $empresa['sitio_web'] }}" target="_blank" class="link-accion">
+                                <i class="fas fa-external-link-alt fa-sm"></i> Visitar sitio web
+                            </a>
+                        @else
+                            <span class="info-label">No cargado</span>
+                        @endif
+                    </div>
+                </div>
+ 
+                <div class="info-item">
+                    <div class="info-label">Redes sociales</div>
+                    <div class="info-value" style="display: flex; gap: 16px; margin-top: 4px;">
+                        @if (!empty($empresa['linkedin']))
+                            <a href="{{ $empresa['linkedin'] }}" target="_blank" class="link-accion" title="LinkedIn">
+                                <i class="fab fa-linkedin fa-lg"></i>
+                            </a>
+                        @endif
+                        @if (!empty($empresa['facebook']))
+                            <a href="{{ $empresa['facebook'] }}" target="_blank" class="link-accion" title="Facebook">
+                                <i class="fab fa-facebook fa-lg"></i>
+                            </a>
+                        @endif
+                        @if (empty($empresa['linkedin']) && empty($empresa['facebook']))
+                            <span class="info-label">Ninguna vinculada</span>
+                        @endif
+                    </div>
+                </div>
+ 
+            </div>
         </div>
-      </div>
-    </div>
-  </div>
+ 
+    </div>{{-- /perfil-sections --}}
+ 
+</div>{{-- /panel-page --}}
+ 
 @endsection
-

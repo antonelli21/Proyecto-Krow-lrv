@@ -48,7 +48,7 @@ $idiomas_array = !empty($estudiante['idiomas'])
       </div>
       <a href="{{ route('configuracion') }}" class="btn-accent">
         <i class="bi bi-pencil"></i> Editar perfil
-      </a>
+      </a>    
     </div>
   </div>
 

@@ -73,16 +73,16 @@
               <polyline points="6 9 12 15 18 9"/>
             </svg>
           </button>
-          <div class="dropdown-menu" id="account-menu" role="menu">
-                  @if(Route::has($rol . '.perfil'))
+            <div class="dropdown-menu" id="account-menu" role="menu">
+            @if(Route::has($rol . '.perfil'))
                 <a href="{{ route($rol . '.perfil') }}" class="dropdown-item" role="menuitem">
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <circle cx="12" cy="8" r="4"/>
+                        <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
+                    </svg>
                     Mi Perfil
                 </a>
             @endif
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
-              Mi Perfil
-            </a>
             <a href="{{ route('mensajes') }}" class="dropdown-item" role="menuitem">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
               Mensajes
