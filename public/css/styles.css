@@ -6,10 +6,10 @@
 
 
 :root {
-  --bg:             #b5b8b4a1;
-  --surface:        #528d6c;
+  --bg:             #c3cac3b9;
+  --surface:        #70947f;
   --primary:        #051410;
-  --accent:         #00dd97;
+  --accent:         #07f7ab;
   --text:           #000000;
   --muted:          #000000;
   --border:         #A8C4BA;
@@ -3636,6 +3636,141 @@ textarea.filter-input-text {
   min-height: 100px;
   font-family: var(--font-body);
   line-height: 1.5;
+}
+
+.config-layout {
+    max-width: 640px;
+    margin: 32px auto;
+    padding: 0 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+ 
+.config-section-title {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0 0 16px 0;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 16px;
+}
+ 
+/* ── Cards ── */
+.config-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    margin-bottom: 16px;
+}
+ 
+.config-card-danger {
+    border-color: var(--destructive);
+}
+ 
+.config-card-header {
+    padding: 12px 16px;
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: var(--text);
+    border-bottom: 1px solid var(--border);
+}
+ 
+.config-card-danger .config-card-header {
+    color: var(--destructive);
+    border-bottom-color: var(--destructive);
+}
+ 
+.config-card-body {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+ 
+/* ── Campos ── */
+.config-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+ 
+.config-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+ 
+.config-error {
+    font-size: 0.8rem;
+    color: var(--destructive);
+}
+ 
+.input-error {
+    border-color: var(--destructive) !important;
+}
+ 
+.config-muted {
+    font-size: 0.875rem;
+    color: var(--muted);
+    margin: 0;
+}
+ 
+/* ── Acciones ── */
+.config-actions {
+    display: flex;
+    justify-content: flex-end;
+    padding-top: 8px;
+    border-top: 1px solid var(--border);
+    margin-top: 8px;
+}
+ 
+/* ── Alerta éxito ── */
+.config-alert {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 12px;
+    font-size: 0.875rem;
+    border: 1px solid transparent;
+}
+ 
+.config-alert-success {
+    background: rgba(46, 204, 154, 0.08);
+    border-color: rgba(46, 204, 154, 0.3);
+    color: var(--accent);
+}
+ 
+/* ── Botón danger ── */
+.btn-danger {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    background: transparent;
+    border: 1px solid var(--destructive);
+    color: var(--destructive);
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+}
+ 
+.btn-danger:hover {
+    background: var(--destructive);
+    color: #ffffff;
+}
+ 
+/* ── Responsive ── */
+@media (max-width: 640px) {
+    .config-layout {
+        padding: 0 16px;
+        margin: 16px auto;
+    }
 }
 
 .btn-ver,
