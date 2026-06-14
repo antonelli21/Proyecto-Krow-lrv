@@ -1,31 +1,52 @@
-/* =============================================
-   KROW — Design System completo
-   Modo claro: verde petróleo + crema
-   Modo oscuro: negro carbón + dorado
-   ============================================= */
-
-
 :root {
-  --bg:             #c3cac3b9;
-  --surface:        #70947f;
-  --primary:        #051410;
-  --accent:         #07f7ab;
-  --text:           #000000;
-  --muted:          #000000;
-  --border:         #A8C4BA;
+  --bg:             #dadada;
+  --surface:        #7b85a0;
+  --primary:        #1A3A6E;
+  --accent:         #2B6BE8;
+  --text:           #0D1E35;
+  --muted:          #232c3b;
+  --border:         #B8CCE0;
   --destructive:    #D4183D;
   --destructive-fg: #ffffff;
   --radius:         0px;
+
+  --accent-dim:      rgba(43,107,232,.12);
+  --border-accent:   rgba(43,107,232,.4);
+  --bg-card:         var(--surface);
+  --bg-input:        var(--bg);
+  --bg-hover:        rgba(43,107,232,.06);
+  --text-primary:    var(--text);
+  --text-secondary:  var(--muted);
+  --text-muted:      #4A6080;
+  --header-h:        80px;
+  --sidebar-w:       270px;
+  --right-w:         290px;
+  --shadow-card:     0 2px 14px rgba(26,58,110,.10);
+  --shadow-accent:   0 4px 20px rgba(43,107,232,.22);
+  --font-display:    Arial, system-ui, sans-serif;
+  --font-body:       Arial, system-ui, sans-serif;
+  --trans:           .18s ease;
 }
 [data-theme="dark"] {
-  --bg:       #111118;         /* Fondo general en modo noche (Negro carbón profundo) */
-  --surface:  #2C2C35;         /* Superficie de componentes en modo noche (Gris oscuro/azulido) */
-  --primary:  #D4A843;         /* Identidad de marca / Títulos en modo noche (Dorado KROW) */
-  --accent:   #D4A843;         /* Color de realce e interacciones de noche (Dorado KROW) */
-  --text:     #F5F3EE;         /* Texto principal de lectura de noche (Blanco hueso para no encandilar) */
-  --muted:    #6B6B78;         /* Texto secundario de noche (Gris apagado de baja intensidad) */
-  --border:   #3A3A45;         /* Líneas divisorias y bordes adaptados a la oscuridad */
+  --bg:              #111118;
+  --surface:         #2C2C35;
+  --primary:         #D4A843;
+  --accent:          #D4A843;
+  --text:            #F5F3EE;
+  --muted:           #6B6B78;
+  --border:          #3A3A45;
+
+  --bg-card:         #1e2030;
+  --bg-input:        #252838;
+  --bg-hover:        rgba(255,255,255,.04);
+  --text-muted:      #6B6B78;
+  --shadow-card:     0 2px 14px rgba(0,0,0,.35);
+  --accent-dim:      rgba(212,168,67,.10);
+  --border-accent:   rgba(212,168,67,.35);
+  --shadow-accent:   0 4px 20px rgba(212,168,67,.22);
 }
+
+
 /* ════════════════════════════════════════
    RESET BASE
 ════════════════════════════════════════ */
@@ -145,10 +166,10 @@ main {
 }
 
 [data-theme="light"] .logo-light {
-  filter: drop-shadow(1px 0px 0px #2ECC9A)
-          drop-shadow(-1px 0px 0px #2ECC9A)
-          drop-shadow(0px 1px 0px #2ECC9A)
-          drop-shadow(0px -1px 0px #2ECC9A);
+  filter: drop-shadow(1px 0px 0px var(--accent))
+          drop-shadow(-1px 0px 0px var(--accent))
+          drop-shadow(0px 1px 0px var(--accent))
+          drop-shadow(0px -1px 0px var(--accent));
 }
 /* ---------------- NAV CENTRAL ---------------- */
 .header-nav {
@@ -465,13 +486,14 @@ p {
 
 /* Footer simple */
 .site-footer{
-  background-color: var(--surface);
+  background-color: var(--bg);
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
   padding: 2rem 1.5rem;
   gap: 2rem;
   min-height: unset;
+  margin-top: 10px;
 }
 main{
   flex: 1;
@@ -516,7 +538,7 @@ main{
   padding: 1rem 0;
   color: var(--muted);
   font-size: 0.875rem;
-  background-color:var(--surface)
+  background-color:var(--bg)
 }
 
 /* =============================================
@@ -918,35 +940,6 @@ main{
 /* ── Fuentes del proyecto ── */
 
 /* ── Tokens adicionales ── */
-:root {
-  --accent-dim:      rgba(46,204,154,.15);
-  --border-accent:   rgba(46,204,154,.5);
-  --bg-card:         var(--surface);
-  --bg-input:        #0A3D2E;
-  --bg-hover:        rgba(255,255,255,.06);
-  --text-primary:    var(--text);
-  --text-secondary:  var(--muted);
-  --text-muted:      #7ABFA3;
-  --header-h:        80px;
-  --sidebar-w:       270px;
-  --right-w:         290px;
-  --shadow-card:     0 2px 14px rgba(0,0,0,.35);
-  --shadow-accent:   0 4px 20px rgba(46,204,154,.25);
-  --font-display:    Arial, system-ui, sans-serif;
-  --font-body:       Arial, system-ui, sans-serif;
-  --trans:           .18s ease;
-}
-
-[data-theme="dark"] {
-  --bg-card:         #1e2030;
-  --bg-input:        #252838;
-  --bg-hover:        rgba(255,255,255,.04);
-  --text-muted:      #6B6B78;
-  --shadow-card:     0 2px 14px rgba(0,0,0,.35);
-  --accent-dim:      rgba(212,168,67,.10);
-  --border-accent:   rgba(212,168,67,.35);
-  --shadow-accent:   0 4px 20px rgba(212,168,67,.22);
-}
 
 /* ── Aplicar fuentes al body ── */
 body {
@@ -975,13 +968,15 @@ body {
   grid-column: 1;
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 0px;
+  border-radius: 8px;
   padding: 18px 14px;
   align-self: start;
   max-height: calc(100vh - var(--header-h) - 32px);
   overflow-y: auto;
   scrollbar-width: thin;
   scrollbar-color: var(--accent) transparent;
+  margin-left:20px;
+  
 }
 
 .sidebar-filtros::-webkit-scrollbar { width: 4px; }
@@ -1041,8 +1036,9 @@ body {
   flex-direction: column;
   gap: 14px;
   padding-right: 8px;
+  width: 80%;
+  margin: 0 auto;
 }
-
 .content-head {
   display: flex;
   align-items: flex-end;
@@ -1088,11 +1084,14 @@ body {
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 0px;
-  padding: 16px;
+  /* padding: 16px; */
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  /* gap: 10px; */
   transition: border-color var(--trans), box-shadow var(--trans);
+  padding: 8px 12px;  /* Reducimos a la mitad el espacio arriba/abajo (8px) y los costados (12px) */
+  gap: 6px;
+
 }
 .job-card:hover {
   border-color: var(--primary);
@@ -1272,6 +1271,7 @@ body {
   gap: 14px;
   padding-right: 16px;
   align-self: start;
+  margin-right: 5px;
 }
 .panel-card {
   background: var(--surface);
@@ -1568,7 +1568,12 @@ body {
   padding: 0 0 12px 0;
   border-bottom: 1px solid var(--border);
   margin-bottom: 14px;
-  color: var(--text);
+  color: var(--primary);
+}
+.sidebar-filtros.collapsed {
+  max-height: 69px;
+  overflow: hidden;
+  padding-bottom: 0;
 }
 
 .sidebar-toggle-btn span {
@@ -1577,7 +1582,7 @@ body {
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 1.4px;
-  color: var(--text-muted);
+  color: var(--prmary);
 }
 
 .sidebar-toggle-icon {
@@ -2326,9 +2331,10 @@ body {
         font-family: var(--font-display, system-ui);
         font-size: 24px;
         font-weight: 800;
-        color: var(--text);
+        color: var(--primary);
         margin-bottom: 10px;
         line-height: 1.2;
+        margin: 3px;
     }
 
     .ayuda-section-sub {
@@ -2352,6 +2358,7 @@ body {
         border-radius: 0px;
         overflow: hidden;
         transition: border-color .2s, box-shadow .2s;
+        margin:5px;
     }
 
     .faq-item:hover {
@@ -2382,6 +2389,7 @@ body {
         font-weight: 600;
         color: var(--text);
         transition: color .2s;
+
     }
 
     .faq-question:hover {
@@ -2429,6 +2437,7 @@ body {
         border: 1px solid var(--border);
         border-radius: 0px;
         padding: 28px;
+        margin: 5px;
     }
 
     .contacto-form {
