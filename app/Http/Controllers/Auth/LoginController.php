@@ -44,8 +44,11 @@ class LoginController extends Controller
                 ->with('success', 'Antes de iniciar sesión, por favor verificá tu email con el código de 6 dígitos que te enviamos.');
         }
 
+        // Obtener el valor del checkbox 'remember' (devuelve true si está marcado, false si no)
+        $remember = $request->has('remember') || $request->boolean('remember');
+
         // Intentar autenticar con las credenciales y opción "recordarme"
-        if (Auth::attempt($credentials, $request->boolean('remember'))) {
+        if (Auth::attempt($credentials, $remember)) {
             // Regenerar la sesión para prevenir session fixation
             $request->session()->regenerate();
 
