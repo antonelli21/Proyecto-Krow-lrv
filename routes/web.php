@@ -29,6 +29,8 @@ Route::get('/empresas', function () {
     return view('empresas');
 })->name('empresas');
 
+Route::get('/ofertas/{id}', [OfertaController::class, 'detalle'])->name('ofertas.detalle');
+
 /* ════════════════════════════════════════
    AUTH — RUTAS DE INVITADOS (GUEST)
    Solo accesibles si el usuario NO está logueado.

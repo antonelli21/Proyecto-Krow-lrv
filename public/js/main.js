@@ -950,168 +950,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 
-
 (function () {
     'use strict';
 
-    const BASE = document.querySelector('meta[name="base-url"]')?.content?.replace(/\/$/, '') ?? '';
-
-    const KROW_ROLES = {
-
-        invitado: {
-            rightPanel: () => `
-                <div class="panel-card cta-card">
-                    <p class="panel-card-title">Encontrá tu primer trabajo</p>
-                    <p style="margin-bottom:16px;">
-                        Registrate gratis y accedé a cientos de ofertas para estudiantes UTN.
-                    </p>
-                    <a href="${BASE}/registro" class="btn-primary-sm"
-                       style="display:block;text-align:center;margin-bottom:8px;">
-                        Crear cuenta
-                    </a>
-                    <a href="${BASE}/login" class="btn-ghost-sm"
-                       style="display:block;text-align:center;">
-                        Ya tengo cuenta
-                    </a>
-                </div>
-                <div class="panel-card featured-card">
-                    <div class="featured-badge"><i class="bi bi-star-fill"></i> Destacado</div>
-                    <p class="featured-title">Senior Backend Engineer</p>
-                    <p class="featured-company">MegaCorp Technologies</p>
-                    <button class="btn-quick-apply" onclick="location.href='${BASE}/login'">
-                        Postularme rápido
-                    </button>
-                </div>
-            `,
-        },
-
-estudiante: {
-    rightPanel: () => `
-        <div class="panel-card">
-            <p class="panel-card-title">Mis Estadísticas</p>
-            <div class="stat-row">
-                <span class="stat-label">Postulaciones enviadas</span>
-                <span class="stat-value">24</span>
-            </div>
-            <div class="stat-row">
-                <span class="stat-label">Empresas que te contactaron</span>
-                <span class="stat-value">8</span>
-            </div>
-            <div class="stat-row">
-                <span class="stat-label">En revisión</span>
-                <span class="stat-value">12</span>
-            </div>
-        </div>
-        <div class="panel-card featured-card">
-            <div class="featured-badge"><i class="bi bi-star-fill"></i> Destacado</div>
-            <p class="featured-title">Senior Backend Engineer</p>
-            <p class="featured-company">MegaCorp Technologies</p>
-            <button class="btn-quick-apply">Postularme rápido</button>
-        </div>
-        <div class="panel-card">
-            <p class="panel-card-title">Últimas empresas vistas</p>
-            <div class="companies-grid">
-                <div class="company-thumb"><span>TC</span></div>
-                <div class="company-thumb"><span>DS</span></div>
-                <div class="company-thumb"><span>MC</span></div>
-                <div class="company-thumb"><span>DC</span></div>
-            </div>
-        </div>
-        <div class="panel-card">
-            <p class="panel-card-title">Tu perfil</p>
-            <p style="font-size:0.85rem;color:var(--muted);margin-bottom:12px;">
-                Completá tu perfil para que las empresas te encuentren.
-            </p>
-            <a href="${BASE}/estudiante/perfil" class="btn-apply-filters"
-               style="display:block;text-align:center;text-decoration:none;">
-                <i class="bi bi-person-circle"></i> Ver mi perfil
-            </a>
-        </div>
-    `,
-},
-
-empresa: {
-    rightPanel: () => `
-        <div class="panel-card">
-            <p class="panel-card-title">Panel Empresa</p>
-            <div class="stat-row">
-                <span class="stat-label">Ofertas activas</span>
-                <span class="stat-value">7</span>
-            </div>
-            <div class="stat-row">
-                <span class="stat-label">Postulantes recibidos</span>
-                <span class="stat-value">143</span>
-            </div>
-            <div class="stat-row">
-                <span class="stat-label">Entrevistas pautadas</span>
-                <span class="stat-value">12</span>
-            </div>
-            <button class="btn-new-offer"
-                    onclick="location.href='${BASE}/empresa/ofertas/nueva'">
-                + Nueva Oferta
-            </button>
-        </div>
-        <div class="panel-card">
-            <p class="panel-card-title">Postulantes destacados</p>
-            <div class="companies-grid">
-                <div class="company-thumb"><span>MA</span></div>
-                <div class="company-thumb"><span>LG</span></div>
-                <div class="company-thumb"><span>RD</span></div>
-                <div class="company-thumb"><span>SV</span></div>
-            </div>
-        </div>
-        <div class="panel-card">
-            <p class="panel-card-title">Tu perfil de empresa</p>
-            <p style="font-size:0.85rem;color:var(--muted);margin-bottom:12px;">
-                Mantené tu perfil actualizado para atraer mejores candidatos.
-            </p>
-            <a href="${BASE}/empresa/perfil" class="btn-apply-filters"
-               style="display:block;text-align:center;text-decoration:none;">
-                <i class="bi bi-building"></i> Ver mi perfil
-            </a>
-        </div>
-    `,
-},
-
-        admin: {
-            rightPanel: () => `
-                <div class="panel-card">
-                    <p class="panel-card-title">Administración</p>
-                    <div class="admin-alert">
-                        <i class="bi bi-exclamation-triangle-fill"></i>
-                        3 ofertas pendientes de revisión
-                    </div>
-                    <div class="admin-alert"
-                         style="background:rgba(46,204,154,.08);border-color:rgba(46,204,154,.3);color:var(--accent);">
-                        <i class="bi bi-people-fill"></i>
-                        8 nuevos registros hoy
-                    </div>
-                    <div class="stat-row">
-                        <span class="stat-label">Usuarios totales</span>
-                        <span class="stat-value">1.2k</span>
-                    </div>
-                    <div class="stat-row">
-                        <span class="stat-label">Empresas activas</span>
-                        <span class="stat-value">38</span>
-                    </div>
-                    <div class="stat-row">
-                        <span class="stat-label">Ofertas publicadas</span>
-                        <span class="stat-value">124</span>
-                    </div>
-                </div>
-            `,
-        },
-    };
-
-    /* ── Helpers ── */
-    function getRol()       { return document.documentElement.dataset.role ?? 'invitado'; }
-    function getConfig(rol) { return KROW_ROLES[rol] ?? KROW_ROLES.invitado; }
-
-    /* ── Right panel ── */
+    /* ── Alternar visibilidad de paneles según Rol activo ── */
     function renderRightPanel() {
-        const panel = document.getElementById('right-panel');
-        if (!panel) return;
-        panel.innerHTML = getConfig(getRol()).rightPanel();
+        const rolActual = document.documentElement.dataset.role ?? 'invitado';
+        const paneles = document.querySelectorAll('.role-panel-content');
+        if (!paneles.length) return;
+
+        paneles.forEach(panel => {
+            // Si el bloque coincide con el rol activo, lo muestra; si no, lo oculta
+            if (panel.dataset.panelRole === rolActual) {
+                panel.style.display = 'block';
+            } else {
+                panel.style.display = 'none';
+            }
+        });
     }
 
     /* ── Bookmarks ── */
@@ -1151,7 +1006,7 @@ empresa: {
         });
     }
 
-    /* ── Role switcher (solo dev) ── */
+    /* ── Role switcher (Desarrollo / Simulación) ── */
     function initRoleSwitcher() {
         const switcher = document.getElementById('role-switcher');
         if (!switcher) return;
@@ -1161,9 +1016,9 @@ empresa: {
             if (!btn) return;
 
             const nuevoRol = btn.dataset.rol;
-            if (!nuevoRol || !KROW_ROLES[nuevoRol]) return;
-
             document.documentElement.dataset.role = nuevoRol;
+            
+            // Llama a la función simplificada para alternar las vistas
             renderRightPanel();
 
             switcher.querySelectorAll('.role-btn').forEach(b => {
@@ -1172,15 +1027,16 @@ empresa: {
         });
     }
 
-    /* ── Init ── */
+    /* ── Init general del módulo ── */
     document.addEventListener('DOMContentLoaded', () => {
         renderRightPanel();
         initBookmarks();
         initSort();
         initRoleSwitcher();
     });
-
 })();
+
+
 /* ════════════════════════════════════════
    CONFIGURACIÓN — JS
    Solo se carga en esta página.

@@ -7,6 +7,18 @@ use Illuminate\Http\Request;
 
 class OfertaController extends Controller
 {
+    public function detalle($id)
+    {
+        $oferta = is_numeric($id)
+            ? Oferta::with(['empresa', 'localidad', 'provincia', 'carreras', 'habilidades'])->findOrFail($id)
+            : $this->ofertaDemo($id);
+
+        return view('empresa.crear-oferta', [
+            'oferta' => $oferta,
+            'readonly' => true,
+        ]);
+    }
+
     public function index()
     {
         return response()->json(Oferta::with(['empresa', 'localidad', 'provincia', 'carreras', 'habilidades'])->get());
@@ -72,5 +84,50 @@ class OfertaController extends Controller
         $oferta->delete();
 
         return response()->noContent();
+    }
+
+    private function ofertaDemo(string $id): array
+    {
+        $ofertas = [
+            'mock-1' => [
+                'titulo' => 'Fullstack Developer Node / React',
+                'empresa' => ['nombre_empresa' => 'MegaCorp'],
+                'modalidad' => 'Remoto',
+                'tipo_oferta' => 'Full-Time',
+                'experiencia_requerida' => 'Junior',
+                'salario_min' => 450000,
+                'salario_max' => 650000,
+                'descripcion' => 'Buscamos un desarrollador proactivo para sumarse al equipo de core-banking, participando en el desarrollo de nuevas funcionalidades, mantenimiento de APIs y mejora continua del producto.',
+                'requisitos' => "Experiencia con Node.js y React\nConocimientos de bases de datos SQL\nManejo de Git\nBuenas practicas de testing",
+                'habilidades' => [
+                    ['nombre' => 'Node.js'],
+                    ['nombre' => 'React'],
+                    ['nombre' => 'SQL'],
+                    ['nombre' => 'Git'],
+                ],
+                'estado' => 'Activa',
+            ],
+            'mock-2' => [
+                'titulo' => 'Analista QA Semi-Senior',
+                'empresa' => ['nombre_empresa' => 'DevSoft'],
+                'modalidad' => 'Hibrido',
+                'tipo_oferta' => 'Part-Time',
+                'experiencia_requerida' => 'Semi Senior',
+                'salario_min' => 300000,
+                'salario_max' => 420000,
+                'descripcion' => 'Incorporamos QA con experiencia en testing funcional y automatizado para acompanar releases de productos web.',
+                'requisitos' => "Testing funcional\nDiseno de casos de prueba\nAutomatizacion basica\nComunicacion con equipos de desarrollo",
+                'habilidades' => [
+                    ['nombre' => 'QA'],
+                    ['nombre' => 'Selenium'],
+                    ['nombre' => 'Jira'],
+                ],
+                'estado' => 'Activa',
+            ],
+        ];
+
+        abort_unless(isset($ofertas[$id]), 404);
+
+        return $ofertas[$id];
     }
 }

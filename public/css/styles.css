@@ -1288,6 +1288,7 @@ body {
   border: 1px solid var(--border);
   border-radius: 0px;
   padding: 16px;
+  margin-bottom:10px;
 }
 
 .panel-card-title {
