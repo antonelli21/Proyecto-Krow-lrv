@@ -7,17 +7,54 @@ use Illuminate\Http\Request;
 
 class OfertaController extends Controller
 {
-    public function detalle($id)
-    {
-        $oferta = is_numeric($id)
-            ? Oferta::with(['empresa', 'localidad', 'provincia', 'carreras', 'habilidades'])->findOrFail($id)
-            : $this->ofertaDemo($id);
+        // public function detalle($id)
+        // {
+        //     $oferta = Oferta::with('empresa')->findOrFail($id);
+        //     $oferta->ya_postulado = auth()->check()
+        //         ? $oferta->postulaciones()->where('user_id', auth()->id())->exists()
+        //         : false;
 
-        return view('empresa.crear-oferta', [
-            'oferta' => $oferta,
-            'readonly' => true,
-        ]);
+        //     return view('ver-oferta', compact('oferta'));
+        // }
+
+
+public function detalle($id_oferta)
+{
+    $oferta = (object)[
+        'id'                    => 1,
+        'titulo'                => 'Desarrollador Full Stack',
+        'modalidad'             => 'Remoto',
+        'tipo_trabajo'          => 'full-time',
+        'rango_salarial'        => 'USD 3000 - 5000',
+        'experiencia_requerida' => 'semi-senior',
+        'descripcion'           => 'Buscamos un desarrollador proactivo para sumarse al equipo de core-banking. Trabajarás con tecnologías modernas en un equipo ágil.',
+        'requisitos'            => "2+ años de experiencia en Laravel\nConocimiento de React o Vue\nExperiencia con bases de datos relacionales\nInglés intermedio",
+        'tecnologias'           => ['Laravel', 'React', 'PostgreSQL', 'Docker'],
+        'estado'                => 'activa',
+        'ubicacion'             => 'Buenos Aires, Argentina',
+        'fecha_texto'           => 'hace 2 días',
+        'ya_postulado'          => false,
+        'empresa'               => (object)[
+            'nombre_empresa' => 'MegaCorp Technologies',
+            'slug'           => 'megacorp-technologies',
+            'ubicacion'      => 'Buenos Aires, Argentina',
+        ],
+    ];
+
+    return view('empresa.oferta-detalle', compact('oferta'));
+}
+
+    public function postular($id_oferta)
+    {
+    // aquí guardás la postulación en la BD cuando tengas el modelo
+    return back()->with('postulado', true);
     }
+
+
+
+
+
+
 
     public function index()
     {
@@ -86,6 +123,13 @@ class OfertaController extends Controller
         return response()->noContent();
     }
 
+
+
+
+
+
+
+
     private function ofertaDemo(string $id): array
     {
         $ofertas = [
@@ -128,6 +172,7 @@ class OfertaController extends Controller
 
         abort_unless(isset($ofertas[$id]), 404);
 
+        
         return $ofertas[$id];
     }
 }

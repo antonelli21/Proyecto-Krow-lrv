@@ -1093,7 +1093,7 @@ body {
 .job-card {
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 0px;
+  border-radius: 10px;
   /* padding: 16px; */
   display: flex;
   flex-direction: column;
@@ -1286,7 +1286,7 @@ body {
 .panel-card {
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 0px;
+  border-radius: 10px;
   padding: 16px;
   margin-bottom:10px;
 }
@@ -1675,7 +1675,7 @@ body {
 .stat-card {
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 0px;
+  border-radius: 10px;
   padding: 22px 24px;
   display: flex;
   align-items: flex-start;
@@ -4009,3 +4009,760 @@ textarea.filter-input-text {
 .empresa-expanded.open {
     display: block;
 }
+    /* ── Variables locales oferta-detalle ── */
+       :root {
+        --oferta-max-w: 780px;
+        --label-size: 0.8rem;
+        --label-weight: 600;
+        --label-ls: 0.6px;
+    }
+
+    /* ── Layout ── */
+    .ver-oferta-page {
+        max-width: var(--oferta-max-w);
+        margin: 0 auto;
+        padding: 32px 20px 60px;
+        animation: fadeInUp 0.35s ease;
+    }
+
+    .ver-oferta-header {
+        margin-bottom: 24px;
+    }
+
+    .link-volver {
+        font-size: 0.85rem;
+        color: var(--accent);
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        margin-bottom: 8px;
+        font-weight: 600;
+        transition: opacity 0.15s;
+    }
+
+    .link-volver:hover { opacity: 0.8; }
+    .link-volver svg   { stroke: currentColor; }
+
+    /* ── Card principal ── */
+    .ver-oferta-card {
+        background: var(--surface);
+        border: 0.5px solid var(--border);
+        border-radius: var(--radius);
+        padding: 28px;
+        box-shadow: var(--shadow-card);
+        margin-bottom: 18px;
+    }
+
+    /* ── Encabezado de la oferta ── */
+    .oferta-head {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 16px;
+        flex-wrap: wrap;
+        margin-bottom: 20px;
+        padding-bottom: 20px;
+        border-bottom: 0.5px solid var(--border);
+    }
+
+    .oferta-head-left {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+    }
+
+    .oferta-empresa-logo {
+        width: 52px;
+        height: 52px;
+        border-radius: var(--radius);
+        background: var(--primary);
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: var(--font-display);
+        font-weight: 800;
+        font-size: 1.1rem;
+        flex-shrink: 0;
+        letter-spacing: -0.5px;
+    }
+
+    [data-theme="dark"] .oferta-empresa-logo {
+        background: var(--accent);
+        color: #111118;
+    }
+
+    .oferta-head-text h1 {
+        font-family: var(--font-display);
+        font-size: 1.45rem;
+        font-weight: 800;
+        color: var(--text);
+        line-height: 1.2;
+        margin-bottom: 4px;
+    }
+
+    .oferta-empresa-meta {
+        font-size: 0.9rem;
+        color: var(--muted);
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        flex-wrap: wrap;
+    }
+
+    .oferta-empresa-meta a {
+        color: var(--accent);
+        text-decoration: none;
+        font-weight: 600;
+    }
+
+    .oferta-empresa-meta a:hover { text-decoration: underline; }
+
+    /* Badge de estado */
+    .oferta-estado-badge {
+        padding: 0.3rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.78rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        white-space: nowrap;
+    }
+
+    .oferta-estado-badge.activa   { background: rgba(46,204,154,0.12); color: #2ecc9a; }
+    .oferta-estado-badge.pausada  { background: rgba(212,168,67,0.12);  color: var(--accent); }
+    .oferta-estado-badge.cerrada  { background: rgba(212,24,61,0.10);   color: var(--destructive); }
+
+    /* ── Badges de tipo / modalidad / salario ── */
+    .oferta-badges {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-bottom: 24px;
+    }
+
+    /* reutiliza .badge del design system; agrego variantes extra */
+    .badge-info {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 0.3rem 0.7rem;
+        border-radius: 20px;
+        font-size: 0.82rem;
+        font-weight: 600;
+        border: 0.5px solid var(--border);
+        background: var(--bg);
+        color: var(--muted);
+    }
+
+    .badge-info svg { flex-shrink: 0; }
+
+    /* ── Secciones de contenido ── */
+    .oferta-section {
+        margin-bottom: 24px;
+    }
+
+    .oferta-section:last-child { margin-bottom: 0; }
+
+    .oferta-section-title {
+        font-size: var(--label-size);
+        font-weight: var(--label-weight);
+        color: var(--text);
+        text-transform: uppercase;
+        letter-spacing: var(--label-ls);
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .oferta-section-title svg { color: var(--accent); }
+
+    .oferta-section-body {
+        font-size: 0.95rem;
+        color: var(--text);
+        line-height: 1.7;
+        white-space: pre-line;
+    }
+
+    /* Requisitos como lista */
+    .oferta-requisitos-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .oferta-requisitos-list li {
+        font-size: 0.95rem;
+        color: var(--text);
+        line-height: 1.55;
+        display: flex;
+        align-items: flex-start;
+        gap: 8px;
+    }
+
+    .oferta-requisitos-list li::before {
+        content: '';
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: var(--accent);
+        margin-top: 8px;
+        flex-shrink: 0;
+    }
+
+    /* Tags de tecnologías (reutiliza .tech-tag del design system) */
+    .oferta-tags-wrap {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    /* Divider entre secciones */
+    .oferta-divider {
+        border: none;
+        border-top: 0.5px solid var(--border);
+        margin: 20px 0;
+    }
+
+    /* ── Sidebar / panel lateral ── */
+    .ver-oferta-layout {
+        display: grid;
+        grid-template-columns: 1fr 260px;
+        gap: 18px;
+        align-items: start;
+        border-radius:10px;
+    }
+
+    .ver-oferta-sidebar {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+    }
+
+    /* Card del sidebar */
+    .sidebar-card {
+        background: var(--surface);
+        border: 0.5px solid var(--border);
+        border-radius: var(--radius);
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: var(--shadow-card);
+    }
+
+    .sidebar-card-title {
+        font-size: var(--label-size);
+        font-weight: var(--label-weight);
+        color: var(--text);
+        text-transform: uppercase;
+        letter-spacing: var(--label-ls);
+        margin-bottom: 12px;
+    }
+
+    .sidebar-dato {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        margin-bottom: 12px;
+    }
+
+    .sidebar-dato:last-child { margin-bottom: 0; }
+
+    .sidebar-dato-label {
+        font-size: 0.78rem;
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: 0.4px;
+        font-weight: 600;
+    }
+
+    .sidebar-dato-value {
+        font-size: 0.95rem;
+        color: var(--text);
+        font-weight: 500;
+    }
+
+    /* ── Botón postular ── */
+    .btn-postular {
+        width: 100%;
+        padding: 0.875rem;
+        border: none;
+        border-radius: var(--radius);
+        background: var(--primary);
+        color: #fff;
+        font-family: var(--font-display);
+        font-weight: 700;
+        font-size: 1rem;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        transition: opacity 0.2s, transform 0.15s, box-shadow 0.2s;
+        margin-bottom: 10px;
+    }
+
+    .btn-postular:hover {
+        opacity: 0.9;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 16px rgba(13,79,60,0.25);
+    }
+
+    .btn-postular:active { transform: translateY(0); }
+
+    [data-theme="dark"] .btn-postular {
+        background: var(--accent);
+        color: #111118;
+    }
+
+    [data-theme="dark"] .btn-postular:hover {
+        box-shadow: 0 4px 20px rgba(212,168,67,0.25);
+    }
+
+    .btn-postular:disabled,
+    .btn-postular.ya-postulado {
+        background: var(--border);
+        color: var(--muted);
+        cursor: not-allowed;
+        transform: none;
+        box-shadow: none;
+        opacity: 0.7;
+    }
+
+    .btn-guardar {
+        width: 100%;
+        padding: 0.75rem;
+        border: 0.5px solid var(--border);
+        border-radius: var(--radius);
+        background: transparent;
+        color: var(--muted);
+        font-family: var(--font-display);
+        font-weight: 600;
+        font-size: 0.9rem;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        transition: all 0.15s;
+    }
+
+    .btn-guardar:hover {
+        border-color: var(--accent);
+        color: var(--accent);
+        background: var(--accent-dim);
+    }
+
+    /* ── Fecha y compartir ── */
+    .oferta-meta-bottom {
+        font-size: 0.82rem;
+        color: var(--muted);
+        margin-top: 12px;
+        text-align: center;
+    }
+
+    /* ── Animación ── */
+    @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(12px); }
+        to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 720px) {
+        .ver-oferta-layout {
+            grid-template-columns: 1fr;
+        }
+
+        .ver-oferta-sidebar {
+            order: -1;
+        }
+
+        .oferta-head-text h1 {
+            font-size: 1.2rem;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .ver-oferta-card { padding: 18px 14px; }
+        .sidebar-card    { padding: 16px 14px; }
+    }
+
+
+
+
+
+
+
+
+
+    
+/* ════════════════════════════════════════
+   KROW — RESPONSIVE COMPLETO
+   Pegá esto al FINAL de tu archivo CSS principal.
+   Cubre: header, layout, sidebar, cards, empresas,
+   admin, perfil, ver-oferta, ayuda, auth, config.
+════════════════════════════════════════ */
+ 
+ 
+/* ──────────────────────────────────────
+   TABLET GRANDE  ≤ 1100px
+────────────────────────────────────── */
+@media (max-width: 1100px) {
+    :root {
+        --right-w: 240px;
+        --sidebar-w: 240px;
+    }
+ 
+    .admin-stats {
+        grid-template-columns: repeat(2, 1fr);
+    }
+ 
+    .stats-row {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+ 
+ 
+/* ──────────────────────────────────────
+   TABLET  ≤ 900px
+────────────────────────────────────── */
+@media (max-width: 900px) {
+ 
+    /* Layout principal: ocultar panel derecho */
+    .page-body {
+        grid-template-columns: var(--sidebar-w) 1fr;
+        gap: 12px;
+    }
+ 
+    #right-panel,
+    .right-panel {
+        display: none;
+    }
+ 
+    /* Main content más ancho */
+    .main-content {
+        width: 100%;
+        padding-right: 12px;
+    }
+ 
+    /* Header */
+    .account-name { display: none; }
+ 
+    /* Admin */
+    .admin-stats {
+        grid-template-columns: repeat(2, 1fr);
+    }
+ 
+    .admin-detalle-inner {
+        grid-template-columns: 1fr 1fr;
+    }
+ 
+    /* Empresas grid */
+    .empresas-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+ 
+    /* Ver oferta */
+    .ver-oferta-layout {
+        grid-template-columns: 1fr;
+    }
+ 
+    .ver-oferta-sidebar {
+        order: -1;
+    }
+ 
+    /* Perfil */
+    .perfil-grid {
+        grid-template-columns: 1fr;
+    }
+ 
+    /* Panel page stats */
+    .stats-row {
+        grid-template-columns: repeat(2, 1fr);
+    }
+ 
+    /* Notif dropdown */
+    .notif-dropdown {
+        width: 300px;
+        right: -60px;
+    }
+}
+ 
+ 
+/* ──────────────────────────────────────
+   TABLET CHICA  ≤ 768px
+────────────────────────────────────── */
+@media (max-width: 768px) {
+ 
+    /* Header hamburguesa */
+    .hamburger { display: flex; }
+ 
+    .header-nav {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background-color: var(--surface);
+        flex-direction: column;
+        align-items: stretch;
+        padding: 1rem 1.5rem;
+        gap: 0.5rem;
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        border-top: 1px solid var(--border);
+        z-index: 99;
+    }
+ 
+    .header-nav.open { display: flex; }
+    .nav-link { width: 100%; text-align: center; padding: 0.6rem; }
+    .btn-ghost-sm, .btn-primary-sm { display: none; }
+ 
+    /* Layout: ocultar sidebar en tablet chica */
+    .page-body {
+        grid-template-columns: 1fr;
+        padding: 12px;
+    }
+ 
+    .sidebar-filtros { display: none; }
+ 
+    /* Empresas toolbar */
+    .empresas-toolbar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+ 
+    .toolbar-count { margin-left: 0; }
+ 
+    /* Filters responsive */
+    .filters-form { max-width: 100%; padding: 0.5rem; }
+ 
+    /* Admin tabs scroll horizontal */
+    .admin-tabs { overflow-x: auto; }
+    .admin-tab  { white-space: nowrap; }
+ 
+    .admin-detalle-inner { grid-template-columns: 1fr; }
+ 
+    /* Panel page */
+    .panel-page { padding: 20px 16px 40px; }
+ 
+    .section-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+ 
+    /* Tabla scroll horizontal */
+    .admin-table-wrap,
+    .ofertas-table,
+    .postulaciones-table {
+        overflow-x: auto;
+        display: block;
+    }
+ 
+    /* Perfil header */
+    .perfil-header-inner {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+ 
+    .perfil-sections { padding: 20px; gap: 24px; }
+ 
+    /* Config */
+    .config-layout { padding: 0 16px; margin: 16px auto; }
+ 
+    /* Notif dropdown */
+    .notif-dropdown {
+        width: calc(100vw - 24px);
+        right: -100px;
+    }
+}
+ 
+ 
+/* ──────────────────────────────────────
+   MOBILE  ≤ 640px
+────────────────────────────────────── */
+@media (max-width: 640px) {
+ 
+    /* Header */
+    .header-inner { padding: 0.5rem 1rem; }
+    .logo-text    { font-size: 1.3rem; }
+    .logo-image   { height: 40px; }
+    .brand-name   { font-size: 0.7rem; }
+ 
+    /* Empresas grid: 1 columna */
+    .empresas-grid { grid-template-columns: 1fr; }
+ 
+    /* Admin stats 2 col */
+    .admin-stats   { grid-template-columns: repeat(2, 1fr); }
+ 
+    /* Stats row panel: 1 col */
+    .stats-row     { grid-template-columns: 1fr; }
+ 
+    /* Empresa card */
+    .empresa-card { padding: 16px; }
+ 
+    /* Job card */
+    .job-card { padding: 10px; }
+ 
+    .job-card-top  { gap: 8px; }
+    .job-title     { font-size: 14px; }
+ 
+    .job-footer {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+ 
+    .btn-ver { width: 100%; justify-content: center; text-align: center; }
+ 
+    /* Content head */
+    .content-head {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+ 
+    .sort-select { width: 100%; }
+ 
+    /* Paginación */
+    .pagination { flex-wrap: wrap; }
+ 
+    /* Panel page */
+    .panel-page-title { font-size: 22px; }
+ 
+    /* Tabla acciones: ocultar columnas menos importantes */
+    .admin-toolbar { flex-direction: column; }
+    .admin-search  { min-width: 100%; }
+ 
+    /* Detalle row inner */
+    .detalle-inner { grid-template-columns: 1fr; }
+ 
+    /* Form row-2 en crear-oferta */
+    .form-row-2 { grid-template-columns: 1fr; }
+ 
+    /* Form contacto */
+    .form-row { grid-template-columns: 1fr; }
+ 
+    /* Auth */
+    .auth-card {
+        padding: 1.5rem 1.25rem;
+        border-radius: 0;
+        border-left: none;
+        border-right: none;
+    }
+ 
+    /* Ayuda */
+    .ayuda-page { padding: 20px 14px 40px; gap: 24px; }
+    .contacto-card { padding: 18px 14px; }
+ 
+    /* Footer */
+    .site-footer {
+        flex-direction: column;
+        gap: 1.5rem;
+        padding: 1.5rem 1rem;
+    }
+}
+ 
+ 
+/* ──────────────────────────────────────
+   MOBILE CHICO  ≤ 480px
+────────────────────────────────────── */
+@media (max-width: 480px) {
+ 
+    /* Ver oferta */
+    .ver-oferta-page   { padding: 12px 10px 32px; }
+    .ver-oferta-card   { padding: 16px 12px; }
+    .sidebar-card      { padding: 14px 12px; }
+ 
+    .oferta-head {
+        flex-direction: column;
+        gap: 10px;
+    }
+ 
+    .oferta-head-left {
+        flex-direction: row;
+        align-items: center;
+        gap: 10px;
+    }
+ 
+    .oferta-empresa-logo {
+        width: 40px;
+        height: 40px;
+        font-size: 0.85rem;
+    }
+ 
+    .oferta-head-text h1 { font-size: 1.1rem; }
+ 
+    .oferta-badges  { gap: 6px; }
+ 
+    .badge-info {
+        font-size: 0.75rem;
+        padding: 0.22rem 0.5rem;
+    }
+ 
+    .btn-postular {
+        padding: 0.75rem;
+        font-size: 0.9rem;
+    }
+ 
+    .btn-guardar {
+        padding: 0.65rem;
+        font-size: 0.85rem;
+    }
+ 
+    /* Perfil */
+    .perfil-grid    { grid-template-columns: 1fr; }
+    .perfil-sections { padding: 14px; gap: 20px; }
+ 
+    /* Admin */
+    .admin-page   { padding: 16px 12px 40px; }
+    .admin-stats  { grid-template-columns: 1fr 1fr; gap: 10px; }
+    .admin-stat   { padding: 14px; }
+    .admin-stat-value { font-size: 26px; }
+ 
+    /* Empresas header */
+    .empresas-header h1 { font-size: 22px; }
+    .empresas-page { padding: 16px 12px 40px; }
+ 
+    /* Panel page */
+    .panel-page    { padding: 14px 10px 40px; }
+    .stat-card     { padding: 16px; }
+    .stat-card-value { font-size: 28px; }
+ 
+    /* Crear oferta */
+    .oferta-page   { padding: 20px 12px 40px; }
+    .oferta-card   { padding: 18px 14px; }
+ 
+    .form-actions {
+        flex-direction: column;
+    }
+ 
+    .btn-cancel { width: 100%; }
+ 
+    /* Config */
+    .config-layout { padding: 0 10px; }
+ 
+    /* Notif dropdown */
+    .notif-dropdown {
+        width: calc(100vw - 16px);
+        right: -80px;
+    }
+ 
+    /* Role switcher */
+    .role-switcher {
+        bottom: 10px;
+        right: 10px;
+        min-width: 130px;
+        padding: 10px 12px;
+    }
+ 
+    /* Footer */
+    .footer-column ul { flex-direction: column; gap: 0.5rem; }
+}
+ 

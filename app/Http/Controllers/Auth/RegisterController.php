@@ -93,7 +93,7 @@ class RegisterController extends Controller
             'nombre'           => $validated['nombre'],
             'apellido'         => $validated['apellido'],
             'dni'              => $request->input('dni', null), // Se completará después en el perfil
-            'legajo'           => $request->input('legajo', 'PENDIENTE'),
+            'legajo' => $request->input('legajo', 'PENDIENTE-' . $user->id),
             'fecha_nacimiento' => $validated['nacimiento'] ?? null,
             'telefono'         => $validated['telefono'] ?? null,
             'id_carrera'       => $carrera->id_carrera,

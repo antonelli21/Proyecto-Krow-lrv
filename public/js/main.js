@@ -1070,5 +1070,36 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
  
+        (function () {
+    const btnGuardar = document.getElementById('btn-guardar-oferta');
+    if (!btnGuardar) return;
+
+    btnGuardar.addEventListener('click', function () {
+        const guardado = btnGuardar.classList.toggle('guardado');
+        const icon = btnGuardar.querySelector('svg');
+
+        if (guardado) {
+            if (icon) icon.setAttribute('fill', 'currentColor');
+            btnGuardar.innerHTML = btnGuardar.innerHTML.replace('Guardar oferta', 'Guardado');
+            btnGuardar.style.borderColor = 'var(--accent)';
+            btnGuardar.style.color       = 'var(--accent)';
+        } else {
+            if (icon) icon.setAttribute('fill', 'none');
+            btnGuardar.innerHTML = btnGuardar.innerHTML.replace('Guardado', 'Guardar oferta');
+            btnGuardar.style.borderColor = '';
+            btnGuardar.style.color       = '';
+        }
+
+        // Llamada al backend (opcional, descomentar cuando exista la ruta)
+        // fetch(`/ofertas/${btnGuardar.dataset.id}/guardar`, {
+        //     method: 'POST',
+        //     headers: {
+        //         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content,
+        //         'Accept': 'application/json',
+        //     }
+        // });
+    });
+})();
+
 });
  

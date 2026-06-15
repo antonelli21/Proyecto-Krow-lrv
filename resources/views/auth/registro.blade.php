@@ -6,20 +6,19 @@
 
 @php
 $carreras = [
-'Tecnicatura Universitaria en Programación',
-'Tecnicatura Universitaria en Operación de Aeronaves',
-'Tecnicatura Universitaria en Material Rodante Ferroviario',
-'Ingeniería Aeronáutica',
-'Ingeniería Aeroespacial',
-'Ingeniería Electrónica',
-'Ingeniería Industrial',
-'Ingeniería Mecánica',
-'Ingeniería Ferroviaria',
-'Bioingeniería',
-'Especialización en Ingeniería Estructural',
-'Especialización en Higiene y Seguridad en el Trabajo',
-'Maestría en Ingeniería Estructural Mecánica',
-'Doctorado en Ingeniería Mención Materiales'
+      'Ingeniería Aeronáutica/Aeroespacial',
+      'Ingeniería Electrónica',
+      'Ingeniería Ferroviaria',
+      'Ingeniería Industrial',
+      'Ingeniería Mecánica',
+      'Bioingeniería',
+      'Tecnicatura en Programación',
+      'Tecnicatura en Operación de Aeronaves',
+      'Tecnicatura en Material Rodante Ferroviario',
+      'Tecnicatura en Desarrollo y Producción de Videojuegos',
+      'Tecnicatura en Higiene y Seguridad en el Trabajo',
+      'Tecnicatura en Comercio Electrónico y Marketing Digital',
+      'Tecnicatura en Logística',
 ];
 @endphp
 
@@ -838,6 +837,7 @@ $carreras = [
       });
     });
   });
+  
 
   /* ── Validación de formularios ── */
   document.addEventListener('DOMContentLoaded', function() {
