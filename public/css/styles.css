@@ -2030,12 +2030,12 @@ body {
     }
 
     /* ─── GRID ─── */
-    .empresas-grid {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 18px;
-        grid-auto-rows: 1fr;
-    }
+      .empresas-grid {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 18px;
+          align-items: start; /* ← reemplaza grid-auto-rows: 1fr */
+      }
 
     @media (max-width: 1024px) {
         .empresas-grid {
@@ -3995,4 +3995,17 @@ textarea.filter-input-text {
  
 .notif-ver-todas:hover {
     text-decoration: underline;
+}
+
+.empresa-expanded {
+    display: none;
+    padding: 16px;
+    margin-top: 12px;
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    width: 100%;
+}
+
+.empresa-expanded.open {
+    display: block;
 }

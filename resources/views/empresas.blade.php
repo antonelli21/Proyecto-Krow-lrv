@@ -38,7 +38,6 @@ $modalidades = array_keys($modalidades);
       </svg>
       <input type="text" id="buscador" placeholder="Buscar empresa, rubro, ubicación..." autocomplete="off">
     </div>
-
     <div class="toolbar-select">
       <select id="filtro-rubro">
         <option value="">Todos los rubros</option>
@@ -47,7 +46,6 @@ $modalidades = array_keys($modalidades);
         @endforeach
       </select>
     </div>
-
     <div class="toolbar-select">
       <select id="filtro-modalidad">
         <option value="">Todas las modalidades</option>
@@ -56,7 +54,6 @@ $modalidades = array_keys($modalidades);
         @endforeach
       </select>
     </div>
-
     <div class="toolbar-count" id="contador">{{ count($empresas) }} empresas</div>
   </div>
 
@@ -102,46 +99,51 @@ $modalidades = array_keys($modalidades);
         @endforeach
       </div>
 
-      <div class="empresa-desc" id="desc-corta-{{ $emp['id'] }}">
+      <div class="empresa-desc">
         {{ $emp['desc_corta'] }}
       </div>
 
       <button class="empresa-toggle" id="toggle-{{ $emp['id'] }}"
-        onclick="togglePerfil"({{ $emp ['id'] }})" aria-expanded="false">
-        <span>Ver perfil completo</span>
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <polyline points="6 9 12 15 18 9"/>
-        </svg>
+          onclick="togglePerfil('{{ $emp['id'] }}')" aria-expanded="false">
+          <span>Ver perfil completo</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="6 9 12 15 18 9"/>
+          </svg>
       </button>
 
-      <div class="empresa-expanded" id="expanded-{{ $emp['id'] }}">
-        <div class="empresa-desc-full">{{ $emp['desc_larga'] }}</div>
-        <div class="empresa-links">
-          <a href="https://{{ $emp['web'] }}" target="_blank" rel="noopener">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <circle cx="12" cy="12" r="10"/>
-              <path d="M2 12h20"/>
-              <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
-            </svg>
-            {{ $emp['web'] }}
+      {{-- ESTE div es el que se muestra/oculta con JS --}}
+      <div class="empresa-expanded" id="expanded-{{ $emp['id'] }}" style="display:none;">
+
+          <div class="empresa-desc-full">{{ $emp['desc_larga'] }}</div>
+
+          <div class="empresa-links">
+              <a href="https://{{ $emp['web'] }}" target="_blank" rel="noopener">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <circle cx="12" cy="12" r="10"/>
+                      <path d="M2 12h20"/>
+                      <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+                  </svg>
+                  {{ $emp['web'] }}
+              </a>
+              <a href="https://linkedin.com/company/{{ $emp['linkedin'] }}" target="_blank" rel="noopener">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/>
+                      <rect x="2" y="9" width="4" height="12"/>
+                      <circle cx="4" cy="4" r="2"/>
+                  </svg>
+                  {{ $emp['linkedin'] }}
+              </a>
+          </div>
+
+          <a href="{{ route('inicio') }}?empresa={{ urlencode($emp['slug']) }}" class="empresa-btn-ofertas">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="2" y="7" width="20" height="14" rx="2" ry="2"/>
+                  <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
+              </svg>
+              Ver {{ $emp['ofertas'] }} oferta{{ $emp['ofertas'] > 1 ? 's' : '' }} activas
           </a>
-          <a href="https://linkedin.com/company/{{ $emp['linkedin'] }}" target="_blank" rel="noopener">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/>
-              <rect x="2" y="9" width="4" height="12"/>
-              <circle cx="4" cy="4" r="2"/>
-            </svg>
-            @{{ $emp['linkedin'] }}
-          </a>
-        </div>
-        <a href="{{ route('inicio') }}?empresa={{ urlencode($emp['slug']) }}" class="empresa-btn-ofertas">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <rect x="2" y="7" width="20" height="14" rx="2" ry="2"/>
-            <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
-          </svg>
-          Ver {{ $emp['ofertas'] }} oferta{{ $emp['ofertas'] > 1 ? 's' : '' }} activas
-        </a>
-      </div>
+
+      </div>{{-- fin empresa-expanded --}}
 
     </article>
     @endforeach
