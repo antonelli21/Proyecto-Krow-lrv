@@ -3,7 +3,7 @@
 @section('title', 'KROW — Portal de Empleos')
 
 @section('content')
-
+x
 @php
     $rol     = auth()->check() ? (auth()->user()->rol ?? 'invitado') : 'invitado';
     $ofertas = $ofertas ?? collect();

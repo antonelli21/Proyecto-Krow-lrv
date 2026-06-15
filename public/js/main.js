@@ -852,6 +852,47 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   /* ── ACCIONES INLINE — delegadas al document una sola vez ── */
+  document.addEventListener('click', async e => {
+    const deleteBtn = e.target.closest('[data-delete-type]');
+    if (!deleteBtn) return;
+
+    const type = deleteBtn.dataset.deleteType;
+    const id = deleteBtn.dataset.deleteId;
+    const rowId = deleteBtn.dataset.deleteRowId;
+    const name = deleteBtn.dataset.deleteName || 'este registro';
+
+    if (!type || !id || !rowId) return;
+    if (!confirm(`¿Seguro que querés eliminar "${name}"? Esta acción no se puede deshacer.`)) return;
+
+    const csrf = document.querySelector('meta[name="csrf-token"]')?.content;
+    const baseUrl = document.querySelector('meta[name="base-url"]')?.content?.replace(/\/$/, '');
+    const basePath = window.location.pathname.includes('/public/')
+      ? window.location.pathname.split('/public/')[0] + '/public'
+      : '';
+
+    deleteBtn.disabled = true;
+
+    try {
+      const response = await fetch(`${baseUrl || basePath}/api/${type}/${id}`, {
+        method: 'DELETE',
+        headers: {
+          'Accept': 'application/json',
+          ...(csrf ? { 'X-CSRF-TOKEN': csrf } : {}),
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('No se pudo eliminar el registro.');
+      }
+
+      document.querySelector(`tr[data-id="${rowId}"]`)?.remove();
+      document.getElementById('admin-det-' + rowId)?.remove();
+    } catch (error) {
+      alert(error.message || 'Ocurrió un error al eliminar.');
+      deleteBtn.disabled = false;
+    }
+  });
+
   document.addEventListener('click', e => {
     const btn = e.target.closest('[data-action]');
     if (!btn) return;
