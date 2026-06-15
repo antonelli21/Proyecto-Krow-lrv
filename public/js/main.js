@@ -851,7 +851,35 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  /* ── ACCIONES INLINE — delegadas al document una sola vez ── */
+  function showAdminNotice(message, type = 'success') {
+    let notice = document.querySelector('.admin-action-notice');
+
+    if (!notice) {
+      notice = document.createElement('div');
+      notice.className = 'admin-action-notice';
+      document.body.appendChild(notice);
+    }
+
+    notice.className = `admin-action-notice ${type} show`;
+    notice.textContent = message;
+
+    clearTimeout(notice.hideTimer);
+    notice.hideTimer = setTimeout(() => {
+      notice.classList.remove('show');
+    }, 2800);
+  }
+
+  function adminEntityLabel(rowId) {
+    if (rowId?.startsWith('e')) return 'Empresa';
+    if (rowId?.startsWith('o')) return 'Oferta';
+    return 'Alumno';
+  }
+
+  function removeAdminRow(rowId) {
+    document.querySelector(`tr[data-id="${rowId}"]`)?.remove();
+    document.getElementById('admin-det-' + rowId)?.remove();
+  }
+
   document.addEventListener('click', async e => {
     const deleteBtn = e.target.closest('[data-delete-type]');
     if (!deleteBtn) return;
@@ -881,14 +909,14 @@ document.addEventListener('DOMContentLoaded', () => {
         },
       });
 
-      if (!response.ok) {
+      if (!response.ok && response.status !== 404) {
         throw new Error('No se pudo eliminar el registro.');
       }
 
-      document.querySelector(`tr[data-id="${rowId}"]`)?.remove();
-      document.getElementById('admin-det-' + rowId)?.remove();
+      removeAdminRow(rowId);
+      showAdminNotice(`${adminEntityLabel(rowId)} eliminado correctamente.`);
     } catch (error) {
-      alert(error.message || 'Ocurrió un error al eliminar.');
+      showAdminNotice(error.message || 'Ocurrió un error al eliminar.', 'error');
       deleteBtn.disabled = false;
     }
   });
@@ -901,17 +929,19 @@ document.addEventListener('DOMContentLoaded', () => {
     const row    = document.querySelector(`tr[data-id="${id}"]`);
     const badge  = row?.querySelector('.badge-admin');
     const mapa   = {
-      aprobar:   ['badge-aprobado',   'Aprobado'],
-      activar:   ['badge-activo',     'Activo'],
-      suspender: ['badge-suspendido', 'Suspendido'],
-      rechazar:  ['badge-rechazado',  'Rechazado'],
-      pausar:    ['badge-pausada',    'Pausada'],
-      publicar:  ['badge-publicada',  'Publicada'],
+      aprobar:   ['badge-aprobado',   'Aprobado',   'aprobada'],
+      activar:   ['badge-activo',     'Activo',     'aprobado'],
+      suspender: ['badge-suspendido', 'Suspendido', 'suspendido'],
+      rechazar:  ['badge-rechazado',  'Rechazado',  'rechazada'],
+      pausar:    ['badge-pausada',    'Pausada',    'pausada'],
+      publicar:  ['badge-publicada',  'Publicada',  'publicada'],
     };
     if (badge && mapa[action]) {
       badge.className = 'badge-admin';
       badge.classList.add(mapa[action][0]);
       badge.textContent = mapa[action][1];
+      row.dataset.estado = mapa[action][1].toLowerCase();
+      showAdminNotice(`${adminEntityLabel(id)} ${mapa[action][2]} correctamente.`);
     }
     const det = document.getElementById('admin-det-' + id);
     if (det) det.classList.remove('open');

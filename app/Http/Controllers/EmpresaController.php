@@ -78,6 +78,13 @@ class EmpresaController extends Controller
 
     public function destroy(Empresa $empresa)
     {
+        $empresa->ofertas->each(function (Oferta $oferta) {
+            $oferta->carreras()->detach();
+            $oferta->habilidades()->detach();
+            $oferta->postulaciones()->delete();
+            $oferta->delete();
+        });
+
         $empresa->delete();
 
         return response()->noContent();

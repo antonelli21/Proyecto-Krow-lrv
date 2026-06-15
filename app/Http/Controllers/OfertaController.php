@@ -66,6 +66,9 @@ class OfertaController extends Controller
 
     public function destroy(Oferta $oferta)
     {
+        $oferta->carreras()->detach();
+        $oferta->habilidades()->detach();
+        $oferta->postulaciones()->delete();
         $oferta->delete();
 
         return response()->noContent();

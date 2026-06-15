@@ -74,6 +74,8 @@ class EstudianteController extends Controller
 
     public function destroy(Estudiante $estudiante)
     {
+        $estudiante->habilidades()->detach();
+        $estudiante->postulaciones()->delete();
         $estudiante->delete();
 
         return response()->noContent();
