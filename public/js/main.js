@@ -520,6 +520,42 @@ function toggleDetalle(id, btn) {
 
 
 
+/* ════════════════════════════════════════
+   Registro BETA.PHP 
+════════════════════════════════════════ */
+/* ── Toggle password (global, fuera del IIFE) ── */
+window.togglePass = function (inputId, btn) {
+  const input = document.getElementById(inputId);
+  if (!input || !btn) return;
+  const open = btn.querySelector('.icon-open');
+  const closed = btn.querySelector('.icon-closed');
+  if (input.type === 'password') {
+    input.type = 'text';
+    if (open) open.style.display = 'none';
+    if (closed) closed.style.display = 'inline';
+    btn.setAttribute('aria-label', 'Ocultar contraseña');
+  } else {
+    input.type = 'password';
+    if (open) open.style.display = 'inline';
+    if (closed) closed.style.display = 'none';
+    btn.setAttribute('aria-label', 'Mostrar contraseña');
+  }
+};
+
+formCand.addEventListener('submit', function (e) {
+  if (ok) {
+    // console.log('Registro candidato OK', Object.fromEntries(new FormData(formCand)));
+    formCand.submit(); // Enviar a Laravel
+  }
+});
+
+
+formEmp.addEventListener('submit', function (ev) {
+  if (ok) {
+    // console.log('Registro empresa OK', Object.fromEntries(new FormData(formEmp)));
+    formEmp.submit(); // Enviar a Laravel
+  }
+});
 
 
 /* ════════════════════════════════════════
@@ -835,63 +871,63 @@ function toggleDetalle(id, btn) {
 ════════════════════════════════════════ */
 
 document.addEventListener('DOMContentLoaded', () => {
- 
-    /* ── Detectar dispositivo ── */
-    const deviceEl = document.getElementById('config-device');
-    if (deviceEl) {
-        const ua      = navigator.userAgent;
-        const browser = ua.includes('Chrome') && !ua.includes('Edg') ? 'Chrome'
-                      : ua.includes('Edg')     ? 'Edge'
-                      : ua.includes('Firefox') ? 'Firefox'
-                      : ua.includes('Safari')  ? 'Safari'
-                      : 'Navegador desconocido';
-        const os      = ua.includes('Windows') ? 'Windows'
-                      : ua.includes('Mac')     ? 'macOS'
-                      : ua.includes('Android') ? 'Android'
-                      : ua.includes('iPhone')  ? 'iPhone'
-                      : ua.includes('Linux')   ? 'Linux'
-                      : 'Desconocido';
-        deviceEl.textContent = `${browser} — ${os}`;
-    }
- 
-    /* ── Confirmación zona de peligro ── */
-    document.getElementById('form-logout-all')
-        ?.addEventListener('submit', (e) => {
-            if (!confirm('¿Cerrar sesión en todos los dispositivos?')) {
-                e.preventDefault();
-            }
-        });
- 
-        (function () {
+
+  /* ── Detectar dispositivo ── */
+  const deviceEl = document.getElementById('config-device');
+  if (deviceEl) {
+    const ua = navigator.userAgent;
+    const browser = ua.includes('Chrome') && !ua.includes('Edg') ? 'Chrome'
+      : ua.includes('Edg') ? 'Edge'
+        : ua.includes('Firefox') ? 'Firefox'
+          : ua.includes('Safari') ? 'Safari'
+            : 'Navegador desconocido';
+    const os = ua.includes('Windows') ? 'Windows'
+      : ua.includes('Mac') ? 'macOS'
+        : ua.includes('Android') ? 'Android'
+          : ua.includes('iPhone') ? 'iPhone'
+            : ua.includes('Linux') ? 'Linux'
+              : 'Desconocido';
+    deviceEl.textContent = `${browser} — ${os}`;
+  }
+
+  /* ── Confirmación zona de peligro ── */
+  document.getElementById('form-logout-all')
+    ?.addEventListener('submit', (e) => {
+      if (!confirm('¿Cerrar sesión en todos los dispositivos?')) {
+        e.preventDefault();
+      }
+    });
+
+  (function () {
     const btnGuardar = document.getElementById('btn-guardar-oferta');
     if (!btnGuardar) return;
 
     btnGuardar.addEventListener('click', function () {
-        const guardado = btnGuardar.classList.toggle('guardado');
-        const icon = btnGuardar.querySelector('svg');
+      const guardado = btnGuardar.classList.toggle('guardado');
+      const icon = btnGuardar.querySelector('svg');
 
-        if (guardado) {
-            if (icon) icon.setAttribute('fill', 'currentColor');
-            btnGuardar.innerHTML = btnGuardar.innerHTML.replace('Guardar oferta', 'Guardado');
-            btnGuardar.style.borderColor = 'var(--accent)';
-            btnGuardar.style.color       = 'var(--accent)';
-        } else {
-            if (icon) icon.setAttribute('fill', 'none');
-            btnGuardar.innerHTML = btnGuardar.innerHTML.replace('Guardado', 'Guardar oferta');
-            btnGuardar.style.borderColor = '';
-            btnGuardar.style.color       = '';
-        }
+      if (guardado) {
+        if (icon) icon.setAttribute('fill', 'currentColor');
+        btnGuardar.innerHTML = btnGuardar.innerHTML.replace('Guardar oferta', 'Guardado');
+        btnGuardar.style.borderColor = 'var(--accent)';
+        btnGuardar.style.color = 'var(--accent)';
+      } else {
+        if (icon) icon.setAttribute('fill', 'none');
+        btnGuardar.innerHTML = btnGuardar.innerHTML.replace('Guardado', 'Guardar oferta');
+        btnGuardar.style.borderColor = '';
+        btnGuardar.style.color = '';
+      }
 
-        // Llamada al backend (opcional, descomentar cuando exista la ruta)
-        // fetch(`/ofertas/${btnGuardar.dataset.id}/guardar`, {
-        //     method: 'POST',
-        //     headers: {
-        //         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content,
-        //         'Accept': 'application/json',
-        //     }
-        // });
+      // Llamada al backend (opcional, descomentar cuando exista la ruta)
+      // fetch(`/ofertas/${btnGuardar.dataset.id}/guardar`, {
+      //     method: 'POST',
+      //     headers: {
+      //         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content,
+      //         'Accept': 'application/json',
+      //     }
+      // });
     });
-})();
+  })();
 
 });
 

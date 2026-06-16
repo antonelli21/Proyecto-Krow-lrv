@@ -12,14 +12,14 @@ class VerificacionEmail extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public $codigo;
-    public $userName;
+    public string $codigo;
+    public string $userName;
 
     // El controlador nos pasa el código y el nombre del usuario por acá
-    public function __construct($codigo, $userName)
+    public function __construct($user, $codigo)
     {
         $this->codigo = $codigo;
-        $this->userName = $userName;
+        $this->userName = $user->name;
     }
 
     // El asunto que va a aparecer en el Gmail de la persona
@@ -34,7 +34,7 @@ class VerificacionEmail extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'emails.verificacion', 
+            view: 'emails.verificacion',
         );
     }
 }

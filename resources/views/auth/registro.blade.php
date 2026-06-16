@@ -1021,202 +1021,200 @@ $localidadesPorProvincia = \App\Models\Localidad::orderBy('nombre')
       });
     });
   });
-  
 
-    /* ── Provincia → carga localidades al cambiar ── */
-    const selectProv = document.getElementById('e-provincia');
-    selectProv.addEventListener('change', function() {
-      cargarLocalidades(this.value, null);
+
+  /* ── Provincia → carga localidades al cambiar ── */
+  const selectProv = document.getElementById('e-provincia');
+  selectProv.addEventListener('change', function() {
+    cargarLocalidades(this.value, null);
+  });
+
+  /* Restaurar localidades si hubo error de validación y había valores old() */
+  if (oldProvincia) {
+    cargarLocalidades(oldProvincia, oldLocalidad);
+  }
+
+  /* ══════════════════════════════════════════════════
+     VALIDACIÓN — Candidato
+  ══════════════════════════════════════════════════ */
+  function showError(id, show) {
+    const el = document.getElementById(id);
+    if (el) el.classList.toggle('show', show);
+  }
+
+  function setInputError(id, isError) {
+    const input = document.getElementById(id);
+    if (input) input.classList.toggle('input-error', isError);
+  }
+
+  function clearErrors(form) {
+    form.querySelectorAll('.error-msg').forEach(function(e) {
+      e.classList.remove('show');
+    });
+    form.querySelectorAll('input, select').forEach(function(i) {
+      i.classList.remove('input-error');
+    });
+  }
+
+  function validateEmail(email) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  }
+
+  function validatePhone(tel) {
+    return /^[\d\s\-\+\(\)]{7,}$/.test(tel);
+  }
+
+  function validateCUIT(cuit) {
+    return cuit.replace(/\D/g, '').length === 11;
+  }
+
+  /* Candidato */
+  if (formCand) {
+    formCand.addEventListener('submit', function(e) {
+      clearErrors(formCand);
+      let valid = true;
+
+      const nombre = document.getElementById('c-nombre');
+      if (!nombre.value.trim() || nombre.value.trim().length < 2) {
+        showError('err-c-nombre', true);
+        setInputError('c-nombre', true);
+        valid = false;
+      }
+
+      const apellido = document.getElementById('c-apellido');
+      if (!apellido.value.trim() || apellido.value.trim().length < 2) {
+        showError('err-c-apellido', true);
+        setInputError('c-apellido', true);
+        valid = false;
+      }
+
+      const email = document.getElementById('c-email');
+      if (!email.value.trim() || !validateEmail(email.value.trim())) {
+        showError('err-c-email', true);
+        setInputError('c-email', true);
+        valid = false;
+      }
+
+      const telefono = document.getElementById('c-telefono');
+      if (telefono.value.trim() && !validatePhone(telefono.value.trim())) {
+        showError('err-c-telefono', true);
+        setInputError('c-telefono', true);
+        valid = false;
+      }
+
+      const nacimiento = document.getElementById('c-nacimiento');
+      if (!nacimiento.value) {
+        showError('err-c-nacimiento', true);
+        setInputError('c-nacimiento', true);
+        valid = false;
+      }
+
+      const carrera = document.getElementById('c-carrera');
+      if (!carrera.value) {
+        showError('err-c-carrera', true);
+        setInputError('c-carrera', true);
+        valid = false;
+      }
+
+      const pass = document.getElementById('c-password');
+      if (!pass.value || pass.value.length < 6) {
+        showError('err-c-password', true);
+        setInputError('c-password', true);
+        valid = false;
+      }
+
+      const pass2 = document.getElementById('c-password2');
+      if (!pass2.value || pass2.value !== pass.value) {
+        showError('err-c-password2', true);
+        setInputError('c-password2', true);
+        valid = false;
+      }
+
+      if (!valid) e.preventDefault();
     });
 
-    /* Restaurar localidades si hubo error de validación y había valores old() */
-    if (oldProvincia) {
-      cargarLocalidades(oldProvincia, oldLocalidad);
-    }
-
-    /* ══════════════════════════════════════════════════
-       VALIDACIÓN — Candidato
-    ══════════════════════════════════════════════════ */
-    function showError(id, show) {
-      const el = document.getElementById(id);
-      if (el) el.classList.toggle('show', show);
-    }
-
-    function setInputError(id, isError) {
-      const input = document.getElementById(id);
-      if (input) input.classList.toggle('input-error', isError);
-    }
-
-    function clearErrors(form) {
-      form.querySelectorAll('.error-msg').forEach(function(e) {
-        e.classList.remove('show');
+    formCand.querySelectorAll('input, select').forEach(function(input) {
+      input.addEventListener('input', function() {
+        this.classList.remove('input-error');
+        const errEl = document.getElementById('err-' + this.id);
+        if (errEl) errEl.classList.remove('show');
       });
-      form.querySelectorAll('input, select').forEach(function(i) {
-        i.classList.remove('input-error');
+    });
+  }
+
+  /* Empresa */
+  if (formEmp) {
+    formEmp.addEventListener('submit', function(e) {
+      clearErrors(formEmp);
+      let valid = true;
+
+      const nombre = document.getElementById('e-nombre');
+      if (!nombre.value.trim() || nombre.value.trim().length < 2) {
+        showError('err-e-nombre', true);
+        setInputError('e-nombre', true);
+        valid = false;
+      }
+
+      const razon = document.getElementById('e-razon');
+      if (!razon.value.trim() || razon.value.trim().length < 2) {
+        showError('err-e-razon', true);
+        setInputError('e-razon', true);
+        valid = false;
+      }
+
+      const email = document.getElementById('e-email');
+      if (!email.value.trim() || !validateEmail(email.value.trim())) {
+        showError('err-e-email', true);
+        setInputError('e-email', true);
+        valid = false;
+      }
+
+      const cuit = document.getElementById('e-cuit');
+      if (!cuit.value.trim() || !validateCUIT(cuit.value.trim())) {
+        showError('err-e-cuit', true);
+        setInputError('e-cuit', true);
+        valid = false;
+      }
+
+      const telefono = document.getElementById('e-telefono');
+      if (!telefono.value.trim() || !validatePhone(telefono.value.trim())) {
+        showError('err-e-telefono', true);
+        setInputError('e-telefono', true);
+        valid = false;
+      }
+
+      const provincia = document.getElementById('e-provincia');
+      if (provincia && !provincia.value) {
+        showError('err-e-provincia', true);
+        setInputError('e-provincia', true);
+        valid = false;
+      }
+
+      const pass = document.getElementById('e-password');
+      if (!pass.value || pass.value.length < 6) {
+        showError('err-e-password', true);
+        setInputError('e-password', true);
+        valid = false;
+      }
+
+      const pass2 = document.getElementById('e-password2');
+      if (!pass2.value || pass2.value !== pass.value) {
+        showError('err-e-password2', true);
+        setInputError('e-password2', true);
+        valid = false;
+      }
+
+      if (!valid) e.preventDefault();
+    });
+
+    formEmp.querySelectorAll('input, select').forEach(function(input) {
+      input.addEventListener('input', function() {
+        this.classList.remove('input-error');
+        const errEl = document.getElementById('err-' + this.id);
+        if (errEl) errEl.classList.remove('show');
       });
-    }
-
-    function validateEmail(email) {
-      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-    }
-
-    function validatePhone(tel) {
-      return /^[\d\s\-\+\(\)]{7,}$/.test(tel);
-    }
-
-    function validateCUIT(cuit) {
-      return cuit.replace(/\D/g, '').length === 11;
-    }
-
-    /* Candidato */
-    if (formCand) {
-      formCand.addEventListener('submit', function(e) {
-        clearErrors(formCand);
-        let valid = true;
-
-        const nombre = document.getElementById('c-nombre');
-        if (!nombre.value.trim() || nombre.value.trim().length < 2) {
-          showError('err-c-nombre', true);
-          setInputError('c-nombre', true);
-          valid = false;
-        }
-
-        const apellido = document.getElementById('c-apellido');
-        if (!apellido.value.trim() || apellido.value.trim().length < 2) {
-          showError('err-c-apellido', true);
-          setInputError('c-apellido', true);
-          valid = false;
-        }
-
-        const email = document.getElementById('c-email');
-        if (!email.value.trim() || !validateEmail(email.value.trim())) {
-          showError('err-c-email', true);
-          setInputError('c-email', true);
-          valid = false;
-        }
-
-        const telefono = document.getElementById('c-telefono');
-        if (telefono.value.trim() && !validatePhone(telefono.value.trim())) {
-          showError('err-c-telefono', true);
-          setInputError('c-telefono', true);
-          valid = false;
-        }
-
-        const nacimiento = document.getElementById('c-nacimiento');
-        if (!nacimiento.value) {
-          showError('err-c-nacimiento', true);
-          setInputError('c-nacimiento', true);
-          valid = false;
-        }
-
-        const carrera = document.getElementById('c-carrera');
-        if (!carrera.value) {
-          showError('err-c-carrera', true);
-          setInputError('c-carrera', true);
-          valid = false;
-        }
-
-        const pass = document.getElementById('c-password');
-        if (!pass.value || pass.value.length < 6) {
-          showError('err-c-password', true);
-          setInputError('c-password', true);
-          valid = false;
-        }
-
-        const pass2 = document.getElementById('c-password2');
-        if (!pass2.value || pass2.value !== pass.value) {
-          showError('err-c-password2', true);
-          setInputError('c-password2', true);
-          valid = false;
-        }
-
-        if (!valid) e.preventDefault();
-      });
-
-      formCand.querySelectorAll('input, select').forEach(function(input) {
-        input.addEventListener('input', function() {
-          this.classList.remove('input-error');
-          const errEl = document.getElementById('err-' + this.id);
-          if (errEl) errEl.classList.remove('show');
-        });
-      });
-    }
-
-    /* Empresa */
-    if (formEmp) {
-      formEmp.addEventListener('submit', function(e) {
-        clearErrors(formEmp);
-        let valid = true;
-
-        const nombre = document.getElementById('e-nombre');
-        if (!nombre.value.trim() || nombre.value.trim().length < 2) {
-          showError('err-e-nombre', true);
-          setInputError('e-nombre', true);
-          valid = false;
-        }
-
-        const razon = document.getElementById('e-razon');
-        if (!razon.value.trim() || razon.value.trim().length < 2) {
-          showError('err-e-razon', true);
-          setInputError('e-razon', true);
-          valid = false;
-        }
-
-        const email = document.getElementById('e-email');
-        if (!email.value.trim() || !validateEmail(email.value.trim())) {
-          showError('err-e-email', true);
-          setInputError('e-email', true);
-          valid = false;
-        }
-
-        const cuit = document.getElementById('e-cuit');
-        if (!cuit.value.trim() || !validateCUIT(cuit.value.trim())) {
-          showError('err-e-cuit', true);
-          setInputError('e-cuit', true);
-          valid = false;
-        }
-
-        const telefono = document.getElementById('e-telefono');
-        if (!telefono.value.trim() || !validatePhone(telefono.value.trim())) {
-          showError('err-e-telefono', true);
-          setInputError('e-telefono', true);
-          valid = false;
-        }
-
-        const provincia = document.getElementById('e-provincia');
-        if (provincia && !provincia.value) {
-          showError('err-e-provincia', true);
-          setInputError('e-provincia', true);
-          valid = false;
-        }
-
-        const pass = document.getElementById('e-password');
-        if (!pass.value || pass.value.length < 6) {
-          showError('err-e-password', true);
-          setInputError('e-password', true);
-          valid = false;
-        }
-
-        const pass2 = document.getElementById('e-password2');
-        if (!pass2.value || pass2.value !== pass.value) {
-          showError('err-e-password2', true);
-          setInputError('e-password2', true);
-          valid = false;
-        }
-
-        if (!valid) e.preventDefault();
-      });
-
-      formEmp.querySelectorAll('input, select').forEach(function(input) {
-        input.addEventListener('input', function() {
-          this.classList.remove('input-error');
-          const errEl = document.getElementById('err-' + this.id);
-          if (errEl) errEl.classList.remove('show');
-        });
-      });
-    }
-
-  }); /* fin DOMContentLoaded */
+    });
+  } /* fin DOMContentLoaded */
 </script>
 
 @endsection
