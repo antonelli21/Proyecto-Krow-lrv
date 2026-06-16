@@ -165,12 +165,14 @@ Route::post('/ayuda/contacto', function (Request $request) {
 
 /* ════════════════════════════════════════
    API RESOURCES
+   Rutas de API RESTful para los recursos del sistema.
+   Usadas por el frontend con fetch/AJAX.
 ════════════════════════════════════════ */
 Route::prefix('api')->group(function () {
-    Route::apiResource('estudiantes', EstudianteController::class)->only(['index', 'show', 'store', 'update', 'destroy']);
-    Route::apiResource('empresas',    EmpresaController::class)->only(['index', 'show', 'store', 'update', 'destroy']);
-    Route::apiResource('ofertas',     OfertaController::class)->only(['index', 'show', 'store', 'update', 'destroy']);
-    Route::apiResource('chats',       ChatController::class)->only(['index', 'show', 'store', 'destroy']);
-    Route::apiResource('mensajes',    MensajeController::class)->only(['index', 'show', 'store', 'update', 'destroy']);
-    Route::apiResource('tickets',     TicketSoporteController::class)->only(['index', 'show', 'store', 'update', 'destroy']);
+    Route::apiResource('estudiantes', EstudianteController::class)->only(['index','show','store','update','destroy']);
+    Route::apiResource('empresas', EmpresaController::class)->only(['index','show','store','update','destroy']);
+    Route::apiResource('ofertas', OfertaController::class)->only(['index','show','store','update','destroy']);
+    Route::apiResource('chats', ChatController::class)->only(['index','show','store','destroy']);
+    Route::apiResource('mensajes', MensajeController::class)->only(['index','show','store','update','destroy']);
+    Route::apiResource('tickets', TicketSoporteController::class)->only(['index','show','store','update','destroy']);
 });
