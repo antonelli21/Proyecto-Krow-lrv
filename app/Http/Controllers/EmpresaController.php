@@ -95,7 +95,10 @@ class EmpresaController extends Controller
         $empresaId = auth()->user()->empresa->id_empresa;
         $ofertas = Oferta::where('id_empresa', $empresaId)->withCount('postulaciones')->get();
         
-        return view('empresa.home-empresa', compact('ofertas'));
+        $totalPostulantes = $ofertas->sum('postulaciones_count');
+        $totalVistas = $ofertas->sum('vistas') ?? 0;
+        
+        return view('empresa.home-empresa', compact('ofertas', 'totalPostulantes', 'totalVistas'));
     }
 
 
