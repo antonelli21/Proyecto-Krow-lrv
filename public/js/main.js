@@ -542,20 +542,20 @@ window.togglePass = function (inputId, btn) {
   }
 };
 
-formCand.addEventListener('submit', function (e) {
-  if (ok) {
-    // console.log('Registro candidato OK', Object.fromEntries(new FormData(formCand)));
-    formCand.submit(); // Enviar a Laravel
-  }
-});
+// formCand.addEventListener('submit', function (e) {
+//   if (ok) {
+//     // console.log('Registro candidato OK', Object.fromEntries(new FormData(formCand)));
+//     formCand.submit(); // Enviar a Laravel
+//   }
+// });
 
 
-formEmp.addEventListener('submit', function (ev) {
-  if (ok) {
-    // console.log('Registro empresa OK', Object.fromEntries(new FormData(formEmp)));
-    formEmp.submit(); // Enviar a Laravel
-  }
-});
+// formEmp.addEventListener('submit', function (ev) {
+//   if (ok) {
+//     // console.log('Registro empresa OK', Object.fromEntries(new FormData(formEmp)));
+//     formEmp.submit(); // Enviar a Laravel
+//   }
+// });
 
 
 /* ════════════════════════════════════════
@@ -781,21 +781,15 @@ formEmp.addEventListener('submit', function (ev) {
 (function () {
   'use strict';
 
-  /* ── Alternar visibilidad de paneles según Rol activo ── */
-  function renderRightPanel() {
-    const rolActual = document.documentElement.dataset.role ?? 'invitado';
-    const paneles = document.querySelectorAll('.role-panel-content');
-    if (!paneles.length) return;
+function renderRightPanel() {
+  const pageBody = document.getElementById('page-body');
+  const rolActual = pageBody?.dataset.rol || 'invitado';
 
-    paneles.forEach(panel => {
-      // Si el bloque coincide con el rol activo, lo muestra; si no, lo oculta
-      if (panel.dataset.panelRole === rolActual) {
-        panel.style.display = 'block';
-      } else {
-        panel.style.display = 'none';
-      }
-    });
-  }
+  document.querySelectorAll('.role-panel-content').forEach(panel => {
+    panel.style.display =
+      panel.dataset.panelRole === rolActual ? 'block' : 'none';
+  });
+}
 
   /* ── Bookmarks ── */
   function initBookmarks() {
@@ -870,7 +864,7 @@ formEmp.addEventListener('submit', function (ev) {
    Solo se carga en esta página.
 ════════════════════════════════════════ */
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded'), () => {
 
   /* ── Detectar dispositivo ── */
   const deviceEl = document.getElementById('config-device');
@@ -889,45 +883,44 @@ document.addEventListener('DOMContentLoaded', () => {
               : 'Desconocido';
     deviceEl.textContent = `${browser} — ${os}`;
   }
+}
+//   /* ── Confirmación zona de peligro ── */
+//   document.getElementById('form-logout-all')
+//     ?.addEventListener('submit', (e) => {
+//       if (!confirm('¿Cerrar sesión en todos los dispositivos?')) {
+//         e.preventDefault();
+//       }
+//     });
 
-  /* ── Confirmación zona de peligro ── */
-  document.getElementById('form-logout-all')
-    ?.addEventListener('submit', (e) => {
-      if (!confirm('¿Cerrar sesión en todos los dispositivos?')) {
-        e.preventDefault();
-      }
-    });
+//   (function () {
+//     const btnGuardar = document.getElementById('btn-guardar-oferta');
+//     if (!btnGuardar) return;
 
-  (function () {
-    const btnGuardar = document.getElementById('btn-guardar-oferta');
-    if (!btnGuardar) return;
+//     btnGuardar.addEventListener('click', function () {
+//       const guardado = btnGuardar.classList.toggle('guardado');
+//       const icon = btnGuardar.querySelector('svg');
 
-    btnGuardar.addEventListener('click', function () {
-      const guardado = btnGuardar.classList.toggle('guardado');
-      const icon = btnGuardar.querySelector('svg');
+//       if (guardado) {
+//         if (icon) icon.setAttribute('fill', 'currentColor');
+//         btnGuardar.innerHTML = btnGuardar.innerHTML.replace('Guardar oferta', 'Guardado');
+//         btnGuardar.style.borderColor = 'var(--accent)';
+//         btnGuardar.style.color = 'var(--accent)';
+//       } else {
+//         if (icon) icon.setAttribute('fill', 'none');
+//         btnGuardar.innerHTML = btnGuardar.innerHTML.replace('Guardado', 'Guardar oferta');
+//         btnGuardar.style.borderColor = '';
+//         btnGuardar.style.color = '';
+//       }
 
-      if (guardado) {
-        if (icon) icon.setAttribute('fill', 'currentColor');
-        btnGuardar.innerHTML = btnGuardar.innerHTML.replace('Guardar oferta', 'Guardado');
-        btnGuardar.style.borderColor = 'var(--accent)';
-        btnGuardar.style.color = 'var(--accent)';
-      } else {
-        if (icon) icon.setAttribute('fill', 'none');
-        btnGuardar.innerHTML = btnGuardar.innerHTML.replace('Guardado', 'Guardar oferta');
-        btnGuardar.style.borderColor = '';
-        btnGuardar.style.color = '';
-      }
+//       // Llamada al backend (opcional, descomentar cuando exista la ruta)
+// //       // fetch(`/ofertas/${btnGuardar.dataset.id}/guardar`, {
+// //       //     method: 'POST',
+// //       //     headers: {
+// //       //         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content,
+//       //         'Accept': 'application/json',
+//       //     }
+//       // });
+//     });
+//   })();
 
-      // Llamada al backend (opcional, descomentar cuando exista la ruta)
-      // fetch(`/ofertas/${btnGuardar.dataset.id}/guardar`, {
-      //     method: 'POST',
-      //     headers: {
-      //         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content,
-      //         'Accept': 'application/json',
-      //     }
-      // });
-    });
-  })();
-
-});
-
+// })
