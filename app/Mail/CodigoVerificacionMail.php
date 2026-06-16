@@ -13,11 +13,11 @@ class CodigoVerificacionMail extends Mailable
     use Queueable, SerializesModels;
 
     // Declaramos las variables públicas para que tu Blade las pueda leer
-    public $codigo;
-    public $userName;
+    public string $codigo;
+    public string $userName;
 
     // Recibimos el código y el nombre del usuario desde el controlador
-    public function __construct($codigo, $userName)
+    public function __construct(string $userName, string $codigo)
     {
         $this->codigo = $codigo;
         $this->userName = $userName;
@@ -35,7 +35,7 @@ class CodigoVerificacionMail extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'emails.verificacion', 
+            view: 'emails.verificacion',
         );
     }
 }
