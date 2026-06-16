@@ -505,6 +505,362 @@
   </div>
  
 </div>
- 
+
+<style>
+/* ════════════════════════════════════════
+   RESPONSIVE — Admin Panel KROW
+   Pegar al pie del CSS de admin (reemplaza
+   el bloque @media existente al final)
+════════════════════════════════════════ */
+
+/* ── Fix global: evita desborde horizontal ── */
+@media (max-width: 640px) {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  html, body {
+    overflow-x: hidden;
+    max-width: 100vw;
+  }
+
+  .admin-page {
+    overflow-x: hidden;
+    max-width: 100%;
+  }
+}
+
+/* ── Tablet ancho (900–1200px) ── */
+@media (max-width: 1200px) {
+  .admin-page {
+    padding: 28px 16px 56px;
+  }
+
+  /* Ocultar columnas menos prioritarias en tabla */
+  .admin-table td:nth-child(4),
+  .admin-table th:nth-child(4) {
+    display: none;
+  }
+}
+
+/* ── Tablet (≤ 900px) ── */
+@media (max-width: 900px) {
+
+  .admin-page {
+    padding: 24px 16px 52px;
+  }
+
+  .admin-page-title {
+    font-size: 21px;
+  }
+
+  .admin-page-sub {
+    font-size: 13px;
+    margin-bottom: 20px;
+  }
+
+  /* Stats: 2 columnas */
+  .admin-stats {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+
+  .admin-stat {
+    padding: 14px 16px;
+  }
+
+  .admin-stat-value {
+    font-size: 26px;
+  }
+
+  /* Toolbar: wrap con buscador full-width */
+  .admin-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+
+  .admin-search {
+    min-width: 100%;
+  }
+
+  .admin-filter-select {
+    width: 100%;
+  }
+
+  /* Detalle expandible: 2 columnas */
+  .admin-detalle-inner {
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  /* Tabla: ocultar columnas de menor prioridad */
+  .admin-table th:nth-child(4),
+  .admin-table td:nth-child(4),
+  .admin-table th:nth-child(6),
+  .admin-table td:nth-child(6) {
+    display: none;
+  }
+}
+
+/* ── Mobile (≤ 640px) ── */
+@media (max-width: 640px) {
+
+  .admin-page {
+    padding: 16px 10px 48px;
+    max-width: 100%;
+    width: 100%;
+  }
+
+  .admin-page-title {
+    font-size: 19px;
+    gap: 7px;
+  }
+
+  .admin-page-sub {
+    font-size: 12.5px;
+    margin-bottom: 18px;
+  }
+
+  /* ── Tabs: scroll horizontal ── */
+  .admin-tabs {
+    gap: 0;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    margin-bottom: 20px;
+  }
+  .admin-tabs::-webkit-scrollbar { display: none; }
+
+  .admin-tab {
+    padding: 10px 16px;
+    font-size: 12.5px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .tab-count {
+    font-size: 10px;
+    padding: 1px 5px;
+  }
+
+  /* ── Stats: 2 columnas compactas ── */
+  .admin-stats {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+
+  .admin-stat {
+    padding: 12px 14px;
+  }
+
+  .admin-stat-label {
+    font-size: 9.5px;
+    gap: 4px;
+  }
+
+  .admin-stat-value {
+    font-size: 28px;
+  }
+
+  /* ── Toolbar ── */
+  .admin-toolbar {
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+
+  .admin-search input {
+    font-size: 14px; /* evita zoom en iOS */
+    padding: 10px 12px 10px 34px;
+  }
+
+  .admin-filter-select {
+    width: 100%;
+    font-size: 14px; /* evita zoom en iOS */
+    padding: 10px 28px 10px 12px;
+  }
+
+  /* ── Tabla → tarjetas ── */
+  .admin-table-wrap {
+    border: none;
+    background: transparent;
+    overflow: hidden;
+    max-width: 100%;
+  }
+
+  .admin-table,
+  .admin-table thead,
+  .admin-table tbody,
+  .admin-table th,
+  .admin-table td,
+  .admin-table tr {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  .admin-table thead {
+    display: none;
+  }
+
+  .admin-table tbody tr {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    margin-bottom: 6px;
+    padding: 8px 10px;
+    position: relative;
+    box-sizing: border-box;
+    width: 100%;
+  }
+
+  .admin-table tbody tr:hover {
+    background: var(--surface);
+  }
+
+  /* Ocultar botón ojo en mobile (el detalle se ve en el panel expandible) */
+  .btn-icon.btn-ver {
+    display: none;
+  }
+
+  /* Fila de detalle expandible: no es tarjeta */
+  .admin-detalle-row {
+    background: transparent !important;
+    border: none !important;
+    padding: 0 !important;
+    margin-bottom: 10px;
+  }
+
+  .admin-detalle-row td {
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 14px !important;
+    background: var(--bg) !important;
+  }
+
+  /* Celda checkbox: ocultar en mobile */
+  .admin-table td:first-child {
+    display: none;
+  }
+
+  /* Celdas normales: flex con etiqueta */
+  .admin-table td {
+    border-bottom: none;
+    padding: 2px 0;
+    font-size: 12px;
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+  }
+
+  .admin-table td::before {
+    content: attr(data-label);
+    font-size: 9.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-muted);
+    min-width: 62px;
+    max-width: 62px;
+    padding-top: 1px;
+    flex-shrink: 0;
+  }
+
+  /* Celda nombre: sin etiqueta, destacada */
+  .admin-table td.td-nombre {
+    flex-direction: column;
+    gap: 1px;
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 6px;
+    padding-bottom: 7px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .admin-table td.td-nombre::before {
+    display: none;
+  }
+
+  /* Celda acciones: sin etiqueta, al final */
+  .admin-table td:last-child {
+    margin-top: 7px;
+    padding-top: 7px;
+    border-top: 1px solid var(--border);
+    justify-content: flex-end;
+  }
+
+  .admin-table td:last-child::before {
+    display: none;
+  }
+
+  /* Botones de acción más compactos */
+  .td-acciones {
+    gap: 2px;
+  }
+
+  .btn-icon {
+    width: 30px;
+    height: 30px;
+    font-size: 14px;
+  }
+
+  /* Badges */
+  .badge-admin {
+    font-size: 11px;
+    padding: 3px 8px;
+  }
+
+  .badge-tipo {
+    font-size: 11px;
+  }
+
+  /* ── Detalle expandible: columna única ── */
+  .admin-detalle-inner {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .admin-detalle-actions {
+    flex-direction: column;
+    margin-top: 12px;
+    gap: 6px;
+  }
+
+  .btn-admin-aprobar,
+  .btn-admin-rechazar,
+  .btn-admin-suspender {
+    width: 100%;
+    justify-content: center;
+    padding: 10px 16px;
+    font-size: 13px;
+  }
+
+  /* ── Toast de acción ── */
+  .admin-action-notice {
+    right: 12px;
+    bottom: 12px;
+    left: 12px;
+    max-width: 100%;
+  }
+
+  /* ── Empty state ── */
+  .admin-empty {
+    padding: 36px 16px;
+  }
+
+  .admin-empty i {
+    font-size: 28px;
+  }
+}
+</style>
+
+
+
 @endsection
  
