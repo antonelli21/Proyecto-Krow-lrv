@@ -5,30 +5,30 @@
 @section('content')
 
 @php
-$carreras = [
-      'Ingeniería Aeronáutica/Aeroespacial',
-      'Ingeniería Electrónica',
-      'Ingeniería Ferroviaria',
-      'Ingeniería Industrial',
-      'Ingeniería Mecánica',
-      'Bioingeniería',
-      'Tecnicatura en Programación',
-      'Tecnicatura en Operación de Aeronaves',
-      'Tecnicatura en Material Rodante Ferroviario',
-      'Tecnicatura en Desarrollo y Producción de Videojuegos',
-      'Tecnicatura en Higiene y Seguridad en el Trabajo',
-      'Tecnicatura en Comercio Electrónico y Marketing Digital',
-      'Tecnicatura en Logística',
-];
+/*
+* $carreras — Collection de App\Models\Carrera (id_carrera, nombre)
+* $provincias — Collection de App\Models\Provincia (id_provincia, nombre)
+* Ambas se pasan desde RegisterController::showRegistrationForm()
+*/
+
+// Detectar si hubo errores del lado empresa para restaurar el tab activo.
+// Se usa una variable PHP para evitar mezclar -> de Eloquent dentro de {{ }} en JS,
+// lo que causaba errores de parseo de Blade.
+$tabEmpresaActivo = $errors->hasAny(['cuit', 'nombre_empresa', 'razon_social', 'id_provincia', 'id_localidad'])
+|| old('nombre_empresa')
+|| old('cuit');
+
+// Agrupar localidades por id_provincia para pasarlas a JS como JSON.
+$localidadesPorProvincia = \App\Models\Localidad::orderBy('nombre')
+->get()
+->groupBy('id_provincia');
 @endphp
 
 <style>
   /* ═══════════════════════════════════════════════════════════
    REGISTRO / AUTH — KROW
-   CSS normalizado, compatible y responsive
    ═══════════════════════════════════════════════════════════ */
 
-  /* ── Layout ── */
   .auth-page {
     min-height: 100vh;
     display: flex;
@@ -172,6 +172,11 @@ $carreras = [
     padding-right: 2.8rem;
   }
 
+  .input-wrap select:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
   .input-wrap input:focus,
   .input-wrap select:focus {
     outline: none;
@@ -301,9 +306,8 @@ $carreras = [
   }
 
   /* ═══════════════════════════════════════════════════════════
-   RESPONSIVE — Registro
+   RESPONSIVE
    ═══════════════════════════════════════════════════════════ */
-
   @media (max-width: 640px) {
     .auth-page {
       padding: 1rem;
@@ -371,7 +375,10 @@ $carreras = [
   }
 </style>
 
-<main class="auth-page">
+<main class="auth-page"
+  data-localidades="{{ json_encode($localidadesPorProvincia) }}"
+  data-old-provincia="{{ old('id_provincia', '') }}"
+  data-old-localidad="{{ old('id_localidad', '') }}">
   <div class="auth-card">
     <div class="auth-head">
       <h1>Crear Cuenta</h1>
@@ -380,14 +387,18 @@ $carreras = [
 
     <!-- Tabs -->
     <div class="role-tabs" id="roleTabs">
-      <button type="button" class="role-tab active" data-role="candidato">Candidato</button>
-      <button type="button" class="role-tab" data-role="empresa">Empresa</button>
+      <button type="button" class="role-tab {{ $tabEmpresaActivo ? '' : 'active' }}" data-role="candidato">Candidato</button>
+      <button type="button" class="role-tab {{ $tabEmpresaActivo ? 'active' : '' }}" data-role="empresa">Empresa</button>
     </div>
 
-    <!-- FORM CANDIDATO — Envía POST a /registro/estudiante -->
-    <form class="auth-form active" id="formCandidato" method="POST" action="{{ route('register.estudiante') }}" novalidate>
+    {{-- ═══════════════════════════════════════════════
+         FORM CANDIDATO — POST a /registro/estudiante
+    ════════════════════════════════════════════════ --}}
+    <form class="auth-form {{ $tabEmpresaActivo ? '' : 'active' }}" id="formCandidato" method="POST" action="{{ route('register.estudiante') }}" novalidate>
       @csrf
+
       <div class="form-row">
+        {{-- Nombre --}}
         <div class="form-group">
           <label for="c-nombre">Nombre</label>
           <div class="input-wrap">
@@ -397,6 +408,16 @@ $carreras = [
             </svg>
             <input type="text" id="c-nombre" name="nombre" placeholder="Juan" autocomplete="given-name" value="{{ old('nombre') }}">
           </div>
+          @error('nombre')
+          <span class="error-msg show">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10" />
+              <line x1="12" y1="8" x2="12" y2="12" />
+              <line x1="12" y1="16" x2="12.01" y2="16" />
+            </svg>
+            {{ $message }}
+          </span>
+          @enderror
           <span class="error-msg" id="err-c-nombre">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <circle cx="12" cy="12" r="10" />
@@ -406,6 +427,8 @@ $carreras = [
             Ingresa tu nombre.
           </span>
         </div>
+
+        {{-- Apellido --}}
         <div class="form-group">
           <label for="c-apellido">Apellido</label>
           <div class="input-wrap">
@@ -415,6 +438,16 @@ $carreras = [
             </svg>
             <input type="text" id="c-apellido" name="apellido" placeholder="Pérez" autocomplete="family-name" value="{{ old('apellido') }}">
           </div>
+          @error('apellido')
+          <span class="error-msg show">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10" />
+              <line x1="12" y1="8" x2="12" y2="12" />
+              <line x1="12" y1="16" x2="12.01" y2="16" />
+            </svg>
+            {{ $message }}
+          </span>
+          @enderror
           <span class="error-msg" id="err-c-apellido">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <circle cx="12" cy="12" r="10" />
@@ -426,6 +459,7 @@ $carreras = [
         </div>
       </div>
 
+      {{-- Email --}}
       <div class="form-group">
         <label for="c-email">Email institucional</label>
         <div class="input-wrap">
@@ -456,6 +490,7 @@ $carreras = [
       </div>
 
       <div class="form-row">
+        {{-- Teléfono --}}
         <div class="form-group">
           <label for="c-telefono">Teléfono</label>
           <div class="input-wrap">
@@ -473,6 +508,8 @@ $carreras = [
             Ingresa un teléfono válido.
           </span>
         </div>
+
+        {{-- Fecha de nacimiento --}}
         <div class="form-group">
           <label for="c-nacimiento">Fecha de nacimiento</label>
           <div class="input-wrap">
@@ -490,11 +527,12 @@ $carreras = [
               <line x1="12" y1="8" x2="12" y2="12" />
               <line x1="12" y1="16" x2="12.01" y2="16" />
             </svg>
-            Selecciona tu fecha de nacimiento.
+            Seleccioná tu fecha de nacimiento.
           </span>
         </div>
       </div>
 
+      {{-- Carrera — datos desde DB via controller --}}
       <div class="form-group">
         <label for="c-carrera">Carrera (UTN Haedo)</label>
         <div class="input-wrap">
@@ -504,14 +542,28 @@ $carreras = [
           </svg>
           <select id="c-carrera" name="carrera">
             <option value="" disabled {{ old('carrera') ? '' : 'selected' }}>Seleccioná tu carrera</option>
-            @foreach($carreras as $c)
-            <option value="{{ $c }}" {{ old('carrera') == $c ? 'selected' : '' }}>{{ $c }}</option>
-            @endforeach
+            @forelse($carreras as $carrera)
+            <option value="{{ $carrera->nombre }}" {{ old('carrera') === $carrera->nombre ? 'selected' : '' }}>
+              {{ $carrera->nombre }}
+            </option>
+            @empty
+            <option value="" disabled>No hay carreras disponibles</option>
+            @endforelse
           </select>
           <svg class="select-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <polyline points="6 9 12 15 18 9" />
           </svg>
         </div>
+        @error('carrera')
+        <span class="error-msg show">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10" />
+            <line x1="12" y1="8" x2="12" y2="12" />
+            <line x1="12" y1="16" x2="12.01" y2="16" />
+          </svg>
+          {{ $message }}
+        </span>
+        @enderror
         <span class="error-msg" id="err-c-carrera">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <circle cx="12" cy="12" r="10" />
@@ -522,6 +574,7 @@ $carreras = [
         </span>
       </div>
 
+      {{-- Contraseña --}}
       <div class="form-group">
         <label for="c-password">Contraseña</label>
         <div class="input-wrap">
@@ -551,6 +604,7 @@ $carreras = [
         </span>
       </div>
 
+      {{-- Confirmar contraseña --}}
       <div class="form-group">
         <label for="c-password2">Confirmar contraseña</label>
         <div class="input-wrap">
@@ -583,9 +637,13 @@ $carreras = [
       <button type="submit" class="btn-submit">Crear Cuenta</button>
     </form>
 
-    <!-- FORM EMPRESA — Envía POST a /registro/empresa -->
-    <form class="auth-form" id="formEmpresa" method="POST" action="{{ route('register.empresa') }}" novalidate>
+    {{-- ═══════════════════════════════════════════════
+         FORM EMPRESA — POST a /registro/empresa
+    ════════════════════════════════════════════════ --}}
+    <form class="auth-form {{ $tabEmpresaActivo ? 'active' : '' }}" id="formEmpresa" method="POST" action="{{ route('register.empresa') }}" novalidate>
       @csrf
+
+      {{-- Nombre empresa --}}
       <div class="form-group">
         <label for="e-nombre">Nombre de la empresa</label>
         <div class="input-wrap">
@@ -594,6 +652,16 @@ $carreras = [
           </svg>
           <input type="text" id="e-nombre" name="nombre_empresa" placeholder="Ej: TechCorp SA" autocomplete="organization" value="{{ old('nombre_empresa') }}">
         </div>
+        @error('nombre_empresa')
+        <span class="error-msg show">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10" />
+            <line x1="12" y1="8" x2="12" y2="12" />
+            <line x1="12" y1="16" x2="12.01" y2="16" />
+          </svg>
+          {{ $message }}
+        </span>
+        @enderror
         <span class="error-msg" id="err-e-nombre">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <circle cx="12" cy="12" r="10" />
@@ -604,6 +672,7 @@ $carreras = [
         </span>
       </div>
 
+      {{-- Razón social --}}
       <div class="form-group">
         <label for="e-razon">Razón social</label>
         <div class="input-wrap">
@@ -615,6 +684,16 @@ $carreras = [
           </svg>
           <input type="text" id="e-razon" name="razon_social" placeholder="Ej: TechCorp S.A." autocomplete="organization" value="{{ old('razon_social') }}">
         </div>
+        @error('razon_social')
+        <span class="error-msg show">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10" />
+            <line x1="12" y1="8" x2="12" y2="12" />
+            <line x1="12" y1="16" x2="12.01" y2="16" />
+          </svg>
+          {{ $message }}
+        </span>
+        @enderror
         <span class="error-msg" id="err-e-razon">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <circle cx="12" cy="12" r="10" />
@@ -625,6 +704,7 @@ $carreras = [
         </span>
       </div>
 
+      {{-- Email --}}
       <div class="form-group">
         <label for="e-email">Email</label>
         <div class="input-wrap">
@@ -634,6 +714,16 @@ $carreras = [
           </svg>
           <input type="email" id="e-email" name="email" placeholder="contacto@empresa.com" autocomplete="email" value="{{ old('email') }}">
         </div>
+        @error('email')
+        <span class="error-msg show">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10" />
+            <line x1="12" y1="8" x2="12" y2="12" />
+            <line x1="12" y1="16" x2="12.01" y2="16" />
+          </svg>
+          {{ $message }}
+        </span>
+        @enderror
         <span class="error-msg" id="err-e-email">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <circle cx="12" cy="12" r="10" />
@@ -645,6 +735,7 @@ $carreras = [
       </div>
 
       <div class="form-row">
+        {{-- CUIT --}}
         <div class="form-group">
           <label for="e-cuit">CUIT</label>
           <div class="input-wrap">
@@ -675,6 +766,8 @@ $carreras = [
             Ingresa un CUIT válido (11 dígitos).
           </span>
         </div>
+
+        {{-- Teléfono --}}
         <div class="form-group">
           <label for="e-telefono">Teléfono</label>
           <div class="input-wrap">
@@ -694,25 +787,79 @@ $carreras = [
         </div>
       </div>
 
+      {{-- Provincia + Localidad: solo se muestran si hay datos en la DB.
+           Si la tabla provincia está vacía, los campos se omiten completamente
+           para que el form siempre pueda enviarse. --}}
+      @if($provincias->isNotEmpty())
       <div class="form-group">
-        <label for="e-ubicacion">Ubicación</label>
+        <label for="e-provincia">Provincia</label>
         <div class="input-wrap">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
             <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
             <circle cx="12" cy="10" r="3" />
           </svg>
-          <input type="text" id="e-ubicacion" name="ubicacion" placeholder="Ciudad / Provincia" autocomplete="address-level1" value="{{ old('ubicacion') }}">
+          <select id="e-provincia" name="id_provincia">
+            <option value="">Seleccioná provincia</option>
+            @foreach($provincias as $provincia)
+            <option value="{{ $provincia->id_provincia }}" {{ old('id_provincia') == $provincia->id_provincia ? 'selected' : '' }}>
+              {{ $provincia->nombre }}
+            </option>
+            @endforeach
+          </select>
+          <svg class="select-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="6 9 12 15 18 9" />
+          </svg>
         </div>
-        <span class="error-msg" id="err-e-ubicacion">
+        @error('id_provincia')
+        <span class="error-msg show">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <circle cx="12" cy="12" r="10" />
             <line x1="12" y1="8" x2="12" y2="12" />
             <line x1="12" y1="16" x2="12.01" y2="16" />
           </svg>
-          Ingresa la ubicación.
+          {{ $message }}
+        </span>
+        @enderror
+        <span class="error-msg" id="err-e-provincia">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10" />
+            <line x1="12" y1="8" x2="12" y2="12" />
+            <line x1="12" y1="16" x2="12.01" y2="16" />
+          </svg>
+          Seleccioná una provincia.
         </span>
       </div>
 
+      {{-- Localidad: sin "disabled" — los campos disabled NO se envían en el POST.
+           Se usa pointer-events + opacity para la apariencia de desactivado. --}}
+      <div class="form-group">
+        <label for="e-localidad">Localidad</label>
+        <div class="input-wrap">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+            <circle cx="12" cy="10" r="3" />
+          </svg>
+          <select id="e-localidad" name="id_localidad" style="opacity:0.45;pointer-events:none;">
+            <option value="">Primero seleccioná una provincia</option>
+          </select>
+          <svg class="select-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="6 9 12 15 18 9" />
+          </svg>
+        </div>
+        @error('id_localidad')
+        <span class="error-msg show">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10" />
+            <line x1="12" y1="8" x2="12" y2="12" />
+            <line x1="12" y1="16" x2="12.01" y2="16" />
+          </svg>
+          {{ $message }}
+        </span>
+        @enderror
+      </div>
+      @endif
+
+      {{-- Contraseña --}}
       <div class="form-group">
         <label for="e-password">Contraseña</label>
         <div class="input-wrap">
@@ -742,6 +889,7 @@ $carreras = [
         </span>
       </div>
 
+      {{-- Confirmar contraseña --}}
       <div class="form-group">
         <label for="e-password2">Confirmar contraseña</label>
         <div class="input-wrap">
@@ -781,6 +929,16 @@ $carreras = [
 </main>
 
 <script>
+  /* ═══════════════════════════════════════════════════════════
+   Localidades agrupadas por provincia y valores old() se pasan
+   como data-attributes en <main> para evitar que el linter de
+   VS Code los confunda con sintaxis JS inválida.
+   ═══════════════════════════════════════════════════════════ */
+  const _authPage = document.querySelector('.auth-page');
+  const localidadesPorProvincia = JSON.parse(_authPage.dataset.localidades || '{}');
+  const oldProvincia = _authPage.dataset.oldProvincia || '';
+  const oldLocalidad = _authPage.dataset.oldLocalidad || '';
+
   /* ── Mostrar / Ocultar contraseña ── */
   function togglePass(inputId, btn) {
     const input = document.getElementById(inputId);
@@ -801,33 +959,59 @@ $carreras = [
     }
   }
 
-  /* ── Cambio de Tabs (Candidato / Empresa) ── */
+  /* ── Carga dinámica de localidades ──
+     NO usar .disabled: los campos disabled no se envían en el POST.
+     Se usa style.opacity + style.pointerEvents para la apariencia. ── */
+  function cargarLocalidades(idProvincia, selectedId) {
+    const sel = document.getElementById('e-localidad');
+    if (!sel) return;
+    const localidades = localidadesPorProvincia[idProvincia] || [];
+
+    sel.innerHTML = '';
+
+    if (localidades.length === 0) {
+      sel.innerHTML = '<option value="">Sin localidades cargadas</option>';
+      sel.style.opacity = '0.45';
+      sel.style.pointerEvents = 'none';
+      return;
+    }
+
+    const placeholder = document.createElement('option');
+    placeholder.value = '';
+    placeholder.disabled = true;
+    placeholder.selected = !selectedId;
+    placeholder.textContent = 'Seleccioná una localidad';
+    sel.appendChild(placeholder);
+
+    localidades.forEach(function(loc) {
+      const opt = document.createElement('option');
+      opt.value = loc.id_localidad;
+      opt.textContent = loc.nombre;
+      if (String(loc.id_localidad) === String(selectedId)) {
+        opt.selected = true;
+      }
+      sel.appendChild(opt);
+    });
+
+    sel.style.opacity = '1';
+    sel.style.pointerEvents = 'auto';
+  }
+
   document.addEventListener('DOMContentLoaded', function() {
+
+    /* ── Tabs (Candidato / Empresa) ── */
     const tabs = document.querySelectorAll('.role-tab');
     const formCand = document.getElementById('formCandidato');
     const formEmp = document.getElementById('formEmpresa');
 
-    // Restaurar tab activo si hubo error de validación en empresa
-    const hasEmpresaErrors = {
-      {
-        (old('cuit') || $errors - > has('cuit') || $errors - > has('nombre_empresa') || $errors - > has('razon_social')) ? 'true' : 'false'
-      }
-    };
-
-    if (hasEmpresaErrors) {
-      tabs.forEach(t => t.classList.remove('active'));
-      document.querySelector('[data-role="empresa"]').classList.add('active');
-      formCand.classList.remove('active');
-      formEmp.classList.add('active');
-    }
-
-    tabs.forEach(tab => {
-      tab.addEventListener('click', () => {
-        tabs.forEach(t => t.classList.remove('active'));
+    tabs.forEach(function(tab) {
+      tab.addEventListener('click', function() {
+        tabs.forEach(function(t) {
+          t.classList.remove('active');
+        });
         tab.classList.add('active');
 
-        const role = tab.dataset.role;
-        if (role === 'candidato') {
+        if (tab.dataset.role === 'candidato') {
           formCand.classList.add('active');
           formEmp.classList.remove('active');
         } else {
@@ -839,11 +1023,20 @@ $carreras = [
   });
   
 
-  /* ── Validación de formularios ── */
-  document.addEventListener('DOMContentLoaded', function() {
-    const formCand = document.getElementById('formCandidato');
-    const formEmp = document.getElementById('formEmpresa');
+    /* ── Provincia → carga localidades al cambiar ── */
+    const selectProv = document.getElementById('e-provincia');
+    selectProv.addEventListener('change', function() {
+      cargarLocalidades(this.value, null);
+    });
 
+    /* Restaurar localidades si hubo error de validación y había valores old() */
+    if (oldProvincia) {
+      cargarLocalidades(oldProvincia, oldLocalidad);
+    }
+
+    /* ══════════════════════════════════════════════════
+       VALIDACIÓN — Candidato
+    ══════════════════════════════════════════════════ */
     function showError(id, show) {
       const el = document.getElementById(id);
       if (el) el.classList.toggle('show', show);
@@ -855,8 +1048,12 @@ $carreras = [
     }
 
     function clearErrors(form) {
-      form.querySelectorAll('.error-msg').forEach(e => e.classList.remove('show'));
-      form.querySelectorAll('input, select').forEach(i => i.classList.remove('input-error'));
+      form.querySelectorAll('.error-msg').forEach(function(e) {
+        e.classList.remove('show');
+      });
+      form.querySelectorAll('input, select').forEach(function(i) {
+        i.classList.remove('input-error');
+      });
     }
 
     function validateEmail(email) {
@@ -868,10 +1065,10 @@ $carreras = [
     }
 
     function validateCUIT(cuit) {
-      const clean = cuit.replace(/\D/g, '');
-      return clean.length === 11;
+      return cuit.replace(/\D/g, '').length === 11;
     }
 
+    /* Candidato */
     if (formCand) {
       formCand.addEventListener('submit', function(e) {
         clearErrors(formCand);
@@ -899,7 +1096,7 @@ $carreras = [
         }
 
         const telefono = document.getElementById('c-telefono');
-        if (!telefono.value.trim() || !validatePhone(telefono.value.trim())) {
+        if (telefono.value.trim() && !validatePhone(telefono.value.trim())) {
           showError('err-c-telefono', true);
           setInputError('c-telefono', true);
           valid = false;
@@ -927,7 +1124,7 @@ $carreras = [
         }
 
         const pass2 = document.getElementById('c-password2');
-        if (pass2.value !== pass.value || !pass2.value) {
+        if (!pass2.value || pass2.value !== pass.value) {
           showError('err-c-password2', true);
           setInputError('c-password2', true);
           valid = false;
@@ -936,17 +1133,16 @@ $carreras = [
         if (!valid) e.preventDefault();
       });
 
-      // Limpiar errores al escribir
-      formCand.querySelectorAll('input, select').forEach(input => {
+      formCand.querySelectorAll('input, select').forEach(function(input) {
         input.addEventListener('input', function() {
           this.classList.remove('input-error');
-          const errId = 'err-' + this.id;
-          const errEl = document.getElementById(errId);
+          const errEl = document.getElementById('err-' + this.id);
           if (errEl) errEl.classList.remove('show');
         });
       });
     }
 
+    /* Empresa */
     if (formEmp) {
       formEmp.addEventListener('submit', function(e) {
         clearErrors(formEmp);
@@ -987,10 +1183,10 @@ $carreras = [
           valid = false;
         }
 
-        const ubicacion = document.getElementById('e-ubicacion');
-        if (!ubicacion.value.trim()) {
-          showError('err-e-ubicacion', true);
-          setInputError('e-ubicacion', true);
+        const provincia = document.getElementById('e-provincia');
+        if (provincia && !provincia.value) {
+          showError('err-e-provincia', true);
+          setInputError('e-provincia', true);
           valid = false;
         }
 
@@ -1002,7 +1198,7 @@ $carreras = [
         }
 
         const pass2 = document.getElementById('e-password2');
-        if (pass2.value !== pass.value || !pass2.value) {
+        if (!pass2.value || pass2.value !== pass.value) {
           showError('err-e-password2', true);
           setInputError('e-password2', true);
           valid = false;
@@ -1011,17 +1207,16 @@ $carreras = [
         if (!valid) e.preventDefault();
       });
 
-      // Limpiar errores al escribir
-      formEmp.querySelectorAll('input, select').forEach(input => {
+      formEmp.querySelectorAll('input, select').forEach(function(input) {
         input.addEventListener('input', function() {
           this.classList.remove('input-error');
-          const errId = 'err-' + this.id;
-          const errEl = document.getElementById(errId);
+          const errEl = document.getElementById('err-' + this.id);
           if (errEl) errEl.classList.remove('show');
         });
       });
     }
-  });
+
+  }); /* fin DOMContentLoaded */
 </script>
 
 @endsection
