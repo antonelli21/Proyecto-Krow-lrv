@@ -422,6 +422,25 @@
         color: var(--muted);
     }
     
+    .status-pending {
+        background: rgba(100, 100, 100, 0.1);
+        color: #9a9aaa;
+        border-color: rgba(100, 100, 100, 0.3);
+    }
+
+    .status-accepted {
+        background: rgba(46, 204, 154, 0.12);
+        color: #2ECC9A;
+        border-color: rgba(46, 204, 154, 0.3);
+    }
+
+    .status-rejected {
+        background: rgba(212, 24, 61, 0.10);
+        color: #e05577;
+        border-color: rgba(212, 24, 61, 0.3);
+    }
+
+
     @media (max-width: 768px) {
         .postulantes-container {
             padding: 16px;
@@ -443,6 +462,8 @@
             justify-content: center;
         }
     }
+
+    
 </style>
 
 <div class="postulantes-container">
@@ -461,7 +482,7 @@
     </div>
 
     <!-- Filtros -->
-    <<div class="filter-tabs">
+    <div class="filter-tabs">
         <button class="filter-btn active" data-estado="todos">Todos ({{ $postulantes->count() }})</button>
         <button class="filter-btn" data-estado="postulado">Postulados ({{ $postulantes->where('estado', 'postulado')->count() }})</button>
         <button class="filter-btn" data-estado="en_revision">En Revisión ({{ $postulantes->where('estado', 'en_revision')->count() }})</button>
@@ -482,11 +503,21 @@
                     <div class="applicant-career">{{ $postulante->carrera }}</div>
                     <div class="applicant-date">Postulado: {{ \Carbon\Carbon::parse($postulante->fecha_postulacion)->format('d/m/Y') }}</div>
                 </div>
-                <span class="status-badge status-{{ $postulante->estado }}">
-                    @if($postulante->estado == 'pending') Pendiente
-                    @elseif($postulante->estado == 'aceptado') Aceptado
-                    @else Rechazado
-                    @endif
+                
+                @php
+                    $estadoActual = $postulante->estado;
+                    $badgeConfig = [
+                        'postulado' => ['class' => 'status-pending', 'text' => '📋 Postulado'],
+                        'en_revision' => ['class' => 'status-accepted', 'text' => '🔍 En Revisión'],
+                        'preseleccionado' => ['class' => 'status-accepted', 'text' => '⭐ Preseleccionado'],
+                        'aceptado' => ['class' => 'status-accepted', 'text' => '✅ Aceptado'],
+                        'rechazado' => ['class' => 'status-rejected', 'text' => '❌ Rechazado'],
+                        'en_contacto' => ['class' => 'status-accepted', 'text' => '💬 En Contacto'],
+                    ];
+                    $config = $badgeConfig[$estadoActual] ?? $badgeConfig['postulado'];
+                @endphp
+                <span class="status-badge {{ $config['class'] }}">
+                    {{ $config['text'] }}
                 </span>
             </div>
 
@@ -510,7 +541,7 @@
                     </div>
 
                     <!-- Botones de acción izquierda -->
-                    @if($postulante->estado_original != 'Rechazado')
+                    @if($postulante->estado != 'rechazado' && $postulante->estado != 'aceptado')
                     <div class="action-buttons">
                         <button class="btn-accept" onclick="openConfirmDialog({{ $postulante->id }}, 'accept')">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -595,14 +626,17 @@
         
         // Obtener el estado actual del postulante
         const card = document.querySelector(`.applicant-card[data-id="${applicantId}"]`);
-        const estadoActual = card.querySelector('.status-badge').textContent;
+        let estadoActual = card.querySelector('.status-badge').textContent;
+
+        // Limpiar el texto: eliminar emojis y espacios extra
+        estadoActual = estadoActual.replace(/[📋🔍⭐✅❌💬]/g, '').trim();
         
         // Definir el siguiente estado según el actual
         const estadosSiguientes = {
-            'Postulado': 'En Revision',
-            'En Revision': 'Preseleccionado',
-            'Preseleccionado': 'En Contacto',
-            'En Contacto': 'En Contacto' // Si ya está en contacto, se queda ahí
+            'Postulado': 'en_revision',
+            'En Revision': 'preseleccionado',
+            'Preseleccionado': 'en_contacto',
+            'En Contacto': 'en_contacto'
         };
         
         if (action === 'accept') {
@@ -632,25 +666,35 @@
         
         // Mapeo de estados para clases CSS
         const estadoClaseMap = {
-            'Postulado': 'status-pending',
-            'En Revision': 'status-pending',
-            'Preseleccionado': 'status-accepted',
-            'En Contacto': 'status-accepted',
-            'Rechazado': 'status-rejected'
+            'postulado': 'status-pending',
+            'en_revision': 'status-pending',
+            'preseleccionado': 'status-accepted',
+            'en_contacto': 'status-accepted',
+            'aceptado': 'status-accepted',
+            'rechazado': 'status-rejected'
         };
-        
+
         const estadoFiltroMap = {
-            'Postulado': 'postulado',
-            'En Revision': 'en_revision',
-            'Preseleccionado': 'preseleccionado',
-            'En Contacto': 'en_contacto',
-            'Rechazado': 'rechazado'
+            'postulado': 'postulado',
+            'en_revision': 'en_revision',
+            'preseleccionado': 'preseleccionado',
+            'en_contacto': 'en_contacto',
+            'aceptado': 'aceptado',
+            'rechazado': 'rechazado'
         };
         
         // Actualizar badge
         const badge = card.querySelector('.status-badge');
         badge.className = `status-badge ${estadoClaseMap[nuevoEstadoOriginal] || 'status-pending'}`;
-        badge.textContent = nuevoEstadoOriginal;
+        const badgeTexts = {
+            'postulado': '📋 Postulado',
+            'en_revision': '🔍 En Revisión',
+            'preseleccionado': '⭐ Preseleccionado',
+            'en_contacto': '💬 En Contacto',
+            'aceptado': '✅ Aceptado',
+            'rechazado': '❌ Rechazado'
+        };
+        badge.textContent = badgeTexts[nuevoEstadoOriginal] || nuevoEstadoOriginal;
         
         // Actualizar data-estado para filtros
         card.setAttribute('data-estado', estadoFiltroMap[nuevoEstadoOriginal] || 'postulado');

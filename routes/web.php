@@ -115,7 +115,7 @@ Route::prefix('empresa')
         Route::get('/mensajes',     function () {       return view('empresa.mensajes-empresa');})->name('mensajes');
         Route::get('/oferta/{id}/postulantes', [EmpresaController::class, 'verPostulantes'])->name('postulantes'); 
         Route::get('/crear-oferta', function () {       return view('empresa.crear-oferta');})->name('crear-oferta');
-        Route::put('/postulacion/{id}/estado', [EmpresaController::class, 'actualizarEstadoPostulante'])->name('actualizar-estado');
+        Route::put('/empresa/postulacion/{id}/estado', [EmpresaController::class, 'actualizarEstadoPostulante'])->name('actualizar-estado');
     });
 
 /* ════════════════════════════════════════
