@@ -1,34 +1,34 @@
 document.addEventListener('DOMContentLoaded', () => {
- 
+
   /* ════════════════════════════════════════
      1. TEMA CLARO / OSCURO
      Persiste en localStorage.
      Aplica data-theme="dark" al <html>.
   ════════════════════════════════════════ */
-  const root      = document.documentElement;
-  const themeBtn  = document.getElementById('theme-toggle');
-  const iconSun   = themeBtn?.querySelector('.icon-sun');
-  const iconMoon  = themeBtn?.querySelector('.icon-moon');
- 
+  const root = document.documentElement;
+  const themeBtn = document.getElementById('theme-toggle');
+  const iconSun = themeBtn?.querySelector('.icon-sun');
+  const iconMoon = themeBtn?.querySelector('.icon-moon');
+
   // Aplicar tema guardado o dark por defecto
   const savedTheme = localStorage.getItem('krow-theme') || 'dark';
   applyTheme(savedTheme);
- 
+
   themeBtn?.addEventListener('click', () => {
     const next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
     applyTheme(next);
     localStorage.setItem('krow-theme', next);
   });
- 
+
   function applyTheme(theme) {
     root.setAttribute('data-theme', theme);
     if (iconSun && iconMoon) {
-      iconSun.style.display  = theme === 'dark'  ? 'block' : 'none';
+      iconSun.style.display = theme === 'dark' ? 'block' : 'none';
       iconMoon.style.display = theme === 'light' ? 'block' : 'none';
     }
   }
- 
- 
+
+
   /* ════════════════════════════════════════
      2. DROPDOWN MI CUENTA
      Abre/cierra con click.
@@ -36,21 +36,21 @@ document.addEventListener('DOMContentLoaded', () => {
      Navegación con flechas del teclado.
   ════════════════════════════════════════ */
   const accountToggle = document.getElementById('account-toggle');
-  const accountMenu   = document.getElementById('account-menu');
- 
+  const accountMenu = document.getElementById('account-menu');
+
   accountToggle?.addEventListener('click', (e) => {
     e.stopPropagation();
     const isOpen = accountMenu.classList.toggle('open');
     accountToggle.setAttribute('aria-expanded', isOpen);
   });
- 
+
   document.addEventListener('click', (e) => {
     if (!accountToggle?.contains(e.target) && !accountMenu?.contains(e.target)) {
       accountMenu?.classList.remove('open');
       accountToggle?.setAttribute('aria-expanded', 'false');
     }
   });
- 
+
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
       accountMenu?.classList.remove('open');
@@ -58,15 +58,15 @@ document.addEventListener('DOMContentLoaded', () => {
       accountToggle?.focus();
     }
   });
- 
+
   accountMenu?.addEventListener('keydown', (e) => {
     const items = [...accountMenu.querySelectorAll('.dropdown-item')];
-    const idx   = items.indexOf(document.activeElement);
+    const idx = items.indexOf(document.activeElement);
     if (e.key === 'ArrowDown') { e.preventDefault(); items[idx + 1]?.focus(); }
-    if (e.key === 'ArrowUp')   { e.preventDefault(); items[idx - 1]?.focus(); }
+    if (e.key === 'ArrowUp') { e.preventDefault(); items[idx - 1]?.focus(); }
   });
- 
- 
+
+
   /* ════════════════════════════════════════
      3. MENÚ HAMBURGUESA (mobile)
      Abre/cierra el nav en pantallas chicas.
@@ -74,13 +74,13 @@ document.addEventListener('DOMContentLoaded', () => {
   ════════════════════════════════════════ */
   const hamburger = document.getElementById('hamburger');
   const headerNav = document.getElementById('header-nav');
- 
+
   hamburger?.addEventListener('click', () => {
     const isOpen = headerNav.classList.toggle('open');
     hamburger.classList.toggle('open', isOpen);
     hamburger.setAttribute('aria-expanded', isOpen);
   });
- 
+
   headerNav?.querySelectorAll('.nav-link').forEach(link => {
     link.addEventListener('click', () => {
       headerNav.classList.remove('open');
@@ -88,8 +88,8 @@ document.addEventListener('DOMContentLoaded', () => {
       hamburger?.setAttribute('aria-expanded', 'false');
     });
   });
- 
- 
+
+
   /* ════════════════════════════════════════
      4. LINK ACTIVO EN NAV
      Marca el link que coincide con la URL actual.
@@ -100,8 +100,8 @@ document.addEventListener('DOMContentLoaded', () => {
       link.classList.add('active');
     }
   });
- 
- 
+
+
   /* ════════════════════════════════════════
      5. VALIDACIÓN DE FORMULARIOS
      Muestra error si un campo requerido está vacío.
@@ -110,7 +110,7 @@ document.addEventListener('DOMContentLoaded', () => {
   document.querySelectorAll('form[data-validate]').forEach(form => {
     form.addEventListener('submit', (e) => {
       let valid = true;
- 
+
       form.querySelectorAll('[required]').forEach(field => {
         field.classList.remove('input-error');
         if (!field.value.trim()) {
@@ -118,15 +118,15 @@ document.addEventListener('DOMContentLoaded', () => {
           valid = false;
         }
       });
- 
+
       if (!valid) {
         e.preventDefault();
         form.querySelector('.input-error')?.focus();
       }
     });
   });
- 
- 
+
+
   /* ════════════════════════════════════════
      6. FILTROS — checkboxes con estilo
      Agrega/quita clase .active en los checks custom.
@@ -136,8 +136,8 @@ document.addEventListener('DOMContentLoaded', () => {
       option.querySelector('.fcheck')?.classList.toggle('active');
     });
   });
- 
- 
+
+
   /* ════════════════════════════════════════
      7. SORT BAR — botones de ordenamiento
      Solo uno activo a la vez.
@@ -150,8 +150,8 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     });
   });
- 
- 
+
+
   /* ════════════════════════════════════════
      8. PAGINACIÓN
      Solo un botón activo a la vez.
@@ -164,40 +164,40 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     });
   });
- 
+
 });
- 
- 
+
+
 /* ════════════════════════════════════════
    9. FILTROS SIDEBAR - Accordions dinámicos
    Maneja apertura/cierre de acordeones
 ════════════════════════════════════════ */
- 
+
 function initFiltersSidebar() {
   // Accordions toggle
   const accordions = document.querySelectorAll('.filter-accordion');
-  
+
   accordions.forEach(accordion => {
-    const header  = accordion.querySelector('.accordion-header');
+    const header = accordion.querySelector('.accordion-header');
     const chevron = header?.querySelector('.accordion-chevron');
- 
+
     // Símbolo inicial según estado
     if (chevron) chevron.textContent = accordion.classList.contains('open') ? '−' : '+';
- 
+
     if (header && !accordion.hasAttribute('data-initialized')) {
       accordion.setAttribute('data-initialized', 'true');
- 
+
       header.addEventListener('click', () => {
         const isOpen = accordion.classList.toggle('open');
         if (chevron) chevron.textContent = isOpen ? '−' : '+';
       });
     }
   });
-  
+
   // Provincia y Localidad (cascada)
   const provinciaSelect = document.getElementById('provincia');
   const localidadSelect = document.getElementById('localidad');
-  
+
   if (provinciaSelect && localidadSelect) {
     // Datos de ejemplo - puedes expandir con más provincias/localidades
     const localidadesPorProvincia = {
@@ -208,11 +208,11 @@ function initFiltersSidebar() {
       'Mendoza': ['Mendoza Capital', 'San Rafael', 'Godoy Cruz', 'Luján de Cuyo'],
       'default': ['Seleccioná una provincia primero']
     };
-    
+
     provinciaSelect.addEventListener('change', (e) => {
       const provincia = e.target.value;
       const localidades = localidadesPorProvincia[provincia] || localidadesPorProvincia['default'];
-      
+
       // Limpiar y habilitar select de localidad
       localidadSelect.innerHTML = '<option value="" disabled selected>Seleccioná una localidad</option>';
       localidades.forEach(localidad => {
@@ -221,59 +221,59 @@ function initFiltersSidebar() {
         option.textContent = localidad;
         localidadSelect.appendChild(option);
       });
-      
+
       localidadSelect.disabled = false;
     });
   }
-  
+
   // Tags de tecnologías
   const inputTech = document.getElementById('tecnologia-input');
   const btnAdd = document.getElementById('btn-add-tag');
   const containerTags = document.getElementById('tags-container');
-  
+
   if (inputTech && btnAdd && containerTags) {
     let tagsList = [];
-    
+
     function createTag(text) {
       const cleanedText = text.trim();
-      
+
       if (cleanedText === '') return;
       if (tagsList.includes(cleanedText.toLowerCase())) {
         inputTech.value = '';
         return;
       }
-      
+
       tagsList.push(cleanedText.toLowerCase());
-      
+
       const tagDiv = document.createElement('div');
       tagDiv.classList.add('tech-tag');
-      
+
       tagDiv.innerHTML = `
         <span>${escapeHtml(cleanedText)}</span>
         <input type="hidden" name="tecnologias[]" value="${escapeHtml(cleanedText.toLowerCase())}">
         <button type="button" class="btn-remove-tag">&times;</button>
       `;
-      
+
       tagDiv.querySelector('.btn-remove-tag').addEventListener('click', () => {
         tagsList = tagsList.filter(t => t !== cleanedText.toLowerCase());
         tagDiv.remove();
       });
-      
+
       containerTags.appendChild(tagDiv);
       inputTech.value = '';
     }
-    
+
     // Función auxiliar para escapar HTML
     function escapeHtml(str) {
       const div = document.createElement('div');
       div.textContent = str;
       return div.innerHTML;
     }
-    
+
     btnAdd.addEventListener('click', () => {
       createTag(inputTech.value);
     });
-    
+
     inputTech.addEventListener('keydown', (e) => {
       if (e.key === 'Enter') {
         e.preventDefault();
@@ -282,45 +282,45 @@ function initFiltersSidebar() {
     });
   }
 }
- 
+
 // Inicializar filtros cuando el DOM esté listo
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', initFiltersSidebar);
 } else {
   initFiltersSidebar();
 }
- 
+
 /* ════════════════════════════════════════
    10. ANIMACIONES SMOOTH PARA FILTROS
    Efecto de fade al hacer scroll
 ════════════════════════════════════════ */
- 
+
 function animateFilterGroups() {
   const filterGroups = document.querySelectorAll('.filter-group, .filter-accordion');
-  
+
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
         entry.target.style.opacity = '0';
         entry.target.style.transform = 'translateY(20px)';
         entry.target.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
-        
+
         setTimeout(() => {
           entry.target.style.opacity = '1';
           entry.target.style.transform = 'translateY(0)';
         }, 50);
-        
+
         observer.unobserve(entry.target);
       }
     });
   }, { threshold: 0.1, rootMargin: '50px' });
-  
+
   filterGroups.forEach(group => {
     group.style.opacity = '0';
     observer.observe(group);
   });
 }
- 
+
 // Ejecutar animación después de cargar
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', animateFilterGroups);
@@ -331,22 +331,22 @@ if (document.readyState === 'loading') {
    SIDEBAR COLAPSABLE
 ════════════════════════════════════════ */
 document.addEventListener('DOMContentLoaded', () => {
-  const sidebarEl    = document.querySelector('.sidebar-filtros');
-  const toggleBtn    = document.getElementById('sidebar-toggle');
+  const sidebarEl = document.querySelector('.sidebar-filtros');
+  const toggleBtn = document.getElementById('sidebar-toggle');
   const toggleSymbol = document.getElementById('sidebar-toggle-symbol');
- 
+
   if (sidebarEl && toggleBtn) {
     const setToggleState = (collapsed) => {
-      toggleBtn.setAttribute('aria-label',   collapsed ? 'Expandir filtros' : 'Colapsar filtros');
+      toggleBtn.setAttribute('aria-label', collapsed ? 'Expandir filtros' : 'Colapsar filtros');
       toggleBtn.setAttribute('aria-pressed', collapsed ? 'true' : 'false');
       if (toggleSymbol) toggleSymbol.textContent = collapsed ? '+' : '−';
     };
- 
+
     // Restaurar estado guardado
     const collapsed = localStorage.getItem('krow_sidebar_collapsed') === 'true';
     if (collapsed) sidebarEl.classList.add('collapsed');
     setToggleState(collapsed);
- 
+
     toggleBtn.addEventListener('click', () => {
       const isCollapsed = sidebarEl.classList.toggle('collapsed');
       setToggleState(isCollapsed);
@@ -360,80 +360,80 @@ document.addEventListener('DOMContentLoaded', () => {
 /* ════════════════════════════════════════
    BETA AYUDA.PHP 
 ════════════════════════════════════════ */
-   (function() {
-        // ─── FAQ Acordeón ───
-        window.toggleFaq = function(btn) {
-            const item = btn.closest('.faq-item');
-            const isOpen = item.classList.contains('active');
+(function () {
+  // ─── FAQ Acordeón ───
+  window.toggleFaq = function (btn) {
+    const item = btn.closest('.faq-item');
+    const isOpen = item.classList.contains('active');
 
-            // Cerrar todos los demás (comportamiento tipo acordeón)
-            document.querySelectorAll('.faq-item.active').forEach(el => {
-                if (el !== item) {
-                    el.classList.remove('active');
-                    el.querySelector('.faq-question').setAttribute('aria-expanded', 'false');
-                }
-            });
+    // Cerrar todos los demás (comportamiento tipo acordeón)
+    document.querySelectorAll('.faq-item.active').forEach(el => {
+      if (el !== item) {
+        el.classList.remove('active');
+        el.querySelector('.faq-question').setAttribute('aria-expanded', 'false');
+      }
+    });
 
-            if (isOpen) {
-                item.classList.remove('active');
-                btn.setAttribute('aria-expanded', 'false');
-            } else {
-                item.classList.add('active');
-                btn.setAttribute('aria-expanded', 'true');
-            }
-        };
+    if (isOpen) {
+      item.classList.remove('active');
+      btn.setAttribute('aria-expanded', 'false');
+    } else {
+      item.classList.add('active');
+      btn.setAttribute('aria-expanded', 'true');
+    }
+  };
 
-        // ─── Formulario de contacto ───
-        const form = document.getElementById('form-contacto');
-        const btn = document.getElementById('btn-enviar');
-        const status = document.getElementById('form-status');
+  // ─── Formulario de contacto ───
+  const form = document.getElementById('form-contacto');
+  const btn = document.getElementById('btn-enviar');
+  const status = document.getElementById('form-status');
 
-        if (!form) return;
-        form.addEventListener('submit', function(e) {
-            e.preventDefault();
+  if (!form) return;
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
 
-            const nombre = form.nombre.value.trim();
-            const email = form.email.value.trim();
-            const asunto = form.asunto.value.trim();
-            const mensaje = form.mensaje.value.trim();
+    const nombre = form.nombre.value.trim();
+    const email = form.email.value.trim();
+    const asunto = form.asunto.value.trim();
+    const mensaje = form.mensaje.value.trim();
 
-            // Validación básica
-            if (!nombre || !email || !asunto || !mensaje) {
-                showStatus('Completá todos los campos obligatorios.', 'error');
-                return;
-            }
-            if (mensaje.length < 20) {
-                showStatus('El mensaje debe tener al menos 20 caracteres.', 'error');
-                return;
-            }
-            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-                showStatus('Ingresá un email válido.', 'error');
-                return;
-            }
+    // Validación básica
+    if (!nombre || !email || !asunto || !mensaje) {
+      showStatus('Completá todos los campos obligatorios.', 'error');
+      return;
+    }
+    if (mensaje.length < 20) {
+      showStatus('El mensaje debe tener al menos 20 caracteres.', 'error');
+      return;
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      showStatus('Ingresá un email válido.', 'error');
+      return;
+    }
 
-            // Simular envío (reemplazar por fetch a backend real)
-            btn.disabled = true;
-            btn.classList.add('loading');
-            status.classList.remove('show', 'success', 'error');
+    // Simular envío (reemplazar por fetch a backend real)
+    btn.disabled = true;
+    btn.classList.add('loading');
+    status.classList.remove('show', 'success', 'error');
 
-            setTimeout(function() {
-                btn.disabled = false;
-                btn.classList.remove('loading');
-                showStatus('¡Mensaje enviado con éxito! Te responderemos a la brevedad.', 'success');
-                form.reset();
+    setTimeout(function () {
+      btn.disabled = false;
+      btn.classList.remove('loading');
+      showStatus('¡Mensaje enviado con éxito! Te responderemos a la brevedad.', 'success');
+      form.reset();
 
-                // Ocultar mensaje después de 5 segundos
-                setTimeout(function() {
-                    status.classList.remove('show');
-                }, 5000);
-            }, 1500);
-        });
+      // Ocultar mensaje después de 5 segundos
+      setTimeout(function () {
+        status.classList.remove('show');
+      }, 5000);
+    }, 1500);
+  });
 
-        function showStatus(msg, type) {
-            status.textContent = msg;
-            status.className = 'form-status show ' + type;
-        }
-    })();
+  function showStatus(msg, type) {
+    status.textContent = msg;
+    status.className = 'form-status show ' + type;
+  }
+})();
 
 
 
@@ -442,65 +442,65 @@ document.addEventListener('DOMContentLoaded', () => {
 ════════════════════════════════════════ */
 
 
-        (function() {
-        const grid = document.getElementById('grid-empresas');
-        if (!grid) return;
-        const cards = Array.from(grid.querySelectorAll('.empresa-card'));
-        const empty = document.getElementById('empty-state');
-        const contador = document.getElementById('contador');
-        const inputBuscar = document.getElementById('buscador');
-        const selectRubro = document.getElementById('filtro-rubro');
-        const selectModalidad = document.getElementById('filtro-modalidad');
+(function () {
+  const grid = document.getElementById('grid-empresas');
+  if (!grid) return;
+  const cards = Array.from(grid.querySelectorAll('.empresa-card'));
+  const empty = document.getElementById('empty-state');
+  const contador = document.getElementById('contador');
+  const inputBuscar = document.getElementById('buscador');
+  const selectRubro = document.getElementById('filtro-rubro');
+  const selectModalidad = document.getElementById('filtro-modalidad');
 
-        function filtrar() {
-            const q = inputBuscar.value.trim().toLowerCase();
-            const rubro = selectRubro.value.toLowerCase();
-            const modalidad = selectModalidad.value.toLowerCase();
-            let visibles = 0;
+  function filtrar() {
+    const q = inputBuscar.value.trim().toLowerCase();
+    const rubro = selectRubro.value.toLowerCase();
+    const modalidad = selectModalidad.value.toLowerCase();
+    let visibles = 0;
 
-            cards.forEach(card => {
-                const nombre = card.dataset.nombre;
-                const cardRubro = card.dataset.rubro;
-                const ubicacion = card.dataset.ubicacion;
-                const mods = card.dataset.modalidades;
+    cards.forEach(card => {
+      const nombre = card.dataset.nombre;
+      const cardRubro = card.dataset.rubro;
+      const ubicacion = card.dataset.ubicacion;
+      const mods = card.dataset.modalidades;
 
-                const matchText = !q || nombre.includes(q) || cardRubro.includes(q) || ubicacion.includes(q);
-                const matchRubro = !rubro || cardRubro === rubro;
-                const matchModalidad = !modalidad || mods.split(',').includes(modalidad);
+      const matchText = !q || nombre.includes(q) || cardRubro.includes(q) || ubicacion.includes(q);
+      const matchRubro = !rubro || cardRubro === rubro;
+      const matchModalidad = !modalidad || mods.split(',').includes(modalidad);
 
-                if (matchText && matchRubro && matchModalidad) {
-                    card.style.display = '';
-                    visibles++;
-                } else {
-                    card.style.display = 'none';
-                }
-            });
+      if (matchText && matchRubro && matchModalidad) {
+        card.style.display = '';
+        visibles++;
+      } else {
+        card.style.display = 'none';
+      }
+    });
 
-            empty.style.display = visibles === 0 ? 'block' : 'none';
-            contador.textContent = visibles + ' empresa' + (visibles !== 1 ? 's' : '');
-        }
+    empty.style.display = visibles === 0 ? 'block' : 'none';
+    contador.textContent = visibles + ' empresa' + (visibles !== 1 ? 's' : '');
+  }
 
-        inputBuscar.addEventListener('input', filtrar);
-        selectRubro.addEventListener('change', filtrar);
-        selectModalidad.addEventListener('change', filtrar);
+  inputBuscar.addEventListener('input', filtrar);
+  selectRubro.addEventListener('change', filtrar);
+  selectModalidad.addEventListener('change', filtrar);
 
-        // Exponer globalmente para el onclick inline
-        window.togglePerfil = function(id) {
-            const expanded = document.getElementById('expanded-' + id);
-            const toggle = document.getElementById('toggle-' + id);
-            const isOpen = expanded.classList.contains('open');
+  // Exponer globalmente para el onclick inline
+  window.togglePerfil = function (id) {
+    const expanded = document.getElementById('expanded-' + id);
+    const toggle = document.getElementById('toggle-' + id);
+    const isOpen = expanded.classList.contains('open');
 
-            if (isOpen) {
-                expanded.classList.remove('open');
-                toggle.setAttribute('aria-expanded', 'false');
-                toggle.querySelector('span').textContent = 'Ver perfil completo';
-            } else {
-                expanded.classList.add('open');
-                toggle.setAttribute('aria-expanded', 'true');
-                toggle.querySelector('span').textContent = 'Ver menos';
-            }
-        };
-    })();
+    if (isOpen) {
+      expanded.classList.remove('open');
+      toggle.setAttribute('aria-expanded', 'false');
+      toggle.querySelector('span').textContent = 'Ver perfil completo';
+    } else {
+      expanded.classList.add('open');
+      toggle.setAttribute('aria-expanded', 'true');
+      toggle.querySelector('span').textContent = 'Ver menos';
+    }
+  };
+})();
 
 
 
@@ -512,7 +512,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 
-    function toggleDetalle(id, btn) {
+function toggleDetalle(id, btn) {
   const row = document.getElementById(id);
   const isOpen = row.classList.toggle('open');
   btn.textContent = isOpen ? 'Cerrar ↑' : 'Ver detalle ↓';
@@ -523,270 +523,98 @@ document.addEventListener('DOMContentLoaded', () => {
 /* ════════════════════════════════════════
    Registro BETA.PHP 
 ════════════════════════════════════════ */
-       /* ── Toggle password (global, fuera del IIFE) ── */
-        window.togglePass = function(inputId, btn) {
-            const input = document.getElementById(inputId);
-            if (!input || !btn) return;
-            const open = btn.querySelector('.icon-open');
-            const closed = btn.querySelector('.icon-closed');
-            if (input.type === 'password') {
-                input.type = 'text';
-                if (open) open.style.display = 'none';
-                if (closed) closed.style.display = 'inline';
-                btn.setAttribute('aria-label', 'Ocultar contraseña');
-            } else {
-                input.type = 'password';
-                if (open) open.style.display = 'inline';
-                if (closed) closed.style.display = 'none';
-                btn.setAttribute('aria-label', 'Mostrar contraseña');
-            }
-        };
+/* ── Toggle password (global, fuera del IIFE) ── */
+window.togglePass = function (inputId, btn) {
+  const input = document.getElementById(inputId);
+  if (!input || !btn) return;
+  const open = btn.querySelector('.icon-open');
+  const closed = btn.querySelector('.icon-closed');
+  if (input.type === 'password') {
+    input.type = 'text';
+    if (open) open.style.display = 'none';
+    if (closed) closed.style.display = 'inline';
+    btn.setAttribute('aria-label', 'Ocultar contraseña');
+  } else {
+    input.type = 'password';
+    if (open) open.style.display = 'inline';
+    if (closed) closed.style.display = 'none';
+    btn.setAttribute('aria-label', 'Mostrar contraseña');
+  }
+};
 
-        (function() {
-            const tabs = document.querySelectorAll('.role-tab');
-            const formCand = document.getElementById('formCandidato');
-            const formEmp = document.getElementById('formEmpresa');
+// formCand.addEventListener('submit', function (e) {
+//   if (ok) {
+//     // console.log('Registro candidato OK', Object.fromEntries(new FormData(formCand)));
+//     formCand.submit(); // Enviar a Laravel
+//   }
+// });
 
-            if (!formCand && !formEmp) return;
-            tabs.forEach(tab => {
-                tab.addEventListener('click', () => {
-                    tabs.forEach(t => t.classList.remove('active'));
-                    tab.classList.add('active');
-                    const role = tab.dataset.role;
-                    if (role === 'candidato') {
-                        formCand.classList.add('active');
-                        formEmp.classList.remove('active');
-                    } else {
-                        formEmp.classList.add('active');
-                        formCand.classList.remove('active');
-                    }
-                });
-            });
 
-            function isValidEmail(v) {
-                return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
-            }
+// formEmp.addEventListener('submit', function (ev) {
+//   if (ok) {
+//     // console.log('Registro empresa OK', Object.fromEntries(new FormData(formEmp)));
+//     formEmp.submit(); // Enviar a Laravel
+//   }
+// });
 
-            function isValidPhone(v) {
-                return /^[\d\s\-+()]{7,20}$/.test(v);
-            }
-
-            function isValidCuit(v) {
-                const digits = v.replace(/\D/g, '');
-                return digits.length === 11;
-            }
-
-            function showError(input, errEl, show) {
-                if (!input || !errEl) return;
-                if (show) {
-                    input.classList.add('error');
-                    errEl.classList.add('show');
-                } else {
-                    input.classList.remove('error');
-                    errEl.classList.remove('show');
-                }
-            }
-
-            /* ── Candidato ── */
-            const c = {
-                nombre: document.getElementById('c-nombre'),
-                apellido: document.getElementById('c-apellido'),
-                email: document.getElementById('c-email'),
-                telefono: document.getElementById('c-telefono'),
-                nacimiento: document.getElementById('c-nacimiento'),
-                carrera: document.getElementById('c-carrera'),
-                pass: document.getElementById('c-password'),
-                pass2: document.getElementById('c-password2')
-            };
-            const ce = {
-                nombre: document.getElementById('err-c-nombre'),
-                apellido: document.getElementById('err-c-apellido'),
-                email: document.getElementById('err-c-email'),
-                telefono: document.getElementById('err-c-telefono'),
-                nacimiento: document.getElementById('err-c-nacimiento'),
-                carrera: document.getElementById('err-c-carrera'),
-                pass: document.getElementById('err-c-password'),
-                pass2: document.getElementById('err-c-password2')
-            };
-            Object.keys(c).forEach(k => {
-                const el = c[k];
-                if (!el) return;
-                el.addEventListener('input', () => showError(el, ce[k], false));
-                el.addEventListener('change', () => showError(el, ce[k], false));
-            });
-            formCand.addEventListener('submit', function(e) {
-                e.preventDefault();
-                let ok = true;
-                if (!c.nombre.value.trim()) {
-                    showError(c.nombre, ce.nombre, true);
-                    ok = false;
-                }
-                if (!c.apellido.value.trim()) {
-                    showError(c.apellido, ce.apellido, true);
-                    ok = false;
-                }
-                if (!c.email.value.trim() || !isValidEmail(c.email.value.trim())) {
-                    showError(c.email, ce.email, true);
-                    ok = false;
-                }
-                if (!c.telefono.value.trim() || !isValidPhone(c.telefono.value.trim())) {
-                    showError(c.telefono, ce.telefono, true);
-                    ok = false;
-                }
-                if (!c.nacimiento.value) {
-                    showError(c.nacimiento, ce.nacimiento, true);
-                    ok = false;
-                }
-                if (!c.carrera.value) {
-                    showError(c.carrera, ce.carrera, true);
-                    ok = false;
-                }
-                if (!c.pass.value || c.pass.value.length < 6) {
-                    showError(c.pass, ce.pass, true);
-                    ok = false;
-                }
-                if (c.pass.value !== c.pass2.value || !c.pass2.value) {
-                    showError(c.pass2, ce.pass2, true);
-                    ok = false;
-                }
-                if (ok) {
-                    // console.log('Registro candidato OK', Object.fromEntries(new FormData(formCand)));
-                    formCand.submit(); // Enviar a Laravel
-                }
-            });
-
-            /* ── Empresa ── */
-            const e = {
-                nombre: document.getElementById('e-nombre'),
-                razon: document.getElementById('e-razon'),
-                email: document.getElementById('e-email'),
-                cuit: document.getElementById('e-cuit'),
-                telefono: document.getElementById('e-telefono'),
-                ubicacion: document.getElementById('e-ubicacion'),
-                pass: document.getElementById('e-password'),
-                pass2: document.getElementById('e-password2')
-            };
-            const ee = {
-                nombre: document.getElementById('err-e-nombre'),
-                razon: document.getElementById('err-e-razon'),
-                email: document.getElementById('err-e-email'),
-                cuit: document.getElementById('err-e-cuit'),
-                telefono: document.getElementById('err-e-telefono'),
-                ubicacion: document.getElementById('err-e-ubicacion'),
-                pass: document.getElementById('err-e-password'),
-                pass2: document.getElementById('err-e-password2')
-            };
-            Object.keys(e).forEach(k => {
-                const el = e[k];
-                if (!el) return;
-                el.addEventListener('input', () => showError(el, ee[k], false));
-                el.addEventListener('change', () => showError(el, ee[k], false));
-            });
-            e.cuit.addEventListener('input', function() {
-                let v = this.value.replace(/\D/g, '').slice(0, 11);
-                if (v.length > 2 && v.length <= 10) v = v.slice(0, 2) + '-' + v.slice(2, 10) + '-' + v.slice(10);
-                else if (v.length > 10) v = v.slice(0, 2) + '-' + v.slice(2, 10) + '-' + v.slice(10);
-                this.value = v;
-            });
-            formEmp.addEventListener('submit', function(ev) {
-                ev.preventDefault();
-                let ok = true;
-                if (!e.nombre.value.trim()) {
-                    showError(e.nombre, ee.nombre, true);
-                    ok = false;
-                }
-                if (!e.razon.value.trim()) {
-                    showError(e.razon, ee.razon, true);
-                    ok = false;
-                }
-                if (!e.email.value.trim() || !isValidEmail(e.email.value.trim())) {
-                    showError(e.email, ee.email, true);
-                    ok = false;
-                }
-                if (!isValidCuit(e.cuit.value)) {
-                    showError(e.cuit, ee.cuit, true);
-                    ok = false;
-                }
-                if (!e.telefono.value.trim() || !isValidPhone(e.telefono.value.trim())) {
-                    showError(e.telefono, ee.telefono, true);
-                    ok = false;
-                }
-                if (!e.ubicacion.value.trim()) {
-                    showError(e.ubicacion, ee.ubicacion, true);
-                    ok = false;
-                }
-                if (!e.pass.value || e.pass.value.length < 6) {
-                    showError(e.pass, ee.pass, true);
-                    ok = false;
-                }
-                if (e.pass.value !== e.pass2.value || !e.pass2.value) {
-                    showError(e.pass2, ee.pass2, true);
-                    ok = false;
-                }
-                if (ok) {
-                    // console.log('Registro empresa OK', Object.fromEntries(new FormData(formEmp)));
-                    formEmp.submit(); // Enviar a Laravel
-                }
-            });
-        })();
 
 /* ════════════════════════════════════════
    Login BETA.PHP 
 ════════════════════════════════════════ */
 
-        (function() {
-            const form = document.getElementById('loginForm');
-            if (!form) return;
-            const email = document.getElementById('email');
-            const password = document.getElementById('password');
-            const errEmail = document.getElementById('err-email');
-            const errPassword = document.getElementById('err-password');
+(function () {
+  const form = document.getElementById('loginForm');
+  if (!form) return;
+  const email = document.getElementById('email');
+  const password = document.getElementById('password');
+  const errEmail = document.getElementById('err-email');
+  const errPassword = document.getElementById('err-password');
 
-            function isValidEmail(v) {
-                return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
-            }
+  function isValidEmail(v) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+  }
 
-            function showError(input, errEl, show) {
-                if (show) {
-                    input.classList.add('error');
-                    errEl.classList.add('show');
-                } else {
-                    input.classList.remove('error');
-                    errEl.classList.remove('show');
-                }
-            }
+  function showError(input, errEl, show) {
+    if (show) {
+      input.classList.add('error');
+      errEl.classList.add('show');
+    } else {
+      input.classList.remove('error');
+      errEl.classList.remove('show');
+    }
+  }
 
-            email.addEventListener('input', () => showError(email, errEmail, false));
-            password.addEventListener('input', () => showError(password, errPassword, false));
+  email.addEventListener('input', () => showError(email, errEmail, false));
+  password.addEventListener('input', () => showError(password, errPassword, false));
 
-            form.addEventListener('submit', function(e) {
-                e.preventDefault();
-                let ok = true;
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    let ok = true;
 
-                const vEmail = email.value.trim();
-                if (!vEmail || !isValidEmail(vEmail)) {
-                    showError(email, errEmail, true);
-                    ok = false;
-                }
+    const vEmail = email.value.trim();
+    if (!vEmail || !isValidEmail(vEmail)) {
+      showError(email, errEmail, true);
+      ok = false;
+    }
 
-                const vPass = password.value;
-                if (!vPass) {
-                    showError(password, errPassword, true);
-                    ok = false;
-                }
+    const vPass = password.value;
+    if (!vPass) {
+      showError(password, errPassword, true);
+      ok = false;
+    }
 
-                if (ok) {
-                    form.submit(); // Enviar login a Laravel
-                }
-            });
-        })();
+    if (ok) {
+      form.submit(); // Enviar login a Laravel
+    }
+  });
+})();
 
 /* ════════════════════════════════════════
    ADMIN PANEL — Tabs / Filtros / Detalle
 ════════════════════════════════════════ */
 (function initAdmin() {
   /* ── TABS ── */
-  const tabs   = document.querySelectorAll('.admin-tab');
+  const tabs = document.querySelectorAll('.admin-tab');
   const panels = document.querySelectorAll('.admin-tab-panel');
   if (!tabs.length) return;
 
@@ -805,16 +633,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const row = document.getElementById('admin-det-' + id);
     if (!row) return;
     const isOpen = row.classList.toggle('open');
-    const label  = btn.querySelector('.det-label');
+    const label = btn.querySelector('.det-label');
     if (label) label.textContent = isOpen ? 'Cerrar ↑' : 'Ver perfil ↓';
   };
 
   /* ── FILTRO GENÉRICO ── */
   document.querySelectorAll('.admin-table-wrap').forEach(wrap => {
     const searchInput = wrap.closest('.admin-tab-panel')?.querySelector('.admin-search input');
-    const selects     = wrap.closest('.admin-tab-panel')?.querySelectorAll('.admin-filter-select');
-    const rows        = wrap.querySelectorAll('tbody tr:not(.admin-detalle-row)');
-    const emptyState  = wrap.closest('.admin-tab-panel')?.querySelector('.admin-empty');
+    const selects = wrap.closest('.admin-tab-panel')?.querySelectorAll('.admin-filter-select');
+    const rows = wrap.querySelectorAll('tbody tr:not(.admin-detalle-row)');
+    const emptyState = wrap.closest('.admin-tab-panel')?.querySelector('.admin-empty');
 
     const applyFilters = () => {
       const query = searchInput?.value.toLowerCase() ?? '';
@@ -825,7 +653,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       let visible = 0;
       rows.forEach(row => {
-        const matchSearch  = !query || (row.dataset.search?.toLowerCase() ?? '').includes(query);
+        const matchSearch = !query || (row.dataset.search?.toLowerCase() ?? '').includes(query);
         const matchFilters = Object.entries(activeFilters).every(([key, val]) =>
           !val || (row.dataset[key] ?? '').toLowerCase() === val
         );
@@ -851,26 +679,97 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  /* ── ACCIONES INLINE — delegadas al document una sola vez ── */
+  function showAdminNotice(message, type = 'success') {
+    let notice = document.querySelector('.admin-action-notice');
+
+    if (!notice) {
+      notice = document.createElement('div');
+      notice.className = 'admin-action-notice';
+      document.body.appendChild(notice);
+    }
+
+    notice.className = `admin-action-notice ${type} show`;
+    notice.textContent = message;
+
+    clearTimeout(notice.hideTimer);
+    notice.hideTimer = setTimeout(() => {
+      notice.classList.remove('show');
+    }, 2800);
+  }
+
+  function adminEntityLabel(rowId) {
+    if (rowId?.startsWith('e')) return 'Empresa';
+    if (rowId?.startsWith('o')) return 'Oferta';
+    return 'Alumno';
+  }
+
+  function removeAdminRow(rowId) {
+    document.querySelector(`tr[data-id="${rowId}"]`)?.remove();
+    document.getElementById('admin-det-' + rowId)?.remove();
+  }
+
+  document.addEventListener('click', async e => {
+    const deleteBtn = e.target.closest('[data-delete-type]');
+    if (!deleteBtn) return;
+
+    const type = deleteBtn.dataset.deleteType;
+    const id = deleteBtn.dataset.deleteId;
+    const rowId = deleteBtn.dataset.deleteRowId;
+    const name = deleteBtn.dataset.deleteName || 'este registro';
+
+    if (!type || !id || !rowId) return;
+    if (!confirm(`¿Seguro que querés eliminar "${name}"? Esta acción no se puede deshacer.`)) return;
+
+    const csrf = document.querySelector('meta[name="csrf-token"]')?.content;
+    const baseUrl = document.querySelector('meta[name="base-url"]')?.content?.replace(/\/$/, '');
+    const basePath = window.location.pathname.includes('/public/')
+      ? window.location.pathname.split('/public/')[0] + '/public'
+      : '';
+
+    deleteBtn.disabled = true;
+
+    try {
+      const response = await fetch(`${baseUrl || basePath}/api/${type}/${id}`, {
+        method: 'DELETE',
+        headers: {
+          'Accept': 'application/json',
+          ...(csrf ? { 'X-CSRF-TOKEN': csrf } : {}),
+        },
+      });
+
+      if (!response.ok && response.status !== 404) {
+        throw new Error('No se pudo eliminar el registro.');
+      }
+
+      removeAdminRow(rowId);
+      showAdminNotice(`${adminEntityLabel(rowId)} eliminado correctamente.`);
+    } catch (error) {
+      showAdminNotice(error.message || 'Ocurrió un error al eliminar.', 'error');
+      deleteBtn.disabled = false;
+    }
+  });
+
   document.addEventListener('click', e => {
     const btn = e.target.closest('[data-action]');
     if (!btn) return;
     const action = btn.dataset.action;
-    const id     = btn.dataset.id;
-    const row    = document.querySelector(`tr[data-id="${id}"]`);
-    const badge  = row?.querySelector('.badge-admin');
-    const mapa   = {
-      aprobar:   ['badge-aprobado',   'Aprobado'],
-      activar:   ['badge-activo',     'Activo'],
-      suspender: ['badge-suspendido', 'Suspendido'],
-      rechazar:  ['badge-rechazado',  'Rechazado'],
-      pausar:    ['badge-pausada',    'Pausada'],
-      publicar:  ['badge-publicada',  'Publicada'],
+    const id = btn.dataset.id;
+    const row = document.querySelector(`tr[data-id="${id}"]`);
+    const badge = row?.querySelector('.badge-admin');
+    const mapa = {
+      aprobar: ['badge-aprobado', 'Aprobado', 'aprobada'],
+      activar: ['badge-activo', 'Activo', 'aprobado'],
+      suspender: ['badge-suspendido', 'Suspendido', 'suspendido'],
+      rechazar: ['badge-rechazado', 'Rechazado', 'rechazada'],
+      pausar: ['badge-pausada', 'Pausada', 'pausada'],
+      publicar: ['badge-publicada', 'Publicada', 'publicada'],
     };
     if (badge && mapa[action]) {
       badge.className = 'badge-admin';
       badge.classList.add(mapa[action][0]);
       badge.textContent = mapa[action][1];
+      row.dataset.estado = mapa[action][1].toLowerCase();
+      showAdminNotice(`${adminEntityLabel(id)} ${mapa[action][2]} correctamente.`);
     }
     const det = document.getElementById('admin-det-' + id);
     if (det) det.classList.remove('open');
@@ -879,214 +778,149 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 
-
 (function () {
-    'use strict';
+  'use strict';
 
-    const BASE = document.querySelector('meta[name="base-url"]')?.content?.replace(/\/$/, '') ?? '';
+function renderRightPanel() {
+  const pageBody = document.getElementById('page-body');
+  const rolActual = pageBody?.dataset.rol || 'invitado';
 
-    const KROW_ROLES = {
+  document.querySelectorAll('.role-panel-content').forEach(panel => {
+    panel.style.display =
+      panel.dataset.panelRole === rolActual ? 'block' : 'none';
+  });
+}
 
-        invitado: {
-            rightPanel: () => `
-                <div class="panel-card cta-card">
-                    <p class="panel-card-title">Encontrá tu primer trabajo</p>
-                    <p style="margin-bottom:16px;">
-                        Registrate gratis y accedé a cientos de ofertas para estudiantes UTN.
-                    </p>
-                    <a href="${BASE}/registro" class="btn-primary-sm"
-                       style="display:block;text-align:center;margin-bottom:8px;">
-                        Crear cuenta
-                    </a>
-                    <a href="${BASE}/login" class="btn-ghost-sm"
-                       style="display:block;text-align:center;">
-                        Ya tengo cuenta
-                    </a>
-                </div>
-                <div class="panel-card featured-card">
-                    <div class="featured-badge"><i class="bi bi-star-fill"></i> Destacado</div>
-                    <p class="featured-title">Senior Backend Engineer</p>
-                    <p class="featured-company">MegaCorp Technologies</p>
-                    <button class="btn-quick-apply" onclick="location.href='${BASE}/login'">
-                        Postularme rápido
-                    </button>
-                </div>
-            `,
-        },
+  /* ── Bookmarks ── */
+  function initBookmarks() {
+    document.getElementById('main-content')
+      ?.addEventListener('click', function (e) {
+        const btn = e.target.closest('.btn-bookmark');
+        if (!btn) return;
+        const saved = btn.classList.toggle('saved');
+        const icon = btn.querySelector('i');
+        if (icon) icon.className = saved ? 'bi bi-bookmark-fill' : 'bi bi-bookmark';
+      });
+  }
 
-        estudiante: {
-            rightPanel: () => `
-                <div class="panel-card">
-                    <p class="panel-card-title">Mis Estadísticas</p>
-                    <div class="stat-row">
-                        <span class="stat-label">Postulaciones enviadas</span>
-                        <span class="stat-value">24</span>
-                    </div>
-                    <div class="stat-row">
-                        <span class="stat-label">Empresas que te contactaron</span>
-                        <span class="stat-value">8</span>
-                    </div>
-                    <div class="stat-row">
-                        <span class="stat-label">En revisión</span>
-                        <span class="stat-value">12</span>
-                    </div>
-                </div>
-                <div class="panel-card featured-card">
-                    <div class="featured-badge"><i class="bi bi-star-fill"></i> Destacado</div>
-                    <p class="featured-title">Senior Backend Engineer</p>
-                    <p class="featured-company">MegaCorp Technologies</p>
-                    <button class="btn-quick-apply">Postularme rápido</button>
-                </div>
-                <div class="panel-card">
-                    <p class="panel-card-title">Últimas empresas vistas</p>
-                    <div class="companies-grid">
-                        <div class="company-thumb"><span>TC</span></div>
-                        <div class="company-thumb"><span>DS</span></div>
-                        <div class="company-thumb"><span>MC</span></div>
-                        <div class="company-thumb"><span>DC</span></div>
-                    </div>
-                </div>
-            `,
-        },
+  /* ── Sort ── */
+  function initSort() {
+    const select = document.getElementById('sort-select');
+    const main = document.getElementById('main-content');
+    if (!select || !main) return;
 
-        empresa: {
-            rightPanel: () => `
-                <div class="panel-card">
-                    <p class="panel-card-title">Panel Empresa</p>
-                    <div class="stat-row">
-                        <span class="stat-label">Ofertas activas</span>
-                        <span class="stat-value">7</span>
-                    </div>
-                    <div class="stat-row">
-                        <span class="stat-label">Postulantes recibidos</span>
-                        <span class="stat-value">143</span>
-                    </div>
-                    <div class="stat-row">
-                        <span class="stat-label">Entrevistas pautadas</span>
-                        <span class="stat-value">12</span>
-                    </div>
-                    <button class="btn-new-offer"
-                            onclick="location.href='${BASE}/empresa/ofertas/nueva'">
-                        + Nueva Oferta
-                    </button>
-                </div>
-                <div class="panel-card">
-                    <p class="panel-card-title">Postulantes destacados</p>
-                    <div class="companies-grid">
-                        <div class="company-thumb"><span>MA</span></div>
-                        <div class="company-thumb"><span>LG</span></div>
-                        <div class="company-thumb"><span>RD</span></div>
-                        <div class="company-thumb"><span>SV</span></div>
-                    </div>
-                </div>
-            `,
-        },
+    select.addEventListener('change', function () {
+      const cards = [...main.querySelectorAll('.job-card')];
+      if (!cards.length) return;
 
-        admin: {
-            rightPanel: () => `
-                <div class="panel-card">
-                    <p class="panel-card-title">Administración</p>
-                    <div class="admin-alert">
-                        <i class="bi bi-exclamation-triangle-fill"></i>
-                        3 ofertas pendientes de revisión
-                    </div>
-                    <div class="admin-alert"
-                         style="background:rgba(46,204,154,.08);border-color:rgba(46,204,154,.3);color:var(--accent);">
-                        <i class="bi bi-people-fill"></i>
-                        8 nuevos registros hoy
-                    </div>
-                    <div class="stat-row">
-                        <span class="stat-label">Usuarios totales</span>
-                        <span class="stat-value">1.2k</span>
-                    </div>
-                    <div class="stat-row">
-                        <span class="stat-label">Empresas activas</span>
-                        <span class="stat-value">38</span>
-                    </div>
-                    <div class="stat-row">
-                        <span class="stat-label">Ofertas publicadas</span>
-                        <span class="stat-value">124</span>
-                    </div>
-                </div>
-            `,
-        },
-    };
+      cards.sort((a, b) => {
+        const sa = Number(a.dataset.salario ?? 0);
+        const sb = Number(b.dataset.salario ?? 0);
+        const fa = Number(a.dataset.fecha ?? 0);
+        const fb = Number(b.dataset.fecha ?? 0);
+        if (this.value === 'salario-asc') return sa - sb;
+        if (this.value === 'salario-desc') return sb - sa;
+        return fb - fa;
+      });
 
-    /* ── Helpers ── */
-    function getRol()       { return document.documentElement.dataset.role ?? 'invitado'; }
-    function getConfig(rol) { return KROW_ROLES[rol] ?? KROW_ROLES.invitado; }
-
-    /* ── Right panel ── */
-    function renderRightPanel() {
-        const panel = document.getElementById('right-panel');
-        if (!panel) return;
-        panel.innerHTML = getConfig(getRol()).rightPanel();
-    }
-
-    /* ── Bookmarks ── */
-    function initBookmarks() {
-        document.getElementById('main-content')
-            ?.addEventListener('click', function (e) {
-                const btn = e.target.closest('.btn-bookmark');
-                if (!btn) return;
-                const saved = btn.classList.toggle('saved');
-                const icon  = btn.querySelector('i');
-                if (icon) icon.className = saved ? 'bi bi-bookmark-fill' : 'bi bi-bookmark';
-            });
-    }
-
-    /* ── Sort ── */
-    function initSort() {
-        const select = document.getElementById('sort-select');
-        const main   = document.getElementById('main-content');
-        if (!select || !main) return;
-
-        select.addEventListener('change', function () {
-            const cards = [...main.querySelectorAll('.job-card')];
-            if (!cards.length) return;
-
-            cards.sort((a, b) => {
-                const sa = Number(a.dataset.salario ?? 0);
-                const sb = Number(b.dataset.salario ?? 0);
-                const fa = Number(a.dataset.fecha   ?? 0);
-                const fb = Number(b.dataset.fecha   ?? 0);
-                if (this.value === 'salario-asc')  return sa - sb;
-                if (this.value === 'salario-desc') return sb - sa;
-                return fb - fa;
-            });
-
-            const ref = main.querySelector('.pagination');
-            cards.forEach(c => main.insertBefore(c, ref ?? null));
-        });
-    }
-
-    /* ── Role switcher (solo dev) ── */
-    function initRoleSwitcher() {
-        const switcher = document.getElementById('role-switcher');
-        if (!switcher) return;
-
-        switcher.addEventListener('click', function (e) {
-            const btn = e.target.closest('.role-btn');
-            if (!btn) return;
-
-            const nuevoRol = btn.dataset.rol;
-            if (!nuevoRol || !KROW_ROLES[nuevoRol]) return;
-
-            document.documentElement.dataset.role = nuevoRol;
-            renderRightPanel();
-
-            switcher.querySelectorAll('.role-btn').forEach(b => {
-                b.classList.toggle('active', b.dataset.rol === nuevoRol);
-            });
-        });
-    }
-
-    /* ── Init ── */
-    document.addEventListener('DOMContentLoaded', () => {
-        renderRightPanel();
-        initBookmarks();
-        initSort();
-        initRoleSwitcher();
+      const ref = main.querySelector('.pagination');
+      cards.forEach(c => main.insertBefore(c, ref ?? null));
     });
+  }
 
+  /* ── Role switcher (Desarrollo / Simulación) ── */
+  function initRoleSwitcher() {
+    const switcher = document.getElementById('role-switcher');
+    if (!switcher) return;
+
+    switcher.addEventListener('click', function (e) {
+      const btn = e.target.closest('.role-btn');
+      if (!btn) return;
+
+      const nuevoRol = btn.dataset.rol;
+      document.documentElement.dataset.role = nuevoRol;
+
+      // Llama a la función simplificada para alternar las vistas
+      renderRightPanel();
+
+      switcher.querySelectorAll('.role-btn').forEach(b => {
+        b.classList.toggle('active', b.dataset.rol === nuevoRol);
+      });
+    });
+  }
+
+  /* ── Init general del módulo ── */
+  document.addEventListener('DOMContentLoaded', () => {
+    renderRightPanel();
+    initBookmarks();
+    initSort();
+    initRoleSwitcher();
+  });
 })();
+
+
+/* ════════════════════════════════════════
+   CONFIGURACIÓN — JS
+   Solo se carga en esta página.
+════════════════════════════════════════ */
+
+document.addEventListener('DOMContentLoaded'), () => {
+
+  /* ── Detectar dispositivo ── */
+  const deviceEl = document.getElementById('config-device');
+  if (deviceEl) {
+    const ua = navigator.userAgent;
+    const browser = ua.includes('Chrome') && !ua.includes('Edg') ? 'Chrome'
+      : ua.includes('Edg') ? 'Edge'
+        : ua.includes('Firefox') ? 'Firefox'
+          : ua.includes('Safari') ? 'Safari'
+            : 'Navegador desconocido';
+    const os = ua.includes('Windows') ? 'Windows'
+      : ua.includes('Mac') ? 'macOS'
+        : ua.includes('Android') ? 'Android'
+          : ua.includes('iPhone') ? 'iPhone'
+            : ua.includes('Linux') ? 'Linux'
+              : 'Desconocido';
+    deviceEl.textContent = `${browser} — ${os}`;
+  }
+}
+//   /* ── Confirmación zona de peligro ── */
+//   document.getElementById('form-logout-all')
+//     ?.addEventListener('submit', (e) => {
+//       if (!confirm('¿Cerrar sesión en todos los dispositivos?')) {
+//         e.preventDefault();
+//       }
+//     });
+
+//   (function () {
+//     const btnGuardar = document.getElementById('btn-guardar-oferta');
+//     if (!btnGuardar) return;
+
+//     btnGuardar.addEventListener('click', function () {
+//       const guardado = btnGuardar.classList.toggle('guardado');
+//       const icon = btnGuardar.querySelector('svg');
+
+//       if (guardado) {
+//         if (icon) icon.setAttribute('fill', 'currentColor');
+//         btnGuardar.innerHTML = btnGuardar.innerHTML.replace('Guardar oferta', 'Guardado');
+//         btnGuardar.style.borderColor = 'var(--accent)';
+//         btnGuardar.style.color = 'var(--accent)';
+//       } else {
+//         if (icon) icon.setAttribute('fill', 'none');
+//         btnGuardar.innerHTML = btnGuardar.innerHTML.replace('Guardado', 'Guardar oferta');
+//         btnGuardar.style.borderColor = '';
+//         btnGuardar.style.color = '';
+//       }
+
+//       // Llamada al backend (opcional, descomentar cuando exista la ruta)
+// //       // fetch(`/ofertas/${btnGuardar.dataset.id}/guardar`, {
+// //       //     method: 'POST',
+// //       //     headers: {
+// //       //         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content,
+//       //         'Accept': 'application/json',
+//       //     }
+//       // });
+//     });
+//   })();
+
+// })

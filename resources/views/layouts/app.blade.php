@@ -3,6 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="csrf-token" content="{{ csrf_token() }}">
+  <meta name="base-url" content="{{ url('') }}">
   <title>@yield('title', 'KROW — Banco de Trabajo')</title>
   <link rel="icon" type="image/x-icon" href="{{ asset('img/logo_claro.png') }}">
   <link rel="stylesheet" href="{{ asset('css/styles.css') }}">
@@ -59,14 +61,11 @@
         </svg>
       </button>
 
-      @auth
-        <button class="action-btn notif-btn" aria-label="Notificaciones">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
-            <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
-          </svg>
-        </button>
+    @auth
+      @include('layouts.notificaciones_dropdown')
+    @endauth
 
+    @auth
         <div class="dropdown" id="account-dropdown">
           <button class="account-btn" id="account-toggle" aria-haspopup="true" aria-expanded="false">
             <div class="account-avatar">{{ strtoupper(substr($rol, 0, 1)) }}</div>
@@ -88,10 +87,6 @@
             <a href="{{ route('mensajes') }}" class="dropdown-item" role="menuitem">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
               Mensajes
-            </a>
-            <a href="{{ route('notificaciones') }}" class="dropdown-item" role="menuitem">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-              Notificaciones
             </a>
             <a href="{{ route('configuracion') }}" class="dropdown-item" role="menuitem">
              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -125,10 +120,9 @@
   </div>
 </header>
 
-<main style="flex:1; display:flex; flex-direction:column; overflow:hidden;">
+<main style="flex:1; display:flex; flex-direction:column; overflow:auto;">
   @yield('content')
 </main>
-
 {{-- ════ FOOTER ════ --}}
 <footer>
   <div class="site-footer">

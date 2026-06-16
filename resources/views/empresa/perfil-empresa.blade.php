@@ -47,7 +47,7 @@
  
             {{-- Acciones --}}
             <div style="display: flex; flex-direction: column; gap: 10px; min-width: 160px;">
-                <a href="{{ url('empresa/perfil-empresa-editar') }}" class="btn-accent" style="justify-content: center; text-align: center;">
+                <a href="{{ route('empresa.perfil.editar') }}" class="btn-accent">
                     <i class="fas fa-edit"></i> Editar perfil
                 </a>
                 <a href="{{ url('empresa/ofertas') }}" class="btn-outline" style="justify-content: center; text-align: center;">

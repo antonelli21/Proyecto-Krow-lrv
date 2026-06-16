@@ -3,7 +3,6 @@
 @section('title', 'KROW — Portal de Empleos')
 
 @section('content')
-
 @php
     $rol     = auth()->check() ? (auth()->user()->rol ?? 'invitado') : 'invitado';
     $ofertas = $ofertas ?? collect();
@@ -39,14 +38,17 @@
         @forelse ($ofertas as $oferta)
 
             @php
-                {{ }}
-                $id         = data_get($oferta, 'id',              $loop->index);
+                $id         = data_get($oferta, 'id',              data_get($oferta, 'id_oferta', $loop->index));
                 $titulo     = data_get($oferta, 'titulo',          '');
-                $empresa    = data_get($oferta, 'empresa.nombre',  data_get($oferta, 'empresa', ''));
+                $empresa    = data_get($oferta, 'empresa.nombre_empresa', data_get($oferta, 'empresa.nombre', data_get($oferta, 'empresa', '')));
                 $modalidad  = data_get($oferta, 'modalidad',       '');
                 $salario    = data_get($oferta, 'salario',         '');
+                if (!$salario && data_get($oferta, 'salario_min')) {
+                    $salario = '$' . number_format(data_get($oferta, 'salario_min'), 0, ',', '.')
+                        . (data_get($oferta, 'salario_max') ? ' - $' . number_format(data_get($oferta, 'salario_max'), 0, ',', '.') : '');
+                }
                 $salarioNum = data_get($oferta, 'salario_num',     0);
-                $tipo       = data_get($oferta, 'tipo',            '');
+                $tipo       = data_get($oferta, 'tipo',            data_get($oferta, 'tipo_oferta', ''));
                 $esNueva    = data_get($oferta, 'es_nueva',        false);
                 $descripcion= data_get($oferta, 'descripcion',     '');
                 $fechaTxt   = data_get($oferta, 'fecha_texto',     '');
@@ -71,13 +73,6 @@
                             <span>{{ $empresa }}</span> &bull; <span>{{ $modalidad }}</span>
                         </p>
                     </div>
-                    <button
-                        class="btn-bookmark{{ $guardado ? ' saved' : '' }}"
-                        aria-label="Guardar oferta"
-                        data-oferta-id="{{ $id }}"
-                    >
-                        <i class="bi bi-bookmark{{ $guardado ? '-fill' : '' }}"></i>
-                    </button>
                 </div>
 
                 <div class="job-badges">
@@ -98,17 +93,12 @@
 
                 <div class="job-footer">
                     <span class="job-date">{{ $fechaTxt }}</span>
-                    @if (is_numeric($id))
-                        <a href="{{ route('ofertas.show', $id) }}" class="btn-ver">Ver oferta</a>
-                    @else
-                        <button class="btn-ver">Ver oferta</button>
-                    @endif
+                    <a href="{{ route('ofertas.detalle', $id) }}" class="btn-ver">Ver oferta</a>
                 </div>
             </article>
 
         @empty
 
-            {{-- Mock de desarrollo --}}
             <article class="job-card" data-id="mock-1" data-salario="450000" data-fecha="9999999999">
                 <div class="job-card-top">
                     <div class="company-logo" aria-hidden="true">MC</div>
@@ -116,9 +106,6 @@
                         <h3 class="job-title">Fullstack Developer Node / React</h3>
                         <p class="job-meta"><span>MegaCorp</span> &bull; <span>Remoto</span></p>
                     </div>
-                    <button class="btn-bookmark" aria-label="Guardar oferta">
-                        <i class="bi bi-bookmark"></i>
-                    </button>
                 </div>
                 <div class="job-badges">
                     <span class="badge badge-salary">$450.000 / mes</span>
@@ -130,7 +117,7 @@
                 </p>
                 <div class="job-footer">
                     <span class="job-date">Publicado hace 2 días</span>
-                    <button class="btn-ver">Ver oferta</button>
+                    <a href="{{ route('ofertas.detalle', 1) }}" class="btn-ver">Ver oferta</a>
                 </div>
             </article>
 
@@ -141,9 +128,6 @@
                         <h3 class="job-title">Analista QA Semi-Senior</h3>
                         <p class="job-meta"><span>DevSoft</span> &bull; <span>Híbrido</span></p>
                     </div>
-                    <button class="btn-bookmark" aria-label="Guardar oferta">
-                        <i class="bi bi-bookmark"></i>
-                    </button>
                 </div>
                 <div class="job-badges">
                     <span class="badge badge-salary">$300.000 / mes</span>
@@ -154,7 +138,7 @@
                 </p>
                 <div class="job-footer">
                     <span class="job-date">Publicado hace 5 días</span>
-                    <button class="btn-ver">Ver oferta</button>
+                    <a href="{{ route('ofertas.detalle', 1) }}" class="btn-ver">Ver oferta</a>
                 </div>
             </article>
 
@@ -182,7 +166,21 @@
     </main>
 
     {{-- RIGHT PANEL --}}
-    <aside id="right-panel" class="right-panel" aria-label="Panel lateral"></aside>
+   <div id="right-panel">
+    <div class="role-panel-content" data-panel-role="invitado">
+        @include('layouts.partials.invitado')
+    </div>
+    <div class="role-panel-content" data-panel-role="estudiante" style="display: none;">
+        @include('layouts.partials.estudiante')
+    </div>
+    <div class="role-panel-content" data-panel-role="empresa" style="display: none;">
+        @include('layouts.partials.empresa')
+    </div>
+    <div class="role-panel-content" data-panel-role="admin" style="display: none;">
+        @include('layouts.partials.admin')
+    </div>
+    </div>
+
 
 </div>{{-- /page-body --}}
 

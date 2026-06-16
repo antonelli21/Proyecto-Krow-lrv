@@ -7,6 +7,55 @@ use Illuminate\Http\Request;
 
 class OfertaController extends Controller
 {
+        // public function detalle($id)
+        // {
+        //     $oferta = Oferta::with('empresa')->findOrFail($id);
+        //     $oferta->ya_postulado = auth()->check()
+        //         ? $oferta->postulaciones()->where('user_id', auth()->id())->exists()
+        //         : false;
+
+        //     return view('ver-oferta', compact('oferta'));
+        // }
+
+
+public function detalle($id_oferta)
+{
+    $oferta = (object)[
+        'id'                    => 1,
+        'titulo'                => 'Desarrollador Full Stack',
+        'modalidad'             => 'Remoto',
+        'tipo_trabajo'          => 'full-time',
+        'rango_salarial'        => 'USD 3000 - 5000',
+        'experiencia_requerida' => 'semi-senior',
+        'descripcion'           => 'Buscamos un desarrollador proactivo para sumarse al equipo de core-banking. Trabajarás con tecnologías modernas en un equipo ágil.',
+        'requisitos'            => "2+ años de experiencia en Laravel\nConocimiento de React o Vue\nExperiencia con bases de datos relacionales\nInglés intermedio",
+        'tecnologias'           => ['Laravel', 'React', 'PostgreSQL', 'Docker'],
+        'estado'                => 'activa',
+        'ubicacion'             => 'Buenos Aires, Argentina',
+        'fecha_texto'           => 'hace 2 días',
+        'ya_postulado'          => false,
+        'empresa'               => (object)[
+            'nombre_empresa' => 'MegaCorp Technologies',
+            'slug'           => 'megacorp-technologies',
+            'ubicacion'      => 'Buenos Aires, Argentina',
+        ],
+    ];
+
+    return view('empresa.oferta-detalle', compact('oferta'));
+}
+
+    public function postular($id_oferta)
+    {
+    // aquí guardás la postulación en la BD cuando tengas el modelo
+    return back()->with('postulado', true);
+    }
+
+
+
+
+
+
+
     public function index()
     {
         return response()->json(Oferta::with(['empresa', 'localidad', 'provincia', 'carreras', 'habilidades'])->get());
@@ -66,8 +115,64 @@ class OfertaController extends Controller
 
     public function destroy(Oferta $oferta)
     {
+        $oferta->carreras()->detach();
+        $oferta->habilidades()->detach();
+        $oferta->postulaciones()->delete();
         $oferta->delete();
 
         return response()->noContent();
+    }
+
+
+
+
+
+
+
+
+    private function ofertaDemo(string $id): array
+    {
+        $ofertas = [
+            'mock-1' => [
+                'titulo' => 'Fullstack Developer Node / React',
+                'empresa' => ['nombre_empresa' => 'MegaCorp'],
+                'modalidad' => 'Remoto',
+                'tipo_oferta' => 'Full-Time',
+                'experiencia_requerida' => 'Junior',
+                'salario_min' => 450000,
+                'salario_max' => 650000,
+                'descripcion' => 'Buscamos un desarrollador proactivo para sumarse al equipo de core-banking, participando en el desarrollo de nuevas funcionalidades, mantenimiento de APIs y mejora continua del producto.',
+                'requisitos' => "Experiencia con Node.js y React\nConocimientos de bases de datos SQL\nManejo de Git\nBuenas practicas de testing",
+                'habilidades' => [
+                    ['nombre' => 'Node.js'],
+                    ['nombre' => 'React'],
+                    ['nombre' => 'SQL'],
+                    ['nombre' => 'Git'],
+                ],
+                'estado' => 'Activa',
+            ],
+            'mock-2' => [
+                'titulo' => 'Analista QA Semi-Senior',
+                'empresa' => ['nombre_empresa' => 'DevSoft'],
+                'modalidad' => 'Hibrido',
+                'tipo_oferta' => 'Part-Time',
+                'experiencia_requerida' => 'Semi Senior',
+                'salario_min' => 300000,
+                'salario_max' => 420000,
+                'descripcion' => 'Incorporamos QA con experiencia en testing funcional y automatizado para acompanar releases de productos web.',
+                'requisitos' => "Testing funcional\nDiseno de casos de prueba\nAutomatizacion basica\nComunicacion con equipos de desarrollo",
+                'habilidades' => [
+                    ['nombre' => 'QA'],
+                    ['nombre' => 'Selenium'],
+                    ['nombre' => 'Jira'],
+                ],
+                'estado' => 'Activa',
+            ],
+        ];
+
+        abort_unless(isset($ofertas[$id]), 404);
+
+        
+        return $ofertas[$id];
     }
 }

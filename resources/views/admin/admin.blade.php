@@ -137,7 +137,9 @@
                 <button class="btn-icon btn-mensaje" title="Enviar mensaje">
                   <i class="bi bi-envelope"></i>
                 </button>
-                <button class="btn-icon btn-eliminar" title="Eliminar">
+                <button class="btn-icon btn-eliminar" title="Eliminar"
+                        data-delete-type="estudiantes" data-delete-id="{{ $a['id'] }}"
+                        data-delete-row-id="{{ $a['id'] }}" data-delete-name="{{ $a['nombre'] }}">
                   <i class="bi bi-trash"></i>
                 </button>
               </div>
@@ -167,8 +169,10 @@
                     <button class="btn-admin-suspender" data-action="suspender" data-id="{{ $a['id'] }}">
                       <i class="bi bi-slash-circle"></i> Suspender
                     </button>
-                    <button class="btn-admin-rechazar" data-action="rechazar" data-id="{{ $a['id'] }}">
-                      <i class="bi bi-x-circle"></i> Eliminar
+                    <button class="btn-admin-rechazar"
+                            data-delete-type="estudiantes" data-delete-id="{{ $a['id'] }}"
+                            data-delete-row-id="{{ $a['id'] }}" data-delete-name="{{ $a['nombre'] }}">
+                      <i class="bi bi-trash"></i> Eliminar
                     </button>
                   </div>
                 </div>
@@ -260,7 +264,7 @@
           @endphp
  
           @foreach($empresas as $e)
-          <tr data-id="{{ $e['id'] }}"
+          <tr data-id="e{{ $e['id'] }}"
               data-search="{{ strtolower($e['nombre'].' '.$e['rubro'].' '.$e['ubicacion']) }}"
               data-estado="{{ $e['estado'] }}"
               data-rubro="{{ $e['rubro_key'] }}">
@@ -288,7 +292,9 @@
                 <button class="btn-icon btn-mensaje" title="Enviar mensaje">
                   <i class="bi bi-envelope"></i>
                 </button>
-                <button class="btn-icon btn-eliminar" title="Eliminar">
+                <button class="btn-icon btn-eliminar" title="Eliminar"
+                        data-delete-type="empresas" data-delete-id="{{ $e['id'] }}"
+                        data-delete-row-id="e{{ $e['id'] }}" data-delete-name="{{ $e['nombre'] }}">
                   <i class="bi bi-trash"></i>
                 </button>
               </div>
@@ -319,6 +325,11 @@
                     </button>
                     <button class="btn-admin-suspender" data-action="suspender" data-id="e{{ $e['id'] }}">
                       <i class="bi bi-slash-circle"></i> Suspender
+                    </button>
+                    <button class="btn-admin-rechazar"
+                            data-delete-type="empresas" data-delete-id="{{ $e['id'] }}"
+                            data-delete-row-id="e{{ $e['id'] }}" data-delete-name="{{ $e['nombre'] }}">
+                      <i class="bi bi-trash"></i> Eliminar
                     </button>
                   </div>
                 </div>
@@ -442,9 +453,10 @@
                         data-action="pausar" data-id="o{{ $o['id'] }}">
                   <i class="bi bi-pause-circle"></i>
                 </button>
-                <button class="btn-icon btn-eliminar" title="Rechazar"
-                        data-action="rechazar" data-id="o{{ $o['id'] }}">
-                  <i class="bi bi-x-circle"></i>
+                <button class="btn-icon btn-eliminar" title="Eliminar"
+                        data-delete-type="ofertas" data-delete-id="{{ $o['id'] }}"
+                        data-delete-row-id="o{{ $o['id'] }}" data-delete-name="{{ $o['titulo'] }}">
+                  <i class="bi bi-trash"></i>
                 </button>
               </div>
             </td>
@@ -472,8 +484,10 @@
                     <button class="btn-admin-suspender" data-action="pausar" data-id="o{{ $o['id'] }}">
                       <i class="bi bi-pause-circle"></i> Pausar
                     </button>
-                    <button class="btn-admin-rechazar" data-action="rechazar" data-id="o{{ $o['id'] }}">
-                      <i class="bi bi-x-circle"></i> Rechazar
+                    <button class="btn-admin-rechazar"
+                            data-delete-type="ofertas" data-delete-id="{{ $o['id'] }}"
+                            data-delete-row-id="o{{ $o['id'] }}" data-delete-name="{{ $o['titulo'] }}">
+                      <i class="bi bi-trash"></i> Eliminar
                     </button>
                   </div>
                 </div>
@@ -491,8 +505,6 @@
   </div>
  
 </div>
- 
-<script src="{{ asset('js/main.js') }}"></script>
  
 @endsection
  
