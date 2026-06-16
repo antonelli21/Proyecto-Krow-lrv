@@ -33,28 +33,28 @@ $modalidades = array_keys($modalidades);
 
   <div class="empresas-toolbar">
     <div class="toolbar-search">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
-      </svg>
-      <input type="text" id="buscador" placeholder="Buscar empresa, rubro, ubicación..." autocomplete="off">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+        </svg>
+        <input type="text" id="buscador" placeholder="Buscar empresa, rubro, ubicación..." autocomplete="off">
     </div>
-    <div class="toolbar-select">
-      <select id="filtro-rubro">
-        <option value="">Todos los rubros</option>
-        @foreach($rubros as $r)
-          <option value="{{ $r }}">{{ $r }}</option>
-        @endforeach
-      </select>
-    </div>
-    <div class="toolbar-select">
-      <select id="filtro-modalidad">
-        <option value="">Todas las modalidades</option>
-        @foreach($modalidades as $m)
-          <option value="{{ $m }}">{{ $m }}</option>
-        @endforeach
-      </select>
-    </div>
-    <div class="toolbar-count" id="contador">{{ count($empresas) }} empresas</div>
+      <div class="toolbar-select">
+          <select id="filtro-rubro">
+              <option value="">Todos los rubros</option>
+              @foreach($rubros as $r)
+                  <option value="{{ $r }}">{{ $r }}</option>
+              @endforeach
+          </select>
+      </div>
+      <div class="toolbar-select">
+          <select id="filtro-modalidad">
+              <option value="">Todas las modalidades</option>
+              @foreach($modalidades as $m)
+                  <option value="{{ $m }}">{{ $m }}</option>
+              @endforeach
+          </select>
+      </div>
+      <div class="toolbar-count" id="contador">{{ count($empresas) }} empresas</div>
   </div>
 
   <div class="empresas-grid" id="grid-empresas">
@@ -157,4 +157,181 @@ $modalidades = array_keys($modalidades);
 
 </main>
 
+
+<style>
+/* ── TOOLBAR RESPONSIVE ── */
+.empresas-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: center;
+    margin-bottom: 24px;
+    padding: 14px 16px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+}
+
+.toolbar-search {
+    flex: 1 1 300px;
+    min-width: 200px;
+    position: relative;
+}
+
+.toolbar-search svg {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--muted);
+    pointer-events: none;
+}
+
+.toolbar-search input {
+    width: 100%;
+    padding: 10px 12px 10px 38px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--bg);
+    color: var(--text);
+    font-size: 14px;
+    transition: border-color .2s;
+}
+
+.toolbar-search input:focus {
+    outline: none;
+    border-color: var(--accent);
+}
+
+.toolbar-select {
+    flex: 0 1 180px;
+    min-width: 150px;
+    position: relative;
+}
+
+.toolbar-select select {
+    width: 100%;
+    padding: 10px 32px 10px 12px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--bg);
+    color: var(--text);
+    font-size: 14px;
+    appearance: none;
+    cursor: pointer;
+    transition: border-color .2s;
+}
+
+.toolbar-select select:focus {
+    outline: none;
+    border-color: var(--accent);
+}
+
+.toolbar-select::after {
+    content: "";
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 10px;
+    height: 10px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%236B6B78' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: center;
+    pointer-events: none;
+}
+
+.toolbar-count {
+    margin-left: auto;
+    font-size: 14px;
+    color: var(--muted);
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+    .empresas-toolbar {
+        flex-direction: column;
+        align-items: stretch;
+        padding: 12px;
+        gap: 10px;
+    }
+
+    .toolbar-search {
+        flex: 1 1 auto;
+        width: 100%;
+        min-width: unset;
+    }
+
+    .toolbar-select {
+        flex: 1 1 auto;
+        width: 100%;
+        min-width: unset;
+    }
+
+    .toolbar-count {
+        margin-left: 0;
+        text-align: center;
+        padding-top: 8px;
+        border-top: 1px solid var(--border);
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .empresas-toolbar {
+        padding: 10px;
+        gap: 8px;
+    }
+
+    .toolbar-search input,
+    .toolbar-select select {
+        padding: 10px 12px;
+        font-size: 14px;
+    }
+
+    .toolbar-search input {
+        padding-left: 38px;
+    }
+
+    .toolbar-count {
+        font-size: 13px;
+        padding-top: 8px;
+    }
+}
+
+/* ── Grid responsive ── */
+@media (max-width: 1024px) {
+    .empresas-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 16px;
+    }
+}
+
+@media (max-width: 640px) {
+    .empresas-grid {
+        grid-template-columns: 1fr;
+        gap: 14px;
+    }
+
+    .empresas-header h1 {
+        font-size: 22px;
+    }
+
+    .empresas-header p {
+        font-size: 14px;
+    }
+
+    .empresa-card {
+        padding: 16px;
+    }
+
+    .empresa-nombre {
+        font-size: 15px;
+    }
+}
+</style>
+
 @endsection
+
