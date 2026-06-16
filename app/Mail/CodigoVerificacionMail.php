@@ -8,21 +8,22 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class VerificacionEmail extends Mailable
+class CodigoVerificacionMail extends Mailable
 {
     use Queueable, SerializesModels;
 
+    // Declaramos las variables públicas para que tu Blade las pueda leer
     public $codigo;
     public $userName;
 
-    // El controlador nos pasa el código y el nombre del usuario por acá
+    // Recibimos el código y el nombre del usuario desde el controlador
     public function __construct($codigo, $userName)
     {
         $this->codigo = $codigo;
         $this->userName = $userName;
     }
 
-    // El asunto que va a aparecer en el Gmail de la persona
+    // El asunto que vas a ver en tu bandeja de entrada de Gmail
     public function envelope(): Envelope
     {
         return new Envelope(
@@ -30,7 +31,7 @@ class VerificacionEmail extends Mailable
         );
     }
 
-    // Tu HTML oscuro guardado en resources/views/emails/verificacion.blade.php
+    // Le decimos a Laravel que use tu plantilla oscura de KROW
     public function content(): Content
     {
         return new Content(

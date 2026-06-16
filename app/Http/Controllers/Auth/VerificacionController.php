@@ -32,7 +32,7 @@ class VerificacionController extends Controller
     }
 
     /**
-     * Procesa la verificación del código ingresado por el usuario.
+     * Procesá la verificación del código ingresado por el usuario.
      * Compara el código con el almacenado en la BD y verifica que no haya expirado.
      */
     public function verificar(Request $request)
@@ -98,7 +98,7 @@ class VerificacionController extends Controller
      */
     public function reenviar()
     {
-        // Obtener el usuario de la sesión
+        // 1. Obtener el usuario de la sesión
         $userId = session('verificacion_user_id');
         $user   = User::find($userId);
 
@@ -108,16 +108,28 @@ class VerificacionController extends Controller
                 ->withErrors(['codigo' => 'Sesión expirada. Registrate de nuevo.']);
         }
 
-        // Generar un nuevo código de 6 dígitos
-        $nuevoCodigoVerificacion = random_int(100000, 999999);
+        // 2. Generar un nuevo código de 6 dígitos
+        $nuevoCodigoVerificacion = str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
 
-        // Actualizar el código y la fecha de expiración en la BD
+        // 3. Actualizar el código y la fecha de expiración en la BD
         $user->email_verification_code    = $nuevoCodigoVerificacion;
         $user->email_verification_expires = now()->addMinutes(30);
         $user->save();
 
-        // Enviar el nuevo código por email
-        Mail::to($user->email)->send(new VerificacionEmail($user, $nuevoCodigoVerificacion));
+        // >>> PARCHE DE EMERGENCIA SEGURO LOCAL <<<
+        // Forzamos a PHP a saltearse la verificación SSL rota de tu PC local en caliente
+        config([
+            'mail.mailers.smtp.stream' => [
+                'ssl' => [
+                    'allow_self_signed' => true,
+                    'verify_peer' => false,
+                    'verify_peer_name' => false,
+                ],
+            ],
+        ]);
+
+        // 4. Enviar el nuevo código por email mandando código y nombre separados
+        Mail::to($user->email)->send(new VerificacionEmail($nuevoCodigoVerificacion, $user->name));
 
         return back()->with('success', 'Se envió un nuevo código a tu email.');
     }

@@ -1020,6 +1020,8 @@ $localidadesPorProvincia = \App\Models\Localidad::orderBy('nombre')
         }
       });
     });
+  });
+  
 
     /* ── Provincia → carga localidades al cambiar ── */
     const selectProv = document.getElementById('e-provincia');

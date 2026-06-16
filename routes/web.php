@@ -29,7 +29,8 @@ Route::get('/empresas', function () {
     return view('empresas');
 })->name('empresas');
 
-Route::get('/ofertas/{id}', [OfertaController::class, 'detalle'])->name('ofertas.detalle');
+// Detalle de oferta — accesible por todos (invitado, estudiante, empresa, admin)
+Route::get('/ofertas/{id_oferta}', [OfertaController::class, 'detalle'])->name('ofertas.detalle');
 
 /* ════════════════════════════════════════
    AUTH — RUTAS DE INVITADOS (GUEST)
@@ -66,19 +67,12 @@ Route::middleware('guest')->group(function () {
    Accesibles sin estar logueado (el usuario aún no verificó su email).
 ════════════════════════════════════════ */
 
-// Mostrar el formulario para ingresar el código de verificación
 Route::get('/verificar-email', [VerificacionController::class, 'mostrar'])->name('verificacion.mostrar');
-
-// Procesar el código de verificación ingresado (POST)
 Route::post('/verificar-email', [VerificacionController::class, 'verificar'])->name('verificacion.verificar');
-
-// Reenviar un nuevo código de verificación (POST)
 Route::post('/verificar-email/reenviar', [VerificacionController::class, 'reenviar'])->name('verificacion.reenviar');
 
 /* ════════════════════════════════════════
    LOGOUT
-   Cierra la sesión del usuario autenticado.
-   Requiere estar autenticado (middleware 'auth').
 ════════════════════════════════════════ */
 Route::post('/logout', [LoginController::class, 'logout'])
     ->middleware('auth')
@@ -87,72 +81,65 @@ Route::post('/logout', [LoginController::class, 'logout'])
 /* ════════════════════════════════════════
    ESTUDIANTE
    Rutas protegidas para usuarios con rol 'estudiante'.
-   Requiere: estar autenticado, email verificado, y rol 'estudiante'.
 ════════════════════════════════════════ */
 Route::prefix('estudiante')
     ->name('estudiante.')
     ->middleware(['auth', 'verified', 'role:estudiante'])
     ->group(function () {
-        Route::get('/home',        function () {    return view('estudiante.home-estudiante');})->name('home');
-        Route::get('/empresas',    function () {    return view('empresas');})->name('empresas');
-        Route::get('/perfil',      function () {    return view('estudiante.perfil-estudiante');})->name('perfil');
-        Route::get('/mensajes',    function () {    return view('estudiante.mensajes-estudiante');})->name('mensajes');
-        Route::get('/oferta/{id}', function ($id) { return view('estudiante.oferta-detalle', compact('id'));})->name('oferta');
-        Route::get('/lista', [App\Http\Controllers\EstudianteController::class, 'lista'])->name('lista');
+        Route::get('/home',           function () { return view('estudiante.home-estudiante'); })->name('home');
+        Route::get('/empresas',       function () { return view('empresas'); })->name('empresas');
+        Route::get('/perfil',         function () { return view('estudiante.perfil-estudiante'); })->name('perfil');
+        Route::get('/mensajes',       function () { return view('estudiante.mensajes-estudiante'); })->name('mensajes');
+        Route::get('/oferta/{id}',    function ($id) { return view('estudiante.oferta-detalle', compact('id')); })->name('oferta');
+        Route::get('/lista',          [EstudianteController::class, 'lista'])->name('lista');
         Route::get('/perfil/editar',  function () { return view('estudiante.perfil-estudiante-editar'); })->name('perfil.editar');
         Route::put('/perfil/update',  [EstudianteController::class, 'updatePerfil'])->name('perfil.update');
+
+        // Postularse a una oferta — solo estudiantes
+        Route::post('/ofertas/{id_oferta}/postular', [OfertaController::class, 'postular'])->name('ofertas.postular');
     });
+
 /* ════════════════════════════════════════
    EMPRESA
    Rutas protegidas para usuarios con rol 'empresa'.
-   Requiere: estar autenticado, email verificado, y rol 'empresa'.
 ════════════════════════════════════════ */
 Route::prefix('empresa')
     ->name('empresa.')
     ->middleware(['auth', 'verified', 'role:empresa'])
     ->group(function () {
-        
-        Route::get('/home', [EmpresaController::class, 'home'])->name('home');
-        Route::get('/perfil',       function () {       return view('empresa.perfil-empresa');})->name('perfil');
-        Route::get('/mensajes',     function () {       return view('empresa.mensajes-empresa');})->name('mensajes');
-        Route::get('/oferta/{id}/postulantes', [EmpresaController::class, 'verPostulantes'])->name('postulantes'); 
-        Route::get('/crear-oferta', function () {       return view('empresa.crear-oferta');})->name('crear-oferta');
-        Route::put('/postulacion/{id}/estado', [EmpresaController::class, 'actualizarEstadoPostulante'])->name('actualizar-estado');
-        Route::get('/perfil/editar',  function () { return view('empresa.perfil-empresa-editar'); })->name('perfil.editar');
-        Route::put('/perfil/update',  [EmpresaController::class, 'updatePerfil'])->name('perfil.update');
+        Route::get('/home',                        [EmpresaController::class, 'home'])->name('home');
+        Route::get('/perfil',                      function () { return view('empresa.perfil-empresa'); })->name('perfil');
+        Route::get('/mensajes',                    function () { return view('empresa.mensajes-empresa'); })->name('mensajes');
+        Route::get('/oferta/{id}/postulantes',     [EmpresaController::class, 'verPostulantes'])->name('postulantes');
+        Route::get('/crear-oferta',                function () { return view('empresa.crear-oferta'); })->name('crear-oferta');
+        Route::put('/postulacion/{id}/estado',     [EmpresaController::class, 'actualizarEstadoPostulante'])->name('actualizar-estado');
+        Route::get('/perfil/editar',               function () { return view('empresa.perfil-empresa-editar'); })->name('perfil.editar');
+        Route::put('/perfil/update',               [EmpresaController::class, 'updatePerfil'])->name('perfil.update');
     });
 
 /* ════════════════════════════════════════
    ADMIN
    Rutas protegidas para usuarios con rol 'admin'.
-   Requiere: estar autenticado, email verificado, y rol 'admin'.
 ════════════════════════════════════════ */
 Route::prefix('admin')
     ->name('admin.')
     ->middleware(['auth', 'verified', 'role:admin'])
     ->group(function () {
-        Route::get('/home',       function () {
-            return view('admin.admin');
-        })->name('home');
-        Route::get('/empresas',   function () {
-            return view('admin.admin');
-        })->name('empresas');
-        Route::get('/estudiantes', function () {
-            return view('admin.admin');
-        })->name('estudiantes');
+        Route::get('/home',        function () { return view('admin.admin'); })->name('home');
+        Route::get('/empresas',    function () { return view('admin.admin'); })->name('empresas');
+        Route::get('/estudiantes', function () { return view('admin.admin'); })->name('estudiantes');
     });
 
 /* ════════════════════════════════════════
    COMPARTIDAS (LOGUEADOS)
-   Rutas accesibles por cualquier usuario autenticado con email verificado,
-   sin importar su rol (estudiante, empresa o admin).
+   Accesibles por cualquier usuario autenticado con email verificado.
 ════════════════════════════════════════ */
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('/mensajes',      function () { return view('mensajes'); })->name('mensajes');
+    Route::get('/mensajes',       function () { return view('mensajes'); })->name('mensajes');
     Route::get('/notificaciones', function () { return view('notificaciones'); })->name('notificaciones');
-    Route::get('/configuracion', function () { return view('configuracion'); })->name('configuracion');
+    Route::get('/configuracion',  function () { return view('configuracion'); })->name('configuracion');
 
-    Route::put('/configuracion/password',    function () {
+    Route::put('/configuracion/password', function () {
         return back()->with('password_ok', true);
     })->name('configuracion.password');
 
@@ -160,9 +147,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         return redirect()->route('inicio');
     })->name('configuracion.logout-all');
 });
+
 /* ════════════════════════════════════════
    FORMULARIO DE CONTACTO (público)
-   Procesa el formulario de contacto de la página de ayuda.
 ════════════════════════════════════════ */
 Route::post('/ayuda/contacto', function (Request $request) {
     $request->validate([
@@ -171,20 +158,17 @@ Route::post('/ayuda/contacto', function (Request $request) {
         'asunto'  => 'required|min:3',
         'mensaje' => 'required|min:20',
     ]);
-    // aquí enviás el mail o guardás en BD
     return back()->with('contacto_ok', true);
 })->name('ayuda.contacto');
 
 /* ════════════════════════════════════════
    API RESOURCES
-   Rutas de API RESTful para los recursos del sistema.
-   Usadas por el frontend con fetch/AJAX.
 ════════════════════════════════════════ */
 Route::prefix('api')->group(function () {
     Route::apiResource('estudiantes', EstudianteController::class)->only(['index', 'show', 'store', 'update', 'destroy']);
-    Route::apiResource('empresas', EmpresaController::class)->only(['index', 'show', 'store', 'update', 'destroy']);
-    Route::apiResource('ofertas', OfertaController::class)->only(['index', 'show', 'store', 'update', 'destroy']);
-    Route::apiResource('chats', ChatController::class)->only(['index', 'show', 'store', 'destroy']);
-    Route::apiResource('mensajes', MensajeController::class)->only(['index', 'show', 'store', 'update', 'destroy']);
-    Route::apiResource('tickets', TicketSoporteController::class)->only(['index', 'show', 'store', 'update', 'destroy']);
+    Route::apiResource('empresas',    EmpresaController::class)->only(['index', 'show', 'store', 'update', 'destroy']);
+    Route::apiResource('ofertas',     OfertaController::class)->only(['index', 'show', 'store', 'update', 'destroy']);
+    Route::apiResource('chats',       ChatController::class)->only(['index', 'show', 'store', 'destroy']);
+    Route::apiResource('mensajes',    MensajeController::class)->only(['index', 'show', 'store', 'update', 'destroy']);
+    Route::apiResource('tickets',     TicketSoporteController::class)->only(['index', 'show', 'store', 'update', 'destroy']);
 });

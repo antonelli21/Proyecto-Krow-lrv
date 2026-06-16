@@ -93,13 +93,12 @@
 
                 <div class="job-footer">
                     <span class="job-date">{{ $fechaTxt }}</span>
-                    <!-- <a href="{{ route('ofertas.detalle', $id) }}" class="btn-ver">Ver oferta</a> -->
+                    <a href="{{ route('ofertas.detalle', $id) }}" class="btn-ver">Ver oferta</a>
                 </div>
             </article>
 
         @empty
 
-            {{-- Mock de desarrollo --}}
             <article class="job-card" data-id="mock-1" data-salario="450000" data-fecha="9999999999">
                 <div class="job-card-top">
                     <div class="company-logo" aria-hidden="true">MC</div>
@@ -107,7 +106,6 @@
                         <h3 class="job-title">Fullstack Developer Node / React</h3>
                         <p class="job-meta"><span>MegaCorp</span> &bull; <span>Remoto</span></p>
                     </div>
-    
                 </div>
                 <div class="job-badges">
                     <span class="badge badge-salary">$450.000 / mes</span>
@@ -119,7 +117,7 @@
                 </p>
                 <div class="job-footer">
                     <span class="job-date">Publicado hace 2 días</span>
-                    <a href="{{ route('ofertas.detalle', 'mock-1') }}" class="btn-ver">Ver oferta</a>
+                    <a href="{{ route('ofertas.detalle', 1) }}" class="btn-ver">Ver oferta</a>
                 </div>
             </article>
 
@@ -140,7 +138,7 @@
                 </p>
                 <div class="job-footer">
                     <span class="job-date">Publicado hace 5 días</span>
-                    <a href="{{ route('ofertas.detalle', 'mock-2') }}" class="btn-ver">Ver oferta</a>
+                    <a href="{{ route('ofertas.detalle', 1) }}" class="btn-ver">Ver oferta</a>
                 </div>
             </article>
 

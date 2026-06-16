@@ -835,32 +835,63 @@ function toggleDetalle(id, btn) {
 ════════════════════════════════════════ */
 
 document.addEventListener('DOMContentLoaded', () => {
+ 
+    /* ── Detectar dispositivo ── */
+    const deviceEl = document.getElementById('config-device');
+    if (deviceEl) {
+        const ua      = navigator.userAgent;
+        const browser = ua.includes('Chrome') && !ua.includes('Edg') ? 'Chrome'
+                      : ua.includes('Edg')     ? 'Edge'
+                      : ua.includes('Firefox') ? 'Firefox'
+                      : ua.includes('Safari')  ? 'Safari'
+                      : 'Navegador desconocido';
+        const os      = ua.includes('Windows') ? 'Windows'
+                      : ua.includes('Mac')     ? 'macOS'
+                      : ua.includes('Android') ? 'Android'
+                      : ua.includes('iPhone')  ? 'iPhone'
+                      : ua.includes('Linux')   ? 'Linux'
+                      : 'Desconocido';
+        deviceEl.textContent = `${browser} — ${os}`;
+    }
+ 
+    /* ── Confirmación zona de peligro ── */
+    document.getElementById('form-logout-all')
+        ?.addEventListener('submit', (e) => {
+            if (!confirm('¿Cerrar sesión en todos los dispositivos?')) {
+                e.preventDefault();
+            }
+        });
+ 
+        (function () {
+    const btnGuardar = document.getElementById('btn-guardar-oferta');
+    if (!btnGuardar) return;
 
-  /* ── Detectar dispositivo ── */
-  const deviceEl = document.getElementById('config-device');
-  if (deviceEl) {
-    const ua = navigator.userAgent;
-    const browser = ua.includes('Chrome') && !ua.includes('Edg') ? 'Chrome'
-      : ua.includes('Edg') ? 'Edge'
-        : ua.includes('Firefox') ? 'Firefox'
-          : ua.includes('Safari') ? 'Safari'
-            : 'Navegador desconocido';
-    const os = ua.includes('Windows') ? 'Windows'
-      : ua.includes('Mac') ? 'macOS'
-        : ua.includes('Android') ? 'Android'
-          : ua.includes('iPhone') ? 'iPhone'
-            : ua.includes('Linux') ? 'Linux'
-              : 'Desconocido';
-    deviceEl.textContent = `${browser} — ${os}`;
-  }
+    btnGuardar.addEventListener('click', function () {
+        const guardado = btnGuardar.classList.toggle('guardado');
+        const icon = btnGuardar.querySelector('svg');
 
-  /* ── Confirmación zona de peligro ── */
-  document.getElementById('form-logout-all')
-    ?.addEventListener('submit', (e) => {
-      if (!confirm('¿Cerrar sesión en todos los dispositivos?')) {
-        e.preventDefault();
-      }
+        if (guardado) {
+            if (icon) icon.setAttribute('fill', 'currentColor');
+            btnGuardar.innerHTML = btnGuardar.innerHTML.replace('Guardar oferta', 'Guardado');
+            btnGuardar.style.borderColor = 'var(--accent)';
+            btnGuardar.style.color       = 'var(--accent)';
+        } else {
+            if (icon) icon.setAttribute('fill', 'none');
+            btnGuardar.innerHTML = btnGuardar.innerHTML.replace('Guardado', 'Guardar oferta');
+            btnGuardar.style.borderColor = '';
+            btnGuardar.style.color       = '';
+        }
+
+        // Llamada al backend (opcional, descomentar cuando exista la ruta)
+        // fetch(`/ofertas/${btnGuardar.dataset.id}/guardar`, {
+        //     method: 'POST',
+        //     headers: {
+        //         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content,
+        //         'Accept': 'application/json',
+        //     }
+        // });
     });
+})();
 
 });
 
