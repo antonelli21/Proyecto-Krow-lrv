@@ -11,10 +11,19 @@ class EstudianteController extends Controller
     {
         return response()->json(Estudiante::with(['user', 'carrera', 'localidad', 'provincia', 'habilidades'])->get());
     }
-
     public function show(Estudiante $estudiante)
     {
-        return response()->json($estudiante->load(['user', 'carrera', 'localidad', 'provincia', 'habilidades', 'postulaciones.oferta.empresa', 'postulaciones.oferta.habilidades']));
+        $estudiante->load([
+            'user',
+            'carrera',
+            'localidad',
+            'provincia',
+            'habilidades',
+            'postulaciones.oferta.empresa',
+            'postulaciones.oferta.habilidades'
+        ]);
+
+        return view('estudiante.perfil', compact('estudiante'));
     }
 
     public function store(Request $request)

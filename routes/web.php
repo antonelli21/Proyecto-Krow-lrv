@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Route;
    Accesibles por cualquier visitante sin necesidad de autenticación.
 ════════════════════════════════════════ */
 
+
 Route::get('/', function () {
     return view('index');
 })->name('inicio');
@@ -115,6 +116,7 @@ Route::prefix('empresa')
         Route::put('/postulacion/{id}/estado',     [EmpresaController::class, 'actualizarEstadoPostulante'])->name('actualizar-estado');
         Route::get('/perfil/editar',               function () { return view('empresa.perfil-empresa-editar'); })->name('perfil.editar');
         Route::put('/perfil/update',               [EmpresaController::class, 'updatePerfil'])->name('perfil.update');
+        Route::get('/estudiante/perfil/{id}',      [EstudianteController::class, 'show'])->name('estudiante.perfil');
     });
 
 /* ════════════════════════════════════════
