@@ -114,6 +114,6 @@
   </div>
 </main>
 @endsection
-@section('scripts')
+@push('scripts')
 <script src="{{ asset('js/main.js') }}"></script>
-@endsection
+@endpush
