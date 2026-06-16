@@ -612,9 +612,96 @@ window.togglePass = function (inputId, btn) {
 /* ════════════════════════════════════════
    ADMIN PANEL — Tabs / Filtros / Detalle
 ════════════════════════════════════════ */
+
+/* ── Helpers globales (fuera del IIFE para que el modal los use) ── */
+function showAdminNotice(message, type = 'success') {
+  let notice = document.querySelector('.admin-action-notice');
+  if (!notice) {
+    notice = document.createElement('div');
+    notice.className = 'admin-action-notice';
+    document.body.appendChild(notice);
+  }
+  notice.className = `admin-action-notice ${type} show`;
+  notice.textContent = message;
+  clearTimeout(notice.hideTimer);
+  notice.hideTimer = setTimeout(() => notice.classList.remove('show'), 2800);
+}
+
+function adminEntityLabel(rowId) {
+  if (rowId?.startsWith('e')) return 'Empresa';
+  if (rowId?.startsWith('o')) return 'Oferta';
+  return 'Alumno';
+}
+
+function removeAdminRow(rowId) {
+  document.querySelector(`tr[data-id="${rowId}"]`)?.remove();
+  document.getElementById('admin-det-' + rowId)?.remove();
+}
+
+/* ════════════════════════════════════════
+   CONFIRM MODAL
+════════════════════════════════════════ */
+(function injectConfirmModal() {
+  if (document.getElementById('krow-confirm-overlay')) return;
+  document.body.insertAdjacentHTML('beforeend', `
+    <div class="confirm-overlay" id="krow-confirm-overlay" role="dialog" aria-modal="true" aria-labelledby="krow-confirm-title">
+      <div class="confirm-box">
+        <div class="confirm-icon"><i class="bi bi-trash3"></i></div>
+        <p class="confirm-title" id="krow-confirm-title">Eliminar registro</p>
+        <div class="confirm-body">
+          <span>Estás por eliminar <span class="confirm-name" id="krow-confirm-name"></span>.</span>
+          <p class="confirm-warning">Esta acción no se puede deshacer.</p>
+        </div>
+        <div class="confirm-actions">
+          <button class="confirm-btn-cancel" id="krow-confirm-cancel">Cancelar</button>
+          <button class="confirm-btn-delete" id="krow-confirm-ok">
+            <i class="bi bi-trash3"></i> Eliminar
+          </button>
+        </div>
+      </div>
+    </div>
+  `);
+})();
+
+function adminConfirm(name) {
+  return new Promise(resolve => {
+    const overlay   = document.getElementById('krow-confirm-overlay');
+    const nameEl    = document.getElementById('krow-confirm-name');
+    const btnOk     = document.getElementById('krow-confirm-ok');
+    const btnCancel = document.getElementById('krow-confirm-cancel');
+
+    nameEl.textContent = `"${name}"`;
+    overlay.classList.add('open');
+    btnCancel.focus();
+
+    function close(result) {
+      overlay.classList.remove('open');
+      btnOk.removeEventListener('click', onOk);
+      btnCancel.removeEventListener('click', onCancel);
+      overlay.removeEventListener('click', onBackdrop);
+      document.removeEventListener('keydown', onEsc);
+      resolve(result);
+    }
+
+    const onOk       = () => close(true);
+    const onCancel   = () => close(false);
+    const onBackdrop = e => { if (e.target === overlay) close(false); };
+    const onEsc      = e => { if (e.key === 'Escape') close(false); };
+
+    btnOk.addEventListener('click', onOk);
+    btnCancel.addEventListener('click', onCancel);
+    overlay.addEventListener('click', onBackdrop);
+    document.addEventListener('keydown', onEsc);
+  });
+}
+
+/* ════════════════════════════════════════
+   INIT ADMIN
+════════════════════════════════════════ */
 (function initAdmin() {
+
   /* ── TABS ── */
-  const tabs = document.querySelectorAll('.admin-tab');
+  const tabs   = document.querySelectorAll('.admin-tab');
   const panels = document.querySelectorAll('.admin-tab-panel');
   if (!tabs.length) return;
 
@@ -640,9 +727,9 @@ window.togglePass = function (inputId, btn) {
   /* ── FILTRO GENÉRICO ── */
   document.querySelectorAll('.admin-table-wrap').forEach(wrap => {
     const searchInput = wrap.closest('.admin-tab-panel')?.querySelector('.admin-search input');
-    const selects = wrap.closest('.admin-tab-panel')?.querySelectorAll('.admin-filter-select');
-    const rows = wrap.querySelectorAll('tbody tr:not(.admin-detalle-row)');
-    const emptyState = wrap.closest('.admin-tab-panel')?.querySelector('.admin-empty');
+    const selects     = wrap.closest('.admin-tab-panel')?.querySelectorAll('.admin-filter-select');
+    const rows        = wrap.querySelectorAll('tbody tr:not(.admin-detalle-row)');
+    const emptyState  = wrap.closest('.admin-tab-panel')?.querySelector('.admin-empty');
 
     const applyFilters = () => {
       const query = searchInput?.value.toLowerCase() ?? '';
@@ -653,7 +740,7 @@ window.togglePass = function (inputId, btn) {
 
       let visible = 0;
       rows.forEach(row => {
-        const matchSearch = !query || (row.dataset.search?.toLowerCase() ?? '').includes(query);
+        const matchSearch  = !query || (row.dataset.search?.toLowerCase() ?? '').includes(query);
         const matchFilters = Object.entries(activeFilters).every(([key, val]) =>
           !val || (row.dataset[key] ?? '').toLowerCase() === val
         );
@@ -679,48 +766,49 @@ window.togglePass = function (inputId, btn) {
     });
   });
 
-  function showAdminNotice(message, type = 'success') {
-    let notice = document.querySelector('.admin-action-notice');
-
-    if (!notice) {
-      notice = document.createElement('div');
-      notice.className = 'admin-action-notice';
-      document.body.appendChild(notice);
+  /* ── CAMBIO DE ESTADO ── */
+  document.addEventListener('click', e => {
+    const btn = e.target.closest('[data-action]');
+    if (!btn) return;
+    const action = btn.dataset.action;
+    const id     = btn.dataset.id;
+    const row    = document.querySelector(`tr[data-id="${id}"]`);
+    const badge  = row?.querySelector('.badge-admin');
+    const mapa   = {
+      aprobar:  ['badge-aprobado',  'Aprobado',  'aprobada'],
+      activar:  ['badge-activo',    'Activo',    'aprobado'],
+      suspender:['badge-suspendido','Suspendido','suspendido'],
+      rechazar: ['badge-rechazado', 'Rechazado', 'rechazada'],
+      pausar:   ['badge-pausada',   'Pausada',   'pausada'],
+      publicar: ['badge-publicada', 'Publicada', 'publicada'],
+    };
+    if (badge && mapa[action]) {
+      badge.className = 'badge-admin';
+      badge.classList.add(mapa[action][0]);
+      badge.textContent = mapa[action][1];
+      row.dataset.estado = mapa[action][1].toLowerCase();
+      showAdminNotice(`${adminEntityLabel(id)} ${mapa[action][2]} correctamente.`);
     }
+    const det = document.getElementById('admin-det-' + id);
+    if (det) det.classList.remove('open');
+  });
 
-    notice.className = `admin-action-notice ${type} show`;
-    notice.textContent = message;
-
-    clearTimeout(notice.hideTimer);
-    notice.hideTimer = setTimeout(() => {
-      notice.classList.remove('show');
-    }, 2800);
-  }
-
-  function adminEntityLabel(rowId) {
-    if (rowId?.startsWith('e')) return 'Empresa';
-    if (rowId?.startsWith('o')) return 'Oferta';
-    return 'Alumno';
-  }
-
-  function removeAdminRow(rowId) {
-    document.querySelector(`tr[data-id="${rowId}"]`)?.remove();
-    document.getElementById('admin-det-' + rowId)?.remove();
-  }
-
+  /* ── ELIMINAR con modal propio ── */
   document.addEventListener('click', async e => {
     const deleteBtn = e.target.closest('[data-delete-type]');
     if (!deleteBtn) return;
 
-    const type = deleteBtn.dataset.deleteType;
-    const id = deleteBtn.dataset.deleteId;
+    const type  = deleteBtn.dataset.deleteType;
+    const id    = deleteBtn.dataset.deleteId;
     const rowId = deleteBtn.dataset.deleteRowId;
-    const name = deleteBtn.dataset.deleteName || 'este registro';
+    const name  = deleteBtn.dataset.deleteName || 'este registro';
 
     if (!type || !id || !rowId) return;
-    if (!confirm(`¿Seguro que querés eliminar "${name}"? Esta acción no se puede deshacer.`)) return;
 
-    const csrf = document.querySelector('meta[name="csrf-token"]')?.content;
+    const confirmed = await adminConfirm(name);
+    if (!confirmed) return;
+
+    const csrf    = document.querySelector('meta[name="csrf-token"]')?.content;
     const baseUrl = document.querySelector('meta[name="base-url"]')?.content?.replace(/\/$/, '');
     const basePath = window.location.pathname.includes('/public/')
       ? window.location.pathname.split('/public/')[0] + '/public'
@@ -749,107 +837,70 @@ window.togglePass = function (inputId, btn) {
     }
   });
 
-  document.addEventListener('click', e => {
-    const btn = e.target.closest('[data-action]');
-    if (!btn) return;
-    const action = btn.dataset.action;
-    const id = btn.dataset.id;
-    const row = document.querySelector(`tr[data-id="${id}"]`);
-    const badge = row?.querySelector('.badge-admin');
-    const mapa = {
-      aprobar: ['badge-aprobado', 'Aprobado', 'aprobada'],
-      activar: ['badge-activo', 'Activo', 'aprobado'],
-      suspender: ['badge-suspendido', 'Suspendido', 'suspendido'],
-      rechazar: ['badge-rechazado', 'Rechazado', 'rechazada'],
-      pausar: ['badge-pausada', 'Pausada', 'pausada'],
-      publicar: ['badge-publicada', 'Publicada', 'publicada'],
-    };
-    if (badge && mapa[action]) {
-      badge.className = 'badge-admin';
-      badge.classList.add(mapa[action][0]);
-      badge.textContent = mapa[action][1];
-      row.dataset.estado = mapa[action][1].toLowerCase();
-      showAdminNotice(`${adminEntityLabel(id)} ${mapa[action][2]} correctamente.`);
-    }
-    const det = document.getElementById('admin-det-' + id);
-    if (det) det.classList.remove('open');
-  });
 })();
 
-
-
+/* ════════════════════════════════════════
+   MÓDULO GENERAL (bookmarks, sort, roles)
+════════════════════════════════════════ */
 (function () {
   'use strict';
 
-function renderRightPanel() {
-  const pageBody = document.getElementById('page-body');
-  const rolActual = pageBody?.dataset.rol || 'invitado';
+  function renderRightPanel() {
+    const pageBody  = document.getElementById('page-body');
+    const rolActual = pageBody?.dataset.rol || 'invitado';
+    document.querySelectorAll('.role-panel-content').forEach(panel => {
+      panel.style.display = panel.dataset.panelRole === rolActual ? 'block' : 'none';
+    });
+  }
 
-  document.querySelectorAll('.role-panel-content').forEach(panel => {
-    panel.style.display =
-      panel.dataset.panelRole === rolActual ? 'block' : 'none';
-  });
-}
-
-  /* ── Bookmarks ── */
   function initBookmarks() {
     document.getElementById('main-content')
       ?.addEventListener('click', function (e) {
         const btn = e.target.closest('.btn-bookmark');
         if (!btn) return;
         const saved = btn.classList.toggle('saved');
-        const icon = btn.querySelector('i');
+        const icon  = btn.querySelector('i');
         if (icon) icon.className = saved ? 'bi bi-bookmark-fill' : 'bi bi-bookmark';
       });
   }
 
-  /* ── Sort ── */
   function initSort() {
     const select = document.getElementById('sort-select');
-    const main = document.getElementById('main-content');
+    const main   = document.getElementById('main-content');
     if (!select || !main) return;
 
     select.addEventListener('change', function () {
       const cards = [...main.querySelectorAll('.job-card')];
       if (!cards.length) return;
-
       cards.sort((a, b) => {
         const sa = Number(a.dataset.salario ?? 0);
         const sb = Number(b.dataset.salario ?? 0);
-        const fa = Number(a.dataset.fecha ?? 0);
-        const fb = Number(b.dataset.fecha ?? 0);
-        if (this.value === 'salario-asc') return sa - sb;
+        const fa = Number(a.dataset.fecha   ?? 0);
+        const fb = Number(b.dataset.fecha   ?? 0);
+        if (this.value === 'salario-asc')  return sa - sb;
         if (this.value === 'salario-desc') return sb - sa;
         return fb - fa;
       });
-
       const ref = main.querySelector('.pagination');
       cards.forEach(c => main.insertBefore(c, ref ?? null));
     });
   }
 
-  /* ── Role switcher (Desarrollo / Simulación) ── */
   function initRoleSwitcher() {
     const switcher = document.getElementById('role-switcher');
     if (!switcher) return;
-
     switcher.addEventListener('click', function (e) {
       const btn = e.target.closest('.role-btn');
       if (!btn) return;
-
       const nuevoRol = btn.dataset.rol;
       document.documentElement.dataset.role = nuevoRol;
-
-      // Llama a la función simplificada para alternar las vistas
       renderRightPanel();
-
       switcher.querySelectorAll('.role-btn').forEach(b => {
         b.classList.toggle('active', b.dataset.rol === nuevoRol);
       });
     });
   }
 
-  /* ── Init general del módulo ── */
   document.addEventListener('DOMContentLoaded', () => {
     renderRightPanel();
     initBookmarks();

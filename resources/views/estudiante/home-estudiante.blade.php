@@ -169,4 +169,230 @@
     document.getElementById('modalOferta').showModal();
   };
 </script>
+
+<style>
+@media (max-width: 768px) {
+
+  /* ── Página contenedora ── */
+  .panel-page {
+    padding: 20px 14px 48px;
+  }
+
+  .panel-page-title {
+    font-size: 22px;
+    margin-bottom: 2px;
+  }
+
+  .panel-page-sub {
+    font-size: 13px;
+    margin-bottom: 22px;
+  }
+
+  /* ── Stats: apiladas en columna única ── */
+  .stats-row {
+    grid-template-columns: 1fr;
+    gap: 10px;
+    margin-bottom: 26px;
+  }
+
+  .stat-card {
+    padding: 18px 20px;
+    border-radius: 8px;
+  }
+
+  .stat-card-value {
+    font-size: 40px;
+  }
+
+  .stat-card-label {
+    font-size: 12.5px;
+  }
+
+  .stat-card-icon {
+    font-size: 20px;
+  }
+
+  /* ── Section header ── */
+  .section-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+
+  .section-title {
+    font-size: 17px;
+  }
+
+  .section-actions {
+    width: 100%;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .section-actions .btn-outline,
+  .section-actions .btn-accent {
+    width: 100%;
+    justify-content: center;
+    padding: 10px 16px;
+    font-size: 13.5px;
+  }
+
+  /* ── Tabla de postulaciones: tarjetas apiladas ── */
+  .postulaciones-table,
+  .postulaciones-table thead,
+  .postulaciones-table tbody,
+  .postulaciones-table th,
+  .postulaciones-table td,
+  .postulaciones-table tr {
+    display: block;
+    width: 100%;
+  }
+
+  .postulaciones-table {
+    border: none;
+    background: transparent;
+  }
+
+  .postulaciones-table thead {
+    display: none; /* ocultamos cabeceras, usamos data-label */
+  }
+
+  .postulaciones-table tbody tr {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    margin-bottom: 12px;
+    padding: 14px 16px;
+    position: relative;
+  }
+
+  .postulaciones-table tbody tr:last-child td {
+    border-bottom: none;
+  }
+
+  .postulaciones-table tbody tr:hover {
+    background: var(--surface);
+  }
+
+  .postulaciones-table td {
+    border-bottom: none;
+    padding: 4px 0;
+    font-size: 13px;
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+  }
+
+  /* Etiqueta inline antes de cada celda */
+  .postulaciones-table td::before {
+    content: attr(data-label);
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: var(--text-muted);
+    min-width: 68px;
+    padding-top: 1px;
+    flex-shrink: 0;
+  }
+
+  /* Celda de puesto: sin etiqueta, ocupa todo el ancho */
+  .postulaciones-table td:first-child {
+    flex-direction: column;
+    gap: 2px;
+    margin-bottom: 8px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .postulaciones-table td:first-child::before {
+    display: none;
+  }
+
+  .td-puesto {
+    font-size: 15px;
+  }
+
+  .td-empresa {
+    font-size: 12px;
+  }
+
+  /* Celda de acción (Ver Oferta) */
+  .postulaciones-table td:last-child {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid var(--border);
+    justify-content: flex-end;
+  }
+
+  .postulaciones-table td:last-child::before {
+    display: none;
+  }
+
+  .toggle-detalle {
+    font-size: 13px;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  /* ── Badges ── */
+  .badge-tipo {
+    font-size: 11px;
+    padding: 3px 8px;
+  }
+
+  .badge-estado {
+    font-size: 11px;
+    padding: 3px 10px;
+  }
+
+  /* ── Detalle expandible: columna única ── */
+  .detalle-row td {
+    padding: 16px 14px;
+  }
+
+  .detalle-inner {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  /* ── Modal oferta ── */
+  dialog#modalOferta {
+    width: calc(100vw - 28px);
+    max-width: 100%;
+    margin: auto;
+    padding: 20px 16px;
+    border-radius: 10px;
+  }
+}
+
+/* ── Breakpoint medio: tablet (768–1024px) ── */
+@media (min-width: 769px) and (max-width: 1024px) {
+
+  .panel-page {
+    padding: 28px 20px 56px;
+  }
+
+  .stats-row {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+  }
+
+  .stat-card-value {
+    font-size: 30px;
+  }
+
+  .postulaciones-table th,
+  .postulaciones-table td {
+    padding: 12px 12px;
+    font-size: 13px;
+  }
+
+  .detalle-inner {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+</style>
+
 @endsection

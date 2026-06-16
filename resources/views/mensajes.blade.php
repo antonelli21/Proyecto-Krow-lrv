@@ -129,7 +129,13 @@
  
           item.addEventListener('mouseenter', () => { if (!activo) item.style.background = 'var(--bg-hover)'; });
           item.addEventListener('mouseleave', () => { if (!activo) item.style.background = 'transparent'; });
-          item.addEventListener('click', () => abrirChat(chat, otro));
+          item.addEventListener('click', () => {
+            abrirChat(chat, otro);
+            if (window.innerWidth <= 640) {
+              document.getElementById('mensajes-page')?.classList.add('chat-abierto');
+            } 
+          });
+
           listEl.appendChild(item);
         });
       })
@@ -212,7 +218,211 @@
   searchEl?.addEventListener('input', cargarChats);
  
   cargarChats();
+/* ════════════════════════════════════════
+   MENSAJES — lógica responsive mobile
+   Pegar DENTRO del <script> del blade,
+   justo antes del cierre  })();
+════════════════════════════════════════ */
+ 
+/* ── Inyectar botón "← Volver" en el sidebar ── */
+(function injectBtnVolver() {
+  const sidebarHeader = document.querySelector('#mensajes-page > aside > div:first-child');
+  if (!sidebarHeader) return;
+ 
+  const btn = document.createElement('button');
+  btn.id = 'btn-volver-chats';
+  btn.innerHTML = '<i class="bi bi-arrow-left"></i> Conversaciones';
+  btn.addEventListener('click', () => {
+    const page = document.getElementById('mensajes-page');
+    page?.classList.remove('chat-abierto');
+ 
+    // Limpiar chat activo
+    chatActivoId = null;
+    clearInterval(intervalo);
+    document.getElementById('panel-header').style.display = 'none';
+    document.getElementById('mensajes-vacio').style.display = 'flex';
+    document.getElementById('form-mensaje').style.display = 'none';
+    document.getElementById('mensajes-historial').innerHTML = '';
+    cargarChats();
+  });
+ 
+  sidebarHeader.prepend(btn);
+})();
+ 
+/* ── Parchar abrirChat para activar clase en mobile ── */
+const _abrirChatOriginal = abrirChat;
+// Se parchea externamente desde el scope del IIFE:
+// En el listener de cada item del chat, después de llamar abrirChat(chat, otro),
+// agregar:
+//   if (window.innerWidth <= 640) {
+//     document.getElementById('mensajes-page')?.classList.add('chat-abierto');
+//   }
 })();
 </script>
+
+<style>
+  /* ════════════════════════════════════════
+   RESPONSIVE — Mensajes KROW
+   Pegar al pie del CSS de mensajes o en
+   <style> dentro del blade de mensajes
+════════════════════════════════════════ */
+
+/* ── Mobile (≤ 640px): layout columna, sidebar como lista full ── */
+@media (max-width: 640px) {
+
+  #mensajes-page {
+    flex-direction: column !important;
+    height: calc(100vh - var(--header-h)) !important;
+    overflow: hidden !important;
+  }
+
+  /* ── SIDEBAR: ocupa todo cuando no hay chat abierto ── */
+  #mensajes-page > aside {
+    width: 100% !important;
+    flex-shrink: 0 !important;
+    border-right: none !important;
+    border-bottom: 0.5px solid var(--border) !important;
+    /* altura fija cuando convive con el panel */
+    max-height: 100% !important;
+    transition: max-height 0.25s ease;
+  }
+
+  /* Cuando hay chat activo: sidebar colapsado en banda angosta */
+  #mensajes-page.chat-abierto > aside {
+    max-height: 60px !important;
+    overflow: hidden !important;
+    border-bottom: 0.5px solid var(--border) !important;
+  }
+
+  /* Ocultar lista de chats cuando hay chat abierto */
+  #mensajes-page.chat-abierto #chats-lista {
+    display: none !important;
+  }
+
+  /* Cabecera del sidebar en modo colapsado: mostrar "← Volver" */
+  #mensajes-page.chat-abierto aside > div:first-child {
+    display: flex !important;
+    align-items: center !important;
+    padding: 10px 16px !important;
+  }
+
+  #mensajes-page.chat-abierto aside > div:first-child p {
+    display: none !important;
+  }
+
+  #mensajes-page.chat-abierto aside > div:first-child > div {
+    display: none !important;
+  }
+
+  /* Botón volver inyectado por JS */
+  #btn-volver-chats {
+    display: none;
+    align-items: center;
+    gap: 8px;
+    background: none;
+    border: none;
+    color: var(--accent);
+    font-family: var(--font-display);
+    font-size: 13.5px;
+    font-weight: 700;
+    cursor: pointer;
+    padding: 0;
+  }
+
+  #mensajes-page.chat-abierto #btn-volver-chats {
+    display: flex !important;
+  }
+
+  /* ── PANEL DERECHO ── */
+  #mensajes-page > section {
+    flex: 1 !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
+  }
+
+  /* Header del panel */
+  #panel-header {
+    padding: 10px 14px !important;
+    gap: 10px !important;
+  }
+
+  #panel-avatar {
+    width: 30px !important;
+    height: 30px !important;
+    font-size: 11px !important;
+  }
+
+  #panel-nombre {
+    font-size: 13px !important;
+  }
+
+  #panel-rol {
+    font-size: 11px !important;
+  }
+
+  /* Historial de mensajes */
+  #mensajes-historial {
+    padding: 12px 10px !important;
+    gap: 8px !important;
+  }
+
+  /* Burbujas de mensajes */
+  #mensajes-historial > div {
+    max-width: 82% !important;
+  }
+
+  /* Form de envío */
+  #form-mensaje {
+    padding: 10px 12px !important;
+    gap: 8px !important;
+  }
+
+  #input-contenido {
+    font-size: 14px !important; /* evita zoom iOS */
+    padding: 8px 12px !important;
+  }
+
+  #form-mensaje button[type="submit"] {
+    width: 36px !important;
+    height: 36px !important;
+    font-size: 14px !important;
+  }
+
+  /* Estado vacío */
+  #mensajes-vacio i {
+    font-size: 32px !important;
+  }
+
+  #mensajes-vacio p {
+    font-size: 13px !important;
+    text-align: center !important;
+    padding: 0 20px !important;
+  }
+}
+
+/* ── Tablet (641px–900px): sidebar más angosto ── */
+@media (min-width: 641px) and (max-width: 900px) {
+
+  #mensajes-page > aside {
+    width: 220px !important;
+  }
+
+  #panel-header {
+    padding: 12px 16px !important;
+  }
+
+  #mensajes-historial {
+    padding: 16px 14px !important;
+  }
+
+  #mensajes-historial > div {
+    max-width: 75% !important;
+  }
+}
+</style>
+
+
+
+
 @endsection
  
