@@ -47,6 +47,23 @@
       @endif
 
       <a href="{{ route('ayuda') }}" class="nav-link {{ request()->routeIs('ayuda') ? 'active' : '' }}">Ayuda</a>
+
+      @auth
+        <div class="nav-mobile-account" aria-label="Mi cuenta móvil">
+          <div class="mobile-account-title">Mi Cuenta</div>
+          @if(Route::has($rol . '.perfil'))
+            <a href="{{ route($rol . '.perfil') }}" class="nav-link mobile-account-link">Mi Perfil</a>
+          @endif
+          <a href="{{ route('mensajes') }}" class="nav-link mobile-account-link">Mensajes</a>
+          <a href="{{ route('configuracion') }}" class="nav-link mobile-account-link">Seguridad</a>
+          <a href="{{ route('logout') }}" class="nav-link mobile-account-link" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Cerrar sesión</a>
+        </div>
+      @else
+        <div class="nav-mobile-account" aria-label="Acceso móvil">
+          <a href="{{ route('login') }}" class="nav-link mobile-account-link">Ingresar</a>
+          <a href="{{ route('register') }}" class="nav-link mobile-account-link">Registro</a>
+        </div>
+      @endauth
     </nav>
 
     <div class="header-actions">
