@@ -75,12 +75,30 @@ document.addEventListener('DOMContentLoaded', () => {
   const hamburger = document.getElementById('hamburger');
   const headerNav = document.getElementById('header-nav');
 
-  hamburger?.addEventListener('click', () => {
-    const isOpen = headerNav.classList.toggle('open');
-    hamburger.classList.toggle('open', isOpen);
-    hamburger.setAttribute('aria-expanded', isOpen);
-  });
+const navOverlay = document.getElementById('nav-overlay');
 
+hamburger?.addEventListener('click', () => {
+  const isOpen = headerNav.classList.toggle('open');
+  hamburger.classList.toggle('open', isOpen);
+  hamburger.setAttribute('aria-expanded', isOpen);
+  navOverlay?.classList.toggle('active', isOpen);
+});
+
+navOverlay?.addEventListener('click', () => {
+  headerNav.classList.remove('open');
+  hamburger?.classList.remove('open');
+  hamburger?.setAttribute('aria-expanded', 'false');
+  navOverlay.classList.remove('active');
+});
+
+headerNav?.querySelectorAll('.nav-link').forEach(link => {
+  link.addEventListener('click', () => {
+    headerNav.classList.remove('open');
+    hamburger?.classList.remove('open');
+    hamburger?.setAttribute('aria-expanded', 'false');
+    navOverlay?.classList.remove('active');
+  });
+});
   headerNav?.querySelectorAll('.nav-link').forEach(link => {
     link.addEventListener('click', () => {
       headerNav.classList.remove('open');

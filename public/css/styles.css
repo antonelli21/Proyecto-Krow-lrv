@@ -418,7 +418,6 @@ main {
 .hamburger.open span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
 .hamburger.open span:nth-child(2) { opacity: 0; }
 .hamburger.open span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
-
 /* ===== responsive ===== */
 @media (max-width: 900px) {
   .header-inner { padding: 0.75rem 1.5rem; flex-wrap: wrap; gap: 0.75rem; }
@@ -440,41 +439,127 @@ main {
     background-color: var(--surface);
     flex-direction: column;
     align-items: stretch;
-    padding: 1rem 1.5rem 1.25rem;
+    padding: 1rem 1.5rem 0;
     gap: 0.5rem;
     box-shadow: 0 10px 20px rgba(0,0,0,0.1);
     border-top: 1px solid var(--border);
     z-index: 99;
+    overflow: hidden;
+    scrollbar-width: none;
   }
+
+  .header-nav::-webkit-scrollbar { display: none; }
+
   [data-theme="dark"] .header-nav {
     background-color: var(--surface);
     border-top: 1px solid var(--border);
   }
+
   .header-nav.open { display: flex; }
-  .header-nav.open .nav-mobile-account {
-    display: flex !important;
-    flex-direction: column;
-    gap: 0.35rem;
-    padding-top: 0.75rem;
-    border-top: 1px solid var(--border);
+
+  /* Separación entre links de nav principal */
+  .header-nav.open > .nav-link {
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 0.6rem;
   }
+
+  .header-nav.open > .nav-link:last-of-type {
+    border-bottom: none;
+  }
+
+  /* Contenedor inferior */
+  .header-nav.open .nav-mobile-account {
+  display: flex !important;
+  flex-direction: column;
+  gap: 4px;
+  margin: 8px -1.5rem 0;
+  padding: 14px 1.5rem 16px;
+  border: none;
+  border-top: 2px solid var(--accent);
+  overflow: hidden;
+  position: relative;
+}
+
+[data-theme="dark"] .header-nav.open .nav-mobile-account {
+  background: rgba(0, 0, 0, 0.35);
+  box-shadow: 0 16px 0 0 rgba(0, 0, 0, 0.35); /* ← extiende el fondo hacia abajo */
+}
+
+[data-theme="light"] .header-nav.open .nav-mobile-account {
+  background: rgba(0, 0, 0, 0.08);
+  box-shadow: 0 16px 0 0 rgba(0, 0, 0, 0.08);
+}
+  /* Título Mi Cuenta */
   .header-nav.open .mobile-account-title {
-    font-size: 0.85rem;
+    font-size: 10px;
     font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.1em;
-    color: var(--text-muted);
-    padding: 0.75rem 0 0.25rem;
+    letter-spacing: 1.2px;
+    color: var(--accent);
+    padding: 0 0 8px 0;
+    margin-bottom: 2px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-shadow: 0 0 8px rgba(212, 168, 67, 0.6);
   }
-  .nav-link { width: 100%; text-align: center; padding: 0.6rem; }
 
+  [data-theme="light"] .header-nav.open .mobile-account-title {
+    text-shadow: 0 0 8px rgba(7, 117, 82, 0.5);
+  }
+
+  /* Links internos */
+  .nav-link.mobile-account-link {
+    padding: 6px 14px;
+    text-align: left;
+    color: var(--accent);
+    font-size: 13.5px;
+    font-weight: 600;
+    border: none;
+    border-top: 1px solid rgba(212, 168, 67, 0.2);
+    background: transparent;
+    box-shadow: none;
+    text-shadow: 0 0 6px rgba(212, 168, 67, 0.5);
+    border-radius: 0;
+    transition: background 0.2s;
+  }
+
+  .nav-link.mobile-account-link:first-child {
+    border-top: none;
+  }
+
+  [data-theme="light"] .nav-link.mobile-account-link {
+    color: #111 !important;
+    border-top-color: rgba(0, 0, 0, 0.1);
+    background: transparent;
+    text-shadow: none;
+    box-shadow: none;
+  }
+
+  [data-theme="light"] .nav-link.mobile-account-link:hover {
+    background: rgba(7, 117, 82, 0.07);
+  }
+
+  .nav-link { width: 100%; text-align: center; padding: 0.6rem; }
   .btn-ghost-sm, .btn-primary-sm { display: none; }
   .account-btn { display: none; }
   .header-actions .action-btn:first-of-type { margin-left: auto; }
-  .nav-link.mobile-account-link {
-    padding-left: 0;
-    text-align: left;
-  }
+}
+
+/* Overlay fondo oscuro */
+.nav-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  top: var(--header-h);
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 98;
+  backdrop-filter: blur(2px);
+  transition: opacity 0.2s ease;
+}
+
+.nav-overlay.active {
+  display: block;
 }
 
 @media (max-width: 480px) {
@@ -483,7 +568,6 @@ main {
   .logo-image { height: 40px; }
   .brand-name { font-size: 0.7rem; }
 }
-
 /* ════════════════════════════════════════
    COMPONENTES ADICIONALES
 ════════════════════════════════════════ */
