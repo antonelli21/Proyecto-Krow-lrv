@@ -25,7 +25,7 @@
             {{-- ── Alumno / Estudiante ── --}}
             @if($rol === 'estudiante')
 
-                <a href="/ofertas/4" class="notif-item unread">
+                <a href="{{ route('estudiante.oferta', 4) }}" class="notif-item unread">
                     <div class="notif-icon notif-icon-info">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <circle cx="12" cy="12" r="10"/>
@@ -40,7 +40,7 @@
                     <span class="notif-dot"></span>
                 </a>
 
-                <a href="/estudiante/postulaciones" class="notif-item unread">
+                <a href="{{ route('estudiante.home') }}" class="notif-item unread">
                     <div class="notif-icon notif-icon-success">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <polyline points="20 6 9 17 4 12"/>
@@ -53,7 +53,7 @@
                     <span class="notif-dot"></span>
                 </a>
 
-                <a href="/estudiante/mensajes" class="notif-item unread">
+                <a href="{{ route('estudiante.mensajes') }}" class="notif-item unread">
                     <div class="notif-icon notif-icon-message">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
@@ -66,7 +66,7 @@
                     <span class="notif-dot"></span>
                 </a>
 
-                <a href="/estudiante/perfil/editar" class="notif-item unread">
+                <a href="{{ route('estudiante.perfil.editar') }}" class="notif-item unread">
                     <div class="notif-icon notif-icon-warning">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
@@ -84,7 +84,7 @@
             {{-- ── Empresa ── --}}
             @elseif($rol === 'empresa')
 
-                <a href="/empresa/ofertas/2/postulaciones" class="notif-item unread">
+                <a href="{{ route('empresa.empresa.ofertas.postulantes', 2) }}" class="notif-item unread">
                     <div class="notif-icon notif-icon-info">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
@@ -100,7 +100,7 @@
                     <span class="notif-dot"></span>
                 </a>
 
-                <a href="/empresa/mensajes" class="notif-item unread">
+                <a href="{{ route('empresa.mensajes') }}" class="notif-item unread">
                     <div class="notif-icon notif-icon-message">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
@@ -113,7 +113,7 @@
                     <span class="notif-dot"></span>
                 </a>
 
-                <a href="/empresa/panel" class="notif-item unread">
+                <a href="{{ route('empresa.home') }}" class="notif-item unread">
                     <div class="notif-icon notif-icon-success">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <polyline points="20 6 9 17 4 12"/>
@@ -126,7 +126,7 @@
                     <span class="notif-dot"></span>
                 </a>
 
-                <a href="/empresa/ofertas/5/editar" class="notif-item unread">
+                <a href="{{ route('empresa.home') }}" class="notif-item unread">
                     <div class="notif-icon notif-icon-warning">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
@@ -144,7 +144,7 @@
             {{-- ── Admin ── --}}
             @elseif($rol === 'admin')
 
-                <a href="/admin/empresas/pendientes" class="notif-item unread">
+                <a href="{{ route('admin.home') }}" class="notif-item unread">
                     <div class="notif-icon notif-icon-info">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
@@ -158,7 +158,7 @@
                     <span class="notif-dot"></span>
                 </a>
 
-                <a href="/admin/moderacion/ofertas/12" class="notif-item unread">
+                <a href="{{ route('admin.home') }}" class="notif-item unread">
                     <div class="notif-icon notif-icon-danger">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <circle cx="12" cy="12" r="10"/>
@@ -173,7 +173,7 @@
                     <span class="notif-dot"></span>
                 </a>
 
-                <a href="/admin/seguridad/logs" class="notif-item unread">
+                <a href="{{ route('admin.home') }}" class="notif-item unread">
                     <div class="notif-icon notif-icon-danger">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
@@ -188,7 +188,7 @@
                     <span class="notif-dot"></span>
                 </a>
 
-                <a href="/admin/informes" class="notif-item unread">
+                <a href="{{ route('admin.home') }}" class="notif-item unread">
                     <div class="notif-icon notif-icon-success">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
@@ -204,6 +204,10 @@
             @endif
 
         </div>{{-- /notif-list --}}
+
+        <div class="notif-footer">
+            <a href="{{ route('notificaciones') }}" class="notif-ver-todas">Ver todas las notificaciones</a>
+        </div>
 
     </div>{{-- /notif-dropdown --}}
 </div>{{-- /notif-wrapper --}}
