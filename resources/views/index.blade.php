@@ -10,6 +10,14 @@
 
 <div class="page-body" id="page-body" data-rol="{{ $rol }}">
 
+        <div class="mobile-sidebar-bar">
+            <button class="sidebar-mobile-toggle" id="sidebar-drawer-toggle" aria-controls="sidebar-filtros" aria-expanded="false" aria-label="Abrir filtros">
+                <span class="sidebar-mobile-toggle-text">Ver filtros</span>
+                <span class="sidebar-mobile-toggle-icon">+</span>
+            </button>
+        </div>
+    <div class="sidebar-mobile-overlay" id="sidebar-overlay" aria-hidden="true"></div>
+
     {{-- SIDEBAR --}}
     <aside class="sidebar-filtros" id="sidebar-filtros" aria-label="Filtros de búsqueda">
         @include('layouts.sidebar-filtros')

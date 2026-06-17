@@ -353,8 +353,59 @@ document.addEventListener('DOMContentLoaded', () => {
       localStorage.setItem('krow_sidebar_collapsed', isCollapsed);
     });
   }
-});
 
+  const drawerToggle = document.getElementById('sidebar-drawer-toggle');
+  const sidebarOverlay = document.getElementById('sidebar-overlay');
+
+  if (sidebarEl && drawerToggle) {
+    const closeDrawer = () => {
+      sidebarEl.classList.remove('drawer-open');
+      if (sidebarOverlay) sidebarOverlay.classList.remove('active');
+      drawerToggle.setAttribute('aria-expanded', 'false');
+      const labelText = drawerToggle.querySelector('.sidebar-mobile-toggle-text');
+      const labelIcon = drawerToggle.querySelector('.sidebar-mobile-toggle-icon');
+      if (labelText) labelText.textContent = 'Ver filtros';
+      if (labelIcon) labelIcon.textContent = '+';
+      drawerToggle.setAttribute('aria-label', 'Abrir filtros');
+    };
+
+    const openDrawer = () => {
+      sidebarEl.classList.add('drawer-open');
+      if (sidebarOverlay) sidebarOverlay.classList.add('active');
+      drawerToggle.setAttribute('aria-expanded', 'true');
+      const labelText = drawerToggle.querySelector('.sidebar-mobile-toggle-text');
+      const labelIcon = drawerToggle.querySelector('.sidebar-mobile-toggle-icon');
+      if (labelText) labelText.textContent = 'Cerrar filtros';
+      if (labelIcon) labelIcon.textContent = '×';
+      drawerToggle.setAttribute('aria-label', 'Cerrar filtros');
+    };
+
+    drawerToggle.addEventListener('click', () => {
+      if (sidebarEl.classList.contains('drawer-open')) {
+        closeDrawer();
+      } else {
+        openDrawer();
+      }
+    });
+
+    // Cerrar drawer al hacer clic en el overlay
+    if (sidebarOverlay) {
+      sidebarOverlay.addEventListener('click', closeDrawer);
+    }
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && sidebarEl.classList.contains('drawer-open')) {
+        closeDrawer();
+      }
+    });
+
+    window.addEventListener('resize', () => {
+      if (window.innerWidth > 900) {
+        closeDrawer();
+      }
+    });
+  }
+});
 
 
 /* ════════════════════════════════════════
