@@ -1,5 +1,4 @@
-<aside class="sidebar-filtros" style="position: sticky; top: 70px; height: calc(100vh - 90px); overflow-y: auto; scrollbar-width: none; -ms-overflow-style: none; background: transparent; border: none; box-shadow: none; padding-left: 0;">
-  <button class="sidebar-toggle-btn" id="sidebar-toggle" aria-label="Colapsar filtros">
+<button class="sidebar-toggle-btn" id="sidebar-toggle" aria-label="Colapsar filtros">
     <span>Filtros</span>
     <span class="sidebar-toggle-icon" id="sidebar-toggle-symbol" style="font-size:1.3rem; font-weight:700; line-height:1;">−</span>
   </button>
@@ -168,4 +167,3 @@
   </button>
 </div>
   </form>
-</aside>
