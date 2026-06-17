@@ -23,7 +23,7 @@ class EstudianteController extends Controller
             'postulaciones.oferta.habilidades'
         ]);
 
-        return view('estudiante.perfil', compact('estudiante'));
+        return response()->json($estudiante);
     }
 
     public function store(Request $request)
