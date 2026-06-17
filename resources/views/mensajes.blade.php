@@ -257,15 +257,10 @@ const _abrirChatOriginal = abrirChat;
 //   if (window.innerWidth <= 640) {
 //     document.getElementById('mensajes-page')?.classList.add('chat-abierto');
 //   }
-})();
+//})();
 </script>
 
 <style>
-  /* ════════════════════════════════════════
-   RESPONSIVE — Mensajes KROW
-   Pegar al pie del CSS de mensajes o en
-   <style> dentro del blade de mensajes
-════════════════════════════════════════ */
 
 /* ── Mobile (≤ 640px): layout columna, sidebar como lista full ── */
 @media (max-width: 640px) {

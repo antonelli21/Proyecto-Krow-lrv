@@ -966,7 +966,7 @@ function adminConfirm(name) {
    Solo se carga en esta página.
 ════════════════════════════════════════ */
 
-document.addEventListener('DOMContentLoaded'), () => {
+document.addEventListener('DOMContentLoaded', () => {
 
   /* ── Detectar dispositivo ── */
   const deviceEl = document.getElementById('config-device');
@@ -985,7 +985,7 @@ document.addEventListener('DOMContentLoaded'), () => {
               : 'Desconocido';
     deviceEl.textContent = `${browser} — ${os}`;
   }
-}
+}); // ← punto y coma acá
 //   /* ── Confirmación zona de peligro ── */
 //   document.getElementById('form-logout-all')
 //     ?.addEventListener('submit', (e) => {
