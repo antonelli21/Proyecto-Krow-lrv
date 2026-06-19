@@ -11,6 +11,7 @@ use App\Http\Controllers\OfertaController;
 use App\Http\Controllers\TicketSoporteController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AdminController;
 
 /* ════════════════════════════════════════
    RUTAS PÚBLICAS
@@ -44,7 +45,9 @@ Route::middleware('guest')->group(function () {
     Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
 
     // Procesar el formulario de login (POST)
-    Route::post('/login', [LoginController::class, 'login'])->name('login.post');
+    Route::post('/login', [LoginController::class, 'login'])
+    ->middleware('throttle:5,1')
+    ->name('login.post');
 
     // Mostrar el formulario de registro (con tabs candidato/empresa)
     Route::get('/registro', [RegisterController::class, 'showRegistrationForm'])->name('register');
@@ -85,7 +88,7 @@ Route::post('/logout', [LoginController::class, 'logout'])
 ════════════════════════════════════════ */
 Route::prefix('estudiante')
     ->name('estudiante.')
-    ->middleware(['auth', 'verified', 'role:estudiante'])
+    ->middleware(['auth', 'verified', 'role:estudiante', 'alumno.activo']) // <-- ¡OJO! Acordate de meter acá tu middleware de bloqueo
     ->group(function () {
         Route::get('/home',           function () { return view('estudiante.home-estudiante'); })->name('home');
         Route::get('/empresas',       function () { return view('empresas'); })->name('empresas');
@@ -95,8 +98,7 @@ Route::prefix('estudiante')
         Route::get('/lista',          [EstudianteController::class, 'lista'])->name('lista');
         Route::get('/perfil/editar',  function () { return view('estudiante.perfil-estudiante-editar'); })->name('perfil.editar');
         Route::put('/perfil/update',  [EstudianteController::class, 'updatePerfil'])->name('perfil.update');
-
-        // Postularse a una oferta — solo estudiantes
+        Route::get('/ofertas', [EstudianteController::class, 'obtenerOfertas'])->name('ofertas');
         Route::post('/ofertas/{id_oferta}/postular', [OfertaController::class, 'postular'])->name('ofertas.postular');
     });
 
@@ -106,7 +108,7 @@ Route::prefix('estudiante')
 ════════════════════════════════════════ */
 Route::prefix('empresa')
     ->name('empresa.')
-    ->middleware(['auth', 'verified', 'role:empresa'])
+    ->middleware(['auth', 'verified', 'role:empresa', 'empresa.activa'])
     ->group(function () {
         Route::get('/home',                        [EmpresaController::class, 'home'])->name('home');
         Route::get('/perfil',                      function () { return view('empresa.perfil-empresa'); })->name('perfil');
@@ -127,9 +129,23 @@ Route::prefix('admin')
     ->name('admin.')
     ->middleware(['auth', 'verified', 'role:admin'])
     ->group(function () {
-        Route::get('/home',        function () { return view('admin.admin'); })->name('home');
-        Route::get('/empresas',    function () { return view('admin.admin'); })->name('empresas');
-        Route::get('/estudiantes', function () { return view('admin.admin'); })->name('estudiantes');
+        // Vistas principales existentes
+        Route::get('/home', [AdminController::class, 'home'])->name('home');
+        Route::get('/empresas', [AdminController::class, 'listarEmpresas'])->name('empresas');
+        Route::get('/estudiantes', [AdminController::class, 'listarEstudiantes'])->name('estudiantes');
+        
+        // NUEVA: Vista de ofertas de empresas aprobadas
+        Route::get('/ofertas', [AdminController::class, 'listarOfertas'])->name('ofertas');
+
+        // Acciones existentes...
+        Route::post('/estudiantes/{id}/estado', [AdminController::class, 'cambiarEstadoEstudiante'])->name('estudiantes.estado');
+        Route::post('/empresas/{id}/estado', [AdminController::class, 'cambiarEstadoEmpresa'])->name('empresas.estado');
+        Route::delete('/estudiantes/{id}', [AdminController::class, 'eliminarEstudiante'])->name('estudiantes.destroy');
+        Route::delete('/empresas/{id}', [AdminController::class, 'eliminarEmpresa'])->name('empresas.destroy');
+
+        // NUEVAS: Acciones sobre las ofertas
+        Route::post('/ofertas/{id}/estado', [AdminController::class, 'cambiarEstadoOferta'])->name('ofertas.estado');
+        Route::delete('/ofertas/{id}', [AdminController::class, 'eliminarOferta'])->name('ofertas.destroy');
     });
 
 /* ════════════════════════════════════════

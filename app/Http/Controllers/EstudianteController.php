@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Estudiante;
 use Illuminate\Http\Request;
-
+use App\Models\Oferta;
 class EstudianteController extends Controller
 {
     public function index()
@@ -89,4 +89,18 @@ class EstudianteController extends Controller
 
         return response()->noContent();
     }
+
+    public function obtenerOfertas()
+    {
+        $ofertas = Oferta::where('estado', 'activa')
+            ->whereHas('empresa', function($query) {
+                $query->where('estado', 'aprobada');
+            })
+            ->latest()
+            ->get();
+
+        return response()->json($ofertas);
+    }
+
+
 }

@@ -1,9 +1,9 @@
 <?php
- 
+
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
- 
+
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
         web: __DIR__.'/../routes/web.php',
@@ -13,11 +13,13 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias([
-            'verified' => \App\Http\Middleware\EnsureEmailIsVerified::class,
-            'role'     => \App\Http\Middleware\CheckRole::class,
-            'guest'    => \App\Http\Middleware\RedirectIfAuthenticated::class,
+            'verified'       => \App\Http\Middleware\EnsureEmailIsVerified::class,
+            'role'           => \App\Http\Middleware\CheckRole::class,
+            'guest'          => \App\Http\Middleware\RedirectIfAuthenticated::class,
+            'empresa.activa' => \App\Http\Middleware\EnsureEmpresaActiva::class,
+            'alumno.activo'  => \App\Http\Middleware\EnsureEstudianteActivo::class,
         ]);
- 
+
         $middleware->redirectTo(
             guests: '/login',
             users:  '/'
@@ -26,4 +28,3 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withExceptions(function (Exceptions $exceptions): void {
         //
     })->create();
- 

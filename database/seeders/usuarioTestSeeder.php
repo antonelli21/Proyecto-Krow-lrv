@@ -997,4 +997,4 @@ class UsuarioTestSeeder extends Seeder
             ]);
         }
     }
-}   
+}

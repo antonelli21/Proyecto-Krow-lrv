@@ -36,6 +36,7 @@ class Empresa extends Model
         'facebook',
         'id_localidad',
         'id_provincia',
+        'estado',
     ];
 
     public function user(): BelongsTo

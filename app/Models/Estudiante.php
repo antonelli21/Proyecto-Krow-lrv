@@ -36,6 +36,7 @@ class Estudiante extends Model
         'github',
         'id_localidad',
         'id_provincia',
+        'estado',
     ];
 
     protected $casts = [

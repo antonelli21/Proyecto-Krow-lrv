@@ -37,14 +37,14 @@ class LoginController extends Controller
         // Verificar que el email esté verificado antes de permitir login
         $user = \App\Models\User::where('email', $credentials['email'])->first();
 
-        // Si el usuario existe pero no verificó su email (tiene un código de verificación pendiente), redirigir a la pantalla de verificación
         if ($user && !is_null($user->email_verification_code)) {
             session(['verificacion_user_id' => $user->id]);
-            return redirect()->route('verificacion.mostrar')
-                ->with('success', 'Antes de iniciar sesión, por favor verificá tu email con el código de 6 dígitos que te enviamos.');
-        }
 
-        // Obtener el valor del checkbox 'remember' (devuelve true si está marcado, false si no)
+            return redirect()
+                ->route('verificacion.mostrar')
+                ->with('success', 'Antes de iniciar sesión, verificá tu email.');
+        } else {    
+            // Obtener el valor del checkbox 'remember' (devuelve true si está marcado, false si no)
         $remember = $request->has('remember') || $request->boolean('remember');
 
         // Intentar autenticar con las credenciales y opción "recordarme"
@@ -66,7 +66,7 @@ class LoginController extends Controller
             ->withErrors(['email' => 'Las credenciales no coinciden con nuestros registros.'])
             ->withInput($request->only('email'));
     }
-
+     }
     /**
      * Cierra la sesión del usuario autenticado.
      * Invalida la sesión y regenera el token CSRF.

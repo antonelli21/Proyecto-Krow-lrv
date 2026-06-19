@@ -2346,6 +2346,10 @@ body {
   border: 1px solid rgba(46, 204, 154, .3);
 }
 
+
+
+
+
 /* Detalle expandible */
 .detalle-row {
   display: none;
@@ -3999,7 +4003,11 @@ body {
   font-size: 12.5px;
 }
 
-/* Estados */
+/* ════════════════════════════════════════
+   BADGES ADMIN — estados masculinos y femeninos
+   Reemplazá el bloque de badges en tu CSS de admin
+════════════════════════════════════════ */
+
 .badge-admin {
   display: inline-block;
   padding: 3px 10px;
@@ -4009,47 +4017,34 @@ body {
   white-space: nowrap;
 }
 
-.badge-activo {
-  background: rgba(46, 204, 154, .12);
-  color: #2ECC9A;
-  border: 1px solid rgba(46, 204, 154, .3);
-}
+/* Activo / Activa */
+.badge-activo,
+.badge-activa     { background: rgba(46,204,154,.12); color: #2ECC9A; border: 1px solid rgba(46,204,154,.3); }
 
-.badge-suspendido {
-  background: rgba(212, 24, 61, .10);
-  color: #e05577;
-  border: 1px solid rgba(212, 24, 61, .3);
-}
+/* Suspendido / Suspendida */
+.badge-suspendido,
+.badge-suspendida { background: rgba(212,24,61,.10);  color: #e05577; border: 1px solid rgba(212,24,61,.3); }
 
-.badge-pendiente {
-  background: rgba(212, 168, 67, .12);
-  color: #D4A843;
-  border: 1px solid rgba(212, 168, 67, .3);
-}
+/* Pendiente */
+.badge-pendiente  { background: rgba(212,168,67,.12); color: #D4A843; border: 1px solid rgba(212,168,67,.3); }
 
-.badge-aprobado {
-  background: rgba(46, 204, 154, .12);
-  color: #2ECC9A;
-  border: 1px solid rgba(46, 204, 154, .3);
-}
+/* Aprobado / Aprobada */
+.badge-aprobado,
+.badge-aprobada   { background: rgba(46,204,154,.12); color: #2ECC9A; border: 1px solid rgba(46,204,154,.3); }
 
-.badge-rechazado {
-  background: rgba(212, 24, 61, .10);
-  color: #e05577;
-  border: 1px solid rgba(212, 24, 61, .3);
-}
+/* Rechazado / Rechazada */
+.badge-rechazado,
+.badge-rechazada  { background: rgba(212,24,61,.10);  color: #e05577; border: 1px solid rgba(212,24,61,.3); }
 
-.badge-publicada {
-  background: rgba(46, 204, 154, .12);
-  color: #2ECC9A;
-  border: 1px solid rgba(46, 204, 154, .3);
-}
+/* Publicada */
+.badge-publicada  { background: rgba(46,204,154,.12); color: #2ECC9A; border: 1px solid rgba(46,204,154,.3); }
 
-.badge-pausada {
-  background: rgba(99, 179, 237, .12);
-  color: #63b3ed;
-  border: 1px solid rgba(99, 179, 237, .3);
-}
+/* Pausado / Pausada */
+.badge-pausado,
+.badge-pausada    { background: rgba(99,179,237,.12); color: #63b3ed; border: 1px solid rgba(99,179,237,.3); }
+
+/* Cerrada */
+.badge-cerrada    { background: rgba(212,24,61,.10);  color: #e05577; border: 1px solid rgba(212,24,61,.3); }
 
 /* Acciones */
 .td-acciones {
