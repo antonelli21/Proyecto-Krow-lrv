@@ -95,11 +95,11 @@ Route::prefix('estudiante')
     ->group(function () {
         Route::get('/home',           function () { return view('estudiante.home-estudiante'); })->name('home');
         Route::get('/empresas',       function () { return view('empresas'); })->name('empresas');
-        Route::get('/perfil',         function () { return view('estudiante.perfil-estudiante'); })->name('perfil');
-        Route::get('/mensajes',       function () { return view('estudiante.mensajes-estudiante'); })->name('mensajes');
+        Route::get('/perfil',         [EstudianteController::class, 'verPerfil'])->name('perfil');
+        Route::get('/mensajes',       function () { return view('mensajes'); })->name('mensajes');
         Route::get('/oferta/{id}',    function ($id) { return view('estudiante.oferta-detalle', compact('id')); })->name('oferta');
         Route::get('/lista',          [EstudianteController::class, 'lista'])->name('lista');
-        Route::get('/perfil/editar',  function () { return view('estudiante.perfil-estudiante-editar'); })->name('perfil.editar');
+        Route::get('/perfil/editar',  [EstudianteController::class, 'editarPerfil'])->name('perfil.editar');
         Route::put('/perfil/update',  [EstudianteController::class, 'updatePerfil'])->name('perfil.update');
         Route::get('/ofertas', [EstudianteController::class, 'obtenerOfertas'])->name('ofertas');
         Route::post('/ofertas/{id_oferta}/postular', [OfertaController::class, 'postular'])->name('ofertas.postular');
@@ -115,7 +115,7 @@ Route::prefix('empresa')
     ->group(function () {
         Route::get('/home',                        [EmpresaController::class, 'home'])->name('home');
         Route::get('/perfil',                      function () { return view('empresa.perfil-empresa'); })->name('perfil');
-        Route::get('/mensajes',                    function () { return view('empresa.mensajes-empresa'); })->name('mensajes');
+        Route::get('/mensajes',                    function () { return view('mensajes'); })->name('mensajes');
         Route::get('/oferta/{id}/postulantes',     [EmpresaController::class, 'verPostulantes'])->name('empresa.ofertas.postulantes');
         Route::get('/crear-oferta',                function () { return view('empresa.crear-oferta'); })->name('crear-oferta');
         Route::put('/postulacion/{id}/estado',     [EmpresaController::class, 'actualizarEstadoPostulante'])->name('actualizar-estado');
