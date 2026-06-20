@@ -156,23 +156,38 @@
 
         @endforelse
 
-        @if ($ofertas instanceof \Illuminate\Pagination\LengthAwarePaginator && $ofertas->hasPages())
-            <div class="pagination">
-                {{-- Anterior --}}
+        {{-- Paginación --}}
+        <nav class="pagination" id="pagination" aria-label="Páginas de resultados">
+            @if ($ofertas instanceof \Illuminate\Pagination\LengthAwarePaginator)
                 @if ($ofertas->onFirstPage())
-                    <button class="pg-btn" disabled><i class="bi bi-chevron-left"></i></button>
+                    <button class="pg-btn" id="pg-prev" aria-label="Página anterior" disabled>
+                        <i class="bi bi-chevron-left"></i>
+                    </button>
                 @else
-                    <a href="{{ $ofertas->previousPageUrl() }}" class="pg-btn"><i class="bi bi-chevron-left"></i></a>
+                    <a href="{{ $ofertas->previousPageUrl() }}" class="pg-btn" id="pg-prev" aria-label="Página anterior">
+                        <i class="bi bi-chevron-left"></i>
+                    </a>
                 @endif
 
-                {{-- Números --}}
                 @foreach ($ofertas->getUrlRange(1, $ofertas->lastPage()) as $page => $url)
-                    @if ($page == $ofertas->currentPage())
-                        <button class="pg-btn active" aria-current="page">{{ $page }}</button>
-                    @else
-                        <a href="{{ $url }}" class="pg-btn">{{ $page }}</a>
-                    @endif
+                    <a href="{{ $url }}" class="pg-btn {{ $page == $ofertas->currentPage() ? 'active' : '' }}">{{ $page }}</a>
                 @endforeach
+
+                @if ($ofertas->hasMorePages())
+                    <a href="{{ $ofertas->nextPageUrl() }}" class="pg-btn" id="pg-next" aria-label="Página siguiente">
+                        <i class="bi bi-chevron-right"></i>
+                    </a>
+                @else
+                    <button class="pg-btn" id="pg-next" aria-label="Página siguiente" disabled>
+                        <i class="bi bi-chevron-right"></i>
+                    </button>
+                @endif
+            @else
+                <button class="pg-btn active" aria-current="page">1</button>
+                <button class="pg-btn">2</button>
+                <button class="pg-btn">3</button>
+            @endif
+        </nav>
 
                 {{-- Siguiente --}}
                 @if ($ofertas->hasMorePages())

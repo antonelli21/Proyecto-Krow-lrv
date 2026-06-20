@@ -12,6 +12,7 @@ use App\Http\Controllers\TicketSoporteController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\IndexController;
 
 /* ════════════════════════════════════════
    RUTAS PÚBLICAS
@@ -19,15 +20,13 @@ use App\Http\Controllers\AdminController;
 ════════════════════════════════════════ */
 
 
-Route::get('/', [OfertaController::class, 'listar'])->name('inicio');
+Route::get('/', [IndexController::class, 'inicio'])->name('inicio');
 
 Route::get('/ayuda', function () {
     return view('ayuda');
 })->name('ayuda');
 
-Route::get('/empresas', function () {
-    return view('empresas');
-})->name('empresas');
+Route::get('/empresas', [IndexController::class, 'empresas'])->name('empresas');
 
 // Detalle de oferta — accesible por todos (invitado, estudiante, empresa, admin)
 Route::get('/ofertas/{id_oferta}', [OfertaController::class, 'detalle'])->name('ofertas.detalle');
@@ -180,15 +179,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 /* ════════════════════════════════════════
    FORMULARIO DE CONTACTO (público)
 ════════════════════════════════════════ */
-Route::post('/ayuda/contacto', function (Request $request) {
-    $request->validate([
-        'nombre'  => 'required|min:2',
-        'email'   => 'required|email',
-        'asunto'  => 'required|min:3',
-        'mensaje' => 'required|min:20',
-    ]);
-    return back()->with('contacto_ok', true);
-})->name('ayuda.contacto');
+Route::post('/ayuda/contacto', [IndexController::class, 'contacto'])->name('ayuda.contacto');
 
 /* ════════════════════════════════════════
    API RESOURCES

@@ -10,11 +10,3 @@
         Ya tengo cuenta
     </a>
 </div>
-<div class="panel-card featured-card">
-    <div class="featured-badge"><i class="bi bi-star-fill"></i> Destacado</div>
-    <p class="featured-title">Senior Backend Engineer</p>
-    <p class="featured-company">MegaCorp Technologies</p>
-    <button class="btn-quick-apply" onclick="location.href='{{ url('/login') }}'">
-        Postularme rápido
-    </button>
-</div>
