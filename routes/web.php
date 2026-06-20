@@ -47,6 +47,11 @@ Route::middleware('guest')->group(function () {
     ->middleware('throttle:5,1')
     ->name('login.post');
 
+    // Pantalla de registro pendiente (empresas)
+    Route::get('/registro/pendiente', function () {
+        return view('auth.registro-pendiente');
+    })->name('registro.pendiente');
+
     // Mostrar el formulario de registro (con tabs candidato/empresa)
     Route::get('/registro', [RegisterController::class, 'showRegistrationForm'])->name('register');
 

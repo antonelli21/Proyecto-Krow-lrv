@@ -997,6 +997,9 @@ $localidadesPorProvincia = \App\Models\Localidad::orderBy('nombre')
     sel.style.pointerEvents = 'auto';
   }
 
+  const formCand = document.getElementById('formCandidato');
+  const formEmp = document.getElementById('formEmpresa');
+
   document.addEventListener('DOMContentLoaded', function() {
 
     /* ── Tabs (Candidato / Empresa) ── */

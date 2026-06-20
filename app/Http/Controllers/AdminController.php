@@ -105,6 +105,7 @@ public function cambiarEstadoEmpresa(Request $request, $id)
     ]);
 
     $empresa = Empresa::findOrFail($id);
+    $estadoAnterior = $empresa->estado;
     $empresa->update(['estado' => $request->estado]);
 
     // 🔥 SINCRONIZACIÓN AUTOMÁTICA DE OFERTAS
@@ -118,6 +119,23 @@ public function cambiarEstadoEmpresa(Request $request, $id)
     if ($request->estado === 'aprobada') {
 
         $empresa->ofertas()->update(['estado' => 'activa']);
+    }
+
+    // ✉️ ENVIAR CORREO DE NOTIFICACIÓN SI EL ESTADO CAMBIA
+    if ($estadoAnterior !== $request->estado && in_array($request->estado, ['aprobada', 'rechazada', 'suspendida'])) {
+        if ($empresa->user && $empresa->user->email) {
+            // Parche SSL temporal para entorno local
+            config([
+                'mail.mailers.smtp.stream' => [
+                    'ssl' => [
+                        'allow_self_signed' => true,
+                        'verify_peer' => false,
+                        'verify_peer_name' => false,
+                    ],
+                ],
+            ]);
+            \Illuminate\Support\Facades\Mail::to($empresa->user->email)->send(new \App\Mail\EstadoEmpresaEmail($empresa, $request->estado));
+        }
     }
 
     return redirect()->back()
