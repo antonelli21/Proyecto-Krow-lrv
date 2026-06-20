@@ -5,13 +5,7 @@
 @section('content')
 
 {{-- ════════════════════════════════════════
-   VER OFERTA — KROW
-   Estilos propios de página (misma convención que crear-oferta)
-════════════════════════════════════════ --}}
-
-
-{{-- ════════════════════════════════════════
-   HTML
+    VER OFERTA — KROW
 ════════════════════════════════════════ --}}
 
 @php
@@ -27,9 +21,12 @@
     $experiencia  = $oferta->experiencia_requerida ?? '';
     $descripcion  = $oferta->descripcion     ?? '';
     $requisitos   = $oferta->requisitos      ?? '';
-    $tecnologias  = $oferta->tecnologias     ?? [];   // array o colección
+    $tecnologias  = $oferta->tecnologias     ?? [];   
     $estado       = $oferta->estado          ?? 'activa';
-    $ubicacion    = $oferta->ubicacion       ?? ($oferta->empresa->ubicacion ?? '');
+    
+    // Corregido: Ahora apunta a ->direccion de la empresa
+    $ubicacion    = $oferta->ubicacion       ?? ($oferta->empresa->direccion ?? '');
+    
     $fechaTxt     = $oferta->fecha_texto     ?? ($oferta->created_at ? \Carbon\Carbon::parse($oferta->created_at)->diffForHumans() : '');
     $yaPostulado  = $oferta->ya_postulado    ?? false;
 @endphp
@@ -50,17 +47,16 @@
 
         {{-- ── COLUMNA PRINCIPAL ─────────────────── --}}
         <div>
-
-            <div class="ver-oferta-card">
+            <div class="ver-oferta-card" style="max-width: 100%; overflow: hidden;">
 
                 {{-- Encabezado ── --}}
                 <div class="oferta-head">
                     <div class="oferta-head-left">
                         <div class="oferta-empresa-logo">{{ $logoLetras }}</div>
                         <div class="oferta-head-text">
-                            <h1>{{ $titulo }}</h1>
+                            <h1 style="overflow-wrap: break-word; word-break: break-word;">{{ $titulo }}</h1>
                             <div class="oferta-empresa-meta">
-                            <span>{{ $empresa }}</span>
+                                <span>{{ $empresa }}</span>
                             </div>
                         </div>
                     </div>
@@ -112,7 +108,7 @@
                             </svg>
                             Descripción del puesto
                         </div>
-                        <div class="oferta-section-body">{{ $descripcion }}</div>
+                        <div class="oferta-section-body" style="white-space: pre-line; overflow-wrap: break-word; word-break: break-word; max-width: 100%;">{{ $descripcion }}</div>
                     </div>
                     <hr class="oferta-divider">
                 @endif
@@ -126,9 +122,9 @@
                             </svg>
                             Requisitos
                         </div>
-                        <ul class="oferta-requisitos-list">
+                        <ul class="oferta-requisitos-list" style="overflow-wrap: break-word; word-break: break-word; max-width: 100%;">
                             @foreach (array_filter(preg_split('/\r\n|\r|\n/', $requisitos)) as $req)
-                                <li>{{ trim($req) }}</li>
+                                <li style="overflow-wrap: break-word; word-break: break-word;">{{ trim($req) }}</li>
                             @endforeach
                         </ul>
                     </div>
@@ -154,17 +150,15 @@
                     </div>
                 @endif
 
-            </div>{{-- /ver-oferta-card --}}
+            </div>
+        </div>
 
-        </div>{{-- /columna principal --}}
-
-        {{-- ── SIDEBAR ────────────────────────────── --}}
+{{-- ── SIDEBAR ────────────────────────────── --}}
         <aside class="ver-oferta-sidebar">
 
-            {{-- CTA postular ── --}}
+            @if(!auth()->check() || auth()->user()->rol === 'estudiante')
             <div class="sidebar-card">
-            @auth
-                @if (auth()->user()->rol === 'estudiante')
+                @auth
                     @if ($yaPostulado)
                         <button class="btn-postular ya-postulado" disabled>
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
@@ -185,79 +179,115 @@
                         </form>
                     @endif
                 @else
-                    {{-- empresa o admin: solo ven la oferta, sin botón --}}
-                @endif
-            @else
-                {{-- invitado: llevado al login --}}
-                <a href="{{ route('login') }}" class="btn-postular">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                        <line x1="22" y1="2" x2="11" y2="13"/>
-                        <polygon points="22 2 15 22 11 13 2 9 22 2"/>
-                    </svg>
-                    Iniciar sesión para postular
-                </a>
-            @endauth
-                            @if ($fechaTxt)
+                    <a href="{{ route('login') }}" class="btn-postular">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <line x1="22" y1="2" x2="11" y2="13"/>
+                            <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+                        </svg>
+                        Iniciar sesión para postular
+                    </a>
+                @endauth
+
+                @if ($fechaTxt)
                     <p class="oferta-meta-bottom">Publicado {{ $fechaTxt }}</p>
                 @endif
             </div>
+            @endif
 
-            {{-- Resumen ── --}}
-            <div class="sidebar-card">
-                <div class="sidebar-card-title">Resumen</div>
+                {{-- Resumen ── --}}
+        <div class="sidebar-card">
+            <div class="sidebar-card-title">Resumen</div>
 
-                @if ($tipo)
-                    <div class="sidebar-dato">
-                        <span class="sidebar-dato-label">Tipo</span>
-                        <span class="sidebar-dato-value">{{ ucfirst(str_replace('-', ' ', $tipo)) }}</span>
-                    </div>
-                @endif
+            @if ($tipo)
+                <div class="sidebar-dato">
+                    <span class="sidebar-dato-label">Tipo</span>
+                    <span class="sidebar-dato-value">{{ ucfirst(str_replace('-', ' ', $tipo)) }}</span>
+                </div>
+            @endif
 
-                @if ($modalidad)
-                    <div class="sidebar-dato">
-                        <span class="sidebar-dato-label">Modalidad</span>
-                        <span class="sidebar-dato-value">{{ ucfirst($modalidad) }}</span>
-                    </div>
-                @endif
+            @if ($modalidad)
+                <div class="sidebar-dato">
+                    <span class="sidebar-dato-label">Modalidad</span>
+                    <span class="sidebar-dato-value">{{ ucfirst($modalidad) }}</span>
+                </div>
+            @endif
 
-                @if ($salario)
-                    <div class="sidebar-dato">
-                        <span class="sidebar-dato-label">Salario</span>
-                        <span class="sidebar-dato-value">{{ $salario }}</span>
-                    </div>
-                @endif
+            @if ($salario)
+                <div class="sidebar-dato">
+                    <span class="sidebar-dato-label">Salario</span>
+                    <span class="sidebar-dato-value">{{ $salario }}</span>
+                </div>
+            @endif
 
-                @if ($experiencia)
-                    <div class="sidebar-dato">
-                        <span class="sidebar-dato-label">Experiencia</span>
-                        <span class="sidebar-dato-value">{{ ucfirst(str_replace('-', ' ', $experiencia)) }}</span>
-                    </div>
-                @endif
+            @if ($experiencia)
+                <div class="sidebar-dato">
+                    <span class="sidebar-dato-label">Experiencia</span>
+                    <span class="sidebar-dato-value">{{ ucfirst(str_replace('-', ' ', $experiencia)) }}</span>
+                </div>
+            @endif
 
-                @if ($ubicacion)
-                    <div class="sidebar-dato">
-                        <span class="sidebar-dato-label">Ubicación</span>
-                        <span class="sidebar-dato-value">{{ $ubicacion }}</span>
-                    </div>
-                @endif
-            </div>
+            {{-- Nueva Fila: Categoría / Área --}}
+            @if ($oferta->area)
+                <div class="sidebar-dato" style="display: flex; justify-content: space-between; align-items: flex-start; gap: 10px;">
+                    <span class="sidebar-dato-label" style="flex-shrink: 0;">Categoría</span>
+                    <span class="sidebar-dato-value" style="word-break: break-word; text-align: right;">
+                        {{ $oferta->area }}
+                    </span>
+                </div>
+            @endif
+
+            {{-- Nueva Fila: Carrera Destinada --}}
+            @if ($oferta->id_carrera)
+                <div class="sidebar-dato" style="display: flex; justify-content: space-between; align-items: flex-start; gap: 10px;">
+                    <span class="sidebar-dato-label" style="flex-shrink: 0;">Carrera</span>
+                    <span class="sidebar-dato-value" style="word-break: break-word; text-align: right;">
+                        {{ $oferta->carrera?->nombre ?? 'No especificada' }}
+                    </span>
+                </div>
+            @endif
+
+            {{-- Procesamos la ubicación --}}
+            @php
+                $locNombre = $oferta->localidad?->nombre;
+                $provNombre = $oferta->localidad?->provincia?->nombre;
+                $ubicacionFinal = ($locNombre && $provNombre) ? $locNombre . ', ' . $provNombre : ($ubicacion ?? '');
+            @endphp
+
+            {{-- Fila: Ubicación --}}
+            @if ($ubicacionFinal)
+                <div class="sidebar-dato" style="display: flex; justify-content: space-between; align-items: flex-start; gap: 10px;">
+                    <span class="sidebar-dato-label" style="flex-shrink: 0;">Ubicación</span>
+                    <span class="sidebar-dato-value" style="word-break: break-word; text-align: right;">
+                        {{ $ubicacionFinal }}
+                    </span>
+                </div>
+            @endif
+
+            {{-- Fila: Dirección física --}}
+            @if (!empty($oferta->empresa?->direccion)) 
+                <div class="sidebar-dato" style="display: flex; justify-content: space-between; align-items: flex-start; gap: 10px;">
+                    <span class="sidebar-dato-label" style="flex-shrink: 0;">Dirección</span>
+                    <span class="sidebar-dato-value" style="word-break: break-word; text-align: right;">
+                        {{ $oferta->empresa->direccion }}
+                    </span>
+                </div>
+            @endif
+        </div> {{-- Cierre limpio del Resumen --}}
 
             {{-- Empresa ── --}}
             @if ($empresa)
                 <div class="sidebar-card">
                     <div class="sidebar-card-title">Empresa</div>
                     <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
-                        <div class="oferta-empresa-logo" style="width:38px;height:38px;font-size:0.85rem;">{{ $logoLetras }}</div>
-                        <span style="font-weight:600; color:var(--text); font-size:0.95rem;">{{ $empresa }}</span>
+                        <div class="oferta-empresa-logo" style="width:38px;height:38px;font-size:0.85rem; flex-shrink: 0;">{{ $logoLetras }}</div>
+                        <span style="font-weight:600; color:var(--text); font-size:0.95rem; overflow-wrap: break-word; word-break: break-word;">{{ $empresa }}</span>
                     </div>
-                    {{-- ruta empresas.ver pendiente --}}
                 </div>
             @endif
 
         </aside>
 
-    </div>{{-- /ver-oferta-layout --}}
-
-</div>{{-- /ver-oferta-page --}}
+    </div>
+</div>
 
 @endsection

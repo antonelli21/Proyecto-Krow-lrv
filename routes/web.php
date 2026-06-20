@@ -113,11 +113,19 @@ Route::prefix('empresa')
     ->name('empresa.')
     ->middleware(['auth', 'verified', 'role:empresa', 'empresa.activa'])
     ->group(function () {
-        Route::get('/home',                        [EmpresaController::class, 'home'])->name('home');
-        Route::get('/perfil',                      function () { return view('empresa.perfil-empresa'); })->name('perfil');
-        Route::get('/mensajes',                    function () { return view('mensajes'); })->name('mensajes');
-        Route::get('/oferta/{id}/postulantes',     [EmpresaController::class, 'verPostulantes'])->name('empresa.ofertas.postulantes');
-        Route::get('/crear-oferta',                function () { return view('empresa.crear-oferta'); })->name('crear-oferta');
+        Route::get('/home',                         [EmpresaController::class, 'home'])->name('home');
+        Route::get('/perfil',                       function () { return view('empresa.perfil-empresa'); })->name('perfil');
+        Route::get('/mensajes',                     function () { return view('mensajes'); })->name('mensajes');
+        
+        // Corregido el nombre redundante (.empresa.ofertas...)
+        Route::get('/oferta/{id}/postulantes',     [EmpresaController::class, 'verPostulantes'])->name('ofertas.postulantes');
+        
+        // POST para guardar la oferta
+        Route::post('/crear-oferta',               [EmpresaController::class, 'storeOferta'])->name('ofertas.store');
+        
+        // SOLUCIÓN: Cambiada la función anónima por el método del controlador
+        Route::get('/crear-oferta',                [EmpresaController::class, 'crearOferta'])->name('crear-oferta');
+        
         Route::put('/postulacion/{id}/estado',     [EmpresaController::class, 'actualizarEstadoPostulante'])->name('actualizar-estado');
         Route::get('/perfil/editar',               function () { return view('empresa.perfil-empresa-editar'); })->name('perfil.editar');
         Route::put('/perfil/update',               [EmpresaController::class, 'updatePerfil'])->name('perfil.update');
@@ -146,7 +154,7 @@ Route::prefix('admin')
         Route::delete('/estudiantes/{id}', [AdminController::class, 'eliminarEstudiante'])->name('estudiantes.destroy');
         Route::delete('/empresas/{id}', [AdminController::class, 'eliminarEmpresa'])->name('empresas.destroy');
 
-        // NUEVAS: Acciones sobre las ofertas
+        
         Route::post('/ofertas/{id}/estado', [AdminController::class, 'cambiarEstadoOferta'])->name('ofertas.estado');
         Route::delete('/ofertas/{id}', [AdminController::class, 'eliminarOferta'])->name('ofertas.destroy');
     });
@@ -194,4 +202,15 @@ Route::prefix('api')->group(function () {
     Route::apiResource('chats', ChatController::class)->only(['index','show','store','destroy']);
     Route::apiResource('mensajes', MensajeController::class)->only(['index','show','store','update','destroy']);
     Route::apiResource('tickets', TicketSoporteController::class)->only(['index','show','store','update','destroy']);
+
+    Route::get('/provincias/{id}/localidades', function ($id_provincia) {
+        $localidades = \App\Models\Localidad::where('id_provincia', $id_provincia)
+                                            ->orderBy('nombre', 'asc')
+                                            ->get(['id_localidad', 'nombre']);
+        
+        return response()->json($localidades);
+    });
+
+
+
 });

@@ -10,7 +10,7 @@ class OfertaController extends Controller
 
     public function detalle($id_oferta)
     {
-        $oferta = Oferta::with(['empresa', 'habilidades', 'carreras', 'localidad', 'provincia'])
+        $oferta = Oferta::with(['empresa', 'habilidades', 'carrera', 'localidad', 'provincia'])
             ->findOrFail($id_oferta);
 
         $oferta->ya_postulado = auth()->check()

@@ -58,12 +58,10 @@ class Oferta extends Model
     {
         return $this->belongsTo(Provincia::class, 'id_provincia', 'id_provincia');
     }
-
-    public function carreras(): BelongsToMany
+    public function carrera()
     {
-        return $this->belongsToMany(Carrera::class, 'oferta_carrera', 'id_oferta', 'id_carrera');
+        return $this->belongsTo(Carrera::class, 'id_carrera');
     }
-
     public function habilidades(): BelongsToMany
     {
         return $this->belongsToMany(Habilidad::class, 'oferta_habilidad', 'id_oferta', 'id_habilidad');

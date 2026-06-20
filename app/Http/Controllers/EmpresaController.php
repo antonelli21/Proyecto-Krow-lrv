@@ -6,7 +6,9 @@ use App\Models\Empresa;
 use Illuminate\Http\Request;
 use App\Models\Oferta;
 use App\Models\Postulacion;
-
+use App\Models\Provincia;
+use App\Models\Localidad;
+use App\Models\Carrera;
 class EmpresaController extends Controller
 {
     public function index()
@@ -144,6 +146,63 @@ class EmpresaController extends Controller
         return view('empresa.postulantes-empresa', compact('oferta', 'postulantes'));
     }
     
+    public function storeOferta(Request $request) 
+    {
+        // 1. Validamos todos los campos (incluyendo área e id_carrera)
+        $data = $request->validate([
+            'titulo'                => 'required|string|max:100',
+            'tipo_trabajo'          => 'required|string',
+            'modalidad'             => 'required|string',
+            'rango_salarial'        => 'required|numeric|nullable',
+            'experiencia_requerida' => 'required|string',
+            'descripcion'           => 'required|string',
+            'requisitos'            => 'required|string|nullable',
+            'id_localidad'          => 'required|exists:localidad,id_localidad',
+            'area'                  => 'required|string|max:50',
+            'id_carrera'            => 'required|exists:carrera,id_carrera', // Cambiá 'id' si la PK de carreras se llama distinto
+        ]);
+
+        // 2. Instanciamos el modelo
+        $oferta = new \App\Models\Oferta();
+        
+        $oferta->titulo      = $data['titulo'];
+        $oferta->descripcion = $data['descripcion'];
+        $oferta->requisitos  = $data['requisitos'];
+        $oferta->id_localidad= $data['id_localidad'];
+        $oferta->area        = $data['area'];
+        $oferta->id_carrera  = $data['id_carrera'];
+        $oferta->salario_min = $data['rango_salarial']; 
+
+        // NORMALIZACIÓN DE ENUMS (Adaptado estricto a las mayúsculas de tu migración)
+        // Modalidad
+        $oferta->modalidad = ucfirst(strtolower($data['modalidad'])); // 'remoto' -> 'Remoto'
+
+        // Tipo Oferta
+        if ($data['tipo_trabajo'] === 'practica-profesional') {
+            $oferta->tipo_oferta = 'Practica Profesional'; 
+        } else {
+            $oferta->tipo_oferta = ucwords(str_replace('-', ' ', $data['tipo_trabajo'])); // 'full-time' -> 'Full-Time'
+        }
+
+        // Experiencia Requerida
+        if ($data['experiencia_requerida'] === 'sin-experiencia') {
+            $oferta->experiencia_requerida = 'Sin Experiencia';
+        } else {
+            $oferta->experiencia_requerida = ucwords(str_replace('-', ' ', $data['experiencia_requerida'])); // 'semi-senior' -> 'Semi Senior'
+        }
+
+        // Relaciones automáticas indispensables
+        $oferta->id_empresa        = auth()->user()->empresa->id_empresa; 
+        $oferta->fecha_publicacion = now();                          
+        $oferta->estado            = 'Activa';                       
+
+        // 3. Guardamos
+        $oferta->save();
+
+        return redirect()->route('empresa.home')->with('success', 'Oferta creada con éxito.');
+        }
+
+
     /**
      * Actualizar el estado de un postulante (aceptar/rechazar)
      */
@@ -166,5 +225,17 @@ class EmpresaController extends Controller
         return redirect()->back()->with('success', 'Estado actualizado correctamente');
     }
 
-    
-}
+  /* Muestra el formulario para crear una nueva oferta laboral */
+    public function crearOferta()
+    {
+        // 1. Traemos las provincias ordenadas
+        $provincias = Provincia::orderBy('nombre', 'asc')->get();
+        
+        // 2. Traemos todas las carreras (en singular como tu tabla)
+        $carreras = Carrera::all(); 
+            
+        // 3. Enviamos AMBAS variables juntas en un solo return
+        return view('empresa.crear-oferta', compact('provincias', 'carreras'));
+    }
+        
+    }
