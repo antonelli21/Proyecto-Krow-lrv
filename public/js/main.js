@@ -75,30 +75,30 @@ document.addEventListener('DOMContentLoaded', () => {
   const hamburger = document.getElementById('hamburger');
   const headerNav = document.getElementById('header-nav');
 
-const navOverlay = document.getElementById('nav-overlay');
+  const navOverlay = document.getElementById('nav-overlay');
 
-hamburger?.addEventListener('click', () => {
-  const isOpen = headerNav.classList.toggle('open');
-  hamburger.classList.toggle('open', isOpen);
-  hamburger.setAttribute('aria-expanded', isOpen);
-  navOverlay?.classList.toggle('active', isOpen);
-});
+  hamburger?.addEventListener('click', () => {
+    const isOpen = headerNav.classList.toggle('open');
+    hamburger.classList.toggle('open', isOpen);
+    hamburger.setAttribute('aria-expanded', isOpen);
+    navOverlay?.classList.toggle('active', isOpen);
+  });
 
-navOverlay?.addEventListener('click', () => {
-  headerNav.classList.remove('open');
-  hamburger?.classList.remove('open');
-  hamburger?.setAttribute('aria-expanded', 'false');
-  navOverlay.classList.remove('active');
-});
-
-headerNav?.querySelectorAll('.nav-link').forEach(link => {
-  link.addEventListener('click', () => {
+  navOverlay?.addEventListener('click', () => {
     headerNav.classList.remove('open');
     hamburger?.classList.remove('open');
     hamburger?.setAttribute('aria-expanded', 'false');
-    navOverlay?.classList.remove('active');
+    navOverlay.classList.remove('active');
   });
-});
+
+  headerNav?.querySelectorAll('.nav-link').forEach(link => {
+    link.addEventListener('click', () => {
+      headerNav.classList.remove('open');
+      hamburger?.classList.remove('open');
+      hamburger?.setAttribute('aria-expanded', 'false');
+      navOverlay?.classList.remove('active');
+    });
+  });
   headerNav?.querySelectorAll('.nav-link').forEach(link => {
     link.addEventListener('click', () => {
       headerNav.classList.remove('open');
@@ -229,13 +229,17 @@ function initFiltersSidebar() {
 
     provinciaSelect.addEventListener('change', (e) => {
       const provincia = e.target.value;
-      const localidades = localidadesPorProvincia[provincia] || localidadesPorProvincia['default'];
+
+      const localidades = (window.localidadesDB && window.localidadesDB[provincia])
+        || localidadesPorProvincia[provincia]
+        || localidadesPorProvincia['default'];
 
       // Limpiar y habilitar select de localidad
       localidadSelect.innerHTML = '<option value="" disabled selected>Seleccioná una localidad</option>';
       localidades.forEach(localidad => {
         const option = document.createElement('option');
-        option.value = localidad.toLowerCase().replace(/\s+/g, '-');
+        // Usar el nombre tal cual para que coincida con DB, no slug
+        option.value = localidad;
         option.textContent = localidad;
         localidadSelect.appendChild(option);
       });
@@ -480,22 +484,49 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    // Simular envío (reemplazar por fetch a backend real)
+    // Enviar al backend real
     btn.disabled = true;
     btn.classList.add('loading');
     status.classList.remove('show', 'success', 'error');
 
-    setTimeout(function () {
-      btn.disabled = false;
-      btn.classList.remove('loading');
-      showStatus('¡Mensaje enviado con éxito! Te responderemos a la brevedad.', 'success');
-      form.reset();
+    const formData = new FormData(form);
 
-      // Ocultar mensaje después de 5 segundos
-      setTimeout(function () {
-        status.classList.remove('show');
-      }, 5000);
-    }, 1500);
+    fetch(form.action, {
+      method: 'POST',
+      headers: {
+        'X-Requested-With': 'XMLHttpRequest',
+        'Accept': 'application/json',
+      },
+      body: formData,
+    })
+      .then(function (response) {
+        btn.disabled = false;
+        btn.classList.remove('loading');
+
+        if (response.ok || response.status === 302) {
+          showStatus('¡Mensaje enviado con éxito! Te responderemos a la brevedad.', 'success');
+          form.reset();
+        } else {
+          return response.json().then(function (data) {
+            if (data.errors) {
+              const firstError = Object.values(data.errors)[0][0];
+              showStatus(firstError, 'error');
+            } else {
+              showStatus('Hubo un error al enviar. Intentá de nuevo.', 'error');
+            }
+          });
+        }
+
+        // Ocultar mensaje después de 5 segundos
+        setTimeout(function () {
+          status.classList.remove('show');
+        }, 5000);
+      })
+      .catch(function () {
+        btn.disabled = false;
+        btn.classList.remove('loading');
+        showStatus('Error de conexión. Verificá tu red e intentá nuevamente.', 'error');
+      });
   });
 
   function showStatus(msg, type) {
@@ -519,25 +550,24 @@ document.addEventListener('DOMContentLoaded', () => {
   const contador = document.getElementById('contador');
   const inputBuscar = document.getElementById('buscador');
   const selectRubro = document.getElementById('filtro-rubro');
-  const selectModalidad = document.getElementById('filtro-modalidad');
+  const selectUbicacion = document.getElementById('filtro-ubicacion');
 
   function filtrar() {
     const q = inputBuscar.value.trim().toLowerCase();
     const rubro = selectRubro.value.toLowerCase();
-    const modalidad = selectModalidad.value.toLowerCase();
+    const filtroUbicacion = selectUbicacion.value.toLowerCase();
     let visibles = 0;
 
     cards.forEach(card => {
       const nombre = card.dataset.nombre;
       const cardRubro = card.dataset.rubro;
       const ubicacion = card.dataset.ubicacion;
-      const mods = card.dataset.modalidades;
 
       const matchText = !q || nombre.includes(q) || cardRubro.includes(q) || ubicacion.includes(q);
       const matchRubro = !rubro || cardRubro === rubro;
-      const matchModalidad = !modalidad || mods.split(',').includes(modalidad);
+      const matchUbicacion = !filtroUbicacion || ubicacion.includes(filtroUbicacion);
 
-      if (matchText && matchRubro && matchModalidad) {
+      if (matchText && matchRubro && matchUbicacion) {
         card.style.display = '';
         visibles++;
       } else {
@@ -551,7 +581,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   inputBuscar.addEventListener('input', filtrar);
   selectRubro.addEventListener('change', filtrar);
-  selectModalidad.addEventListener('change', filtrar);
+  selectUbicacion.addEventListener('change', filtrar);
 
   // Exponer globalmente para el onclick inline
   window.togglePerfil = function (id) {
@@ -734,9 +764,9 @@ function removeAdminRow(rowId) {
 
 function adminConfirm(name) {
   return new Promise(resolve => {
-    const overlay   = document.getElementById('krow-confirm-overlay');
-    const nameEl    = document.getElementById('krow-confirm-name');
-    const btnOk     = document.getElementById('krow-confirm-ok');
+    const overlay = document.getElementById('krow-confirm-overlay');
+    const nameEl = document.getElementById('krow-confirm-name');
+    const btnOk = document.getElementById('krow-confirm-ok');
     const btnCancel = document.getElementById('krow-confirm-cancel');
 
     nameEl.textContent = `"${name}"`;
@@ -752,10 +782,10 @@ function adminConfirm(name) {
       resolve(result);
     }
 
-    const onOk       = () => close(true);
-    const onCancel   = () => close(false);
+    const onOk = () => close(true);
+    const onCancel = () => close(false);
     const onBackdrop = e => { if (e.target === overlay) close(false); };
-    const onEsc      = e => { if (e.key === 'Escape') close(false); };
+    const onEsc = e => { if (e.key === 'Escape') close(false); };
 
     btnOk.addEventListener('click', onOk);
     btnCancel.addEventListener('click', onCancel);
@@ -770,7 +800,7 @@ function adminConfirm(name) {
 (function initAdmin() {
 
   /* ── TABS ── */
-  const tabs   = document.querySelectorAll('.admin-tab');
+  const tabs = document.querySelectorAll('.admin-tab');
   const panels = document.querySelectorAll('.admin-tab-panel');
   if (!tabs.length) return;
 
@@ -796,9 +826,9 @@ function adminConfirm(name) {
   /* ── FILTRO GENÉRICO ── */
   document.querySelectorAll('.admin-table-wrap').forEach(wrap => {
     const searchInput = wrap.closest('.admin-tab-panel')?.querySelector('.admin-search input');
-    const selects     = wrap.closest('.admin-tab-panel')?.querySelectorAll('.admin-filter-select');
-    const rows        = wrap.querySelectorAll('tbody tr:not(.admin-detalle-row)');
-    const emptyState  = wrap.closest('.admin-tab-panel')?.querySelector('.admin-empty');
+    const selects = wrap.closest('.admin-tab-panel')?.querySelectorAll('.admin-filter-select');
+    const rows = wrap.querySelectorAll('tbody tr:not(.admin-detalle-row)');
+    const emptyState = wrap.closest('.admin-tab-panel')?.querySelector('.admin-empty');
 
     const applyFilters = () => {
       const query = searchInput?.value.toLowerCase() ?? '';
@@ -809,7 +839,7 @@ function adminConfirm(name) {
 
       let visible = 0;
       rows.forEach(row => {
-        const matchSearch  = !query || (row.dataset.search?.toLowerCase() ?? '').includes(query);
+        const matchSearch = !query || (row.dataset.search?.toLowerCase() ?? '').includes(query);
         const matchFilters = Object.entries(activeFilters).every(([key, val]) =>
           !val || (row.dataset[key] ?? '').toLowerCase() === val
         );
@@ -840,15 +870,15 @@ function adminConfirm(name) {
     const btn = e.target.closest('[data-action]');
     if (!btn) return;
     const action = btn.dataset.action;
-    const id     = btn.dataset.id;
-    const row    = document.querySelector(`tr[data-id="${id}"]`);
-    const badge  = row?.querySelector('.badge-admin');
-    const mapa   = {
-      aprobar:  ['badge-aprobado',  'Aprobado',  'aprobada'],
-      activar:  ['badge-activo',    'Activo',    'aprobado'],
-      suspender:['badge-suspendido','Suspendido','suspendido'],
+    const id = btn.dataset.id;
+    const row = document.querySelector(`tr[data-id="${id}"]`);
+    const badge = row?.querySelector('.badge-admin');
+    const mapa = {
+      aprobar: ['badge-aprobado', 'Aprobado', 'aprobada'],
+      activar: ['badge-activo', 'Activo', 'aprobado'],
+      suspender: ['badge-suspendido', 'Suspendido', 'suspendido'],
       rechazar: ['badge-rechazado', 'Rechazado', 'rechazada'],
-      pausar:   ['badge-pausada',   'Pausada',   'pausada'],
+      pausar: ['badge-pausada', 'Pausada', 'pausada'],
       publicar: ['badge-publicada', 'Publicada', 'publicada'],
     };
     if (badge && mapa[action]) {
@@ -867,17 +897,17 @@ function adminConfirm(name) {
     const deleteBtn = e.target.closest('[data-delete-type]');
     if (!deleteBtn) return;
 
-    const type  = deleteBtn.dataset.deleteType;
-    const id    = deleteBtn.dataset.deleteId;
+    const type = deleteBtn.dataset.deleteType;
+    const id = deleteBtn.dataset.deleteId;
     const rowId = deleteBtn.dataset.deleteRowId;
-    const name  = deleteBtn.dataset.deleteName || 'este registro';
+    const name = deleteBtn.dataset.deleteName || 'este registro';
 
     if (!type || !id || !rowId) return;
 
     const confirmed = await adminConfirm(name);
     if (!confirmed) return;
 
-    const csrf    = document.querySelector('meta[name="csrf-token"]')?.content;
+    const csrf = document.querySelector('meta[name="csrf-token"]')?.content;
     const baseUrl = document.querySelector('meta[name="base-url"]')?.content?.replace(/\/$/, '');
     const basePath = window.location.pathname.includes('/public/')
       ? window.location.pathname.split('/public/')[0] + '/public'
@@ -915,7 +945,7 @@ function adminConfirm(name) {
   'use strict';
 
   function renderRightPanel() {
-    const pageBody  = document.getElementById('page-body');
+    const pageBody = document.getElementById('page-body');
     const rolActual = pageBody?.dataset.rol || 'invitado';
     document.querySelectorAll('.role-panel-content').forEach(panel => {
       panel.style.display = panel.dataset.panelRole === rolActual ? 'block' : 'none';
@@ -928,14 +958,14 @@ function adminConfirm(name) {
         const btn = e.target.closest('.btn-bookmark');
         if (!btn) return;
         const saved = btn.classList.toggle('saved');
-        const icon  = btn.querySelector('i');
+        const icon = btn.querySelector('i');
         if (icon) icon.className = saved ? 'bi bi-bookmark-fill' : 'bi bi-bookmark';
       });
   }
 
   function initSort() {
     const select = document.getElementById('sort-select');
-    const main   = document.getElementById('main-content');
+    const main = document.getElementById('main-content');
     if (!select || !main) return;
 
     select.addEventListener('change', function () {
@@ -944,9 +974,9 @@ function adminConfirm(name) {
       cards.sort((a, b) => {
         const sa = Number(a.dataset.salario ?? 0);
         const sb = Number(b.dataset.salario ?? 0);
-        const fa = Number(a.dataset.fecha   ?? 0);
-        const fb = Number(b.dataset.fecha   ?? 0);
-        if (this.value === 'salario-asc')  return sa - sb;
+        const fa = Number(a.dataset.fecha ?? 0);
+        const fb = Number(b.dataset.fecha ?? 0);
+        if (this.value === 'salario-asc') return sa - sb;
         if (this.value === 'salario-desc') return sb - sa;
         return fb - fa;
       });
