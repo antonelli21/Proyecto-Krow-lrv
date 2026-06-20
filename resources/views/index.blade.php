@@ -59,7 +59,11 @@
                 $tipo       = data_get($oferta, 'tipo',            data_get($oferta, 'tipo_oferta', ''));
                 $esNueva    = data_get($oferta, 'es_nueva',        false);
                 $descripcion= data_get($oferta, 'descripcion',     '');
-                $fechaTxt   = data_get($oferta, 'fecha_texto',     '');
+                $fechaTxt = data_get($oferta, 'fecha_texto',
+                        $oferta->fecha_publicacion
+                            ? \Carbon\Carbon::parse($oferta->fecha_publicacion)->diffForHumans()
+                            : ''
+                    );
                 $fechaTs    = data_get($oferta, 'created_at')
                                 ? \Carbon\Carbon::parse(data_get($oferta, 'created_at'))->timestamp
                                 : data_get($oferta, 'fecha_timestamp', 0);
@@ -152,25 +156,32 @@
 
         @endforelse
 
-        {{-- Paginación --}}
-        <nav class="pagination" id="pagination" aria-label="Páginas de resultados">
-            <button class="pg-btn" id="pg-prev" aria-label="Página anterior">
-                <i class="bi bi-chevron-left"></i>
-            </button>
+        @if ($ofertas instanceof \Illuminate\Pagination\LengthAwarePaginator && $ofertas->hasPages())
+            <div class="pagination">
+                {{-- Anterior --}}
+                @if ($ofertas->onFirstPage())
+                    <button class="pg-btn" disabled><i class="bi bi-chevron-left"></i></button>
+                @else
+                    <a href="{{ $ofertas->previousPageUrl() }}" class="pg-btn"><i class="bi bi-chevron-left"></i></a>
+                @endif
 
-            @if ($ofertas instanceof \Illuminate\Pagination\LengthAwarePaginator)
-                {{ $ofertas->links() }}
-            @else
-                <button class="pg-btn active" aria-current="page">1</button>
-                <button class="pg-btn">2</button>
-                <button class="pg-btn">3</button>
-            @endif
+                {{-- Números --}}
+                @foreach ($ofertas->getUrlRange(1, $ofertas->lastPage()) as $page => $url)
+                    @if ($page == $ofertas->currentPage())
+                        <button class="pg-btn active" aria-current="page">{{ $page }}</button>
+                    @else
+                        <a href="{{ $url }}" class="pg-btn">{{ $page }}</a>
+                    @endif
+                @endforeach
 
-            <button class="pg-btn" id="pg-next" aria-label="Página siguiente">
-                <i class="bi bi-chevron-right"></i>
-            </button>
-        </nav>
-
+                {{-- Siguiente --}}
+                @if ($ofertas->hasMorePages())
+                    <a href="{{ $ofertas->nextPageUrl() }}" class="pg-btn"><i class="bi bi-chevron-right"></i></a>
+                @else
+                    <button class="pg-btn" disabled><i class="bi bi-chevron-right"></i></button>
+                @endif
+            </div>
+        @endif
     </main>
 
     {{-- RIGHT PANEL --}}

@@ -394,5 +394,5 @@
   }
 }
 </style>
-
+@include('estudiante.oferta-detalle')
 @endsection

@@ -19,6 +19,8 @@ class Postulacion extends Model
         'id_oferta',
         'estado',
         'observaciones',
+        'fecha_postulacion',
+
     ];
 
     protected $casts = [

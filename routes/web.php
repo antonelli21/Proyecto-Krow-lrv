@@ -19,9 +19,7 @@ use App\Http\Controllers\AdminController;
 ════════════════════════════════════════ */
 
 
-Route::get('/', function () {
-    return view('index');
-})->name('inicio');
+Route::get('/', [OfertaController::class, 'listar'])->name('inicio');
 
 Route::get('/ayuda', function () {
     return view('ayuda');

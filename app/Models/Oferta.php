@@ -74,3 +74,4 @@ class Oferta extends Model
         return $this->hasMany(Postulacion::class, 'id_oferta', 'id_oferta');
     }
 }
+
