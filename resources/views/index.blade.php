@@ -59,7 +59,11 @@
                 $tipo       = data_get($oferta, 'tipo',            data_get($oferta, 'tipo_oferta', ''));
                 $esNueva    = data_get($oferta, 'es_nueva',        false);
                 $descripcion= data_get($oferta, 'descripcion',     '');
-                $fechaTxt   = data_get($oferta, 'fecha_texto',     '');
+                $fechaTxt = data_get($oferta, 'fecha_texto',
+                        $oferta->fecha_publicacion
+                            ? \Carbon\Carbon::parse($oferta->fecha_publicacion)->diffForHumans()
+                            : ''
+                    );
                 $fechaTs    = data_get($oferta, 'created_at')
                                 ? \Carbon\Carbon::parse(data_get($oferta, 'created_at'))->timestamp
                                 : data_get($oferta, 'fecha_timestamp', 0);
@@ -185,6 +189,14 @@
             @endif
         </nav>
 
+                {{-- Siguiente --}}
+                @if ($ofertas->hasMorePages())
+                    <a href="{{ $ofertas->nextPageUrl() }}" class="pg-btn"><i class="bi bi-chevron-right"></i></a>
+                @else
+                    <button class="pg-btn" disabled><i class="bi bi-chevron-right"></i></button>
+                @endif
+            </div>
+        @endif
     </main>
 
     {{-- RIGHT PANEL --}}

@@ -489,7 +489,7 @@
 </style>
 
 {{-- ════════════════════════════════════════
-   HTML DEL FORMULARIO
+   HTML DEL FORMULARIO CONSOLIDADO
 ════════════════════════════════════════ --}}
 
 <div class="oferta-page">
@@ -508,7 +508,7 @@
 
     {{-- Card --}}
     <div class="oferta-card">
-        <form class="oferta-form" id="ofertaForm" action="{{ route('ofertas.store') }}" method="POST" novalidate>
+        <form class="oferta-form" id="ofertaForm" action="{{ route('empresa.ofertas.store') }}" method="POST" novalidate>
             @csrf
 
             {{-- Título del Puesto --}}
@@ -574,6 +574,66 @@
                 </div>
             </div>
 
+            {{-- Provincia y Localidad --}}
+            <div style="display: flex; gap: 20px; margin-bottom: 20px;">
+                <div style="flex: 1;">
+                    <label style="display: block; color: #fff; margin-bottom: 8px; font-weight: 600; font-size: 0.9rem;">PROVINCIA *</label>
+                    <select name="id_provincia" id="select-provincia" required 
+                            style="width: 100%; background: #2d3248; border: 1px solid rgba(255,255,255,0.1); padding: 12px; border-radius: 6px; color: #fff;">
+                        <option value="">Seleccionar...</option>
+                        @foreach($provincias as $provincia)
+                            <option value="{{ $provincia->id_provincia }}">{{ $provincia->nombre }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                
+                <div style="flex: 1;">
+                    <label style="display: block; color: #fff; margin-bottom: 8px; font-weight: 600; font-size: 0.9rem;">LOCALIDAD *</label>
+                    <select name="id_localidad" id="select-localidad" required disabled
+                            style="width: 100%; background: #2d3248; border: 1px solid rgba(255,255,255,0.1); padding: 12px; border-radius: 6px; color: #fff;">
+                        <option value="">Seleccionar provincia primero...</option>
+                    </select>
+                </div>
+            </div>
+
+            {{-- Dirección --}}
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; color: #fff; margin-bottom: 8px; font-weight: 600; font-size: 0.9rem;">DIRECCIÓN</label>
+                <input type="text" name="direccion" placeholder="ej. Av. Corrientes 1234, Piso 2" 
+                    style="width: 100%; background: #2d3248; border: 1px solid rgba(255,255,255,0.1); padding: 12px; border-radius: 6px; color: #fff;">
+            </div>
+
+            {{-- NUEVA FILA: Categoría + Carrera Destinada (Alineados nativos) --}}
+            <div class="form-row-2">
+                <div class="form-group">
+                    <label for="area">Categoría <span class="required-mark">*</span></label>
+                    <div class="select-wrap">
+                        <select name="area" id="area" class="form-select" required>
+                            <option value="" disabled selected>Seleccionar...</option>
+                            @foreach(['Ingeniería', 'Tecnología', 'Industria y producción', 'Marketing', 'Ventas', 'Recursos Humanos', 'Diseño', 'Administración', 'Finanzas'] as $cat)
+                                <option value="{{ $cat }}">[{{ $cat }}]</option>
+                            @endforeach
+                        </select>
+                        <span class="select-chevron">▼</span>
+                    </div>
+                    <span class="field-error" id="error-area">La categoría es obligatoria</span>
+                </div>
+
+                <div class="form-group">
+                    <label for="id_carrera">Carrera Destinada <span class="required-mark">*</span></label>
+                    <div class="select-wrap">
+                        <select name="id_carrera" id="id_carrera" class="form-select" required>
+                            <option value="" disabled selected>Seleccionar...</option>
+                            @foreach($carreras as $carrera)
+                                <option value="{{ $carrera->id_carrera }}">{{ $carrera->nombre }}</option>
+                            @endforeach
+                        </select>
+                        <span class="select-chevron">▼</span>
+                    </div>
+                    <span class="field-error" id="error-id_carrera">La carrera es obligatoria</span>
+                </div>
+            </div>
+
             {{-- Descripción del Puesto --}}
             <div class="form-group">
                 <label for="descripcion">Descripción del Puesto <span class="required-mark">*</span></label>
@@ -590,10 +650,9 @@
                 <span class="field-error" id="error-requisitos">Los requisitos son obligatorios</span>
             </div>
 
-            {{-- Tecnologías / Tags (compatible con tu JS existente) --}}
+            {{-- Tecnologías / Tags --}}
             <div class="form-group">
                 <label for="tecnologia-input">Tecnologias/Herramientas</label>
-
                 <div class="tag-input-wrapper">
                     <input type="text" id="tecnologia-input" name="tecnologia"
                         placeholder="Ej: C#, Oracle, Git..."
@@ -617,7 +676,6 @@
                     <button type="button" class="tech-suggestion" data-tech="Git">Git</button>
                     <button type="button" class="tech-suggestion" data-tech="Figma">Figma</button>
                 </div>
-
             </div>
 
             {{-- Acciones --}}
@@ -765,6 +823,37 @@
             style.textContent = '@keyframes spin{to{transform:rotate(360deg)}}';
             document.head.appendChild(style);
         }
+
+
+        document.getElementById('select-provincia').addEventListener('change', function() {
+            const provinciaId = this.value;
+            const selectLocalidad = document.getElementById('select-localidad');
+            
+            selectLocalidad.innerHTML = '<option value="">Cargando localidades...</option>';
+            selectLocalidad.disabled = true;
+
+            if (!provinciaId) {
+                selectLocalidad.innerHTML = '<option value="">Seleccionar provincia primero...</option>';
+                return;
+            }
+
+            // Llamada a tu ruta de la API (revisá si tu ruta es así o similar)
+            fetch(`/api/provincias/${provinciaId}/localidades`)
+                .then(response => response.json())
+                .then(data => {
+                    selectLocalidad.innerHTML = '<option value="">Seleccionar...</option>';
+                    data.forEach(localidad => {
+                        selectLocalidad.innerHTML += `<option value="${localidad.id_localidad}">${localidad.nombre}</option>`;
+                    });
+                    selectLocalidad.disabled = false;
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    selectLocalidad.innerHTML = '<option value="">Error al cargar</option>';
+                });
+        });
+
+
 
     })();
 </script>

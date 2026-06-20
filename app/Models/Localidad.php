@@ -6,23 +6,22 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use App\Models\Estudiante;
-use App\Models\Empresa;
-use App\Models\Oferta;
 
 class Localidad extends Model
 {
     use HasFactory;
 
-    public $timestamps = false;
+    // Configuración de la tabla
     protected $table = 'localidad';
     protected $primaryKey = 'id_localidad';
+    public $timestamps = false;
 
     protected $fillable = [
         'id_provincia',
         'nombre',
     ];
 
+    // Relaciones
     public function provincia(): BelongsTo
     {
         return $this->belongsTo(Provincia::class, 'id_provincia', 'id_provincia');

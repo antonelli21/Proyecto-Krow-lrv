@@ -132,6 +132,7 @@ return new class extends Migration
             $table->enum('estado', ['Activa', 'Pausada', 'Cerrada'])->default('Activa');
             $table->foreign('id_empresa')->references('id_empresa')->on('empresa');
             $table->foreign('id_localidad')->references('id_localidad')->on('localidad');
+            
             $table->foreign('id_provincia')->references('id_provincia')->on('provincia');
         });
 

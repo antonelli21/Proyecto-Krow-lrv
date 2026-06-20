@@ -4,51 +4,28 @@
 
 @section('content')
 
-@php
-$usuario = [
-    'nombre'   => 'Juan Pérez',
-    'email'    => 'juan.perez@example.com',
-    'telefono' => '+54 9 11 1234 5678',
-];
-
-$estudiante = [
-    'legajo'             => '173456',
-    'dni'                => '40123456',
-    'edad'               => 22,
-    'carrera'            => 'Ing. en Sistemas de Información',
-    'modalidad_deseada'  => 'Híbrido / Remoto',
-    'puesto_interes'     => 'Desarrollo Web, Backend',
-    'disponibilidad'     => 'Lunes a Viernes, 9hs a 17hs',
-    'habilidades'        => 'React, TypeScript, Node.js, SQL',
-    'idiomas'            => 'Español Nativo, Inglés Intermedio',
-    'linkedin'           => 'https://linkedin.com/in/juanperez',
-    'github'             => 'https://github.com/juanperez',
-    'portafolio'         => '',
-    'cv_link'            => '',
-];
-
-$habilidades_array = !empty($estudiante['habilidades'])
-    ? array_map('trim', explode(',', $estudiante['habilidades'])) : [];
-$idiomas_array = !empty($estudiante['idiomas'])
-    ? array_map('trim', explode(',', $estudiante['idiomas'])) : [];
-@endphp
+<?php
+    $habilidades_array = $estudiante->habilidades->pluck('nombre')->toArray();
+?>
 
 <div class="panel-page">
 
   {{-- Header de perfil --}}
   <div class="perfil-header-card">
     <div class="perfil-header-inner">
-      <div class="perfil-avatar">
-        {{ strtoupper(substr($usuario['nombre'], 0, 1)) }}
+      <div class="perfil-avatar" style="{{ $estudiante->foto_perfil ? 'background-image:url(\'' . \Illuminate\Support\Facades\Storage::url($estudiante->foto_perfil) . '\'); background-size:cover; background-position:center;' : '' }}">
+        @if(!$estudiante->foto_perfil)
+          {{ strtoupper(substr($usuario->name ?? 'E', 0, 1)) }}
+        @endif
       </div>
       <div class="perfil-header-info">
-        <h1 class="panel-page-title" style="margin-bottom:2px;">{{ $usuario['nombre'] }}</h1>
-        <p class="panel-page-sub" style="margin-bottom:2px;">{{ $estudiante['carrera'] }}</p>
-        <p class="panel-page-sub">Legajo: {{ $estudiante['legajo'] }}</p>
+        <h1 class="panel-page-title" style="margin-bottom:2px;">{{ $usuario->name }}</h1>
+        <p class="panel-page-sub" style="margin-bottom:2px;">{{ $estudiante->carrera->nombre ?? 'Sin carrera' }}</p>
+        <p class="panel-page-sub">Legajo: {{ $estudiante->legajo }}</p>
       </div>
       <a href="{{ route('estudiante.perfil.editar') }}" class="btn-accent">
         <i class="bi bi-pencil"></i> Editar perfil
-      </a>    
+      </a>
     </div>
   </div>
 
@@ -63,23 +40,23 @@ $idiomas_array = !empty($estudiante['idiomas'])
         <div class="perfil-grid">
           <div class="info-item">
             <div class="info-label">Nombre completo</div>
-            <div class="info-value">{{ $usuario['nombre'] }}</div>
+            <div class="info-value">{{ $usuario->name }} {{ $estudiante->apellido }}</div>
           </div>
           <div class="info-item">
             <div class="info-label">Edad</div>
-            <div class="info-value">{{ $estudiante['edad'] ?? 'No especificada' }}</div>
+            <div class="info-value">{{ $estudiante->fecha_nacimiento?->age ?? 'No especificada' }}</div>
           </div>
           <div class="info-item">
             <div class="info-label">DNI</div>
-            <div class="info-value">{{ $estudiante['dni'] ?? 'No especificado' }}</div>
+            <div class="info-value">{{ $estudiante->dni ?? 'No especificado' }}</div>
           </div>
           <div class="info-item">
             <div class="info-label">Correo electrónico</div>
-            <div class="info-value">{{ $usuario['email'] }}</div>
+            <div class="info-value">{{ $usuario->email }}</div>
           </div>
           <div class="info-item" style="grid-column: 1 / -1;">
             <div class="info-label">Teléfono</div>
-            <div class="info-value">{{ $usuario['telefono'] ?? 'No especificado' }}</div>
+            <div class="info-value">{{ $estudiante->telefono ?? 'No especificado' }}</div>
           </div>
         </div>
       </div>
@@ -94,17 +71,17 @@ $idiomas_array = !empty($estudiante['idiomas'])
         <div class="perfil-grid">
           <div class="info-item">
             <div class="info-label">Carrera que cursa</div>
-            <div class="info-value">{{ $estudiante['carrera'] ?? 'No especificada' }}</div>
+            <div class="info-value">{{ $estudiante->carrera->nombre ?? 'No especificada' }}</div>
           </div>
           <div class="info-item">
             <div class="info-label">Legajo universitario</div>
-            <div class="info-value">{{ $estudiante['legajo'] ?? 'No especificado' }}</div>
+            <div class="info-value">{{ $estudiante->legajo ?? 'No especificado' }}</div>
           </div>
           <div class="info-item">
             <div class="info-label">Portafolio</div>
             <div class="info-value">
-              @if(!empty($estudiante['portafolio']))
-                <a href="{{ $estudiante['portafolio'] }}" target="_blank" class="link-accion">
+              @if(!empty($estudiante->portfolio))
+                <a href="{{ $estudiante->portfolio }}" target="_blank" class="link-accion">
                   <i class="bi bi-box-arrow-up-right"></i> Ver portafolio
                 </a>
               @else
@@ -115,8 +92,8 @@ $idiomas_array = !empty($estudiante['idiomas'])
           <div class="info-item">
             <div class="info-label">Currículum Vitae</div>
             <div class="info-value">
-              @if(!empty($estudiante['cv_link']))
-                <a href="{{ $estudiante['cv_link'] }}" target="_blank" class="link-accion">
+              @if(!empty($estudiante->cv))
+                <a href="{{ \Illuminate\Support\Facades\Storage::url($estudiante->cv) }}" target="_blank" class="link-accion">
                   <i class="bi bi-file-earmark-text"></i> Ver CV
                 </a>
               @else
@@ -137,43 +114,28 @@ $idiomas_array = !empty($estudiante['idiomas'])
         <div class="perfil-grid">
           <div class="info-item">
             <div class="info-label">Modalidad deseada</div>
-            <div class="info-value">{{ $estudiante['modalidad_deseada'] ?? 'No especificada' }}</div>
-          </div>
-          <div class="info-item">
-            <div class="info-label">Puestos o áreas de interés</div>
-            <div class="info-value">{{ $estudiante['puesto_interes'] ?? 'No especificado' }}</div>
+            <div class="info-value">{{ $estudiante->modalidad_deseada ?? 'No especificada' }}</div>
           </div>
           <div class="info-item" style="grid-column: 1 / -1;">
             <div class="info-label">Disponibilidad</div>
-            <div class="info-value">{{ $estudiante['disponibilidad'] ?? 'No especificada' }}</div>
+            <div class="info-value">{{ $estudiante->disponibilidad_horaria ?? 'No especificada' }}</div>
           </div>
         </div>
       </div>
     </div>
 
-    {{-- Habilidades e Idiomas --}}
+    {{-- Habilidades --}}
     <div class="perfil-card">
       <div class="perfil-card-header">
-        <i class="bi bi-code-slash"></i> Habilidades e Idiomas
+        <i class="bi bi-code-slash"></i> Habilidades
       </div>
       <div class="perfil-card-body">
         <p class="info-label" style="margin-bottom:10px;"><i class="bi bi-tools"></i> Habilidades y tecnologías</p>
-        <div class="detalle-tags" style="margin-bottom:20px;">
+        <div class="detalle-tags">
           @forelse($habilidades_array as $hab)
             <span class="detalle-tag">{{ $hab }}</span>
           @empty
             <span class="text-muted">No especificadas</span>
-          @endforelse
-        </div>
-
-        <hr style="border-color:var(--border); margin-bottom:16px;">
-
-        <p class="info-label" style="margin-bottom:10px;"><i class="bi bi-translate"></i> Idiomas</p>
-        <div class="detalle-tags">
-          @forelse($idiomas_array as $idioma)
-            <span class="detalle-tag">{{ $idioma }}</span>
-          @empty
-            <span class="text-muted">No especificados</span>
           @endforelse
         </div>
       </div>
@@ -189,9 +151,9 @@ $idiomas_array = !empty($estudiante['idiomas'])
           <div class="info-item">
             <div class="info-label">LinkedIn</div>
             <div class="info-value">
-              @if(!empty($estudiante['linkedin']))
-                <a href="{{ $estudiante['linkedin'] }}" target="_blank" class="link-accion">
-                  <i class="bi bi-linkedin"></i> {{ $estudiante['linkedin'] }}
+              @if(!empty($estudiante->linkedin))
+                <a href="{{ $estudiante->linkedin }}" target="_blank" class="link-accion">
+                  <i class="bi bi-linkedin"></i> {{ $estudiante->linkedin }}
                 </a>
               @else
                 <span class="text-muted">No agregado</span>
@@ -201,9 +163,9 @@ $idiomas_array = !empty($estudiante['idiomas'])
           <div class="info-item">
             <div class="info-label">GitHub</div>
             <div class="info-value">
-              @if(!empty($estudiante['github']))
-                <a href="{{ $estudiante['github'] }}" target="_blank" class="link-accion">
-                  <i class="bi bi-github"></i> {{ $estudiante['github'] }}
+              @if(!empty($estudiante->github))
+                <a href="{{ $estudiante->github }}" target="_blank" class="link-accion">
+                  <i class="bi bi-github"></i> {{ $estudiante->github }}
                 </a>
               @else
                 <span class="text-muted">No agregado</span>

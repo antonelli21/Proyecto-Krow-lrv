@@ -67,7 +67,7 @@
                     <td><span class="td-postulantes"><i class="bi bi-people-fill"></i> {{ $oferta->postulaciones_count ?? 0 }}</span></td>
                     <td class="td-fecha">{{ $oferta->created_at ? $oferta->created_at->format('d/m/Y') : 'Sin fecha' }}</td>
                     <td>
-                        <a href="{{ route('empresa.empresa.ofertas.postulantes', $oferta->id_oferta) }}" class="link-accion">Ver postulantes →</a>
+                     <a href="{{ route('empresa.ofertas.postulantes', $oferta->id_oferta) }}" class="link-accion">Ver postulantes →</a>
                     </td>
                 </tr>
                 @endforeach
@@ -102,7 +102,7 @@
                 </div>
             </div>
             <div class="oferta-mobile-footer">
-                <a href="{{ route('empresa.empresa.ofertas.postulantes', $oferta->id_oferta) }}" class="link-accion">Ver postulantes →</a>
+              <a href="{{ route('empresa.ofertas.postulantes', $oferta->id_oferta) }}" class="link-accion">Ver postulantes →</a>
             </div>
         </div>
         @endforeach

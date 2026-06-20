@@ -1490,7 +1490,8 @@ body {
 
 .job-date {
   font-size: 11.5px;
-  color: var(--text-muted);
+  color: var(--accent);
+  font-weight: 400;
 }
 
 .btn-ver {
@@ -4975,21 +4976,36 @@ textarea.filter-input-text {
   text-transform: uppercase;
   letter-spacing: 0.5px;
   white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.oferta-estado-badge::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+  flex-shrink: 0;
 }
 
 .oferta-estado-badge.activa {
-  background: rgba(46, 204, 154, 0.12);
+  background: rgba(46,204,154,.12);
   color: #2ecc9a;
+  border: 1px solid rgba(46,204,154,.3);
 }
 
 .oferta-estado-badge.pausada {
-  background: rgba(212, 168, 67, 0.12);
+  background: rgba(212,168,67,.12);
   color: var(--accent);
+  border: 1px solid rgba(212,168,67,.3);
 }
 
 .oferta-estado-badge.cerrada {
-  background: rgba(212, 24, 61, 0.10);
+  background: rgba(212,24,61,.10);
   color: var(--destructive);
+  border: 1px solid rgba(212,24,61,.3);
 }
 
 /* ── Badges de tipo / modalidad / salario ── */
@@ -5107,6 +5123,7 @@ textarea.filter-input-text {
   flex-direction: column;
   gap: 14px;
 }
+
 
 /* Card del sidebar */
 .sidebar-card {
