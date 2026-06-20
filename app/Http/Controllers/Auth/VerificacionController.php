@@ -78,14 +78,22 @@ class VerificacionController extends Controller
         // Limpiar la sesión de verificación
         session()->forget('verificacion_user_id');
 
-        // Autenticar al usuario automáticamente después de verificar
+        // Redirigir al panel correspondiente según el rol
+        if ($user->rol === 'empresa') {
+            $empresa = $user->empresa;
+            if ($empresa && $empresa->estado === 'aprobada') {
+                Auth::login($user);
+                return redirect()->route('empresa.home')->with('success', '¡Email verificado correctamente! Bienvenido/a.');
+            } else {
+                return redirect()->route('registro.pendiente');
+            }
+        }
+
+        // Autenticar al usuario automáticamente después de verificar (para el resto)
         Auth::login($user);
 
-        // Redirigir al panel correspondiente según el rol
         return match ($user->rol) {
             'estudiante' => redirect()->route('estudiante.home')
-                ->with('success', '¡Email verificado correctamente! Bienvenido/a.'),
-            'empresa' => redirect()->route('empresa.home')
                 ->with('success', '¡Email verificado correctamente! Bienvenido/a.'),
             default => redirect()->route('inicio')
                 ->with('success', '¡Email verificado correctamente!'),

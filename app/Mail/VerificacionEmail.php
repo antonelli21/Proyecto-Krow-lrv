@@ -16,17 +16,17 @@ class VerificacionEmail extends Mailable
     public string $userName;
 
     // El controlador nos pasa el código y el nombre del usuario por acá
-    public function __construct($user, $codigo)
+    public function __construct(string $user, string $codigo)
     {
         $this->codigo = $codigo;
-        $this->userName = $user->name;
+        $this->userName = $user;
     }
 
     // El asunto que va a aparecer en el Gmail de la persona
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: '🔑 Tu código de verificación de KROW',
+            subject: 'KROW - Código de Verificación de Email',
         );
     }
 

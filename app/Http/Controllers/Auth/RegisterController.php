@@ -100,7 +100,7 @@ class RegisterController extends Controller
             'id_carrera'       => $carrera->id_carrera,
         ]);
 
-        Mail::to($user->email)->send(new VerificacionEmail($user, $codigoVerificacion));
+        Mail::to($user->email)->send(new VerificacionEmail($user->name, $codigoVerificacion));
 
         session(['verificacion_user_id' => $user->id]);
 
@@ -169,7 +169,7 @@ class RegisterController extends Controller
             'email_representante' => $validated['email'],
         ]);
 
-        Mail::to($user->email)->send(new VerificacionEmail($user, $codigoVerificacion));
+        Mail::to($user->email)->send(new VerificacionEmail($user->name, $codigoVerificacion));
 
         session(['verificacion_user_id' => $user->id]);
 
