@@ -13,6 +13,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\IndexController;
+use App\Http\Controllers\ConfiguracionController;
 
 /* ════════════════════════════════════════
    RUTAS PÚBLICAS
@@ -43,8 +44,8 @@ Route::middleware('guest')->group(function () {
 
     // Procesar el formulario de login (POST)
     Route::post('/login', [LoginController::class, 'login'])
-    ->middleware('throttle:5,1')
-    ->name('login.post');
+        ->middleware('throttle:5,1')
+        ->name('login.post');
 
     // Pantalla de registro pendiente (empresas)
     Route::get('/registro/pendiente', function () {
@@ -92,11 +93,19 @@ Route::prefix('estudiante')
     ->name('estudiante.')
     ->middleware(['auth', 'verified', 'role:estudiante', 'alumno.activo']) // <-- ¡OJO! Acordate de meter acá tu middleware de bloqueo
     ->group(function () {
-        Route::get('/home',           function () { return view('estudiante.home-estudiante'); })->name('home');
-        Route::get('/empresas',       function () { return view('empresas'); })->name('empresas');
+        Route::get('/home',           function () {
+            return view('estudiante.home-estudiante');
+        })->name('home');
+        Route::get('/empresas',       function () {
+            return view('empresas');
+        })->name('empresas');
         Route::get('/perfil',         [EstudianteController::class, 'verPerfil'])->name('perfil');
-        Route::get('/mensajes',       function () { return view('mensajes'); })->name('mensajes');
-        Route::get('/oferta/{id}',    function ($id) { return view('estudiante.oferta-detalle', compact('id')); })->name('oferta');
+        Route::get('/mensajes',       function () {
+            return view('mensajes');
+        })->name('mensajes');
+        Route::get('/oferta/{id}',    function ($id) {
+            return view('estudiante.oferta-detalle', compact('id'));
+        })->name('oferta');
         Route::get('/lista',          [EstudianteController::class, 'lista'])->name('lista');
         Route::get('/perfil/editar',  [EstudianteController::class, 'editarPerfil'])->name('perfil.editar');
         Route::put('/perfil/update',  [EstudianteController::class, 'updatePerfil'])->name('perfil.update');
@@ -104,26 +113,32 @@ Route::prefix('estudiante')
         Route::post('/ofertas/{id_oferta}/postular', [OfertaController::class, 'postular'])->name('ofertas.postular');
     });
 
-        Route::prefix('empresa')
-            ->name('empresa.')
-            ->middleware(['auth', 'verified', 'role:empresa', 'empresa.activa'])
-            ->group(function () {
-                Route::get('/home',                         [EmpresaController::class, 'home'])->name('home');
-                Route::get('/perfil',                       function () { return view('empresa.perfil-empresa'); })->name('perfil');
-                Route::get('/mensajes',                     function () { return view('mensajes'); })->name('mensajes');
-                Route::get('/oferta/{id}/postulantes',      [EmpresaController::class, 'verPostulantes'])->name('ofertas.postulantes');
-                Route::post('/crear-oferta',               [EmpresaController::class, 'storeOferta'])->name('ofertas.store');
-                Route::get('/crear-oferta',                [EmpresaController::class, 'crearOferta'])->name('crear-oferta');
-                Route::put('/postulacion/{id}/estado',     [EmpresaController::class, 'actualizarEstadoPostulante'])->name('actualizar-estado');
-                Route::get('/perfil/editar',               function () { return view('empresa.perfil-empresa-editar'); })->name('perfil.editar');
-                
-                // CORRECCIÓN EXACTA AQUÍ:
-                // Al estar dentro de un grupo con ->name('empresa.'), el name 'perfil.update'
-                // se convierte automáticamente en 'empresa.perfil.update' para la vista.
-                Route::put('/perfil/update',               [EmpresaController::class, 'update'])->name('perfil.update');        
-                
-                Route::get('/estudiante/perfil/{id}',      [EstudianteController::class, 'show'])->name('estudiante.perfil');
-            });
+Route::prefix('empresa')
+    ->name('empresa.')
+    ->middleware(['auth', 'verified', 'role:empresa', 'empresa.activa'])
+    ->group(function () {
+        Route::get('/home',                         [EmpresaController::class, 'home'])->name('home');
+        Route::get('/perfil',                       function () {
+            return view('empresa.perfil-empresa');
+        })->name('perfil');
+        Route::get('/mensajes',                     function () {
+            return view('mensajes');
+        })->name('mensajes');
+        Route::get('/oferta/{id}/postulantes',      [EmpresaController::class, 'verPostulantes'])->name('ofertas.postulantes');
+        Route::post('/crear-oferta',               [EmpresaController::class, 'storeOferta'])->name('ofertas.store');
+        Route::get('/crear-oferta',                [EmpresaController::class, 'crearOferta'])->name('crear-oferta');
+        Route::put('/postulacion/{id}/estado',     [EmpresaController::class, 'actualizarEstadoPostulante'])->name('actualizar-estado');
+        Route::get('/perfil/editar',               function () {
+            return view('empresa.perfil-empresa-editar');
+        })->name('perfil.editar');
+
+        // CORRECCIÓN EXACTA AQUÍ:
+        // Al estar dentro de un grupo con ->name('empresa.'), el name 'perfil.update'
+        // se convierte automáticamente en 'empresa.perfil.update' para la vista.
+        Route::put('/perfil/update',               [EmpresaController::class, 'update'])->name('perfil.update');
+
+        Route::get('/estudiante/perfil/{id}',      [EstudianteController::class, 'show'])->name('estudiante.perfil');
+    });
 /* ════════════════════════════════════════
    ADMIN
    Rutas protegidas para usuarios con rol 'admin'.
@@ -136,7 +151,7 @@ Route::prefix('admin')
         Route::get('/home', [AdminController::class, 'home'])->name('home');
         Route::get('/empresas', [AdminController::class, 'listarEmpresas'])->name('empresas');
         Route::get('/estudiantes', [AdminController::class, 'listarEstudiantes'])->name('estudiantes');
-        
+
         // NUEVA: Vista de ofertas de empresas aprobadas
         Route::get('/ofertas', [AdminController::class, 'listarOfertas'])->name('ofertas');
 
@@ -146,7 +161,7 @@ Route::prefix('admin')
         Route::delete('/estudiantes/{id}', [AdminController::class, 'eliminarEstudiante'])->name('estudiantes.destroy');
         Route::delete('/empresas/{id}', [AdminController::class, 'eliminarEmpresa'])->name('empresas.destroy');
 
-        
+
         Route::post('/ofertas/{id}/estado', [AdminController::class, 'cambiarEstadoOferta'])->name('ofertas.estado');
         Route::delete('/ofertas/{id}', [AdminController::class, 'eliminarOferta'])->name('ofertas.destroy');
     });
@@ -156,17 +171,15 @@ Route::prefix('admin')
    Accesibles por cualquier usuario autenticado con email verificado.
 ════════════════════════════════════════ */
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('/mensajes',       function () { return view('mensajes'); })->name('mensajes');
-    Route::get('/notificaciones', function () { return view('notificaciones'); })->name('notificaciones');
-    Route::get('/configuracion',  function () { return view('configuracion'); })->name('configuracion');
-
-    Route::put('/configuracion/password', function () {
-        return back()->with('password_ok', true);
-    })->name('configuracion.password');
-
-    Route::post('/configuracion/logout-all', function () {
-        return redirect()->route('inicio');
-    })->name('configuracion.logout-all');
+    Route::get('/mensajes',       function () {
+        return view('mensajes');
+    })->name('mensajes');
+    Route::get('/notificaciones', function () {
+        return view('notificaciones');
+    })->name('notificaciones');
+    Route::get('/configuracion',              [ConfiguracionController::class, 'index'])->name('configuracion');
+    Route::put('/configuracion/password',     [ConfiguracionController::class, 'cambiarPassword'])->name('configuracion.password');
+    Route::post('/configuracion/logout-all',  [ConfiguracionController::class, 'logoutAll'])->name('configuracion.logout-all');
 });
 
 /* ════════════════════════════════════════
@@ -180,21 +193,18 @@ Route::post('/ayuda/contacto', [IndexController::class, 'contacto'])->name('ayud
    Usadas por el frontend con fetch/AJAX.
 ════════════════════════════════════════ */
 Route::prefix('api')->group(function () {
-    Route::apiResource('estudiantes', EstudianteController::class)->only(['index','show','store','update','destroy']);
-    Route::apiResource('empresas', EmpresaController::class)->only(['index','show','store','update','destroy']);
-    Route::apiResource('ofertas', OfertaController::class)->only(['index','show','store','update','destroy']);
-    Route::apiResource('chats', ChatController::class)->only(['index','show','store','destroy']);
-    Route::apiResource('mensajes', MensajeController::class)->only(['index','show','store','update','destroy']);
-    Route::apiResource('tickets', TicketSoporteController::class)->only(['index','show','store','update','destroy']);
+    Route::apiResource('estudiantes', EstudianteController::class)->only(['index', 'show', 'store', 'update', 'destroy']);
+    Route::apiResource('empresas', EmpresaController::class)->only(['index', 'show', 'store', 'update', 'destroy']);
+    Route::apiResource('ofertas', OfertaController::class)->only(['index', 'show', 'store', 'update', 'destroy']);
+    Route::apiResource('chats', ChatController::class)->only(['index', 'show', 'store', 'destroy']);
+    Route::apiResource('mensajes', MensajeController::class)->only(['index', 'show', 'store', 'update', 'destroy']);
+    Route::apiResource('tickets', TicketSoporteController::class)->only(['index', 'show', 'store', 'update', 'destroy']);
 
     Route::get('/provincias/{id}/localidades', function ($id_provincia) {
         $localidades = \App\Models\Localidad::where('id_provincia', $id_provincia)
-                                            ->orderBy('nombre', 'asc')
-                                            ->get(['id_localidad', 'nombre']);
-        
+            ->orderBy('nombre', 'asc')
+            ->get(['id_localidad', 'nombre']);
+
         return response()->json($localidades);
     });
-
-
-
 });
