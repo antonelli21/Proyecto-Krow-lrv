@@ -192,6 +192,13 @@ document.addEventListener('DOMContentLoaded', () => {
 ════════════════════════════════════════ */
 
 function initFiltersSidebar() {
+  if (window.innerWidth > 900) {
+    document.querySelectorAll('.filter-accordion.open').forEach(acc => {
+      acc.classList.remove('open');
+      const chevron = acc.querySelector('.accordion-chevron');
+      if (chevron) chevron.textContent = '+';
+    });
+  }
   // Accordions toggle
   const accordions = document.querySelectorAll('.filter-accordion');
 
@@ -303,6 +310,44 @@ function initFiltersSidebar() {
       }
     });
   }
+  const filtersForm = document.querySelector('.filters-form');
+const mainContent = document.getElementById('main-content');
+const resultCount = document.getElementById('result-count');
+const buscarInput = document.getElementById('buscar');
+
+if (!filtersForm || !mainContent) return;
+
+async function fetchOfertas() {
+    const params = new URLSearchParams(new FormData(filtersForm));
+
+    const res = await fetch('/?' + params.toString(), {
+        headers: { 'Accept': 'application/json' }
+    });
+
+    const data = await res.json();
+
+    const cardContainer = mainContent.querySelector('#cards-container');
+    if (cardContainer) cardContainer.innerHTML = data.html;
+
+    if (resultCount) {
+        resultCount.textContent = 'Se encontraron ' + data.total + ' resultados';
+    }
+}
+
+// Búsqueda al escribir con debounce
+let debounceTimer;
+if (buscarInput) {
+    buscarInput.addEventListener('input', () => {
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(fetchOfertas, 500);
+    });
+}
+
+// Botón aplicar filtros
+filtersForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    fetchOfertas();
+});
 }
 
 // Inicializar filtros cuando el DOM esté listo
@@ -310,6 +355,7 @@ if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', initFiltersSidebar);
 } else {
   initFiltersSidebar();
+  
 }
 
 /* ════════════════════════════════════════
@@ -365,9 +411,15 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // Restaurar estado guardado
-    const collapsed = localStorage.getItem('krow_sidebar_collapsed') === 'true';
-    if (collapsed) sidebarEl.classList.add('collapsed');
-    setToggleState(collapsed);
+    // Desktop: sidebar siempre visible
+    if (window.innerWidth > 900) {
+      sidebarEl.classList.remove('collapsed');
+      setToggleState(false);
+    } else {
+      const collapsed = localStorage.getItem('krow_sidebar_collapsed') === 'true';
+      if (collapsed) sidebarEl.classList.add('collapsed');
+      setToggleState(collapsed);
+    }
 
     toggleBtn.addEventListener('click', () => {
       const isCollapsed = sidebarEl.classList.toggle('collapsed');
