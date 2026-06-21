@@ -4,22 +4,33 @@
 
 @section('content')
 
-@php
-    $usuario = auth()->user();
-    $empresa = $usuario->empresa ?? null;
-@endphp
-
 <div class="panel-page">
 
     {{-- ══ HEADER ══ --}}
     <div class="perfil-header-card">
         <div class="perfil-header-inner">
-            <div class="perfil-avatar">
-                {{ strtoupper(substr($empresa->nombre ?? $usuario->name ?? 'E', 0, 1)) }}
+
+            <div class="perfil-avatar" id="logoPreview"
+                 style="cursor:pointer; position:relative; {{ $empresa->logo ? 'background-image:url(\'' . \Illuminate\Support\Facades\Storage::url($empresa->logo) . '\'); background-size:cover; background-position:center;' : '' }}"
+                 onclick="document.getElementById('logo').click()"
+                 title="Tocar para cambiar el logo">
+                <span id="logoInitial">
+                    @if(!$empresa->logo)
+                        {{ strtoupper(substr($empresa->nombre_empresa ?? $usuario->name ?? 'E', 0, 1)) }}
+                    @endif
+                </span>
+                <div class="avatar-overlay">
+                    <i class="bi bi-camera-fill"></i>
+                </div>
             </div>
+            <input type="file" id="logo" name="logo" accept="image/*"
+                   form="formEditarEmpresa"
+                   style="display:none;" onchange="previewLogo(this)">
+
             <div class="perfil-header-info" style="flex: 1;">
                 <h1 class="panel-page-title">Editar perfil</h1>
-                <p class="panel-page-sub">{{ $empresa->nombre ?? $usuario->name ?? '' }}</p>
+                <p class="panel-page-sub">{{ $empresa->nombre_empresa ?? $usuario->name ?? '' }}</p>
+                @error('logo') <span class="config-error">{{ $message }}</span> @enderror
             </div>
             <a href="{{ route('empresa.perfil') }}" class="btn-outline">
                 <i class="bi bi-arrow-left"></i> Volver al perfil
@@ -30,7 +41,7 @@
     {{-- ══ FORMULARIO ══ --}}
     <div class="perfil-sections">
 
-        <form action="{{ route('empresa.perfil.update') }}" method="POST" enctype="multipart/form-data">
+        <form id="formEditarEmpresa" action="{{ route('empresa.perfil.update') }}" method="POST" enctype="multipart/form-data">
             @csrf
             @method('PUT')
 
@@ -46,27 +57,59 @@
                     <i class="bi bi-building"></i> Datos de la Empresa
                 </div>
                 <div class="perfil-card-body" style="display: flex; flex-direction: column; gap: 16px;">
-                    
-                    {{-- Fila 1: Nombre y Rubro --}}
+
                     <div style="display: flex; gap: 16px; width: 100%;">
                         <div class="info-item" style="flex: 1;">
-                            <label class="info-label" for="nombre">Nombre de la empresa</label>
-                            <input type="text" id="nombre" name="nombre"
-                                   class="filter-input-text {{ $errors->has('nombre') ? 'input-error' : '' }}"
-                                   value="{{ old('nombre', $empresa->nombre ?? '') }}" required>
-                            @error('nombre') <span class="config-error">{{ $message }}</span> @enderror
+                            <label class="info-label" for="nombre_empresa">Nombre de la empresa</label>
+                            <input type="text" id="nombre_empresa" name="nombre_empresa"
+                                   class="filter-input-text {{ $errors->has('nombre_empresa') ? 'input-error' : '' }}"
+                                   value="{{ old('nombre_empresa', $empresa->nombre_empresa ?? '') }}" required>
+                            @error('nombre_empresa') <span class="config-error">{{ $message }}</span> @enderror
                         </div>
 
                         <div class="info-item" style="flex: 1;">
                             <label class="info-label" for="rubro">Rubro principal</label>
                             <input type="text" id="rubro" name="rubro"
-                                   class="filter-input-text"
+                                   class="filter-input-text {{ $errors->has('rubro') ? 'input-error' : '' }}"
                                    placeholder="Software / Tecnología"
-                                   value="{{ old('rubro', $empresa->rubro ?? '') }}">
+                                   value="{{ old('rubro', $empresa->rubro ?? '') }}" required>
+                            @error('rubro') <span class="config-error">{{ $message }}</span> @enderror
                         </div>
                     </div>
 
-                    {{-- Fila 2: Sitio Web (Ancho Completo) --}}
+                    <div style="display: flex; gap: 16px; width: 100%;">
+                        <div class="info-item" style="flex: 1;">
+                            <label class="info-label" for="razon_social">Razón social</label>
+                            <input type="text" id="razon_social" name="razon_social"
+                                   class="filter-input-text {{ $errors->has('razon_social') ? 'input-error' : '' }}"
+                                   value="{{ old('razon_social', $empresa->razon_social ?? '') }}" required>
+                            @error('razon_social') <span class="config-error">{{ $message }}</span> @enderror
+                        </div>
+
+                        <div class="info-item" style="flex: 1;">
+                            <label class="info-label" for="cuit">CUIT</label>
+                            <input type="text" id="cuit" name="cuit"
+                                   class="filter-input-text {{ $errors->has('cuit') ? 'input-error' : '' }}"
+                                   placeholder="20123456789"
+                                   value="{{ old('cuit', $empresa->cuit ?? '') }}" required>
+                            @error('cuit') <span class="config-error">{{ $message }}</span> @enderror
+                        </div>
+                    </div>
+
+                    <div class="info-item" style="width: 100%;">
+                        <label class="info-label" for="tamano_empresa">Tamaño de la empresa</label>
+                        <div class="select-wrapper">
+                            <select id="tamano_empresa" name="tamano_empresa" class="filter-select">
+                                <option value="">Seleccionar...</option>
+                                @foreach(['Microempresa', 'Pequena', 'Mediana', 'Grande'] as $t)
+                                    <option value="{{ $t }}" {{ old('tamano_empresa', $empresa->tamano_empresa ?? '') === $t ? 'selected' : '' }}>
+                                        {{ $t }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+
                     <div class="info-item" style="width: 100%;">
                         <label class="info-label" for="sitio_web">Sitio web</label>
                         <input type="url" id="sitio_web" name="sitio_web"
@@ -75,7 +118,6 @@
                                value="{{ old('sitio_web', $empresa->sitio_web ?? '') }}">
                     </div>
 
-                    {{-- Fila 3: Descripción (Ancho Completo) --}}
                     <div class="info-item" style="width: 100%;">
                         <label class="info-label" for="descripcion">Descripción de la organización</label>
                         <textarea id="descripcion" name="descripcion"
@@ -87,14 +129,39 @@
                 </div>
             </div>
 
+            {{-- ── Representante ── --}}
+            <div class="perfil-card">
+                <div class="perfil-card-header">
+                    <i class="bi bi-person-badge"></i> Representante
+                </div>
+                <div class="perfil-card-body" style="display: flex; flex-direction: column; gap: 16px;">
+                    <div style="display: flex; gap: 16px; width: 100%;">
+                        <div class="info-item" style="flex: 1;">
+                            <label class="info-label" for="representante">Nombre del representante</label>
+                            <input type="text" id="representante" name="representante"
+                                   class="filter-input-text {{ $errors->has('representante') ? 'input-error' : '' }}"
+                                   value="{{ old('representante', $empresa->representante ?? '') }}" required>
+                            @error('representante') <span class="config-error">{{ $message }}</span> @enderror
+                        </div>
+
+                        <div class="info-item" style="flex: 1;">
+                            <label class="info-label" for="email_representante">Email del representante</label>
+                            <input type="email" id="email_representante" name="email_representante"
+                                   class="filter-input-text {{ $errors->has('email_representante') ? 'input-error' : '' }}"
+                                   value="{{ old('email_representante', $empresa->email_representante ?? '') }}" required>
+                            @error('email_representante') <span class="config-error">{{ $message }}</span> @enderror
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             {{-- ── Ubicación ── --}}
             <div class="perfil-card">
                 <div class="perfil-card-header">
                     <i class="bi bi-geo-alt"></i> Ubicación
                 </div>
                 <div class="perfil-card-body" style="display: flex; flex-direction: column; gap: 16px;">
-                    
-                    {{-- Fila 1: Dirección (Ancho Completo) --}}
+
                     <div class="info-item" style="width: 100%;">
                         <label class="info-label" for="direccion">Dirección</label>
                         <input type="text" id="direccion" name="direccion"
@@ -103,20 +170,35 @@
                                value="{{ old('direccion', $empresa->direccion ?? '') }}">
                     </div>
 
-                    {{-- Fila 2: Localidad y Provincia --}}
                     <div style="display: flex; gap: 16px; width: 100%;">
                         <div class="info-item" style="flex: 1;">
-                            <label class="info-label" for="localidad">Localidad</label>
-                            <input type="text" id="localidad" name="localidad"
-                                   class="filter-input-text"
-                                   value="{{ old('localidad', $empresa->localidad ?? '') }}">
+                            <label class="info-label" for="id_provincia">Provincia</label>
+                            <div class="select-wrapper">
+                                <select id="id_provincia" name="id_provincia" class="filter-select">
+                                    <option value="">Seleccionar...</option>
+                                    @foreach($provincias as $p)
+                                        <option value="{{ $p->id_provincia }}"
+                                            {{ (int) old('id_provincia', $empresa->id_provincia ?? 0) === $p->id_provincia ? 'selected' : '' }}>
+                                            {{ $p->nombre }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
                         </div>
 
                         <div class="info-item" style="flex: 1;">
-                            <label class="info-label" for="provincia">Provincia</label>
-                            <input type="text" id="provincia" name="provincia"
-                                   class="filter-input-text"
-                                   value="{{ old('provincia', $empresa->provincia ?? '') }}">
+                            <label class="info-label" for="id_localidad">Localidad</label>
+                            <div class="select-wrapper">
+                                <select id="id_localidad" name="id_localidad" class="filter-select">
+                                    <option value="">Seleccionar...</option>
+                                    @foreach($localidades as $l)
+                                        <option value="{{ $l->id_localidad }}"
+                                            {{ (int) old('id_localidad', $empresa->id_localidad ?? 0) === $l->id_localidad ? 'selected' : '' }}>
+                                            {{ $l->nombre }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
                         </div>
                     </div>
 
@@ -129,22 +211,23 @@
                     <i class="bi bi-envelope"></i> Contacto
                 </div>
                 <div class="perfil-card-body" style="display: flex; flex-direction: column; gap: 16px;">
-                    
+
                     <div style="display: flex; gap: 16px; width: 100%;">
                         <div class="info-item" style="flex: 1;">
-                            <label class="info-label" for="email">Correo electrónico</label>
-                            <input type="email" id="email" name="email"
-                                   class="filter-input-text {{ $errors->has('email') ? 'input-error' : '' }}"
-                                   value="{{ old('email', $usuario->email ?? '') }}" required>
-                            @error('email') <span class="config-error">{{ $message }}</span> @enderror
+                            <label class="info-label" for="email_contacto">Correo electrónico</label>
+                            <input type="email" id="email_contacto" name="email_contacto"
+                                   class="filter-input-text {{ $errors->has('email_contacto') ? 'input-error' : '' }}"
+                                   value="{{ old('email_contacto', $usuario->email ?? '') }}" required>
+                            @error('email_contacto') <span class="config-error">{{ $message }}</span> @enderror
                         </div>
 
                         <div class="info-item" style="flex: 1;">
                             <label class="info-label" for="telefono">Teléfono de contacto</label>
                             <input type="text" id="telefono" name="telefono"
-                                   class="filter-input-text"
+                                   class="filter-input-text {{ $errors->has('telefono') ? 'input-error' : '' }}"
                                    placeholder="+54 9 11 0000 0000"
-                                   value="{{ old('telefono', $empresa->telefono ?? '') }}">
+                                   value="{{ old('telefono', $empresa->telefono ?? '') }}" required>
+                            @error('telefono') <span class="config-error">{{ $message }}</span> @enderror
                         </div>
                     </div>
 
@@ -157,7 +240,7 @@
                     <i class="bi bi-share"></i> Redes Sociales
                 </div>
                 <div class="perfil-card-body" style="display: flex; flex-direction: column; gap: 16px;">
-                    
+
                     <div style="display: flex; gap: 16px; width: 100%;">
                         <div class="info-item" style="flex: 1;">
                             <label class="info-label" for="linkedin">LinkedIn</label>
@@ -173,6 +256,14 @@
                                    class="filter-input-text"
                                    placeholder="https://facebook.com/empresa"
                                    value="{{ old('facebook', $empresa->facebook ?? '') }}">
+                        </div>
+
+                        <div class="info-item" style="flex: 1;">
+                            <label class="info-label" for="instagram">Instagram</label>
+                            <input type="url" id="instagram" name="instagram"
+                                   class="filter-input-text"
+                                   placeholder="https://instagram.com/empresa"
+                                   value="{{ old('instagram', $empresa->instagram ?? '') }}">
                         </div>
                     </div>
 
@@ -196,5 +287,69 @@
     </div>
 
 </div>
+
+<style>
+.avatar-overlay {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: rgba(0,0,0,0.55);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity .15s ease;
+    color: #fff;
+    font-size: 1.1rem;
+}
+.perfil-avatar:hover .avatar-overlay {
+    opacity: 1;
+}
+</style>
+
+<script>
+// Preview en vivo del logo al elegir un archivo
+function previewLogo(input) {
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            const avatar = document.getElementById('logoPreview');
+            avatar.style.backgroundImage = `url('${e.target.result}')`;
+            avatar.style.backgroundSize = 'cover';
+            avatar.style.backgroundPosition = 'center';
+            document.getElementById('logoInitial').textContent = '';
+        };
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+
+// Select dependiente: al cambiar provincia, recargamos las localidades disponibles
+document.getElementById('id_provincia').addEventListener('change', function () {
+    const idProvincia = this.value;
+    const selectLocalidad = document.getElementById('id_localidad');
+
+    if (!idProvincia) {
+        selectLocalidad.innerHTML = '<option value="">Seleccionar...</option>';
+        return;
+    }
+
+    selectLocalidad.innerHTML = '<option value="">Cargando...</option>';
+
+    fetch(`/localidades/${idProvincia}`)
+        .then(res => res.json())
+        .then(data => {
+            selectLocalidad.innerHTML = '<option value="">Seleccionar...</option>';
+            data.forEach(loc => {
+                const opt = document.createElement('option');
+                opt.value = loc.id_localidad;
+                opt.textContent = loc.nombre;
+                selectLocalidad.appendChild(opt);
+            });
+        })
+        .catch(() => {
+            selectLocalidad.innerHTML = '<option value="">Error al cargar</option>';
+        });
+});
+</script>
 
 @endsection

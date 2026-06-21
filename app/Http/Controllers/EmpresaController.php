@@ -50,7 +50,7 @@ class EmpresaController extends Controller
         return response()->json($empresa, 201);
     }
 
-public function update(Request $request)
+public function updatePerfil(Request $request)
     {
         $usuario = auth()->user();
         $empresa = $usuario->empresa;
@@ -133,6 +133,37 @@ public function update(Request $request)
                 ->withInput()
                 ->withErrors(['error' => '❌ Error al actualizar el perfil de empresa: ' . $e->getMessage()]);
         }
+    }
+
+    /**
+     * Vista de solo lectura del perfil de la empresa logueada.
+     */
+    public function verPerfil()
+    {
+        $usuario = auth()->user();
+        $empresa = $usuario->empresa()->with(['localidad', 'provincia'])->first();
+        $ofertas = Oferta::where('id_empresa', $empresa->id_empresa)->get();
+
+        return view('empresa.perfil-empresa', compact('empresa', 'ofertas'));
+    }
+
+    /**
+     * Formulario de edición del perfil de la empresa logueada.
+     */
+    public function editarPerfil()
+    {
+        $usuario = auth()->user();
+        $empresa = $usuario->empresa;
+
+        $provincias = Provincia::orderBy('nombre')->get();
+
+        // Si la empresa ya tiene provincia cargada, traemos sus localidades
+        // para que el select de localidad aparezca poblado al entrar al form.
+        $localidades = $empresa && $empresa->id_provincia
+            ? Localidad::where('id_provincia', $empresa->id_provincia)->orderBy('nombre')->get()
+            : collect();
+
+        return view('empresa.perfil-empresa-editar', compact('usuario', 'empresa', 'provincias', 'localidades'));
     }
 
     public function destroy(Empresa $empresa)
