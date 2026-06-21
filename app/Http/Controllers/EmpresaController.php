@@ -218,6 +218,7 @@ public function updatePerfil(Request $request)
                                      
                                     return (object)[
                                         'id' => $postulacion->id_postulacion,
+                                        'id_estudiante' => $estudiante->id_estudiante,
                                         'nombre' => $estudiante->name ?? $estudiante->nombre ?? 'Nombre no disponible',
                                         'carrera' => $estudiante->carrera->nombre ?? $estudiante->carrera ?? 'No especificada',
                                         'email' => $estudiante->email ?? $postulacion->email,
@@ -311,6 +312,20 @@ public function updatePerfil(Request $request)
         }
         
         return redirect()->back()->with('success', 'Estado actualizado correctamente');
+    }
+
+    public function verPerfilEstudiante($id)
+    {
+        $estudiante = \App\Models\Estudiante::with([
+            'user',
+            'carrera',
+            'localidad',
+            'provincia',
+            'habilidades',
+            'postulaciones.oferta.empresa'
+        ])->findOrFail($id);
+        
+        return view('empresa.perfil-estudiante', compact('estudiante'));
     }
 
   /* Muestra el formulario para crear una nueva oferta laboral */

@@ -119,16 +119,14 @@ Route::prefix('empresa')
     ->group(function () {
         Route::get('/home',                         [EmpresaController::class, 'home'])->name('home');
         Route::get('/perfil',                       [EmpresaController::class, 'verPerfil'])->name('perfil');
-        Route::get('/mensajes',                     function () {
-            return view('mensajes');
-        })->name('mensajes');
+        Route::get('/mensajes',                     function () {return view('mensajes');})->name('mensajes');
         Route::get('/oferta/{id}/postulantes',      [EmpresaController::class, 'verPostulantes'])->name('ofertas.postulantes');
         Route::post('/crear-oferta',                [EmpresaController::class, 'storeOferta'])->name('ofertas.store');
         Route::get('/crear-oferta',                 [EmpresaController::class, 'crearOferta'])->name('crear-oferta');
         Route::put('/postulacion/{id}/estado',      [EmpresaController::class, 'actualizarEstadoPostulante'])->name('actualizar-estado');
         Route::get('/perfil/editar',                [EmpresaController::class, 'editarPerfil'])->name('perfil.editar');
         Route::put('/perfil/update',                [EmpresaController::class, 'updatePerfil'])->name('perfil.update');
-        Route::get('/estudiante/perfil/{id}',      [EstudianteController::class, 'show'])->name('estudiante.perfil');
+        Route::get('/estudiante/{id}',              [EmpresaController::class, 'verPerfilEstudiante'])->name('estudiante.perfil'); // ← Esto crea 'empresa.estudiante.perfil'
     });
 /* ════════════════════════════════════════
    ADMIN

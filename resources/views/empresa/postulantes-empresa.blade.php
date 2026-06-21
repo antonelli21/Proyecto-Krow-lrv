@@ -498,11 +498,15 @@
             <div class="card-header">
                 <div>
                     <h3 class="applicant-name">
-                        <a href="{{ route('estudiante.perfil', $postulante->id) }}">{{ $postulante->nombre }}</a>
+                        <a href="{{ route('empresa.estudiante.perfil', $postulante->id_estudiante) }}" 
+                        class="text-decoration-none text-dark">
+                            {{ $postulante->nombre ?? 'Nombre no disponible' }}
+                        </a>
                     </h3>
                     <div class="applicant-career">{{ $postulante->carrera }}</div>
                     <div class="applicant-date">Postulado: {{ \Carbon\Carbon::parse($postulante->fecha_postulacion)->format('d/m/Y') }}</div>
                 </div>
+                
                 
                 @php
                     $estadoActual = $postulante->estado;
