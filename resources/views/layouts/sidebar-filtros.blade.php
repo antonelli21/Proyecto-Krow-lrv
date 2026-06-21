@@ -1,6 +1,5 @@
-<button class="sidebar-toggle-btn" id="sidebar-toggle" aria-label="Colapsar filtros">
+<button class="sidebar-toggle" id="sidebar-toggle" aria-label="Colapsar filtros">
   <span>Filtros</span>
-  <span class="sidebar-toggle-icon" id="sidebar-toggle-symbol" style="font-size:1.3rem; font-weight:700; line-height:1;">−</span>
 </button>
 
 @if(isset($localidadesMap))

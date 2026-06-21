@@ -19,25 +19,25 @@ class IndexController extends Controller
         // Filtro de búsqueda
         if ($request->filled('buscar')) {
             $buscar = $request->buscar;
-            $query->where(function($q) use ($buscar) {
+            $query->where(function ($q) use ($buscar) {
                 $q->where('titulo', 'like', "%{$buscar}%")
-                  ->orWhere('descripcion', 'like', "%{$buscar}%")
-                  ->orWhereHas('empresa', function($qEmp) use ($buscar) {
-                      $qEmp->where('nombre_empresa', 'like', "%{$buscar}%");
-                  });
+                    ->orWhere('descripcion', 'like', "%{$buscar}%")
+                    ->orWhereHas('empresa', function ($qEmp) use ($buscar) {
+                        $qEmp->where('nombre_empresa', 'like', "%{$buscar}%");
+                    });
             });
         }
 
         // Provincia
         if ($request->filled('provincia')) {
-            $query->whereHas('provincia', function($q) use ($request) {
+            $query->whereHas('provincia', function ($q) use ($request) {
                 $q->where('nombre', $request->provincia);
             });
         }
 
         // Localidad (si está filtrado por localidad)
         if ($request->filled('localidad')) {
-            $query->whereHas('localidad', function($q) use ($request) {
+            $query->whereHas('localidad', function ($q) use ($request) {
                 $q->where('nombre', $request->localidad);
             });
         }
@@ -105,6 +105,13 @@ class IndexController extends Controller
             $localidadesMap[$prov->nombre] = $prov->localidades->pluck('nombre')->toArray();
         }
 
+        if ($request->wantsJson()) {
+            return response()->json([
+                'html'  => view('layouts.partials.ofertas-cards', compact('ofertas'))->render(),
+                'total' => $ofertas instanceof \Illuminate\Pagination\LengthAwarePaginator ? $ofertas->total() : $ofertas->count(),
+            ]);
+        }
+
         return view('index', compact('ofertas', 'panelData', 'provinciasFiltro', 'categoriasFiltro', 'localidadesMap', 'modalidadesFiltro', 'contratosFiltro'));
     }
 
@@ -115,9 +122,9 @@ class IndexController extends Controller
         // Filtros (opcionales para el futuro)
         if ($request->filled('buscar')) {
             $buscar = $request->buscar;
-            $query->where(function($q) use ($buscar) {
+            $query->where(function ($q) use ($buscar) {
                 $q->where('nombre_empresa', 'like', "%{$buscar}%")
-                  ->orWhere('rubro', 'like', "%{$buscar}%");
+                    ->orWhere('rubro', 'like', "%{$buscar}%");
             });
         }
 
@@ -149,8 +156,8 @@ class IndexController extends Controller
         try {
             Mail::raw("Mensaje de: {$request->nombre} <{$request->email}>\n\nAsunto: {$request->asunto}\n\nMensaje:\n{$request->mensaje}", function ($message) use ($request) {
                 $message->to(env('MAIL_FROM_ADDRESS', 'soporte@krow.com'))
-                        ->replyTo($request->email, $request->nombre)
-                        ->subject("Contacto KROW: {$request->asunto}");
+                    ->replyTo($request->email, $request->nombre)
+                    ->subject("Contacto KROW: {$request->asunto}");
             });
         } catch (\Exception $e) {
             if ($request->ajax() || $request->wantsJson()) {

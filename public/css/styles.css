@@ -797,8 +797,7 @@ main {
   flex-direction: column;
   gap: 1.5rem;
   width: 100%;
-  max-width: 320px;
-  padding: 1rem;
+  padding: 0.2rem;
 }
 
 .filters-form h3 {
@@ -1217,9 +1216,8 @@ body {
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 8px;
-  padding: 18px 14px;
+  padding: 8px 8px;
   align-self: start;
-  position: sticky;
   top: calc(var(--header-h) + 8px);
   max-height: calc(100vh - var(--header-h) - 32px);
   overflow-y: auto;
@@ -1883,6 +1881,18 @@ body {
 /* ════════════════════════════════════════
    SIDEBAR COLAPSABLE
 ════════════════════════════════════════ */
+.sidebar-toggle {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  background: none;
+  border: none;
+  padding: 18px 14px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 14px;
+  color: var(--primary);
+}
+
 .sidebar-toggle-btn {
   display: flex;
   align-items: center;
@@ -1952,7 +1962,8 @@ body {
   .mobile-sidebar-bar {
     display: flex;
     justify-content: flex-end;
-    padding: 0 12px 12px;
+    padding: 0 12px 0 0;
+    width: 100%
   }
 
   .sidebar-mobile-toggle {
@@ -1968,6 +1979,7 @@ body {
     font-weight: 700;
     cursor: pointer;
     transition: background-color var(--trans), border-color var(--trans), transform 0.2s;
+    width: 100%;
   }
 
   .sidebar-mobile-toggle:hover {
@@ -4020,32 +4032,64 @@ body {
 
 /* Activo / Activa */
 .badge-activo,
-.badge-activa     { background: rgba(46,204,154,.12); color: #2ECC9A; border: 1px solid rgba(46,204,154,.3); }
+.badge-activa {
+  background: rgba(46, 204, 154, .12);
+  color: #2ECC9A;
+  border: 1px solid rgba(46, 204, 154, .3);
+}
 
 /* Suspendido / Suspendida */
 .badge-suspendido,
-.badge-suspendida { background: rgba(212,24,61,.10);  color: #e05577; border: 1px solid rgba(212,24,61,.3); }
+.badge-suspendida {
+  background: rgba(212, 24, 61, .10);
+  color: #e05577;
+  border: 1px solid rgba(212, 24, 61, .3);
+}
 
 /* Pendiente */
-.badge-pendiente  { background: rgba(212,168,67,.12); color: #D4A843; border: 1px solid rgba(212,168,67,.3); }
+.badge-pendiente {
+  background: rgba(212, 168, 67, .12);
+  color: #D4A843;
+  border: 1px solid rgba(212, 168, 67, .3);
+}
 
 /* Aprobado / Aprobada */
 .badge-aprobado,
-.badge-aprobada   { background: rgba(46,204,154,.12); color: #2ECC9A; border: 1px solid rgba(46,204,154,.3); }
+.badge-aprobada {
+  background: rgba(46, 204, 154, .12);
+  color: #2ECC9A;
+  border: 1px solid rgba(46, 204, 154, .3);
+}
 
 /* Rechazado / Rechazada */
 .badge-rechazado,
-.badge-rechazada  { background: rgba(212,24,61,.10);  color: #e05577; border: 1px solid rgba(212,24,61,.3); }
+.badge-rechazada {
+  background: rgba(212, 24, 61, .10);
+  color: #e05577;
+  border: 1px solid rgba(212, 24, 61, .3);
+}
 
 /* Publicada */
-.badge-publicada  { background: rgba(46,204,154,.12); color: #2ECC9A; border: 1px solid rgba(46,204,154,.3); }
+.badge-publicada {
+  background: rgba(46, 204, 154, .12);
+  color: #2ECC9A;
+  border: 1px solid rgba(46, 204, 154, .3);
+}
 
 /* Pausado / Pausada */
 .badge-pausado,
-.badge-pausada    { background: rgba(99,179,237,.12); color: #63b3ed; border: 1px solid rgba(99,179,237,.3); }
+.badge-pausada {
+  background: rgba(99, 179, 237, .12);
+  color: #63b3ed;
+  border: 1px solid rgba(99, 179, 237, .3);
+}
 
 /* Cerrada */
-.badge-cerrada    { background: rgba(212,24,61,.10);  color: #e05577; border: 1px solid rgba(212,24,61,.3); }
+.badge-cerrada {
+  background: rgba(212, 24, 61, .10);
+  color: #e05577;
+  border: 1px solid rgba(212, 24, 61, .3);
+}
 
 /* Acciones */
 .td-acciones {
@@ -4383,7 +4427,8 @@ body {
 .panel-page {
   max-width: 1440px;
   margin: 0 auto;
-  padding: 1.5rem; /* 24px */
+  padding: 1.5rem;
+  /* 24px */
 }
 
 /* --- 2. Header de Perfil (Cards Superiores) --- */
@@ -4398,7 +4443,8 @@ body {
 .perfil-header-inner {
   display: flex;
   align-items: center;
-  gap: 1.25rem; /* 20px */
+  gap: 1.25rem;
+  /* 20px */
   flex-wrap: wrap;
 }
 
@@ -4419,19 +4465,25 @@ body {
 /* --- 3. Arquitectura del Contenido (Dashboard Layout) --- */
 .perfil-sections {
   display: grid;
-  grid-template-columns: 2fr 1fr; /* Columna principal amplia + Barra lateral */
-  gap: 1.75rem; /* 28px */
+  grid-template-columns: 2fr 1fr;
+  /* Columna principal amplia + Barra lateral */
+  gap: 1.75rem;
+  /* 28px */
   margin-top: 1.5rem;
 }
 
 /* En la estructura de la empresa, forzamos bloques pesados al ancho completo si es necesario */
-.perfil-sections .perfil-card:nth-child(1), /* Datos de la Empresa */
-.perfil-sections .perfil-card:nth-child(3) { /* Ofertas publicadas */
+.perfil-sections .perfil-card:nth-child(1),
+/* Datos de la Empresa */
+.perfil-sections .perfil-card:nth-child(3) {
+  /* Ofertas publicadas */
   grid-column: 1;
 }
 
-.perfil-sections .perfil-card:nth-child(2), /* Ubicación */
-.perfil-sections .perfil-card:nth-child(4) { /* Contacto y Redes */
+.perfil-sections .perfil-card:nth-child(2),
+/* Ubicación */
+.perfil-sections .perfil-card:nth-child(4) {
+  /* Contacto y Redes */
   grid-column: 2;
 }
 
@@ -4440,7 +4492,8 @@ body {
   background-color: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius, 0px);
-  padding: 2rem; /* 32px Internos */
+  padding: 2rem;
+  /* 32px Internos */
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
@@ -4461,21 +4514,24 @@ body {
 .perfil-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 1.5rem 1.25rem; /* 24px vertical, 20px horizontal */
+  gap: 1.5rem 1.25rem;
+  /* 24px vertical, 20px horizontal */
 }
 
 /* Ajustes de columnas para barra lateral */
 .perfil-card[style*="grid-column: 2"] .perfil-grid,
 .perfil-sections .perfil-card:nth-child(2) .perfil-grid,
 .perfil-sections .perfil-card:nth-child(4) .perfil-grid {
-  grid-template-columns: 1fr; /* Columna única para widgets de contacto/ubicación */
+  grid-template-columns: 1fr;
+  /* Columna única para widgets de contacto/ubicación */
 }
 
 /* --- 6. Componente Info-Item (Visualizadores de Datos) --- */
 .info-item {
   display: flex;
   flex-direction: column;
-  gap: 0.375rem; /* 6px */
+  gap: 0.375rem;
+  /* 6px */
   padding: 1rem 1.25rem;
   background-color: var(--bg);
   border-radius: var(--radius, 0px);
@@ -4486,7 +4542,7 @@ body {
 /* Micro-interacción profesional al posarse sobre bloques de datos */
 .info-item:hover {
   transform: translateX(2px);
-  box-shadow: var(--shadow-sm, 0 2px 4px rgba(0,0,0,0.02));
+  box-shadow: var(--shadow-sm, 0 2px 4px rgba(0, 0, 0, 0.02));
 }
 
 .info-label {
@@ -4515,7 +4571,7 @@ body {
   transition: color 0.15s ease-in-out;
 }
 
-.link-accion:hover, 
+.link-accion:hover,
 .link-accion:focus-visible {
   color: var(--accent-hover, var(--primary));
   text-decoration: underline;
@@ -4523,7 +4579,9 @@ body {
 }
 
 /* --- 7. Componentes de Botones Generales --- */
-.btn-accent, .btn-outline, .btn-danger {
+.btn-accent,
+.btn-outline,
+.btn-danger {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -4675,11 +4733,12 @@ textarea.filter-input-text:focus {
    ========================================================================== */
 
 @media (max-width: 1024px) {
+
   /* En tablets horizontales colapsamos la grilla asimétrica a una sola columna */
   .perfil-sections {
     grid-template-columns: 1fr;
   }
-  
+
   .perfil-sections .perfil-card:nth-child(1),
   .perfil-sections .perfil-card:nth-child(2),
   .perfil-sections .perfil-card:nth-child(3),
@@ -4690,25 +4749,30 @@ textarea.filter-input-text:focus {
   .perfil-card[style*="grid-column: 2"] .perfil-grid,
   .perfil-sections .perfil-card:nth-child(2) .perfil-grid,
   .perfil-sections .perfil-card:nth-child(4) .perfil-grid {
-    grid-template-columns: repeat(2, 1fr); /* En tablet sí caben a dos columnas */
+    grid-template-columns: repeat(2, 1fr);
+    /* En tablet sí caben a dos columnas */
   }
 }
 
 @media (max-width: 768px) {
+
   .perfil-grid,
   .perfil-card[style*="grid-column: 2"] .perfil-grid,
   .perfil-sections .perfil-card:nth-child(2) .perfil-grid,
   .perfil-sections .perfil-card:nth-child(4) .perfil-grid {
-    grid-template-columns: 1fr; /* Todo a una columna en móviles */
+    grid-template-columns: 1fr;
+    /* Todo a una columna en móviles */
   }
 
   .perfil-sections {
-    padding: 0; /* Remueve espaciados innecesarios y delega en las tarjetas */
+    padding: 0;
+    /* Remueve espaciados innecesarios y delega en las tarjetas */
     gap: 1.5rem;
   }
-  
+
   .perfil-card {
-    padding: 1.25rem; /* Tarjetas más compactas en celular */
+    padding: 1.25rem;
+    /* Tarjetas más compactas en celular */
   }
 
   .perfil-header-inner {
@@ -4717,9 +4781,12 @@ textarea.filter-input-text:focus {
   }
 
   .perfil-header-inner div[style*="display: flex"] {
-    width: 100%; /* Botones de acción ocupan todo el ancho en mobile */
+    width: 100%;
+    /* Botones de acción ocupan todo el ancho en mobile */
   }
-}/* ==========================================================================
+}
+
+/* ==========================================================================
    PERFIL DE EMPRESA & CONFIGURACIÓN - ESTILOS COMPONENTIZADOS
    ========================================================================== */
 
@@ -4727,7 +4794,8 @@ textarea.filter-input-text:focus {
 .panel-page {
   max-width: 1440px;
   margin: 0 auto;
-  padding: 1.5rem; /* 24px */
+  padding: 1.5rem;
+  /* 24px */
 }
 
 /* --- 2. Header de Perfil (Cards Superiores) --- */
@@ -4742,7 +4810,8 @@ textarea.filter-input-text:focus {
 .perfil-header-inner {
   display: flex;
   align-items: center;
-  gap: 1.25rem; /* 20px */
+  gap: 1.25rem;
+  /* 20px */
   flex-wrap: wrap;
 }
 
@@ -4763,19 +4832,25 @@ textarea.filter-input-text:focus {
 /* --- 3. Arquitectura del Contenido (Dashboard Layout) --- */
 .perfil-sections {
   display: grid;
-  grid-template-columns: 2fr 1fr; /* Columna principal amplia + Barra lateral */
-  gap: 1.75rem; /* 28px */
+  grid-template-columns: 2fr 1fr;
+  /* Columna principal amplia + Barra lateral */
+  gap: 1.75rem;
+  /* 28px */
   margin-top: 1.5rem;
 }
 
 /* En la estructura de la empresa, forzamos bloques pesados al ancho completo si es necesario */
-.perfil-sections .perfil-card:nth-child(1), /* Datos de la Empresa */
-.perfil-sections .perfil-card:nth-child(3) { /* Ofertas publicadas */
+.perfil-sections .perfil-card:nth-child(1),
+/* Datos de la Empresa */
+.perfil-sections .perfil-card:nth-child(3) {
+  /* Ofertas publicadas */
   grid-column: 1;
 }
 
-.perfil-sections .perfil-card:nth-child(2), /* Ubicación */
-.perfil-sections .perfil-card:nth-child(4) { /* Contacto y Redes */
+.perfil-sections .perfil-card:nth-child(2),
+/* Ubicación */
+.perfil-sections .perfil-card:nth-child(4) {
+  /* Contacto y Redes */
   grid-column: 2;
 }
 
@@ -4784,7 +4859,8 @@ textarea.filter-input-text:focus {
   background-color: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius, 0px);
-  padding: 2rem; /* 32px Internos */
+  padding: 2rem;
+  /* 32px Internos */
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
@@ -4805,21 +4881,24 @@ textarea.filter-input-text:focus {
 .perfil-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 1.5rem 1.25rem; /* 24px vertical, 20px horizontal */
+  gap: 1.5rem 1.25rem;
+  /* 24px vertical, 20px horizontal */
 }
 
 /* Ajustes de columnas para barra lateral */
 .perfil-card[style*="grid-column: 2"] .perfil-grid,
 .perfil-sections .perfil-card:nth-child(2) .perfil-grid,
 .perfil-sections .perfil-card:nth-child(4) .perfil-grid {
-  grid-template-columns: 1fr; /* Columna única para widgets de contacto/ubicación */
+  grid-template-columns: 1fr;
+  /* Columna única para widgets de contacto/ubicación */
 }
 
 /* --- 6. Componente Info-Item (Visualizadores de Datos) --- */
 .info-item {
   display: flex;
   flex-direction: column;
-  gap: 0.375rem; /* 6px */
+  gap: 0.375rem;
+  /* 6px */
   padding: 1rem 1.25rem;
   background-color: var(--bg);
   border-radius: var(--radius, 0px);
@@ -4830,7 +4909,7 @@ textarea.filter-input-text:focus {
 /* Micro-interacción profesional al posarse sobre bloques de datos */
 .info-item:hover {
   transform: translateX(2px);
-  box-shadow: var(--shadow-sm, 0 2px 4px rgba(0,0,0,0.02));
+  box-shadow: var(--shadow-sm, 0 2px 4px rgba(0, 0, 0, 0.02));
 }
 
 .info-label {
@@ -4859,7 +4938,7 @@ textarea.filter-input-text:focus {
   transition: color 0.15s ease-in-out;
 }
 
-.link-accion:hover, 
+.link-accion:hover,
 .link-accion:focus-visible {
   color: var(--accent-hover, var(--primary));
   text-decoration: underline;
@@ -4867,7 +4946,9 @@ textarea.filter-input-text:focus {
 }
 
 /* --- 7. Componentes de Botones Generales --- */
-.btn-accent, .btn-outline, .btn-danger {
+.btn-accent,
+.btn-outline,
+.btn-danger {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -5019,11 +5100,12 @@ textarea.filter-input-text:focus {
    ========================================================================== */
 
 @media (max-width: 1024px) {
+
   /* En tablets horizontales colapsamos la grilla asimétrica a una sola columna */
   .perfil-sections {
     grid-template-columns: 1fr;
   }
-  
+
   .perfil-sections .perfil-card:nth-child(1),
   .perfil-sections .perfil-card:nth-child(2),
   .perfil-sections .perfil-card:nth-child(3),
@@ -5034,25 +5116,30 @@ textarea.filter-input-text:focus {
   .perfil-card[style*="grid-column: 2"] .perfil-grid,
   .perfil-sections .perfil-card:nth-child(2) .perfil-grid,
   .perfil-sections .perfil-card:nth-child(4) .perfil-grid {
-    grid-template-columns: repeat(2, 1fr); /* En tablet sí caben a dos columnas */
+    grid-template-columns: repeat(2, 1fr);
+    /* En tablet sí caben a dos columnas */
   }
 }
 
 @media (max-width: 768px) {
+
   .perfil-grid,
   .perfil-card[style*="grid-column: 2"] .perfil-grid,
   .perfil-sections .perfil-card:nth-child(2) .perfil-grid,
   .perfil-sections .perfil-card:nth-child(4) .perfil-grid {
-    grid-template-columns: 1fr; /* Todo a una columna en móviles */
+    grid-template-columns: 1fr;
+    /* Todo a una columna en móviles */
   }
 
   .perfil-sections {
-    padding: 0; /* Remueve espaciados innecesarios y delega en las tarjetas */
+    padding: 0;
+    /* Remueve espaciados innecesarios y delega en las tarjetas */
     gap: 1.5rem;
   }
-  
+
   .perfil-card {
-    padding: 1.25rem; /* Tarjetas más compactas en celular */
+    padding: 1.25rem;
+    /* Tarjetas más compactas en celular */
   }
 
   .perfil-header-inner {
@@ -5061,9 +5148,12 @@ textarea.filter-input-text:focus {
   }
 
   .perfil-header-inner div[style*="display: flex"] {
-    width: 100%; /* Botones de acción ocupan todo el ancho en mobile */
+    width: 100%;
+    /* Botones de acción ocupan todo el ancho en mobile */
   }
-}/* ==========================================================================
+}
+
+/* ==========================================================================
    PERFIL DE EMPRESA & CONFIGURACIÓN - ESTILOS COMPONENTIZADOS
    ========================================================================== */
 
@@ -5071,7 +5161,8 @@ textarea.filter-input-text:focus {
 .panel-page {
   max-width: 1440px;
   margin: 0 auto;
-  padding: 1.5rem; /* 24px */
+  padding: 1.5rem;
+  /* 24px */
 }
 
 /* --- 2. Header de Perfil (Cards Superiores) --- */
@@ -5086,7 +5177,8 @@ textarea.filter-input-text:focus {
 .perfil-header-inner {
   display: flex;
   align-items: center;
-  gap: 1.25rem; /* 20px */
+  gap: 1.25rem;
+  /* 20px */
   flex-wrap: wrap;
 }
 
@@ -5107,19 +5199,25 @@ textarea.filter-input-text:focus {
 /* --- 3. Arquitectura del Contenido (Dashboard Layout) --- */
 .perfil-sections {
   display: grid;
-  grid-template-columns: 2fr 1fr; /* Columna principal amplia + Barra lateral */
-  gap: 1.75rem; /* 28px */
+  grid-template-columns: 2fr 1fr;
+  /* Columna principal amplia + Barra lateral */
+  gap: 1.75rem;
+  /* 28px */
   margin-top: 1.5rem;
 }
 
 /* En la estructura de la empresa, forzamos bloques pesados al ancho completo si es necesario */
-.perfil-sections .perfil-card:nth-child(1), /* Datos de la Empresa */
-.perfil-sections .perfil-card:nth-child(3) { /* Ofertas publicadas */
+.perfil-sections .perfil-card:nth-child(1),
+/* Datos de la Empresa */
+.perfil-sections .perfil-card:nth-child(3) {
+  /* Ofertas publicadas */
   grid-column: 1;
 }
 
-.perfil-sections .perfil-card:nth-child(2), /* Ubicación */
-.perfil-sections .perfil-card:nth-child(4) { /* Contacto y Redes */
+.perfil-sections .perfil-card:nth-child(2),
+/* Ubicación */
+.perfil-sections .perfil-card:nth-child(4) {
+  /* Contacto y Redes */
   grid-column: 2;
 }
 
@@ -5128,7 +5226,8 @@ textarea.filter-input-text:focus {
   background-color: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius, 0px);
-  padding: 2rem; /* 32px Internos */
+  padding: 2rem;
+  /* 32px Internos */
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
@@ -5149,21 +5248,24 @@ textarea.filter-input-text:focus {
 .perfil-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 1.5rem 1.25rem; /* 24px vertical, 20px horizontal */
+  gap: 1.5rem 1.25rem;
+  /* 24px vertical, 20px horizontal */
 }
 
 /* Ajustes de columnas para barra lateral */
 .perfil-card[style*="grid-column: 2"] .perfil-grid,
 .perfil-sections .perfil-card:nth-child(2) .perfil-grid,
 .perfil-sections .perfil-card:nth-child(4) .perfil-grid {
-  grid-template-columns: 1fr; /* Columna única para widgets de contacto/ubicación */
+  grid-template-columns: 1fr;
+  /* Columna única para widgets de contacto/ubicación */
 }
 
 /* --- 6. Componente Info-Item (Visualizadores de Datos) --- */
 .info-item {
   display: flex;
   flex-direction: column;
-  gap: 0.375rem; /* 6px */
+  gap: 0.375rem;
+  /* 6px */
   padding: 1rem 1.25rem;
   background-color: var(--bg);
   border-radius: var(--radius, 0px);
@@ -5174,7 +5276,7 @@ textarea.filter-input-text:focus {
 /* Micro-interacción profesional al posarse sobre bloques de datos */
 .info-item:hover {
   transform: translateX(2px);
-  box-shadow: var(--shadow-sm, 0 2px 4px rgba(0,0,0,0.02));
+  box-shadow: var(--shadow-sm, 0 2px 4px rgba(0, 0, 0, 0.02));
 }
 
 .info-label {
@@ -5203,7 +5305,7 @@ textarea.filter-input-text:focus {
   transition: color 0.15s ease-in-out;
 }
 
-.link-accion:hover, 
+.link-accion:hover,
 .link-accion:focus-visible {
   color: var(--accent-hover, var(--primary));
   text-decoration: underline;
@@ -5211,7 +5313,9 @@ textarea.filter-input-text:focus {
 }
 
 /* --- 7. Componentes de Botones Generales --- */
-.btn-accent, .btn-outline, .btn-danger {
+.btn-accent,
+.btn-outline,
+.btn-danger {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -5363,11 +5467,12 @@ textarea.filter-input-text:focus {
    ========================================================================== */
 
 @media (max-width: 1024px) {
+
   /* En tablets horizontales colapsamos la grilla asimétrica a una sola columna */
   .perfil-sections {
     grid-template-columns: 1fr;
   }
-  
+
   .perfil-sections .perfil-card:nth-child(1),
   .perfil-sections .perfil-card:nth-child(2),
   .perfil-sections .perfil-card:nth-child(3),
@@ -5378,25 +5483,30 @@ textarea.filter-input-text:focus {
   .perfil-card[style*="grid-column: 2"] .perfil-grid,
   .perfil-sections .perfil-card:nth-child(2) .perfil-grid,
   .perfil-sections .perfil-card:nth-child(4) .perfil-grid {
-    grid-template-columns: repeat(2, 1fr); /* En tablet sí caben a dos columnas */
+    grid-template-columns: repeat(2, 1fr);
+    /* En tablet sí caben a dos columnas */
   }
 }
 
 @media (max-width: 768px) {
+
   .perfil-grid,
   .perfil-card[style*="grid-column: 2"] .perfil-grid,
   .perfil-sections .perfil-card:nth-child(2) .perfil-grid,
   .perfil-sections .perfil-card:nth-child(4) .perfil-grid {
-    grid-template-columns: 1fr; /* Todo a una columna en móviles */
+    grid-template-columns: 1fr;
+    /* Todo a una columna en móviles */
   }
 
   .perfil-sections {
-    padding: 0; /* Remueve espaciados innecesarios y delega en las tarjetas */
+    padding: 0;
+    /* Remueve espaciados innecesarios y delega en las tarjetas */
     gap: 1.5rem;
   }
-  
+
   .perfil-card {
-    padding: 1.25rem; /* Tarjetas más compactas en celular */
+    padding: 1.25rem;
+    /* Tarjetas más compactas en celular */
   }
 
   .perfil-header-inner {
@@ -5405,14 +5515,15 @@ textarea.filter-input-text:focus {
   }
 
   .perfil-header-inner div[style*="display: flex"] {
-    width: 100%; /* Botones de acción ocupan todo el ancho en mobile */
+    width: 100%;
+    /* Botones de acción ocupan todo el ancho en mobile */
   }
 }
 
 /* --- Variante profesional en tono Plateado / Metalizado para Links --- */
 .info-item-link {
   /* Borde izquierdo en gris plateado/cromado medio */
-  border-left: 4px solid #94a3b8 !important; 
+  border-left: 4px solid #94a3b8 !important;
   /* Degradado sutil simulando un reflejo metálico suave sobre el fondo */
   background: linear-gradient(90deg, rgba(203, 213, 225, 0.09) 0%, var(--bg) 100%) !important;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
@@ -5420,10 +5531,11 @@ textarea.filter-input-text:focus {
   overflow: hidden;
   transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
 }
+
 /* --- Variante Plateada Metalizada Universal (Adaptable a Modo Claro y Oscuro) --- */
 .info-item-link {
   /* Borde izquierdo gris plateado/cromado intermedio */
-  border-left: 4px solid #64748b !important; 
+  border-left: 4px solid #64748b !important;
   /* Fondo con un sutil reflejo metálico translúcido */
   background: linear-gradient(90deg, rgba(100, 116, 139, 0.06) 0%, rgba(255, 255, 255, 0.01) 100%) !important;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
@@ -5436,12 +5548,14 @@ textarea.filter-input-text:focus {
 .info-item-link:hover {
   transform: translateY(-1px) translateX(2px) !important;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05) !important;
-  border-left-color: #475569 !important; /* Plata más oscuro y definido al pasar el mouse */
+  border-left-color: #475569 !important;
+  /* Plata más oscuro y definido al pasar el mouse */
 }
 
 /* TEXTO DEL ENLACE: Gris acero oscuro para garantizar legibilidad en fondos blancos */
 .info-item-link .link-accion {
-  color: #475569 !important; /* Color gris pizarra de alta visibilidad */
+  color: #475569 !important;
+  /* Color gris pizarra de alta visibilidad */
   font-weight: 600;
   text-decoration: none;
   transition: color 0.15s ease-in-out;
@@ -5453,7 +5567,8 @@ textarea.filter-input-text:focus {
 /* Hover del texto del enlace */
 .info-item-link .link-accion:hover,
 .info-item-link .link-accion:focus-visible {
-  color: #1e293b !important; /* Casi negro/grafito para un contraste óptimo en modo claro */
+  color: #1e293b !important;
+  /* Casi negro/grafito para un contraste óptimo en modo claro */
   text-decoration: underline;
 }
 
@@ -5466,7 +5581,8 @@ textarea.filter-input-text:focus {
   right: 12px;
   font-size: 0.75rem;
   color: #64748b;
-  opacity: 0.15; /* Muy sutil para que no ensucie el texto */
+  opacity: 0.15;
+  /* Muy sutil para que no ensucie el texto */
 }
 
 /* ════════════════════════════════════════
@@ -5809,21 +5925,21 @@ textarea.filter-input-text:focus {
 }
 
 .oferta-estado-badge.activa {
-  background: rgba(46,204,154,.12);
+  background: rgba(46, 204, 154, .12);
   color: #2ecc9a;
-  border: 1px solid rgba(46,204,154,.3);
+  border: 1px solid rgba(46, 204, 154, .3);
 }
 
 .oferta-estado-badge.pausada {
-  background: rgba(212,168,67,.12);
+  background: rgba(212, 168, 67, .12);
   color: var(--accent);
-  border: 1px solid rgba(212,168,67,.3);
+  border: 1px solid rgba(212, 168, 67, .3);
 }
 
 .oferta-estado-badge.cerrada {
-  background: rgba(212,24,61,.10);
+  background: rgba(212, 24, 61, .10);
   color: var(--destructive);
-  border: 1px solid rgba(212,24,61,.3);
+  border: 1px solid rgba(212, 24, 61, .3);
 }
 
 /* ── Badges de tipo / modalidad / salario ── */
@@ -6152,7 +6268,8 @@ textarea.filter-input-text:focus {
   .mobile-sidebar-bar {
     display: flex;
     justify-content: flex-end;
-    padding: 0 12px 12px;
+    padding: 0 12px 0 0;
+    width: 100%
   }
 
   .sidebar-mobile-overlay {
