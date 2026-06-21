@@ -36,6 +36,7 @@ class User extends Authenticatable
         // Campos para verificación de email por código de 6 dígitos
         'email_verification_code',
         'email_verification_expires',
+        'last_login_at' => 'datetime'
     ];
 
     /**

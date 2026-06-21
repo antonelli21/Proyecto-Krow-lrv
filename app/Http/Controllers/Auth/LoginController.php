@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 /**
  * LoginController — Maneja el inicio de sesión de usuarios.
@@ -43,30 +44,33 @@ class LoginController extends Controller
             return redirect()
                 ->route('verificacion.mostrar')
                 ->with('success', 'Antes de iniciar sesión, verificá tu email.');
-        } else {    
+        } else {
             // Obtener el valor del checkbox 'remember' (devuelve true si está marcado, false si no)
-        $remember = $request->has('remember') || $request->boolean('remember');
+            $remember = $request->has('remember') || $request->boolean('remember');
 
-        // Intentar autenticar con las credenciales y opción "recordarme"
-        if (Auth::attempt($credentials, $remember)) {
-            // Regenerar la sesión para prevenir session fixation
-            $request->session()->regenerate();
+            // Intentar autenticar con las credenciales y opción "recordarme"
+            if (Auth::attempt($credentials, $remember)) {
+                // Regenerar la sesión para prevenir session fixation
+                $request->session()->regenerate();
+                DB::table('users')
+                    ->where('id', Auth::id())
+                    ->update(['last_login_at' => now()]);
 
-            // Redirigir según el rol del usuario autenticado
-            return match (Auth::user()->rol) {
-                'estudiante' => redirect()->route('estudiante.home'),
-                'empresa'    => redirect()->route('empresa.home'),
-                'admin'      => redirect()->route('admin.home'),
-                default      => redirect()->route('inicio'),
-            };
+                // Redirigir según el rol del usuario autenticado
+                return match (Auth::user()->rol) {
+                    'estudiante' => redirect()->route('estudiante.home'),
+                    'empresa'    => redirect()->route('empresa.home'),
+                    'admin'      => redirect()->route('admin.home'),
+                    default      => redirect()->route('inicio'),
+                };
+            }
+
+            // Si las credenciales son incorrectas, volver con error
+            return back()
+                ->withErrors(['email' => 'Las credenciales no coinciden con nuestros registros.'])
+                ->withInput($request->only('email'));
         }
-
-        // Si las credenciales son incorrectas, volver con error
-        return back()
-            ->withErrors(['email' => 'Las credenciales no coinciden con nuestros registros.'])
-            ->withInput($request->only('email'));
     }
-     }
     /**
      * Cierra la sesión del usuario autenticado.
      * Invalida la sesión y regenera el token CSRF.
