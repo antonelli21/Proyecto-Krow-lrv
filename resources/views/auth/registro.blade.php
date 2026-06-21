@@ -396,7 +396,6 @@ $localidadesPorProvincia = \App\Models\Localidad::orderBy('nombre')
     ════════════════════════════════════════════════ --}}
     <form class="auth-form {{ $tabEmpresaActivo ? '' : 'active' }}" id="formCandidato" method="POST" action="{{ route('register.estudiante') }}" novalidate>
       @csrf
-
       <div class="form-row">
         {{-- Nombre --}}
         <div class="form-group">
