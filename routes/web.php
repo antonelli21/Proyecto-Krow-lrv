@@ -113,32 +113,21 @@ Route::prefix('estudiante')
         Route::post('/ofertas/{id_oferta}/postular', [OfertaController::class, 'postular'])->name('ofertas.postular');
     });
 
-Route::prefix('empresa')
-    ->name('empresa.')
-    ->middleware(['auth', 'verified', 'role:empresa', 'empresa.activa'])
-    ->group(function () {
-        Route::get('/home',                         [EmpresaController::class, 'home'])->name('home');
-        Route::get('/perfil',                       function () {
-            return view('empresa.perfil-empresa');
-        })->name('perfil');
-        Route::get('/mensajes',                     function () {
-            return view('mensajes');
-        })->name('mensajes');
-        Route::get('/oferta/{id}/postulantes',      [EmpresaController::class, 'verPostulantes'])->name('ofertas.postulantes');
-        Route::post('/crear-oferta',               [EmpresaController::class, 'storeOferta'])->name('ofertas.store');
-        Route::get('/crear-oferta',                [EmpresaController::class, 'crearOferta'])->name('crear-oferta');
-        Route::put('/postulacion/{id}/estado',     [EmpresaController::class, 'actualizarEstadoPostulante'])->name('actualizar-estado');
-        Route::get('/perfil/editar',               function () {
-            return view('empresa.perfil-empresa-editar');
-        })->name('perfil.editar');
-
-        // CORRECCIÓN EXACTA AQUÍ:
-        // Al estar dentro de un grupo con ->name('empresa.'), el name 'perfil.update'
-        // se convierte automáticamente en 'empresa.perfil.update' para la vista.
-        Route::put('/perfil/update',               [EmpresaController::class, 'update'])->name('perfil.update');
-
-        Route::get('/estudiante/perfil/{id}',      [EstudianteController::class, 'show'])->name('estudiante.perfil');
-    });
+        Route::prefix('empresa')
+            ->name('empresa.')
+            ->middleware(['auth', 'verified', 'role:empresa', 'empresa.activa'])
+            ->group(function () {
+                Route::get('/home',                         [EmpresaController::class, 'home'])->name('home');
+                Route::get('/perfil',                       [EmpresaController::class, 'verPerfil'])->name('perfil');
+                Route::get('/mensajes',                     function () { return view('mensajes'); })->name('mensajes');
+                Route::get('/oferta/{id}/postulantes',      [EmpresaController::class, 'verPostulantes'])->name('ofertas.postulantes');
+                Route::post('/crear-oferta',                [EmpresaController::class, 'storeOferta'])->name('ofertas.store');
+                Route::get('/crear-oferta',                 [EmpresaController::class, 'crearOferta'])->name('crear-oferta');
+                Route::put('/postulacion/{id}/estado',      [EmpresaController::class, 'actualizarEstadoPostulante'])->name('actualizar-estado');
+                Route::get('/perfil/editar',                [EmpresaController::class, 'editarPerfil'])->name('perfil.editar');
+                Route::put('/perfil/update',                [EmpresaController::class, 'updatePerfil'])->name('perfil.update');
+                Route::get('/estudiante/perfil/{id}',      [EstudianteController::class, 'show'])->name('estudiante.perfil');
+            });
 /* ════════════════════════════════════════
    ADMIN
    Rutas protegidas para usuarios con rol 'admin'.
@@ -170,16 +159,27 @@ Route::prefix('admin')
    COMPARTIDAS (LOGUEADOS)
    Accesibles por cualquier usuario autenticado con email verificado.
 ════════════════════════════════════════ */
+
+
+
+
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('/mensajes',       function () {
-        return view('mensajes');
-    })->name('mensajes');
-    Route::get('/notificaciones', function () {
-        return view('notificaciones');
-    })->name('notificaciones');
-    Route::get('/configuracion',              [ConfiguracionController::class, 'index'])->name('configuracion');
-    Route::put('/configuracion/password',     [ConfiguracionController::class, 'cambiarPassword'])->name('configuracion.password');
-    Route::post('/configuracion/logout-all',  [ConfiguracionController::class, 'logoutAll'])->name('configuracion.logout-all');
+    Route::get('/mensajes',       function () { return view('mensajes'); })->name('mensajes');
+    Route::get('/notificaciones', function () { return view('notificaciones'); })->name('notificaciones');
+    Route::get('/configuracion',  function () { return view('configuracion'); })->name('configuracion');
+
+    Route::put('/configuracion/password', function () {
+        return back()->with('password_ok', true);
+    })->name('configuracion.password');
+
+
+    Route::get('/localidades/{id_provincia}', function ($id_provincia) {
+        return \App\Models\Localidad::where('id_provincia', $id_provincia)->orderBy('nombre')->get();
+    })->name('localidades.por-provincia');
+
+    Route::post('/configuracion/logout-all', function () {
+        return redirect()->route('inicio');
+    })->name('configuracion.logout-all');
 });
 
 /* ════════════════════════════════════════
