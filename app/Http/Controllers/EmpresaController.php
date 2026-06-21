@@ -50,21 +50,33 @@ class EmpresaController extends Controller
         return response()->json($empresa, 201);
     }
 
-    public function update(Request $request, Empresa $empresa)
+public function update(Request $request)
     {
+        $usuario = auth()->user();
+        $empresa = $usuario->empresa;
+
+        // 1) Adaptamos el request si tu formulario de empresa envía 'nombre' o 'email' comunes
+        if ($request->has('nombre') && !$request->has('nombre_empresa')) {
+            $request->merge(['nombre_empresa' => $request->input('nombre')]);
+        }
+        if ($request->has('email') && !$request->has('email_contacto')) {
+            $request->merge(['email_contacto' => $request->input('email')]);
+        }
+
+        // 2) Validación estricta con las reglas de tu tabla 'empresa'
         $data = $request->validate([
-            'nombre_empresa' => 'sometimes|required|string|max:100',
-            'razon_social' => 'sometimes|required|string|max:150',
-            'cuit' => 'sometimes|required|numeric|digits_between:10,11|unique:empresa,cuit,' . $empresa->id_empresa . ',id_empresa',
-            'rubro' => 'sometimes|required|string|max:100',
+            'logo' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:3072',
+            'nombre_empresa' => 'required|string|max:100',
+            'razon_social' => 'required|string|max:150',
+            'cuit' => 'required|numeric|digits_between:10,11|unique:empresa,cuit,' . $empresa->id_empresa . ',id_empresa',
+            'rubro' => 'required|string|max:100',
             'direccion' => 'nullable|string|max:200',
-            'telefono' => 'sometimes|required|string|max:20',
-            'email_contacto' => 'sometimes|required|email|max:100',
+            'telefono' => 'required|string|max:20',
+            'email_contacto' => 'required|email|max:100',
             'sitio_web' => 'nullable|string|max:255',
             'descripcion' => 'nullable|string',
-            'logo' => 'nullable|string|max:255',
-            'representante' => 'sometimes|required|string|max:100',
-            'email_representante' => 'sometimes|required|email|max:100',
+            'representante' => 'required|string|max:100',
+            'email_representante' => 'required|email|max:100',
             'tamano_empresa' => 'nullable|in:Microempresa,Pequena,Mediana,Grande',
             'linkedin' => 'nullable|string|max:255',
             'instagram' => 'nullable|string|max:255',
@@ -73,9 +85,54 @@ class EmpresaController extends Controller
             'id_provincia' => 'nullable|exists:provincia,id_provincia',
         ]);
 
-        $empresa->update($data);
+        try {
+            // 3) Logo / Imagen de perfil de empresa (si se sube un archivo)
+            if ($request->hasFile('logo')) {
+                // Eliminar logo anterior si existe para no acumular basura
+                if ($empresa->logo && \Illuminate\Support\Facades\Storage::disk('public')->exists($empresa->logo)) {
+                    \Illuminate\Support\Facades\Storage::disk('public')->delete($empresa->logo);
+                }
+                $path = $request->file('logo')->store('logos', 'public');
+                $empresa->logo = $path;
+            }
 
-        return response()->json($empresa);
+            // 4) Sincronizamos la cuenta de usuario global (tabla users)
+            $usuario->name = $data['nombre_empresa'];
+            $usuario->email = $data['email_contacto'];
+            $usuario->save();
+
+            // 5) Mapeo explícito usando fill() para asegurar que todo impacte en la BD
+            $empresa->fill([
+                'nombre_empresa' => $data['nombre_empresa'],
+                'razon_social'   => $data['razon_social'],
+                'cuit'           => $data['cuit'],
+                'rubro'          => $data['rubro'],
+                'direccion'      => $data['direccion'] ?? null,
+                'telefono'       => $data['telefono'],
+                'email_contacto' => $data['email_contacto'],
+                'sitio_web'      => $data['sitio_web'] ?? null,
+                'descripcion'    => $data['descripcion'] ?? null,
+                'representante'  => $data['representante'],
+                'email_representante' => $data['email_representante'],
+                'tamano_empresa' => $data['tamano_empresa'] ?? null,
+                'linkedin'       => $data['linkedin'] ?? null,
+                'instagram'      => $data['instagram'] ?? null,
+                'facebook'       => $data['facebook'] ?? null,
+                'id_localidad'   => $data['id_localidad'] ?? null,
+                'id_provincia'   => $data['id_provincia'] ?? null,
+            ]);
+
+            $empresa->save();
+
+            // Redireccionamos con la sesión de éxito idéntica a la que espera tu Blade
+            return redirect()->back()
+                ->with('perfil_ok', '✅ Perfil actualizado correctamente');
+
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->withInput()
+                ->withErrors(['error' => '❌ Error al actualizar el perfil de empresa: ' . $e->getMessage()]);
+        }
     }
 
     public function destroy(Empresa $empresa)

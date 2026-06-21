@@ -4,11 +4,10 @@
 
 @section('content')
 
-<?php
+@php
     $usuario = auth()->user();
-    // $estudiante y $carreras y $habilidades vienen del controlador (EstudianteController::editarPerfil)
     $misHabilidades = old('habilidades', $estudiante->habilidades->pluck('id_habilidad')->toArray());
-?>
+@endphp
 
 <div class="panel-page">
 
@@ -62,10 +61,11 @@
                 <div class="perfil-card-header">
                     <i class="bi bi-person-circle"></i> Datos Personales
                 </div>
-                <div class="perfil-card-body">
-                    <div class="perfil-grid">
-
-                        <div class="info-item">
+                <div class="perfil-card-body" style="display: flex; flex-direction: column; gap: 16px;">
+                    
+                    {{-- Fila 1 --}}
+                    <div style="display: flex; gap: 16px; width: 100%;">
+                        <div class="info-item" style="flex: 1;">
                             <label class="info-label" for="nombre">Nombre</label>
                             <input type="text" id="nombre" name="nombre"
                                    class="filter-input-text {{ $errors->has('nombre') ? 'input-error' : '' }}"
@@ -73,15 +73,18 @@
                             @error('nombre') <span class="config-error">{{ $message }}</span> @enderror
                         </div>
 
-                        <div class="info-item">
+                        <div class="info-item" style="flex: 1;">
                             <label class="info-label" for="apellido">Apellido</label>
                             <input type="text" id="apellido" name="apellido"
                                    class="filter-input-text {{ $errors->has('apellido') ? 'input-error' : '' }}"
                                    value="{{ old('apellido', $estudiante->apellido ?? '') }}" required>
                             @error('apellido') <span class="config-error">{{ $message }}</span> @enderror
                         </div>
+                    </div>
 
-                        <div class="info-item">
+                    {{-- Fila 2 --}}
+                    <div style="display: flex; gap: 16px; width: 100%;">
+                        <div class="info-item" style="flex: 1;">
                             <label class="info-label" for="fecha_nacimiento">Fecha de nacimiento</label>
                             <input type="date" id="fecha_nacimiento" name="fecha_nacimiento"
                                    class="filter-input-text {{ $errors->has('fecha_nacimiento') ? 'input-error' : '' }}"
@@ -89,15 +92,18 @@
                             @error('fecha_nacimiento') <span class="config-error">{{ $message }}</span> @enderror
                         </div>
 
-                        <div class="info-item">
+                        <div class="info-item" style="flex: 1;">
                             <label class="info-label" for="dni">DNI</label>
                             <input type="text" id="dni" name="dni"
                                    class="filter-input-text {{ $errors->has('dni') ? 'input-error' : '' }}"
                                    value="{{ old('dni', $estudiante->dni ?? '') }}" required>
                             @error('dni') <span class="config-error">{{ $message }}</span> @enderror
                         </div>
+                    </div>
 
-                        <div class="info-item">
+                    {{-- Fila 3 --}}
+                    <div style="display: flex; gap: 16px; width: 100%;">
+                        <div class="info-item" style="flex: 1;">
                             <label class="info-label" for="email">Correo electrónico</label>
                             <input type="email" id="email" name="email"
                                    class="filter-input-text {{ $errors->has('email') ? 'input-error' : '' }}"
@@ -105,20 +111,21 @@
                             @error('email') <span class="config-error">{{ $message }}</span> @enderror
                         </div>
 
-                        <div class="info-item" style="grid-column: 1 / -1;">
+                        <div class="info-item" style="flex: 1;">
                             <label class="info-label" for="telefono">Teléfono</label>
                             <input type="text" id="telefono" name="telefono"
                                    class="filter-input-text {{ $errors->has('telefono') ? 'input-error' : '' }}"
                                    value="{{ old('telefono', $estudiante->telefono ?? '') }}">
                             @error('telefono') <span class="config-error">{{ $message }}</span> @enderror
                         </div>
-
-                        <div class="info-item" style="grid-column: 1 / -1;">
-                            <label class="info-label" for="descripcion">Descripción / Sobre mí</label>
-                            <textarea id="descripcion" name="descripcion" class="filter-input-text" rows="4">{{ old('descripcion', $estudiante->descripcion ?? '') }}</textarea>
-                        </div>
-
                     </div>
+
+                    {{-- Fila 4: Descripción (Ancho Completo) --}}
+                    <div class="info-item" style="width: 100%;">
+                        <label class="info-label" for="descripcion">Descripción / Sobre mí</label>
+                        <textarea id="descripcion" name="descripcion" class="filter-input-text" rows="4" placeholder="Contanos un poco sobre tu perfil profesional o académico...">{{ old('descripcion', $estudiante->descripcion ?? '') }}</textarea>
+                    </div>
+
                 </div>
             </div>
 
@@ -127,10 +134,11 @@
                 <div class="perfil-card-header">
                     <i class="bi bi-book"></i> Datos Académicos
                 </div>
-                <div class="perfil-card-body">
-                    <div class="perfil-grid">
-
-                        <div class="info-item">
+                <div class="perfil-card-body" style="display: flex; flex-direction: column; gap: 16px;">
+                    
+                    {{-- Fila 1 --}}
+                    <div style="display: flex; gap: 16px; width: 100%;">
+                        <div class="info-item" style="flex: 1;">
                             <label class="info-label" for="id_carrera">Carrera</label>
                             <div class="select-wrapper">
                                 <select id="id_carrera" name="id_carrera" class="filter-select {{ $errors->has('id_carrera') ? 'input-error' : '' }}" required>
@@ -146,15 +154,18 @@
                             @error('id_carrera') <span class="config-error">{{ $message }}</span> @enderror
                         </div>
 
-                        <div class="info-item">
+                        <div class="info-item" style="flex: 1;">
                             <label class="info-label" for="legajo">Legajo universitario</label>
                             <input type="text" id="legajo" name="legajo"
                                    class="filter-input-text {{ $errors->has('legajo') ? 'input-error' : '' }}"
                                    value="{{ old('legajo', $estudiante->legajo ?? '') }}" required>
                             @error('legajo') <span class="config-error">{{ $message }}</span> @enderror
                         </div>
+                    </div>
 
-                        <div class="info-item">
+                    {{-- Fila 2 --}}
+                    <div style="display: flex; gap: 16px; width: 100%;">
+                        <div class="info-item" style="flex: 1;">
                             <label class="info-label" for="portfolio">URL Portafolio</label>
                             <input type="url" id="portfolio" name="portfolio"
                                    class="filter-input-text"
@@ -162,19 +173,19 @@
                                    value="{{ old('portfolio', $estudiante->portfolio ?? '') }}">
                         </div>
 
-                        <div class="info-item">
+                        <div class="info-item" style="flex: 1;">
                             <label class="info-label" for="cv">Currículum Vitae (PDF)</label>
                             <input type="file" id="cv" name="cv"
                                    class="filter-input-text"
                                    accept=".pdf">
                             @if (!empty($estudiante->cv))
-                                <span class="info-label" style="margin-top:4px;">
+                                <span class="info-label" style="margin-top:4px; font-weight: normal;">
                                     CV actual: <a href="{{ Storage::url($estudiante->cv) }}" target="_blank" class="link-accion">ver CV</a>
                                 </span>
                             @endif
                         </div>
-
                     </div>
+
                 </div>
             </div>
 
@@ -183,33 +194,33 @@
                 <div class="perfil-card-header">
                     <i class="bi bi-briefcase"></i> Preferencias Laborales
                 </div>
-                <div class="perfil-card-body">
-                    <div class="perfil-grid">
-
-                        <div class="info-item">
-                            <label class="info-label" for="modalidad_deseada">Modalidad deseada</label>
-                            <div class="select-wrapper">
-                                <select id="modalidad_deseada" name="modalidad_deseada" class="filter-select">
-                                    <option value="">Seleccionar...</option>
-                                    @foreach(['Full-Time', 'Part-Time', 'Hibrido', 'Remoto'] as $m)
-                                        <option value="{{ $m }}"
-                                            {{ old('modalidad_deseada', $estudiante->modalidad_deseada ?? '') === $m ? 'selected' : '' }}>
-                                            {{ $m }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                            </div>
+                <div class="perfil-card-body" style="display: flex; flex-direction: column; gap: 16px;">
+                    
+                    {{-- Fila 1 (Ancho Completo) --}}
+                    <div class="info-item" style="width: 100%;">
+                        <label class="info-label" for="modalidad_deseada">Modalidad deseada</label>
+                        <div class="select-wrapper">
+                            <select id="modalidad_deseada" name="modalidad_deseada" class="filter-select">
+                                <option value="">Seleccionar...</option>
+                                @foreach(['Full-Time', 'Part-Time', 'Hibrido', 'Remoto'] as $m)
+                                    <option value="{{ $m }}"
+                                        {{ old('modalidad_deseada', $estudiante->modalidad_deseada ?? '') === $m ? 'selected' : '' }}>
+                                        {{ $m }}
+                                    </option>
+                                @endforeach
+                            </select>
                         </div>
-
-                        <div class="info-item" style="grid-column: 1 / -1;">
-                            <label class="info-label" for="disponibilidad_horaria">Disponibilidad horaria</label>
-                            <input type="text" id="disponibilidad_horaria" name="disponibilidad_horaria"
-                                   class="filter-input-text"
-                                   placeholder="Lunes a Viernes, 9hs a 17hs"
-                                   value="{{ old('disponibilidad_horaria', $estudiante->disponibilidad_horaria ?? '') }}">
-                        </div>
-
                     </div>
+
+                    {{-- Fila 2 (Ancho Completo) --}}
+                    <div class="info-item" style="width: 100%;">
+                        <label class="info-label" for="disponibilidad_horaria">Disponibilidad horaria</label>
+                        <input type="text" id="disponibilidad_horaria" name="disponibilidad_horaria"
+                               class="filter-input-text"
+                               placeholder="Lunes a Viernes, 9hs a 17hs"
+                               value="{{ old('disponibilidad_horaria', $estudiante->disponibilidad_horaria ?? '') }}">
+                    </div>
+
                 </div>
             </div>
 
@@ -219,11 +230,11 @@
                     <i class="bi bi-code-slash"></i> Habilidades
                 </div>
                 <div class="perfil-card-body">
-                    <div class="info-item" style="grid-column: 1 / -1;">
-                        <label class="info-label">Habilidades y tecnologías</label>
-                        <div class="perfil-grid" style="grid-template-columns: repeat(3, 1fr);">
+                    <div class="info-item" style="width: 100%;">
+                        <label class="info-label" style="margin-bottom: 12px;">Habilidades y tecnologías</label>
+                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;">
                             @foreach($habilidades as $h)
-                                <label style="display:flex; align-items:center; gap:6px; font-weight:normal;">
+                                <label style="display:flex; align-items:center; gap:8px; font-weight:normal; margin: 0; cursor: pointer;">
                                     <input type="checkbox" name="habilidades[]" value="{{ $h->id_habilidad }}"
                                            {{ in_array($h->id_habilidad, $misHabilidades) ? 'checked' : '' }}>
                                     {{ $h->nombre }}
@@ -239,10 +250,10 @@
                 <div class="perfil-card-header">
                     <i class="bi bi-share"></i> Redes Profesionales
                 </div>
-                <div class="perfil-card-body">
-                    <div class="perfil-grid">
-
-                        <div class="info-item">
+                <div class="perfil-card-body" style="display: flex; flex-direction: column; gap: 16px;">
+                    
+                    <div style="display: flex; gap: 16px; width: 100%;">
+                        <div class="info-item" style="flex: 1;">
                             <label class="info-label" for="linkedin">LinkedIn</label>
                             <input type="url" id="linkedin" name="linkedin"
                                    class="filter-input-text"
@@ -250,21 +261,21 @@
                                    value="{{ old('linkedin', $estudiante->linkedin ?? '') }}">
                         </div>
 
-                        <div class="info-item">
+                        <div class="info-item" style="flex: 1;">
                             <label class="info-label" for="github">GitHub</label>
                             <input type="url" id="github" name="github"
                                    class="filter-input-text"
                                    placeholder="https://github.com/usuario"
                                    value="{{ old('github', $estudiante->github ?? '') }}">
                         </div>
-
                     </div>
+
                 </div>
             </div>
 
             {{-- ── Acciones ── --}}
             <div class="perfil-card">
-                <div class="perfil-card-body" style="flex-direction: row; justify-content: flex-end; gap: 12px;">
+                <div class="perfil-card-body" style="display: flex; flex-direction: row; justify-content: flex-end; gap: 12px;">
                     <a href="{{ route('estudiante.perfil') }}" class="btn-outline">
                         Cancelar
                     </a>
@@ -276,9 +287,9 @@
 
         </form>
 
-    </div>{{-- /perfil-sections --}}
+    </div>
 
-</div>{{-- /panel-page --}}
+</div>
 
 <style>
 .avatar-overlay {

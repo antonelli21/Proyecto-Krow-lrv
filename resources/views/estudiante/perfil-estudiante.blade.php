@@ -4,179 +4,195 @@
 
 @section('content')
 
-<?php
+@php
     $habilidades_array = $estudiante->habilidades->pluck('nombre')->toArray();
-?>
+@endphp
 
 <div class="panel-page">
 
-  {{-- Header de perfil --}}
-  <div class="perfil-header-card">
-    <div class="perfil-header-inner">
-      <div class="perfil-avatar" style="{{ $estudiante->foto_perfil ? 'background-image:url(\'' . \Illuminate\Support\Facades\Storage::url($estudiante->foto_perfil) . '\'); background-size:cover; background-position:center;' : '' }}">
-        @if(!$estudiante->foto_perfil)
-          {{ strtoupper(substr($usuario->name ?? 'E', 0, 1)) }}
-        @endif
-      </div>
-      <div class="perfil-header-info">
-        <h1 class="panel-page-title" style="margin-bottom:2px;">{{ $usuario->name }}</h1>
-        <p class="panel-page-sub" style="margin-bottom:2px;">{{ $estudiante->carrera->nombre ?? 'Sin carrera' }}</p>
-        <p class="panel-page-sub">Legajo: {{ $estudiante->legajo }}</p>
-      </div>
-      <a href="{{ route('estudiante.perfil.editar') }}" class="btn-accent">
-        <i class="bi bi-pencil"></i> Editar perfil
-      </a>
-    </div>
-  </div>
-
-  <div class="perfil-sections">
-
-    {{-- Datos Personales --}}
-    <div class="perfil-card">
-      <div class="perfil-card-header">
-        <i class="bi bi-person-circle"></i> Datos Personales
-      </div>
-      <div class="perfil-card-body">
-        <div class="perfil-grid">
-          <div class="info-item">
-            <div class="info-label">Nombre completo</div>
-            <div class="info-value">{{ $usuario->name }} {{ $estudiante->apellido }}</div>
-          </div>
-          <div class="info-item">
-            <div class="info-label">Edad</div>
-            <div class="info-value">{{ $estudiante->fecha_nacimiento?->age ?? 'No especificada' }}</div>
-          </div>
-          <div class="info-item">
-            <div class="info-label">DNI</div>
-            <div class="info-value">{{ $estudiante->dni ?? 'No especificado' }}</div>
-          </div>
-          <div class="info-item">
-            <div class="info-label">Correo electrónico</div>
-            <div class="info-value">{{ $usuario->email }}</div>
-          </div>
-          <div class="info-item" style="grid-column: 1 / -1;">
-            <div class="info-label">Teléfono</div>
-            <div class="info-value">{{ $estudiante->telefono ?? 'No especificado' }}</div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    {{-- Datos Académicos --}}
-    <div class="perfil-card">
-      <div class="perfil-card-header">
-        <i class="bi bi-book"></i> Datos Académicos
-      </div>
-      <div class="perfil-card-body">
-        <div class="perfil-grid">
-          <div class="info-item">
-            <div class="info-label">Carrera que cursa</div>
-            <div class="info-value">{{ $estudiante->carrera->nombre ?? 'No especificada' }}</div>
-          </div>
-          <div class="info-item">
-            <div class="info-label">Legajo universitario</div>
-            <div class="info-value">{{ $estudiante->legajo ?? 'No especificado' }}</div>
-          </div>
-          <div class="info-item">
-            <div class="info-label">Portafolio</div>
-            <div class="info-value">
-              @if(!empty($estudiante->portfolio))
-                <a href="{{ $estudiante->portfolio }}" target="_blank" class="link-accion">
-                  <i class="bi bi-box-arrow-up-right"></i> Ver portafolio
-                </a>
-              @else
-                <span class="text-muted">No cargado</span>
-              @endif
+    {{-- Header de perfil --}}
+    <div class="perfil-header-card">
+        <div class="perfil-header-inner">
+            <div class="perfil-avatar" style="{{ $estudiante->foto_perfil ? 'background-image:url(\'' . \Illuminate\Support\Facades\Storage::url($estudiante->foto_perfil) . '\'); background-size:cover; background-position:center;' : '' }}">
+                @if(!$estudiante->foto_perfil)
+                    {{ strtoupper(substr($usuario->name ?? 'E', 0, 1)) }}
+                @endif
             </div>
-          </div>
-          <div class="info-item">
-            <div class="info-label">Currículum Vitae</div>
-            <div class="info-value">
-              @if(!empty($estudiante->cv))
-                <a href="{{ \Illuminate\Support\Facades\Storage::url($estudiante->cv) }}" target="_blank" class="link-accion">
-                  <i class="bi bi-file-earmark-text"></i> Ver CV
-                </a>
-              @else
-                <span class="text-muted">No cargado</span>
-              @endif
+            <div class="perfil-header-info">
+                <h1 class="panel-page-title" style="margin-bottom:2px;">{{ $usuario->name }}</h1>
+                <p class="panel-page-sub" style="margin-bottom:2px;">{{ $estudiante->carrera->nombre ?? 'Sin carrera' }}</p>
+                <p class="panel-page-sub">Legajo: {{ $estudiante->legajo }}</p>
             </div>
-          </div>
+            <a href="{{ route('estudiante.perfil.editar') }}" class="btn-accent">
+                <i class="bi bi-pencil"></i> Editar perfil
+            </a>
         </div>
-      </div>
     </div>
 
-    {{-- Preferencias Laborales --}}
-    <div class="perfil-card">
-      <div class="perfil-card-header">
-        <i class="bi bi-briefcase"></i> Preferencias Laborales
-      </div>
-      <div class="perfil-card-body">
-        <div class="perfil-grid">
-          <div class="info-item">
-            <div class="info-label">Modalidad deseada</div>
-            <div class="info-value">{{ $estudiante->modalidad_deseada ?? 'No especificada' }}</div>
-          </div>
-          <div class="info-item" style="grid-column: 1 / -1;">
-            <div class="info-label">Disponibilidad</div>
-            <div class="info-value">{{ $estudiante->disponibilidad_horaria ?? 'No especificada' }}</div>
-          </div>
-        </div>
-      </div>
-    </div>
+    <div class="perfil-sections">
 
-    {{-- Habilidades --}}
-    <div class="perfil-card">
-      <div class="perfil-card-header">
-        <i class="bi bi-code-slash"></i> Habilidades
-      </div>
-      <div class="perfil-card-body">
-        <p class="info-label" style="margin-bottom:10px;"><i class="bi bi-tools"></i> Habilidades y tecnologías</p>
-        <div class="detalle-tags">
-          @forelse($habilidades_array as $hab)
-            <span class="detalle-tag">{{ $hab }}</span>
-          @empty
-            <span class="text-muted">No especificadas</span>
-          @endforelse
-        </div>
-      </div>
-    </div>
-
-    {{-- Redes Profesionales --}}
-    <div class="perfil-card">
-      <div class="perfil-card-header">
-        <i class="bi bi-share"></i> Redes Profesionales
-      </div>
-      <div class="perfil-card-body">
-        <div class="perfil-grid">
-          <div class="info-item">
-            <div class="info-label">LinkedIn</div>
-            <div class="info-value">
-              @if(!empty($estudiante->linkedin))
-                <a href="{{ $estudiante->linkedin }}" target="_blank" class="link-accion">
-                  <i class="bi bi-linkedin"></i> {{ $estudiante->linkedin }}
-                </a>
-              @else
-                <span class="text-muted">No agregado</span>
-              @endif
+        {{-- Datos Personales --}}
+        <div class="perfil-card">
+            <div class="perfil-card-header">
+                <i class="bi bi-person-circle"></i> Datos Personales
             </div>
-          </div>
-          <div class="info-item">
-            <div class="info-label">GitHub</div>
-            <div class="info-value">
-              @if(!empty($estudiante->github))
-                <a href="{{ $estudiante->github }}" target="_blank" class="link-accion">
-                  <i class="bi bi-github"></i> {{ $estudiante->github }}
-                </a>
-              @else
-                <span class="text-muted">No agregado</span>
-              @endif
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+            <div class="perfil-card-body">
+                <div class="perfil-grid">
+                    <div class="info-item">
+                        <div class="info-label">Nombre completo</div>
+                        <div class="info-value">{{ $usuario->name }}</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Edad</div>
+                        <div class="info-value">{{ $estudiante->fecha_nacimiento?->age ?? 'No especificada' }}</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">DNI</div>
+                        <div class="info-value">{{ $estudiante->dni ?? 'No especificado' }}</div>
+                    </div>
+                    
+                    {{-- Correo Electrónico Activo como Link Plateado --}}
+                    <div class="info-item {{ !empty($usuario->email) ? 'info-item-link' : '' }}">
+                        <div class="info-label">Correo electrónico</div>
+                        <div class="info-value">
+                            @if(!empty($usuario->email))
+                                <a href="mailto:{{ $usuario->email }}?subject=Contacto desde KROW" class="link-accion">
+                                    <i class="bi bi-envelope"></i> Enviar correo electrónico
+                                </a>
+                            @else
+                                <span class="text-muted">No especificado</span>
+                            @endif
+                        </div>
+                    </div>
 
-  </div>
+                    <div class="info-item" style="grid-column: 1 / -1;">
+                        <div class="info-label">Teléfono</div>
+                        <div class="info-value">{{ $estudiante->telefono ?? 'No especificado' }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {{-- Datos Académicos --}}
+        <div class="perfil-card">
+            <div class="perfil-card-header">
+                <i class="bi bi-book"></i> Datos Académicos
+            </div>
+            <div class="perfil-card-body">
+                <div class="perfil-grid">
+                    <div class="info-item">
+                        <div class="info-label">Carrera que cursa</div>
+                        <div class="info-value">{{ $estudiante->carrera->nombre ?? 'No especificada' }}</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Legajo universitario</div>
+                        <div class="info-value">{{ $estudiante->legajo ?? 'No especificado' }}</div>
+                    </div>
+                    
+                    <div class="info-item {{ !empty($estudiante->portfolio) ? 'info-item-link' : '' }}">
+                        <div class="info-label">Portafolio</div>
+                        <div class="info-value">
+                            @if(!empty($estudiante->portfolio))
+                                <a href="{{ $estudiante->portfolio }}" target="_blank" class="link-accion">
+                                    <i class="bi bi-box-arrow-up-right"></i> Ver mi portafolio
+                                </a>
+                            @else
+                                <span class="text-muted">No cargado</span>
+                            @endif
+                        </div>
+                    </div>
+                    
+                    <div class="info-item {{ !empty($estudiante->cv) ? 'info-item-link' : '' }}">
+                        <div class="info-label">Currículum Vitae</div>
+                        <div class="info-value">
+                            @if(!empty($estudiante->cv))
+                                <a href="{{ \Illuminate\Support\Facades\Storage::url($estudiante->cv) }}" target="_blank" class="link-accion">
+                                    <i class="bi bi-file-earmark-text"></i> Ver mi CV
+                                </a>
+                            @else
+                                <span class="text-muted">No cargado</span>
+                            @endif
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {{-- Preferencias Laborales --}}
+        <div class="perfil-card">
+            <div class="perfil-card-header">
+                <i class="bi bi-briefcase"></i> Preferencias Laborales
+            </div>
+            <div class="perfil-card-body">
+                <div class="perfil-grid">
+                    <div class="info-item">
+                        <div class="info-label">Modalidad deseada</div>
+                        <div class="info-value">{{ $estudiante->modalidad_deseada ?? 'No especificada' }}</div>
+                    </div>
+                    <div class="info-item" style="grid-column: 1 / -1;">
+                        <div class="info-label">Disponibilidad</div>
+                        <div class="info-value">{{ $estudiante->disponibilidad_horaria ?? 'No especificada' }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {{-- Habilidades --}}
+        <div class="perfil-card">
+            <div class="perfil-card-header">
+                <i class="bi bi-code-slash"></i> Habilidades
+            </div>
+            <div class="perfil-card-body">
+                <p class="info-label" style="margin-bottom:10px;"><i class="bi bi-tools"></i> Habilidades y tecnologías</p>
+                <div class="detalle-tags">
+                    @forelse($habilidades_array as $hab)
+                        <span class="detalle-tag">{{ $hab }}</span>
+                    @empty
+                        <span class="text-muted">No especificadas</span>
+                    @endforelse
+                </div>
+            </div>
+        </div>
+
+        {{-- Redes Profesionales --}}
+        <div class="perfil-card">
+            <div class="perfil-card-header">
+                <i class="bi bi-share"></i> Redes Profesionales
+            </div>
+            <div class="perfil-card-body">
+                <div class="perfil-grid">
+                    
+                    <div class="info-item {{ !empty($estudiante->linkedin) ? 'info-item-link' : '' }}">
+                        <div class="info-label">LinkedIn</div>
+                        <div class="info-value">
+                            @if(!empty($estudiante->linkedin))
+                                <a href="{{ $estudiante->linkedin }}" target="_blank" class="link-accion">
+                                    <i class="bi bi-linkedin"></i> Ver mi perfil profesional
+                                </a>
+                            @else
+                                <span class="text-muted">No agregado</span>
+                            @endif
+                        </div>
+                    </div>
+                    
+                    <div class="info-item {{ !empty($estudiante->github) ? 'info-item-link' : '' }}">
+                        <div class="info-label">GitHub</div>
+                        <div class="info-value">
+                            @if(!empty($estudiante->github))
+                                <a href="{{ $estudiante->github }}" target="_blank" class="link-accion">
+                                    <i class="bi bi-github"></i> Ver mis repositorios
+                                </a>
+                            @else
+                                <span class="text-muted">No agregado</span>
+                            @endif
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+
+    </div>
 </div>
 
 @endsection
