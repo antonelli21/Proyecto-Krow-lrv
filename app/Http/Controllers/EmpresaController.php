@@ -9,6 +9,7 @@ use App\Models\Postulacion;
 use App\Models\Provincia;
 use App\Models\Localidad;
 use App\Models\Carrera;
+
 class EmpresaController extends Controller
 {
     public function index()
@@ -50,7 +51,7 @@ class EmpresaController extends Controller
         return response()->json($empresa, 201);
     }
 
-public function updatePerfil(Request $request)
+    public function updatePerfil(Request $request)
     {
         $usuario = auth()->user();
         $empresa = $usuario->empresa;
@@ -127,7 +128,6 @@ public function updatePerfil(Request $request)
             // Redireccionamos con la sesión de éxito idéntica a la que espera tu Blade
             return redirect()->back()
                 ->with('perfil_ok', '✅ Perfil actualizado correctamente');
-
         } catch (\Exception $e) {
             return redirect()->back()
                 ->withInput()
@@ -184,112 +184,115 @@ public function updatePerfil(Request $request)
     {
         $empresaId = auth()->user()->empresa->id_empresa;
         $ofertas = Oferta::where('id_empresa', $empresaId)->withCount('postulaciones')->get();
-        
+
         $totalPostulantes = $ofertas->sum('postulaciones_count');
         $totalVistas = $ofertas->sum('vistas') ?? 0;
-        
+
         return view('empresa.home-empresa', compact('ofertas', 'totalPostulantes', 'totalVistas'));
     }
 
 
-/* Mostrar los postulantes de una oferta específica*/
+    /* Mostrar los postulantes de una oferta específica*/
     public function verPostulantes($id)
     {
         // Buscar la oferta y verificar que pertenece a la empresa logueada
         $oferta = Oferta::where('id_oferta', $id)
-                        ->where('id_empresa', auth()->user()->empresa->id_empresa) // Asumiendo que User tiene relación con Empresa
-                        ->firstOrFail();
-        
+            ->where('id_empresa', auth()->user()->empresa->id_empresa) // Asumiendo que User tiene relación con Empresa
+            ->firstOrFail();
+
         // Obtener los postulantes con sus datos relacionados
         $postulantes = Postulacion::where('id_oferta', $id)
-                                  ->with('estudiante') // Cargar la relación con estudiante
-                                  ->get()
-                                  ->map(function($postulacion) {
-                                      // Transformar los datos al formato que usa la vista
-                                      $estudiante = $postulacion->estudiante;
+            ->with('estudiante') // Cargar la relación con estudiante
+            ->get()
+            ->map(function ($postulacion) {
+                // Transformar los datos al formato que usa la vista
+                $estudiante = $postulacion->estudiante;
 
-                                    $estadoMap = [
-                                      'Postulado' => 'postulado',
-                                      'En Revision' => 'en_revision',
-                                      'Preseleccionado' => 'preseleccionado',
-                                      'En Contacto' => 'en_contacto',
-                                      'Rechazado' => 'rechazado'
-                                    ];
-                                     
-                                    return (object)[
-                                        'id' => $postulacion->id_postulacion,
-                                        'id_estudiante' => $estudiante->id_estudiante,
-                                        'nombre' => $estudiante->name ?? $estudiante->nombre ?? 'Nombre no disponible',
-                                        'carrera' => $estudiante->carrera->nombre ?? $estudiante->carrera ?? 'No especificada',
-                                        'email' => $estudiante->email ?? $postulacion->email,
-                                        'telefono' => $estudiante->telefono ?? 'No disponible',
-                                        'fecha_postulacion' => $postulacion->created_at,
-                                        'estado_original' => $postulacion->estado,
-                                        'estado' => $postulacion->estado ?? 'pendiente',
-                                        'cv_url' => $estudiante->cv_url ?? null,
-                                        'linkedin_url' => $estudiante->linkedin_url ?? null,
-                                        'github_url' => $estudiante->github_url ?? null
-                                    ];
-                                    });
-        
+                $estadoMap = [
+                    'Postulado' => 'postulado',
+                    'En Revision' => 'en_revision',
+                    'Preseleccionado' => 'preseleccionado',
+                    'En Contacto' => 'en_contacto',
+                    'Rechazado' => 'rechazado'
+                ];
+
+                return (object)[
+                    'id' => $postulacion->id_postulacion,
+                    'id_estudiante' => $estudiante->id_estudiante,
+                    'nombre' => $estudiante->name ?? $estudiante->nombre ?? 'Nombre no disponible',
+                    'carrera' => $estudiante->carrera->nombre ?? $estudiante->carrera ?? 'No especificada',
+                    'email' => $estudiante->email ?? $postulacion->email,
+                    'telefono' => $estudiante->telefono ?? 'No disponible',
+                    'fecha_postulacion' => $postulacion->created_at,
+                    'estado_original' => $postulacion->estado,
+                    'estado' => $postulacion->estado ?? 'pendiente',
+                    'cv_url' => $estudiante->cv_url ?? null,
+                    'linkedin_url' => $estudiante->linkedin_url ?? null,
+                    'github_url' => $estudiante->github_url ?? null
+                ];
+            });
+
         return view('empresa.postulantes-empresa', compact('oferta', 'postulantes'));
     }
-    
-    public function storeOferta(Request $request) 
+
+    public function storeOferta(Request $request)
     {
-        // 1. Validamos todos los campos (incluyendo área e id_carrera)
         $data = $request->validate([
             'titulo'                => 'required|string|max:100',
             'tipo_trabajo'          => 'required|string',
             'modalidad'             => 'required|string',
-            'rango_salarial'        => 'required|numeric|nullable',
+            'rango_salarial'        => 'nullable|string|max:100',
             'experiencia_requerida' => 'required|string',
             'descripcion'           => 'required|string',
-            'requisitos'            => 'required|string|nullable',
-            'id_localidad'          => 'required|exists:localidad,id_localidad',
+            'requisitos'            => 'nullable|string',
+            'id_localidad'          => 'nullable|exists:localidad,id_localidad',
+            'id_provincia'          => 'nullable|exists:provincia,id_provincia',
             'area'                  => 'required|string|max:50',
-            'id_carrera'            => 'required|exists:carrera,id_carrera', // Cambiá 'id' si la PK de carreras se llama distinto
+            'id_carrera'            => 'required|exists:carrera,id_carrera',
         ]);
 
-        // 2. Instanciamos el modelo
         $oferta = new \App\Models\Oferta();
-        
+
         $oferta->titulo      = $data['titulo'];
         $oferta->descripcion = $data['descripcion'];
-        $oferta->requisitos  = $data['requisitos'];
-        $oferta->id_localidad= $data['id_localidad'];
+        $oferta->requisitos  = $data['requisitos'] ?? null;
+        $oferta->id_localidad = $data['id_localidad'] ?? null;
+        $oferta->id_provincia = $data['id_provincia'] ?? null;
         $oferta->area        = $data['area'];
         $oferta->id_carrera  = $data['id_carrera'];
-        $oferta->salario_min = $data['rango_salarial']; 
-
-        // NORMALIZACIÓN DE ENUMS (Adaptado estricto a las mayúsculas de tu migración)
-        // Modalidad
-        $oferta->modalidad = ucfirst(strtolower($data['modalidad'])); // 'remoto' -> 'Remoto'
-
-        // Tipo Oferta
-        if ($data['tipo_trabajo'] === 'practica-profesional') {
-            $oferta->tipo_oferta = 'Practica Profesional'; 
+        // Parsear rango salarial "3000-4000" o "USD 3000 - 5000"
+        if (!empty($data['rango_salarial'])) {
+            preg_match_all('/\d+/', str_replace('.', '', $data['rango_salarial']), $matches);
+            $numeros = $matches[0];
+            $oferta->salario_min = $numeros[0] ?? null;
+            $oferta->salario_max = $numeros[1] ?? null;
         } else {
-            $oferta->tipo_oferta = ucwords(str_replace('-', ' ', $data['tipo_trabajo'])); // 'full-time' -> 'Full-Time'
+            $oferta->salario_min = null;
+            $oferta->salario_max = null;
         }
 
-        // Experiencia Requerida
+        $oferta->modalidad = ucfirst(strtolower($data['modalidad']));
+
+        if ($data['tipo_trabajo'] === 'practica-profesional') {
+            $oferta->tipo_oferta = 'Practica Profesional';
+        } else {
+            $oferta->tipo_oferta = ucwords(str_replace('-', ' ', $data['tipo_trabajo']));
+        }
+
         if ($data['experiencia_requerida'] === 'sin-experiencia') {
             $oferta->experiencia_requerida = 'Sin Experiencia';
         } else {
-            $oferta->experiencia_requerida = ucwords(str_replace('-', ' ', $data['experiencia_requerida'])); // 'semi-senior' -> 'Semi Senior'
+            $oferta->experiencia_requerida = ucwords(str_replace('-', ' ', $data['experiencia_requerida']));
         }
 
-        // Relaciones automáticas indispensables
-        $oferta->id_empresa        = auth()->user()->empresa->id_empresa; 
-        $oferta->fecha_publicacion = now();                          
-        $oferta->estado            = 'Activa';                       
+        $oferta->id_empresa        = auth()->user()->empresa->id_empresa;
+        $oferta->fecha_publicacion = now();
+        $oferta->estado            = 'Activa';
 
-        // 3. Guardamos
         $oferta->save();
 
         return redirect()->route('empresa.home')->with('success', 'Oferta creada con éxito.');
-        }
+    }
 
 
     /**
@@ -298,19 +301,19 @@ public function updatePerfil(Request $request)
     public function actualizarEstadoPostulante(Request $request, $postulacionId)
     {
         $postulacion = Postulacion::findOrFail($postulacionId);
-        
+
         // Verificar que la oferta pertenece a la empresa logueada
         if ($postulacion->oferta->empresa_id !== auth()->user()->empresa->id) {
             abort(403, 'No autorizado');
         }
-        
+
         $postulacion->estado = $request->estado;
         $postulacion->save();
-        
+
         if ($request->ajax()) {
             return response()->json(['success' => true]);
         }
-        
+
         return redirect()->back()->with('success', 'Estado actualizado correctamente');
     }
 
@@ -324,21 +327,20 @@ public function updatePerfil(Request $request)
             'habilidades',
             'postulaciones.oferta.empresa'
         ])->findOrFail($id);
-        
+
         return view('empresa.perfil-estudiante', compact('estudiante'));
     }
 
-  /* Muestra el formulario para crear una nueva oferta laboral */
+    /* Muestra el formulario para crear una nueva oferta laboral */
     public function crearOferta()
     {
         // 1. Traemos las provincias ordenadas
         $provincias = Provincia::orderBy('nombre', 'asc')->get();
-        
+
         // 2. Traemos todas las carreras (en singular como tu tabla)
-        $carreras = Carrera::all(); 
-            
+        $carreras = Carrera::all();
+
         // 3. Enviamos AMBAS variables juntas en un solo return
         return view('empresa.crear-oferta', compact('provincias', 'carreras'));
     }
-        
-    }
+}
