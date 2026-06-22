@@ -87,32 +87,31 @@
         @auth
         <div class="dropdown" id="account-dropdown">
           <button class="account-btn" id="account-toggle" aria-haspopup="true" aria-expanded="false">
-            
+
             @php
-              $fotoPerfil = null;
-              $inicial = 'E';
-              $user = auth()->user();
+            $fotoPerfil = null;
+            $inicial = 'E';
+            $user = auth()->user();
 
-              if ($user->rol === 'estudiante') {
-                  // Este usa user_id y funciona bien
-                  $estudianteData = \App\Models\Estudiante::where('user_id', $user->id)->first();
-                  if ($estudianteData) {
-                      $fotoPerfil = $estudianteData->foto_perfil;
-                  }
-                  $inicial = substr($user->name ?? 'E', 0, 1);
-              } elseif ($user->rol === 'empresa') {
-                  // CORREGIDO: Usamos 'id_usuario' que es el nombre real de tu columna
-                  $empresaData = \App\Models\Empresa::where('id_usuario', $user->id)->first();
-                  
-                  if ($empresaData) {
-                      $fotoPerfil = $empresaData->logo; // Usa tu campo 'logo'
-                      $inicial = substr($empresaData->nombre_empresa ?? 'E', 0, 1);
-                  } else {
-                      $inicial = substr($user->name ?? 'E', 0, 1);
-                  }
-              }
-            @endphp
-
+            if ($user->rol === 'estudiante') {
+                // CORREGIDO: Cambiamos 'user_id' por 'id_usuario'
+                $estudianteData = \App\Models\Estudiante::where('id_usuario', $user->id)->first();
+                if ($estudianteData) {
+                    $fotoPerfil = $estudianteData->foto_perfil;
+                }
+                $inicial = substr($user->name ?? 'E', 0, 1);
+            } elseif ($user->rol === 'empresa') {
+                // CORREGIDO: Asegurate de que acá también apunte a 'id_usuario'
+                $empresaData = \App\Models\Empresa::where('id_usuario', $user->id)->first();
+                
+                if ($empresaData) {
+                    $fotoPerfil = $empresaData->logo; 
+                    $inicial = substr($empresaData->nombre_empresa ?? 'E', 0, 1);
+                } else {
+                    $inicial = substr($user->name ?? 'E', 0, 1);
+                }
+            }
+          @endphp
             <div class="account-avatar" style="{{ $fotoPerfil ? 'background-image:url(\'' . \Illuminate\Support\Facades\Storage::url($fotoPerfil) . '\'); background-size:cover; background-position:center;' : '' }}">
               @if(!$fotoPerfil)
               <span class="avatar-initial">{{ strtoupper($inicial) }}</span>
