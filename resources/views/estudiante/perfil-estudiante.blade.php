@@ -13,7 +13,9 @@
     {{-- Header de perfil --}}
     <div class="perfil-header-card">
         <div class="perfil-header-inner">
-            <div class="perfil-avatar" style="{{ $estudiante->foto_perfil ? 'background-image:url(\'' . \Illuminate\Support\Facades\Storage::url($estudiante->foto_perfil) . '\'); background-size:cover; background-position:center;' : '' }}">
+            <div class="perfil-avatar {{ $estudiante->foto_perfil ? 'avatar-expandible' : '' }}" 
+                style="{{ $estudiante->foto_perfil ? 'background-image:url(\'' . \Illuminate\Support\Facades\Storage::url($estudiante->foto_perfil) . '\'); background-size:cover; background-position:center; cursor:pointer;' : '' }}"
+                @if($estudiante->foto_perfil) onclick="abrirModalAvatar('{{ \Illuminate\Support\Facades\Storage::url($estudiante->foto_perfil) }}')" @endif>
                 @if(!$estudiante->foto_perfil)
                     {{ strtoupper(substr($usuario->name ?? 'E', 0, 1)) }}
                 @endif
@@ -194,5 +196,14 @@
 
     </div>
 </div>
+
+{{-- ════ MODAL FLOTANTE PARA EXPANDIR LA FOTO (Agregar al final de la página antes del @endsection) ════ --}}
+@if($estudiante->foto_perfil)
+<div id="avatarModal" class="avatar-modal" onclick="cerrarModalAvatar()">
+    <span class="avatar-modal-close">&times;</span>
+    <img class="avatar-modal-content" id="imgModalTarget">
+</div>
+@endif
+
 
 @endsection

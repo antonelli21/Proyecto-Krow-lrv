@@ -129,17 +129,6 @@ class OfertaController extends Controller
         
         return view('index', compact('ofertas'));
     }
-
-
-
-
-
-
-
-
-
-
-
 }
 
 

@@ -10,7 +10,9 @@
     <div class="perfil-header-card">
         <div class="perfil-header-inner">
 
-            <div class="perfil-avatar" style="{{ $empresa->logo ? 'background-image:url(\'' . \Illuminate\Support\Facades\Storage::url($empresa->logo) . '\'); background-size:cover; background-position:center;' : '' }}">
+            <div class="perfil-avatar {{ $empresa->logo ? 'avatar-expandible' : '' }}" 
+                 style="{{ $empresa->logo ? 'background-image:url(\'' . \Illuminate\Support\Facades\Storage::url($empresa->logo) . '\'); background-size:cover; background-position:center; cursor:pointer;' : '' }}"
+                 @if($empresa->logo) onclick="abrirModalAvatar('{{ \Illuminate\Support\Facades\Storage::url($empresa->logo) }}')" @endif>
                 @if(!$empresa->logo)
                     {{ strtoupper(substr($empresa->nombre_empresa ?? 'E', 0, 1)) }}
                 @endif
@@ -204,5 +206,13 @@
 
     </div>
 </div>
+
+{{-- ════ MODAL FLOTANTE PARA EXPANDIR EL LOGO DE LA EMPRESA ════ --}}
+@if($empresa->logo)
+<div id="avatarModal" class="avatar-modal" onclick="cerrarModalAvatar()">
+    <span class="avatar-modal-close">&times;</span>
+    <img class="avatar-modal-content" id="imgModalTarget">
+</div>
+@endif
 
 @endsection

@@ -274,64 +274,73 @@ main {
   position: relative;
 }
 
+/* Botón principal "Mi Cuenta" */
 .account-btn {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  background: transparent;
-  border: 2px solid rgba(43, 42, 42, 0.2);
-  border-radius: 0px;
-  padding: 8px 16px;
+  gap: 0.75rem; /* Espaciado equilibrado entre avatar, texto e icono */
+  background-color: transparent;
+  color: var(--text-color, #ffffff); /* Color de texto blanco o variable */
+  border: 1px solid rgba(255, 255, 255, 0.1); /* Un borde sutil para darle estructura */
+  border-radius: 50px; /* Bordes completamente redondeados (estilo píldora) */
+  padding: 6px 16px 6px 6px; /* Menos padding a la izquierda para que el avatar abrace el borde */
+  font-family: inherit;
+  font-size: 0.95rem;
+  font-weight: 500; /* Peso de fuente medio para mayor legibilidad */
   cursor: pointer;
-  color: rgba(34, 36, 35, 0.9);
-  font-size: 0.875rem;
-  font-weight: 500;
-  transition: border-color 0.15s, background-color 0.15s;
+  transition: all 0.2s ease-in-out; /* Animación suave para interacciones */
 }
 
+/* Efecto al pasar el mouse por encima (Hover) */
 .account-btn:hover {
-  border-color: var(--accent);
-  background-color: rgba(255, 255, 255, 0.07);
+  background-color: rgba(255, 255, 255, 0.05); /* Brillo sutil de fondo */
+  border-color: var(--primary, #d4af37); /* Tu color amarillo corporativo destaca en el borde */
 }
 
-[data-theme="dark"] .account-btn {
-  border-color: var(--border);
-  color: var(--text);
+/* Efecto cuando el menú dropdown esté desplegado/activo */
+.account-btn[aria-expanded="true"] {
+  background-color: rgba(255, 255, 255, 0.08);
+  border-color: var(--primary, #d4af37);
 }
 
-.account-avatar {
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  background-color: var(--accent);
-  color: var(--primary);
-  font-size: 0.8rem;
-  font-weight: 700;
+/* Ajustes finos para el avatar redondo dentro de este botón */
+.account-btn .account-avatar {
+  width: 32px;  /* Tamaño compacto y elegante para la barra superior */
+  height: 32px;
+  overflow: hidden;
+  flex-shrink: 0;
+  background-color: var(--primary-light, rgba(212, 175, 55, 0.1));
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-[data-theme="dark"] .account-avatar {
-  color: #111118;
+/* Iniciales dentro del mini avatar */
+.account-btn .avatar-initial {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--primary, #d4af37);
 }
 
+/* Nombre de usuario o texto "Mi Cuenta" */
 .account-name {
-  max-width: 100px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  font-weight: 500;
+  user-select: none;
 }
 
-.chevron {
-  transition: transform 0.2s;
-  opacity: 0.6;
+/* Icono de la flecha (Chevron) */
+.account-btn .chevron {
+  opacity: 0.7;
+  transition: transform 0.2s ease;
+  margin-left: 2px;
 }
 
+/* Animación: la flecha gira 180 grados si el dropdown está abierto */
 .account-btn[aria-expanded="true"] .chevron {
   transform: rotate(180deg);
+  opacity: 1;
+  color: var(--primary, #d4af37);
 }
-
 .dropdown-menu {
   position: absolute;
   top: calc(100% + 8px);
@@ -1876,6 +1885,64 @@ body {
   background: var(--accent-dim);
   border-color: var(--border-accent);
   color: var(--accent);
+}
+
+/* Efecto hover sutil en la foto del perfil */
+.avatar-expandible {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.avatar-expandible:hover {
+    transform: scale(1.03);
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
+}
+
+/* El fondo del modal (oscuro traslúcido) */
+.avatar-modal {
+    display: none; 
+    position: fixed; 
+    z-index: 2000; 
+    padding-top: 100px; 
+    left: 0;
+    top: 0;
+    width: 100%; 
+    height: 100%; 
+    overflow: auto; 
+    background-color: rgba(10, 10, 20, 0.9); /* Tono oscuro a juego con KROW */
+    backdrop-filter: blur(5px); /* Desenfoque de fondo */
+}
+
+/* La imagen expandida */
+.avatar-modal-content {
+    margin: auto;
+    display: block;
+    max-width: 500px;
+    max-height: 500px;
+    width: 80%;
+    border-radius: 50%; /* Si la querés perfectamente redonda al expandir, dejas esto. Si la querés cuadrada, sacale el border-radius */
+    object-fit: cover;
+    border: 3px solid rgba(255, 255, 255, 0.1);
+    animation: zoomIn 0.25s ease-out;
+}
+
+/* Botón de cerrar */
+.avatar-modal-close {
+    position: absolute;
+    top: 40px;
+    right: 45px;
+    color: #fff;
+    font-size: 40px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+.avatar-modal-close:hover {
+    color: #ffcc00;
+}
+
+/* Animación de apertura */
+@keyframes zoomIn {
+    from { transform: scale(0.7); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
 }
 
 /* ════════════════════════════════════════
@@ -4447,19 +4514,54 @@ body {
   /* 20px */
   flex-wrap: wrap;
 }
+.perfil-header-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* Centra el bloque de textos verticalmente en su espacio */
+    align-self: center;      /* Fuerza a que la caja se acople al centro del contenedor flex */
+}
 
-.perfil-avatar {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 70px;
-  height: 70px;
-  background-color: var(--primary-light, rgba(212, 175, 55, 0.1));
-  color: var(--primary);
-  font-size: 1.75rem;
-  font-weight: 700;
-  border-radius: var(--radius, 0px);
-  border: 1px solid var(--primary);
+/* Opcional: Aseguramos que los textos internos no tengan márgenes raros que tiren el contenedor hacia arriba */
+.perfil-header-info h1 {
+    margin: 0 0 4px 0 !important; /* Limpia márgenes por defecto y deja solo una separación sutil abajo */
+    line-height: 1.2;
+}
+
+.perfil-header-info p {
+    margin: 0 0 2px 0 !important; /* Margen mínimo entre líneas para que queden compactas y centradas */
+    line-height: 1.2;
+}
+
+.perfil-header-inner .btn-accent,
+.perfil-header-inner .btn-outline {
+ white-space: nowrap; 
+}
+
+/* Forzamos la prioridad usando el contenedor padre */
+.perfil-header-inner .perfil-avatar {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  
+  /* Incrementamos el tamaño de manera definitiva */
+  width: 95px !important;
+  height: 95px !important;
+  
+  /* Círculo perfecto */
+  border-radius: 50% !important;
+  overflow: hidden !important;
+  flex-shrink: 0 !important;
+  
+  /* Estilos de fondo y borde */
+  background-size: cover !important;
+  background-position: center !important;
+  background-color: var(--primary-light, rgba(212, 175, 55, 0.1)) !important;
+  border: 2px solid var(--primary) !important;
+  
+  /* Inicial */
+  font-size: 2.2rem !important;
+  font-weight: 700 !important;
 }
 
 /* --- 3. Arquitectura del Contenido (Dashboard Layout) --- */
@@ -6368,6 +6470,26 @@ textarea.filter-input-text:focus {
     width: 300px;
     right: -60px;
   }
+}
+/* Contenedor del avatar en el header */
+.account-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #ffcc00; /* Fondo amarillo fallback si no hay foto */
+    flex-shrink: 0;
+    overflow: hidden;
+}
+
+/* Inicial cuando no hay foto */
+.avatar-initial {
+    color: #1a1a2e;
+    font-weight: bold;
+    font-size: 14px;
+    line-height: 1;
 }
 
 
