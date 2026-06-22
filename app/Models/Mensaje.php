@@ -10,7 +10,8 @@ class Mensaje extends Model
 {
     use HasFactory;
 
-    public $timestamps = false;
+    // Como usás fecha_envio nativa o manejás tus propios campos, dejamos false
+    public $timestamps = false; 
     protected $table = 'mensaje';
     protected $primaryKey = 'id_mensaje';
 
@@ -19,6 +20,8 @@ class Mensaje extends Model
         'id_remitente',
         'contenido',
         'leido',
+        'ruta_archivo',   
+        'nombre_archivo',
     ];
 
     protected $casts = [

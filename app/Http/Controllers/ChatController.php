@@ -3,51 +3,89 @@
 namespace App\Http\Controllers;
 
 use App\Models\Chat;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class ChatController extends Controller
 {
     public function index()
     {
-        return response()->json(Chat::with(['usuario1', 'usuario2', 'mensajes'])->get());
+        $userId = auth()->id();
+        $chats = Chat::with(['usuario1:id,name', 'usuario2:id,name', 'ultimoMensaje'])
+            ->where('id_usuario_1', $userId)
+            ->orWhere('id_usuario_2', $userId)
+            ->get();
+
+        return response()->json($chats);
     }
 
     public function show(Chat $chat)
     {
-        return response()->json($chat->load(['usuario1', 'usuario2', 'mensajes']));
+        $userId = auth()->id();
+        if ($chat->id_usuario_1 !== $userId && $chat->id_usuario_2 !== $userId) {
+            abort(403);
+        }
+        return response()->json($chat->load(['usuario1:id,name', 'usuario2:id,name', 'mensajes']));
     }
 
-public function store(Request $request)
-{
-    // 1. Validamos que nos manden IDs de usuarios reales
-    $data = $request->validate([
-        'id_usuario_1' => 'required|exists:users,id',
-        'id_usuario_2' => 'required|exists:users,id',
-    ]);
+    public function store(Request $request)
+    {
+        $request->validate([
+            'id_usuario_destinatario' => 'required|exists:users,id',
+        ]);
 
-    // 2. CONTROL DE DUPLICADOS: Buscamos si ya existe el chat entre A y B o entre B y A
-    $chatExistente = Chat::where(function($query) use ($data) {
-        $query->where('id_usuario_1', $data['id_usuario_1'])
-              ->where('id_usuario_2', $data['data_usuario_2']);
-    })->orWhere(function($query) use ($data) {
-        $query->where('id_usuario_1', $data['id_usuario_2'])
-              ->where('id_usuario_2', $data['id_usuario_1']);
-    })->first();
+        $usuarioLogueado = auth()->id();
+        $usuarioDestino  = (int) $request->id_usuario_destinatario;
 
-    // 3. Si ya existía, no creamos nada, le devolvemos el chat viejo directo
-    if ($chatExistente) {
-        return response()->json($chatExistente, 200);
+        if ($usuarioLogueado === $usuarioDestino) {
+            return redirect()->back()->with('error', 'No podés iniciar un chat con vos mismo.');
+        }
+
+        // ✅ Usando el scope del modelo
+        $chat = Chat::betweenUsers($usuarioLogueado, $usuarioDestino)->first()
+            ?? Chat::create([
+                'id_usuario_1' => $usuarioLogueado,
+                'id_usuario_2' => $usuarioDestino,
+            ]);
+
+        return redirect()->route('empresa.mensajes.show', $chat->id_chat);
     }
 
-    // 4. Si no existía, recién ahí creamos la fila en la base de datos
-    $chat = Chat::create($data);
-
-    return response()->json($chat, 201); // 201 significa "Creado con éxito"
-}
     public function destroy(Chat $chat)
     {
+        $userId = auth()->id();
+        if ($chat->id_usuario_1 !== $userId && $chat->id_usuario_2 !== $userId) {
+            abort(403);
+        }
         $chat->delete();
+        return redirect()->route('empresa.mensajes')->with('success', 'Chat eliminado.');
+    }
 
-        return response()->noContent();
+    public function buscarOCrear(Request $request)
+    {
+        $miId   = auth()->id();
+        $otroId = $request->query('usuario_id');
+
+        // ✅ Validar primero, buscar después
+        if (!$otroId) {
+            return response()->json(['error' => 'Falta el ID del usuario objetivo.'], 400);
+        }
+
+        $otro = User::findOrFail($otroId);
+
+        if ((int) $otroId === $miId) {
+            return response()->json(['error' => 'No podés chatear con vos mismo.'], 422);
+        }
+
+        // ✅ Scope reutilizado, sin duplicar lógica
+        $chat = Chat::betweenUsers($miId, $otroId)->first()
+            ?? Chat::create([
+                'id_usuario_1' => $miId,
+                'id_usuario_2' => $otroId,
+            ]);
+
+        $chat->load(['usuario1:id,name', 'usuario2:id,name', 'mensajes']);
+
+        return response()->json($chat); // ✅ Devuelve el chat, no un error
     }
 }
