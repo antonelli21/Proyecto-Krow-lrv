@@ -525,10 +525,10 @@
                     <div class="select-wrap">
                         <select id="tipo_trabajo" name="tipo_trabajo" class="form-select" required>
                             <option value="" disabled selected>Seleccionar...</option>
-                            <option value="pasantia">Pasantia</option>
-                            <option value="practica-profesional">Practica Profesional</option>
-                            <option value="part-time">Part Time</option>
-                            <option value="full-time">Full Time</option>
+                            <option value="Pasantia">Pasantia</option>
+                            <option value="Practica Profesional">Practica Profesional</option>
+                            <option value="Part-Time">Part Time</option>
+                            <option value="Full-Time">Full Time</option>
                         </select>
                         <span class="select-chevron">▼</span>
                     </div>

@@ -483,9 +483,9 @@
 
     <!-- Filtros -->
     <div class="filter-tabs">
-        <button class="filter-btn active" data-estado="todos">Todos ({{ $postulantes->count() }})</button>
+        <button class="filter-btn" data-estado="todos">Todos ({{ $postulantes->count() }})</button>
         <button class="filter-btn" data-estado="postulado">Postulados ({{ $postulantes->where('estado', 'postulado')->count() }})</button>
-        <button class="filter-btn" data-estado="en_revision">En Revisión ({{ $postulantes->where('estado', 'en_revision')->count() }})</button>
+        <button class="filter-btn active" data-estado="en_revision">En Revisión ({{ $postulantes->where('estado', 'en_revision')->count() }})</button>
         <button class="filter-btn" data-estado="preseleccionado">Preseleccionados ({{ $postulantes->where('estado', 'preseleccionado')->count() }})</button>
         <button class="filter-btn" data-estado="en_contacto">En Contacto ({{ $postulantes->where('estado', 'en_contacto')->count() }})</button>
         <button class="filter-btn" data-estado="rechazado">Rechazados ({{ $postulantes->where('estado', 'rechazado')->count() }})</button>
