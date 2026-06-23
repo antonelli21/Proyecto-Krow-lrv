@@ -23,8 +23,11 @@ class EstudianteController extends Controller
             'postulaciones.oferta.habilidades'
         ]);
 
-        return response()->json($estudiante);
+        return response()->json(
+             $estudiante->load(['postulaciones.oferta.empresa'])
+        );
     }
+
 
     public function store(Request $request)
     {

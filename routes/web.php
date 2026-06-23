@@ -215,6 +215,9 @@ Route::prefix('api')
         Route::apiResource('tickets', TicketSoporteController::class)
             ->only(['index', 'show', 'store', 'update', 'destroy']);
 
+        Route::apiResource('estudiantes', EstudianteController::class)
+            ->only(['index', 'show', 'store', 'update', 'destroy']);
+
         // ── Localidades ──
         Route::get('/provincias/{id}/localidades', function ($id) {
             return \App\Models\Localidad::where('id_provincia', $id)

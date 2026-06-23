@@ -172,25 +172,8 @@
   </div>
 </header>
 
-<main style="flex:1; display:flex; flex-direction:column;">
-  @yield('banner')
-  @yield('content')
-</main>
-
-{{-- ════ FOOTER ════ --}}
-<footer>
-  <div class="site-footer">
-    <div class="footer-column">
-      <h4>Redes Sociales</h4>
-      <ul>
-        <li><a href="#">LinkedIn</a></li>
-        <li><a href="#">Instagram</a></li>
-        <li><a href="#">Twitter</a></li>
-      </ul>
-    </div>
-  </header>
-
   <main style="flex:1; display:flex; flex-direction:column; overflow:auto;">
+    @yield('banner')
     @yield('content')
   </main>
   {{-- ════ FOOTER ════ --}}
