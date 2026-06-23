@@ -194,46 +194,33 @@ class EmpresaController extends Controller
 
     /* Mostrar los postulantes de una oferta específica*/
     public function verPostulantes($id)
-    {
-        // Buscar la oferta y verificar que pertenece a la empresa logueada
-        $oferta = Oferta::where('id_oferta', $id)
-            ->where('id_empresa', auth()->user()->empresa->id_empresa) // Asumiendo que User tiene relación con Empresa
-            ->firstOrFail();
+{
+    $oferta = Oferta::where('id_oferta', $id)
+        ->where('id_empresa', auth()->user()->empresa->id_empresa)
+        ->firstOrFail();
 
-        // Obtener los postulantes con sus datos relacionados
-        $postulantes = Postulacion::where('id_oferta', $id)
-            ->with('estudiante') // Cargar la relación con estudiante
-            ->get()
-            ->map(function ($postulacion) {
-                // Transformar los datos al formato que usa la vista
-                $estudiante = $postulacion->estudiante;
+    $postulantes = Postulacion::where('id_oferta', $id)
+        ->with(['estudiante.carrera', 'estudiante.user'])
+        ->get()
+        ->map(function ($postulacion) {
+            $estudiante = $postulacion->estudiante;
 
-                $estadoMap = [
-                    'Postulado' => 'postulado',
-                    'En Revision' => 'en_revision',
-                    'Preseleccionado' => 'preseleccionado',
-                    'En Contacto' => 'en_contacto',
-                    'Rechazado' => 'rechazado'
-                ];
+            return (object)[
+                'id'                => $postulacion->id_postulacion,
+                'id_estudiante'     => $estudiante->id_estudiante,
+                'nombre'            => trim($estudiante->nombre . ' ' . $estudiante->apellido),
+                'carrera'           => $estudiante->carrera->nombre ?? 'No especificada',
+                'email'             => $estudiante->user->email ?? 'No disponible',
+                'telefono'          => $estudiante->telefono ?? 'No disponible',
+                'fecha_postulacion' => $postulacion->fecha_postulacion,
+                'estado'            => $postulacion->estado,
+                'linkedin'          => $estudiante->linkedin ?? null,
+                'github'            => $estudiante->github ?? null,
+            ];
+        });
 
-                return (object)[
-                    'id' => $postulacion->id_postulacion,
-                    'id_estudiante' => $estudiante->id_estudiante,
-                    'nombre' => $estudiante->name ?? $estudiante->nombre ?? 'Nombre no disponible',
-                    'carrera' => $estudiante->carrera->nombre ?? $estudiante->carrera ?? 'No especificada',
-                    'email' => $estudiante->email ?? $postulacion->email,
-                    'telefono' => $estudiante->telefono ?? 'No disponible',
-                    'fecha_postulacion' => $postulacion->created_at,
-                    'estado_original' => $postulacion->estado,
-                    'estado' => $postulacion->estado ?? 'pendiente',
-                    'cv_url' => $estudiante->cv_url ?? null,
-                    'linkedin_url' => $estudiante->linkedin_url ?? null,
-                    'github_url' => $estudiante->github_url ?? null
-                ];
-            });
-
-        return view('empresa.postulantes-empresa', compact('oferta', 'postulantes'));
-    }
+    return view('empresa.postulantes-empresa', compact('oferta', 'postulantes'));
+}
 
     public function storeOferta(Request $request)
     {
@@ -299,23 +286,27 @@ class EmpresaController extends Controller
      * Actualizar el estado de un postulante (aceptar/rechazar)
      */
     public function actualizarEstadoPostulante(Request $request, $postulacionId)
-    {
-        $postulacion = Postulacion::findOrFail($postulacionId);
+{
+    $postulacion = Postulacion::with('oferta')->findOrFail($postulacionId);
 
-        // Verificar que la oferta pertenece a la empresa logueada
-        if ($postulacion->oferta->empresa_id !== auth()->user()->empresa->id) {
-            abort(403, 'No autorizado');
-        }
-
-        $postulacion->estado = $request->estado;
-        $postulacion->save();
-
-        if ($request->ajax()) {
-            return response()->json(['success' => true]);
-        }
-
-        return redirect()->back()->with('success', 'Estado actualizado correctamente');
+    // Verificar que la oferta pertenece a la empresa logueada
+    if ($postulacion->oferta->id_empresa !== auth()->user()->empresa->id_empresa) {
+        abort(403, 'No autorizado');
     }
+
+    $estadosValidos = ['Postulado', 'Preseleccionado', 'En Contacto', 'Rechazado'];
+
+    $estado = $request->input('estado');
+
+    if (!in_array($estado, $estadosValidos)) {
+        return response()->json(['error' => 'Estado inválido'], 422);
+    }
+
+    $postulacion->estado = $estado;
+    $postulacion->save();
+
+    return response()->json(['success' => true, 'estado' => $postulacion->estado]);
+}
 
     public function verPerfilEstudiante($id)
     {
@@ -343,4 +334,40 @@ class EmpresaController extends Controller
         // 3. Enviamos AMBAS variables juntas en un solo return
         return view('empresa.crear-oferta', compact('provincias', 'carreras'));
     }
+
+    public function cambiarEstadoOferta(Request $request, $id)
+{
+    $oferta = Oferta::where('id_oferta', $id)
+        ->where('id_empresa', auth()->user()->empresa->id_empresa)
+        ->firstOrFail();
+
+    $estadosValidos = ['Activa', 'Pausada', 'Cerrada'];
+    $nuevoEstado = $request->input('estado');
+
+    if (!in_array($nuevoEstado, $estadosValidos)) {
+        return response()->json(['error' => 'Estado inválido'], 422);
+    }
+
+    $oferta->estado = $nuevoEstado;
+    $oferta->save();
+
+    return response()->json(['success' => true, 'estado' => $oferta->estado]);
+}
+
+public function eliminarOferta($id)
+{
+    $oferta = Oferta::where('id_oferta', $id)
+        ->where('id_empresa', auth()->user()->empresa->id_empresa)
+        ->firstOrFail();
+
+    $oferta->postulaciones()->delete();
+    $oferta->habilidades()->detach();
+
+    // oferta_carrera también hay que limpiarla
+    \DB::table('oferta_carrera')->where('id_oferta', $id)->delete();
+
+    $oferta->delete();
+
+    return response()->json(['success' => true]);
+}
 }

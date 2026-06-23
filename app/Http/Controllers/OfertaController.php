@@ -22,7 +22,24 @@ class OfertaController extends Controller
         return view('empresa.oferta-detalle', compact('oferta'));
     }
 
+public function preview($id_oferta)
+{
+    $oferta = Oferta::with([
+        'empresa',
+        'habilidades',
+        'carrera',
+        'localidad',
+        'provincia'
+    ])->findOrFail($id_oferta);
 
+    $oferta->ya_postulado = auth()->check()
+            ? $oferta->postulaciones()
+                ->whereHas('estudiante', fn($q) => $q->where('id_usuario', auth()->id()))
+                ->exists()
+            : false;
+
+    return view('empresa.oferta-detalle-preview', compact('oferta'));
+}
 
     // aquí guardás la postulación en la BD cuando tengas el modelo
         public function postular($id_oferta)
