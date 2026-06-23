@@ -78,76 +78,76 @@
         </svg>
       </button>
 
-    @auth
-      @include('layouts.notificaciones_dropdown')
-    @endauth
-
       @auth
+        @include('layouts.notificaciones_dropdown')
+
+        @php
+          $fotoPerfil = null;
+          $inicial = 'E';
+          $user = auth()->user();
+
+          if ($user->rol === 'estudiante') {
+              $estudianteData = \App\Models\Estudiante::where('id_usuario', $user->id)->first();
+              if ($estudianteData) {
+                  $fotoPerfil = $estudianteData->foto_perfil;
+              }
+              $inicial = substr($user->name ?? 'E', 0, 1);
+          } elseif ($user->rol === 'empresa') {
+              $empresaData = \App\Models\Empresa::where('id_usuario', $user->id)->first();
+              if ($empresaData) {
+                  $fotoPerfil = $empresaData->logo;
+                  $inicial = substr($empresaData->nombre_empresa ?? 'E', 0, 1);
+              } else {
+                  $inicial = substr($user->name ?? 'E', 0, 1);
+              }
+          }
+        @endphp
+
         <div class="dropdown" id="account-dropdown">
           <button class="account-btn" id="account-toggle" aria-haspopup="true" aria-expanded="false">
-            
-            @php
-              $fotoPerfil = null;
-              $inicial = 'E';
-              $user = auth()->user();
-
-              if ($user->rol === 'estudiante') {
-                  // Este usa user_id y funciona bien
-                  $estudianteData = \App\Models\Estudiante::where('user_id', $user->id)->first();
-                  if ($estudianteData) {
-                      $fotoPerfil = $estudianteData->foto_perfil;
-                  }
-                  $inicial = substr($user->name ?? 'E', 0, 1);
-              } elseif ($user->rol === 'empresa') {
-                  // CORREGIDO: Usamos 'id_usuario' que es el nombre real de tu columna
-                  $empresaData = \App\Models\Empresa::where('id_usuario', $user->id)->first();
-                  
-                  if ($empresaData) {
-                      $fotoPerfil = $empresaData->logo; // Usa tu campo 'logo'
-                      $inicial = substr($empresaData->nombre_empresa ?? 'E', 0, 1);
-                  } else {
-                      $inicial = substr($user->name ?? 'E', 0, 1);
-                  }
-              }
-            @endphp
-
             <div class="account-avatar" style="{{ $fotoPerfil ? 'background-image:url(\'' . \Illuminate\Support\Facades\Storage::url($fotoPerfil) . '\'); background-size:cover; background-position:center;' : '' }}">
               @if(!$fotoPerfil)
                 <span class="avatar-initial">{{ strtoupper($inicial) }}</span>
               @endif
             </div>
-            
             <span class="account-name">Mi Cuenta</span>
             <svg class="chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <polyline points="6 9 12 15 18 9"/>
             </svg>
           </button>
-            <div class="dropdown-menu" id="account-menu" role="menu">
+
+          <div class="dropdown-menu" id="account-menu" role="menu">
             @if(Route::has($rol . '.perfil'))
-                <a href="{{ route($rol . '.perfil') }}" class="dropdown-item" role="menuitem">
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                        <circle cx="12" cy="8" r="4"/>
-                        <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
-                    </svg>
-                    Mi Perfil
-                </a>
+              <a href="{{ route($rol . '.perfil') }}" class="dropdown-item" role="menuitem">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                  <circle cx="12" cy="8" r="4"/>
+                  <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
+                </svg>
+                Mi Perfil
+              </a>
             @endif
             <a href="{{ route('mensajes') }}" class="dropdown-item" role="menuitem">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+              </svg>
               Mensajes
             </a>
             <a href="{{ route('configuracion') }}" class="dropdown-item" role="menuitem">
-             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-               <path d="M12 3L5 6v6c0 5 3.5 8 7 9 3.5-1 7-4 7-9V6l-7-3z"/>
-              <path d="M10 11V9a2 2 0 1 1 4 0v2"/>
-              <rect x="9" y="11" width="6" height="5" rx="1"/>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 3L5 6v6c0 5 3.5 8 7 9 3.5-1 7-4 7-9V6l-7-3z"/>
+                <path d="M10 11V9a2 2 0 1 1 4 0v2"/>
+                <rect x="9" y="11" width="6" height="5" rx="1"/>
               </svg>
               Seguridad
             </a>
             <hr class="dropdown-divider">
             <a href="{{ route('logout') }}" class="dropdown-item dropdown-item-danger" role="menuitem"
                onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                <polyline points="16 17 21 12 16 7"/>
+                <line x1="21" y1="12" x2="9" y2="12"/>
+              </svg>
               Cerrar sesión
             </a>
             <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display:none">
@@ -155,8 +155,9 @@
             </form>
           </div>
         </div>
+
       @else
-        <a href="{{ route('login') }}"    class="btn-ghost-sm">Ingresar</a>
+        <a href="{{ route('login') }}" class="btn-ghost-sm">Ingresar</a>
         <a href="{{ route('register') }}" class="btn-primary-sm">Registro</a>
       @endauth
 
@@ -164,15 +165,16 @@
         <span></span><span></span><span></span>
       </button>
 
-      
     </div>
     <div class="nav-overlay" id="nav-overlay"></div>
   </div>
 </header>
 
-<main style="flex:1; display:flex; flex-direction:column; overflow:auto;">
+<main style="flex:1; display:flex; flex-direction:column;">
+  @yield('banner')
   @yield('content')
 </main>
+
 {{-- ════ FOOTER ════ --}}
 <footer>
   <div class="site-footer">

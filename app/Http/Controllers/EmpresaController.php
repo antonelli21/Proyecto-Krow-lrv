@@ -67,6 +67,7 @@ class EmpresaController extends Controller
         // 2) Validación estricta con las reglas de tu tabla 'empresa'
         $data = $request->validate([
             'logo' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:3072',
+            'banner' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:5120',
             'nombre_empresa' => 'required|string|max:100',
             'razon_social' => 'required|string|max:150',
             'cuit' => 'required|numeric|digits_between:10,11|unique:empresa,cuit,' . $empresa->id_empresa . ',id_empresa',
@@ -95,6 +96,12 @@ class EmpresaController extends Controller
                 }
                 $path = $request->file('logo')->store('logos', 'public');
                 $empresa->logo = $path;
+            }
+            if ($request->hasFile('banner')) {
+                if ($empresa->banner && \Illuminate\Support\Facades\Storage::disk('public')->exists($empresa->banner)) {
+                    \Illuminate\Support\Facades\Storage::disk('public')->delete($empresa->banner);
+                }
+                $empresa->banner = $request->file('banner')->store('banners', 'public');
             }
 
             // 4) Sincronizamos la cuenta de usuario global (tabla users)
