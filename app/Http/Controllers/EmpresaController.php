@@ -56,6 +56,7 @@ class EmpresaController extends Controller
         $usuario = auth()->user();
         $empresa = $usuario->empresa;
 
+        // Mapeo de campos para compatibilidad
         if ($request->has('nombre') && !$request->has('nombre_empresa')) {
             $request->merge(['nombre_empresa' => $request->input('nombre')]);
         }
@@ -65,7 +66,7 @@ class EmpresaController extends Controller
 
         $data = $request->validate([
             'logo'                => 'nullable|image|mimes:jpg,jpeg,png,webp|max:3072',
-            'banner'              => 'nullable|image|mimes:jpg,jpeg,png,webp|max:5120',
+            'banner'              => 'nullable|image|mimes:jpg,jpeg,png,webp|max:5120', // Cambiado a 5MB
             'nombre_empresa'      => 'required|string|max:100',
             'razon_social'        => 'required|string|max:150',
             'cuit'                => 'required|numeric|digits_between:10,11|unique:empresa,cuit,' . $empresa->id_empresa . ',id_empresa',
@@ -86,24 +87,32 @@ class EmpresaController extends Controller
         ]);
 
         try {
+            // Guardar logo
             if ($request->hasFile('logo')) {
-                if ($empresa->logo && \Illuminate\Support\Facades\Storage::disk('public')->exists($empresa->logo)) {
-                    \Illuminate\Support\Facades\Storage::disk('public')->delete($empresa->logo);
+                // Eliminar logo anterior si existe
+                if ($empresa->logo && Storage::disk('public')->exists($empresa->logo)) {
+                    Storage::disk('public')->delete($empresa->logo);
                 }
-                $empresa->logo = $request->file('logo')->store('logos', 'public');
+                $path = $request->file('logo')->store('logos', 'public');
+                $empresa->logo = $path;
             }
 
+            // Guardar banner - La clave está aquí
             if ($request->hasFile('banner')) {
-                if ($empresa->banner && \Illuminate\Support\Facades\Storage::disk('public')->exists($empresa->banner)) {
-                    \Illuminate\Support\Facades\Storage::disk('public')->delete($empresa->banner);
+                // Eliminar banner anterior si existe
+                if ($empresa->banner && Storage::disk('public')->exists($empresa->banner)) {
+                    Storage::disk('public')->delete($empresa->banner);
                 }
-                $empresa->banner = $request->file('banner')->store('banners', 'public');
+                $path = $request->file('banner')->store('banners', 'public');
+                $empresa->banner = $path; // Asegurar que se guarda
             }
 
+            // Actualizar datos del usuario
             $usuario->name  = $data['nombre_empresa'];
             $usuario->email = $data['email_contacto'];
             $usuario->save();
 
+            // Actualizar datos de la empresa
             $empresa->fill([
                 'nombre_empresa'      => $data['nombre_empresa'],
                 'razon_social'        => $data['razon_social'],
@@ -124,14 +133,24 @@ class EmpresaController extends Controller
                 'id_provincia'        => $data['id_provincia'] ?? null,
             ]);
 
+            // Asegurar que el banner se guarde en el modelo
+            // (ya se asignó arriba, pero por si acaso)
+            if (isset($path) && $request->hasFile('banner')) {
+                $empresa->banner = $path;
+            }
+
             $empresa->save();
 
-            return redirect()->back()->with('perfil_ok', '✅ Perfil actualizado correctamente');
+            // Debug: verificar si se guardó
+            \Log::info('Banner guardado:', ['banner' => $empresa->banner]);
+
+            return redirect()->route('empresa.perfil')->with('perfil_ok', '✅ Perfil actualizado correctamente');
 
         } catch (\Exception $e) {
+            \Log::error('Error al actualizar perfil:', ['error' => $e->getMessage()]);
             return redirect()->back()
                 ->withInput()
-                ->withErrors(['error' => '❌ Error al actualizar el perfil de empresa: ' . $e->getMessage()]);
+                ->withErrors(['error' => '❌ Error al actualizar el perfil: ' . $e->getMessage()]);
         }
     }
 
