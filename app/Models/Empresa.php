@@ -28,6 +28,7 @@ class Empresa extends Model
         'sitio_web',
         'descripcion',
         'logo',
+        'banner',
         'representante',
         'email_representante',
         'tamano_empresa',
