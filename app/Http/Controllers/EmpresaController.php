@@ -200,47 +200,45 @@ class EmpresaController extends Controller
 
 
     /* Mostrar los postulantes de una oferta específica*/
-    public function verPostulantes($id)
-    {
-        // Buscar la oferta y verificar que pertenece a la empresa logueada
-        $oferta = Oferta::where('id_oferta', $id)
-            ->where('id_empresa', auth()->user()->empresa->id_empresa) // Asumiendo que User tiene relación con Empresa
-            ->firstOrFail();
+        public function verPostulantes($id)
+        {
+            $oferta = Oferta::where('id_oferta', $id)
+                ->where('id_empresa', auth()->user()->empresa->id_empresa)
+                ->firstOrFail();
 
-        // Obtener los postulantes con sus datos relacionados
-        $postulantes = Postulacion::where('id_oferta', $id)
-            ->with('estudiante') // Cargar la relación con estudiante
-            ->get()
-            ->map(function ($postulacion) {
-                // Transformar los datos al formato que usa la vista
-                $estudiante = $postulacion->estudiante;
+            $postulantes = Postulacion::where('id_oferta', $id)
+                ->with('estudiante')  // ← si Estudiante tiene id_usuario acá ya alcanza
+                ->get()
+                ->map(function ($postulacion) {
+                    $estudiante = $postulacion->estudiante;
 
-                $estadoMap = [
-                    'Postulado' => 'postulado',
-                    'En Revision' => 'en_revision',
-                    'Preseleccionado' => 'preseleccionado',
-                    'En Contacto' => 'en_contacto',
-                    'Rechazado' => 'rechazado'
-                ];
+                    $estadoMap = [
+                        'Postulado'       => 'postulado',
+                        'En Revision'     => 'en_revision',
+                        'Preseleccionado' => 'preseleccionado',
+                        'En Contacto'     => 'en_contacto',
+                        'Rechazado'       => 'rechazado'
+                    ];
 
-                return (object)[
-                    'id' => $postulacion->id_postulacion,
-                    'id_estudiante' => $estudiante->id_estudiante,
-                    'nombre' => $estudiante->name ?? $estudiante->nombre ?? 'Nombre no disponible',
-                    'carrera' => $estudiante->carrera->nombre ?? $estudiante->carrera ?? 'No especificada',
-                    'email' => $estudiante->email ?? $postulacion->email,
-                    'telefono' => $estudiante->telefono ?? 'No disponible',
-                    'fecha_postulacion' => $postulacion->created_at,
-                    'estado_original' => $postulacion->estado,
-                    'estado' => $postulacion->estado ?? 'pendiente',
-                    'cv_url' => $estudiante->cv_url ?? null,
-                    'linkedin_url' => $estudiante->linkedin_url ?? null,
-                    'github_url' => $estudiante->github_url ?? null
-                ];
-            });
+                    return (object)[
+                        'id'                 => $postulacion->id_postulacion,
+                        'id_estudiante'      => $estudiante->id_estudiante,
+                        'id_usuario'         => $estudiante->id_usuario, // ✅ agregado
+                        'nombre'             => $estudiante->name ?? $estudiante->nombre ?? 'Nombre no disponible',
+                        'carrera'            => $estudiante->carrera->nombre ?? $estudiante->carrera ?? 'No especificada',
+                        'email'              => $estudiante->email ?? $postulacion->email,
+                        'telefono'           => $estudiante->telefono ?? 'No disponible',
+                        'fecha_postulacion'  => $postulacion->created_at,
+                        'estado_original'    => $postulacion->estado,
+                        'estado'             => $postulacion->estado ?? 'pendiente',
+                        'cv_url'             => $estudiante->cv_url ?? null,
+                        'linkedin_url'       => $estudiante->linkedin_url ?? null,
+                        'github_url'         => $estudiante->github_url ?? null,
+                    ];
+                });
 
-        return view('empresa.postulantes-empresa', compact('oferta', 'postulantes'));
-    }
+            return view('empresa.postulantes-empresa', compact('oferta', 'postulantes'));
+        }
 
     public function storeOferta(Request $request)
     {

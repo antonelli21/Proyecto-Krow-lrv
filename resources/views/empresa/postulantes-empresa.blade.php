@@ -483,9 +483,9 @@
 
     <!-- Filtros -->
     <div class="filter-tabs">
-        <button class="filter-btn active" data-estado="todos">Todos ({{ $postulantes->count() }})</button>
+        <button class="filter-btn" data-estado="todos">Todos ({{ $postulantes->count() }})</button>
         <button class="filter-btn" data-estado="postulado">Postulados ({{ $postulantes->where('estado', 'postulado')->count() }})</button>
-        <button class="filter-btn" data-estado="en_revision">En Revisión ({{ $postulantes->where('estado', 'en_revision')->count() }})</button>
+        <button class="filter-btn active" data-estado="en_revision">En Revisión ({{ $postulantes->where('estado', 'en_revision')->count() }})</button>
         <button class="filter-btn" data-estado="preseleccionado">Preseleccionados ({{ $postulantes->where('estado', 'preseleccionado')->count() }})</button>
         <button class="filter-btn" data-estado="en_contacto">En Contacto ({{ $postulantes->where('estado', 'en_contacto')->count() }})</button>
         <button class="filter-btn" data-estado="rechazado">Rechazados ({{ $postulantes->where('estado', 'rechazado')->count() }})</button>
@@ -588,13 +588,12 @@
                             </svg>
                         </a>
                     </div>
-
-                    <a href="{{ route('empresa.mensajes') }}" class="btn-contact">
+                    <a href="{{ route('empresa.mensajes', ['postulante_id' => $postulante->id_usuario]) }}" class="btn-contact">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
                         </svg>
                         Contactar
-                    </a>
+                    </a
                 </div>
             </div>
         </div>

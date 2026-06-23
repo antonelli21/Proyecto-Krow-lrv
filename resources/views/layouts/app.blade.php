@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es" data-theme="dark" data-role="{{ auth()->check() ? auth()->user()->rol : 'invitado' }}">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,55 +11,56 @@
   <link rel="stylesheet" href="{{ asset('css/styles.css') }}">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 </head>
+
 <body>
 
-{{-- ════ HEADER ════ --}}
-@php
+  {{-- ════ HEADER ════ --}}
+  @php
   $rol = auth()->check() ? auth()->user()->rol : 'invitado';
-@endphp
+  @endphp
 
-<header class="krow-header" id="krow-header">
-  <div class="header-inner">
+  <header class="krow-header" id="krow-header">
+    <div class="header-inner">
 
-    <a href="{{ route('inicio') }}" class="header-logo">
-      <img src="{{ asset('img/logo_claro.png') }}" alt="KROW" class="logo-image logo-light">
-      <img src="{{ asset('img/logo_oscuro.png') }}" alt="KROW" class="logo-image logo-dark">
-      <div class="logo-brand">
-        <span class="logo-text">KROW</span>
-        <span class="brand-name">Banco de Trabajo</span>
-      </div>
-    </a>
+      <a href="{{ route('inicio') }}" class="header-logo">
+        <img src="{{ asset('img/logo_claro.png') }}" alt="KROW" class="logo-image logo-light">
+        <img src="{{ asset('img/logo_oscuro.png') }}" alt="KROW" class="logo-image logo-dark">
+        <div class="logo-brand">
+          <span class="logo-text">KROW</span>
+          <span class="brand-name">Banco de Trabajo</span>
+        </div>
+      </a>
 
-    <nav class="header-nav" id="header-nav">
-      <a href="{{ route('inicio') }}" class="nav-link {{ request()->routeIs('inicio') ? 'active' : '' }}">Inicio</a>
+      <nav class="header-nav" id="header-nav">
+        <a href="{{ route('inicio') }}" class="nav-link {{ request()->routeIs('inicio') ? 'active' : '' }}">Inicio</a>
 
-      @if($rol === 'estudiante')
-          <a href="{{ route('empresas') }}" class="nav-link {{ request()->routeIs('empresas') ? 'active' : '' }}">Empresas</a>
-          <a href="{{ route('estudiante.home') }}" class="nav-link {{ request()->routeIs('estudiante.home') ? 'active' : '' }}">Mis Postulaciones</a>
-      @elseif($rol === 'empresa')
-          <a href="{{ route('empresas') }}" class="nav-link {{ request()->routeIs('empresas') ? 'active' : '' }}">Empresas</a>
-          <a href="{{ route('empresa.home') }}" class="nav-link {{ request()->routeIs('empresa.home') ? 'active' : '' }}">Panel Empresa</a>
-      @elseif($rol === 'admin')
-          <a href="{{ route('empresas') }}" class="nav-link {{ request()->routeIs('empresas') ? 'active' : '' }}">Empresas</a>
-          <a href="{{ route('admin.home') }}" class="nav-link {{ request()->routeIs('admin.*') ? 'active' : '' }}">Administrar</a>
-      @else
-          <a href="{{ route('empresas') }}" class="nav-link {{ request()->routeIs('empresas') ? 'active' : '' }}">Empresas</a>
-          <a href="{{ route('login') }}" class="nav-link">Mis Postulaciones</a>
-      @endif
+        @if($rol === 'estudiante')
+        <a href="{{ route('empresas') }}" class="nav-link {{ request()->routeIs('empresas') ? 'active' : '' }}">Empresas</a>
+        <a href="{{ route('estudiante.home') }}" class="nav-link {{ request()->routeIs('estudiante.home') ? 'active' : '' }}">Mis Postulaciones</a>
+        @elseif($rol === 'empresa')
+        <a href="{{ route('empresas') }}" class="nav-link {{ request()->routeIs('empresas') ? 'active' : '' }}">Empresas</a>
+        <a href="{{ route('empresa.home') }}" class="nav-link {{ request()->routeIs('empresa.home') ? 'active' : '' }}">Panel Empresa</a>
+        @elseif($rol === 'admin')
+        <a href="{{ route('empresas') }}" class="nav-link {{ request()->routeIs('empresas') ? 'active' : '' }}">Empresas</a>
+        <a href="{{ route('admin.home') }}" class="nav-link {{ request()->routeIs('admin.*') ? 'active' : '' }}">Administrar</a>
+        @else
+        <a href="{{ route('empresas') }}" class="nav-link {{ request()->routeIs('empresas') ? 'active' : '' }}">Empresas</a>
+        <a href="{{ route('login') }}" class="nav-link">Mis Postulaciones</a>
+        @endif
 
-      <a href="{{ route('ayuda') }}" class="nav-link {{ request()->routeIs('ayuda') ? 'active' : '' }}">Ayuda</a>
+        <a href="{{ route('ayuda') }}" class="nav-link {{ request()->routeIs('ayuda') ? 'active' : '' }}">Ayuda</a>
 
-      @auth
+        @auth
         <div class="nav-mobile-account" aria-label="Mi cuenta móvil">
           <div class="mobile-account-title">Mi Cuenta</div>
           @if(Route::has($rol . '.perfil'))
-            <a href="{{ route($rol . '.perfil') }}" class="nav-link mobile-account-link">Mi Perfil</a>
+          <a href="{{ route($rol . '.perfil') }}" class="nav-link mobile-account-link">Mi Perfil</a>
           @endif
           <a href="{{ route('mensajes') }}" class="nav-link mobile-account-link">Mensajes</a>
           <a href="{{ route('configuracion') }}" class="nav-link mobile-account-link">Seguridad</a>
           <a href="{{ route('logout') }}" class="nav-link mobile-account-link" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Cerrar sesión</a>
         </div>
-      @else
+        @else
         <div class="nav-mobile-account" aria-label="Acceso móvil">
           <a href="{{ route('login') }}" class="nav-link mobile-account-link">Ingresar</a>
           <a href="{{ route('register') }}" class="nav-link mobile-account-link">Registro</a>
@@ -107,12 +109,12 @@
           <button class="account-btn" id="account-toggle" aria-haspopup="true" aria-expanded="false">
             <div class="account-avatar" style="{{ $fotoPerfil ? 'background-image:url(\'' . \Illuminate\Support\Facades\Storage::url($fotoPerfil) . '\'); background-size:cover; background-position:center;' : '' }}">
               @if(!$fotoPerfil)
-                <span class="avatar-initial">{{ strtoupper($inicial) }}</span>
+              <span class="avatar-initial">{{ strtoupper($inicial) }}</span>
               @endif
             </div>
             <span class="account-name">Mi Cuenta</span>
             <svg class="chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <polyline points="6 9 12 15 18 9"/>
+              <polyline points="6 9 12 15 18 9" />
             </svg>
           </button>
 
@@ -159,11 +161,11 @@
       @else
         <a href="{{ route('login') }}" class="btn-ghost-sm">Ingresar</a>
         <a href="{{ route('register') }}" class="btn-primary-sm">Registro</a>
-      @endauth
+        @endauth
 
-      <button class="hamburger" id="hamburger" aria-label="Menú" aria-expanded="false">
-        <span></span><span></span><span></span>
-      </button>
+        <button class="hamburger" id="hamburger" aria-label="Menú" aria-expanded="false">
+          <span></span><span></span><span></span>
+        </button>
 
     </div>
     <div class="nav-overlay" id="nav-overlay"></div>
@@ -186,25 +188,41 @@
         <li><a href="#">Twitter</a></li>
       </ul>
     </div>
-    <div class="footer-column">
-      <h4>Sobre KROW</h4>
-      <p>KROW es una plataforma dedicada a conectar profesionales y empresas.</p>
-    </div>
-    <div class="footer-column">
-      <h4>Contacto</h4>
-      <ul>
-        <li><a href="{{ route('ayuda') }}">Contacto</a></li>
-        <li><a href="#">Servicio</a></li>
-        <li><a href="#">Privacidad</a></li>
-      </ul>
-    </div>
-  </div>
-  <div class="footer-bottom">
-    <p>&copy; {{ date('Y') }} KROW. Todos los derechos reservados.</p>
-  </div>
-</footer>
+  </header>
 
-<script src="{{ asset('js/main.js') }}"></script>
-@yield('scripts')
+  <main style="flex:1; display:flex; flex-direction:column; overflow:auto;">
+    @yield('content')
+  </main>
+  {{-- ════ FOOTER ════ --}}
+  <footer>
+    <div class="site-footer">
+      <div class="footer-column">
+        <h4>Redes Sociales</h4>
+        <ul>
+          <li><a href="#">LinkedIn</a></li>
+          <li><a href="#">Instagram</a></li>
+          <li><a href="#">Twitter</a></li>
+        </ul>
+      </div>
+      <div class="footer-column">
+        <h4>Sobre KROW</h4>
+        <p>KROW es una plataforma dedicada a conectar profesionales y empresas.</p>
+      </div>
+      <div class="footer-column">
+        <h4>Contacto</h4>
+        <ul>
+          <li><a href="{{ route('ayuda') }}">Contacto</a></li>
+          <li><a href="#">Servicio</a></li>
+          <li><a href="#">Privacidad</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; {{ date('Y') }} KROW. Todos los derechos reservados.</p>
+    </div>
+  </footer>
+
+  <script src="{{ asset('js/main.js') }}"></script>
+  @yield('scripts')
 </body>
 </html>
