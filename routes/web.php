@@ -111,6 +111,7 @@ Route::prefix('estudiante')
         Route::put('/perfil/update',  [EstudianteController::class, 'updatePerfil'])->name('perfil.update');
         Route::get('/ofertas', [EstudianteController::class, 'obtenerOfertas'])->name('ofertas');
         Route::post('/ofertas/{id_oferta}/postular', [OfertaController::class, 'postular'])->name('ofertas.postular');
+        Route::get('/oferta/{id_oferta}/preview', [OfertaController::class, 'preview'])->name('ofertas.preview');
     });
 
 Route::prefix('empresa')
@@ -126,7 +127,10 @@ Route::prefix('empresa')
         Route::put('/postulacion/{id}/estado',      [EmpresaController::class, 'actualizarEstadoPostulante'])->name('actualizar-estado');
         Route::get('/perfil/editar',                [EmpresaController::class, 'editarPerfil'])->name('perfil.editar');
         Route::put('/perfil/update',                [EmpresaController::class, 'updatePerfil'])->name('perfil.update');
-        Route::get('/estudiante/{id}',              [EmpresaController::class, 'verPerfilEstudiante'])->name('estudiante.perfil'); // ← Esto crea 'empresa.estudiante.perfil'
+        Route::get('/estudiante/{id}',              [EmpresaController::class, 'verPerfilEstudiante'])->name('estudiante.perfil'); // ← 
+        Route::patch('/oferta/{id}/estado',  [EmpresaController::class, 'cambiarEstadoOferta'])->name('ofertas.estado');
+        Route::delete('/oferta/{id}',        [EmpresaController::class, 'eliminarOferta'])->name('ofertas.destroy');
+       Route::get('/oferta/{id_oferta}/preview', [OfertaController::class, 'preview'])->name('ofertas.preview');
     });
 /* ════════════════════════════════════════
    ADMIN
