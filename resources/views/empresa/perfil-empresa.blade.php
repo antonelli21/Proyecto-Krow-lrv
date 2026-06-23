@@ -2,39 +2,143 @@
 
 @section('title', 'Perfil Empresa - Krow')
 
+@section('banner')
+<div style="width:100%; height:380px; position:relative; overflow:hidden;">
+
+    {{-- Imagen o placeholder --}}
+    @if($empresa->banner)
+        <img src="{{ \Illuminate\Support\Facades\Storage::url($empresa->banner) }}"
+             alt="Banner" style="width:100%; height:100%; object-fit:cover; display:block;">
+    @else
+        <div style="width:100%; height:100%; background:linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);"></div>
+    @endif
+
+    {{-- Degradado solo en la parte inferior --}}
+    <div style="position:absolute; inset:0; background:linear-gradient(to top, rgba(0,0,0,0.80) 0%, rgba(0,0,0,0.3) 40%, transparent 70%);"></div>
+
+    {{-- Contenido pegado al fondo, centrado horizontalmente --}}
+    <div style="position:absolute; bottom:0; left:50%; transform:translateX(-50%); z-index:2; display:flex; flex-direction:column; align-items:center; text-align:center; padding-bottom:16px; gap:6px; width:100%;">
+
+        {{-- Logo circular --}}
+        <div style="width:84px; height:84px; border-radius:50%; border:3px solid rgba(255,255,255,0.35); overflow:hidden; background:var(--surface); display:flex; align-items:center; justify-content:center; font-size:2rem; font-weight:700; color:var(--accent); flex-shrink:0;
+            {{ $empresa->logo ? 'background-image:url(\'' . \Illuminate\Support\Facades\Storage::url($empresa->logo) . '\'); background-size:cover; background-position:center;' : '' }}">
+            @if(!$empresa->logo)
+                {{ strtoupper(substr($empresa->nombre_empresa ?? 'E', 0, 1)) }}
+            @endif
+        </div>
+
+        {{-- Nombre --}}
+        <h1 style="color:#fff; font-size:1.5rem; font-weight:800; margin:0; text-shadow:0 2px 8px rgba(0,0,0,0.7); line-height:1.2;">
+            {{ $empresa->nombre_empresa ?? '' }}
+        </h1>
+
+        {{-- Rubro --}}
+        @if(!empty($empresa->rubro))
+        <p style="color:rgba(255,255,255,0.8); font-size:0.9rem; margin:0; text-shadow:0 1px 4px rgba(0,0,0,0.6);">
+            {{ $empresa->rubro }}
+        </p>
+        @endif
+
+        {{-- Botones --}}
+        <div style="display:flex; gap:10px; flex-wrap:wrap; justify-content:center; margin-top:4px;">
+            <a href="{{ route('empresa.perfil.editar') }}" class="btn-accent" style="font-size:0.82rem; padding:6px 16px;">
+                <i class="fas fa-edit"></i> Editar perfil
+            </a>
+            <a href="{{ url('empresa/ofertas') }}" class="btn-outline" style="font-size:0.82rem; padding:6px 16px; color:#fff; border-color:rgba(255,255,255,0.4);">
+                <i class="fas fa-eye"></i> Ver ofertas
+            </a>
+        </div>
+
+    </div>
+</div>
+@endsection
+
 @section('content')
 
+<style>
+.empresa-header-body {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+.perfil-sections {
+    width: 100% !important;
+}
+</style>
+
+<style>
+.empresa-header-banner {
+    position: relative;
+    width: calc(100% + 48px);
+    margin-left: -24px;
+    margin-right: -24px;
+    margin-top: -24px;
+    height: 320px;
+    background: var(--surface);
+    border-radius: var(--radius) var(--radius) 0 0;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    border-bottom: none;
+}
+.empresa-banner-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.empresa-banner-placeholder {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, var(--surface) 0%, var(--border) 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--muted);
+    font-size: 0.85rem;
+}
+.empresa-header-body {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-top: none;
+    border-radius: 0 0 var(--radius) var(--radius);
+    padding: 0 24px 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    margin-bottom: 24px;
+}
+.empresa-logo-wrap {
+    margin-top: -44px;
+    margin-bottom: 12px;
+    position: relative;
+    z-index: 1;
+}
+.empresa-logo-circle {
+    width: 88px;
+    height: 88px;
+    border-radius: 50%;
+    border: 4px solid var(--surface);
+    background: var(--bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--accent);
+    overflow: hidden;
+    background-size: cover;
+    background-position: center;
+}
+.empresa-header-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 16px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+</style>
+
 <div class="panel-page">
-
-    {{-- HEADER --}}
-    <div class="perfil-header-card">
-        <div class="perfil-header-inner">
-
-            <div class="perfil-avatar {{ $empresa->logo ? 'avatar-expandible' : '' }}" 
-                 style="{{ $empresa->logo ? 'background-image:url(\'' . \Illuminate\Support\Facades\Storage::url($empresa->logo) . '\'); background-size:cover; background-position:center; cursor:pointer;' : '' }}"
-                 @if($empresa->logo) onclick="abrirModalAvatar('{{ \Illuminate\Support\Facades\Storage::url($empresa->logo) }}')" @endif>
-                @if(!$empresa->logo)
-                    {{ strtoupper(substr($empresa->nombre_empresa ?? 'E', 0, 1)) }}
-                @endif
-            </div>
-
-            <div class="perfil-header-info" style="flex: 1;">
-                <h1 class="panel-page-title">{{ $empresa->nombre_empresa ?? '' }}</h1>
-                <p class="panel-page-sub" style="margin-bottom: 2px;">{{ $empresa->rubro ?? '' }}</p>
-                <p class="panel-page-sub">{{ $empresa->direccion ?? '' }} — {{ $empresa->localidad->nombre ?? '' }}</p>
-            </div>
-
-            <div style="display: flex; flex-direction: column; gap: 10px; min-width: 160px;">
-                <a href="{{ route('empresa.perfil.editar') }}" class="btn-accent">
-                    <i class="fas fa-edit"></i> Editar perfil
-                </a>
-                <a href="{{ url('empresa/ofertas') }}" class="btn-outline" style="justify-content: center; text-align: center;">
-                    <i class="fas fa-eye"></i> Ver ofertas
-                </a>
-            </div>
-
-        </div>
-    </div>
 
     {{-- SECCIONES --}}
     <div class="perfil-sections">
@@ -206,13 +310,5 @@
 
     </div>
 </div>
-
-{{-- ════ MODAL FLOTANTE PARA EXPANDIR EL LOGO DE LA EMPRESA ════ --}}
-@if($empresa->logo)
-<div id="avatarModal" class="avatar-modal" onclick="cerrarModalAvatar()">
-    <span class="avatar-modal-close">&times;</span>
-    <img class="avatar-modal-content" id="imgModalTarget">
-</div>
-@endif
 
 @endsection

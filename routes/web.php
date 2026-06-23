@@ -144,10 +144,9 @@ Route::prefix('admin')
         Route::get('/home', [AdminController::class, 'home'])->name('home');
         Route::get('/empresas', [AdminController::class, 'listarEmpresas'])->name('empresas');
         Route::get('/estudiantes', [AdminController::class, 'listarEstudiantes'])->name('estudiantes');
-
         // NUEVA: Vista de ofertas de empresas aprobadas
         Route::get('/ofertas', [AdminController::class, 'listarOfertas'])->name('ofertas');
-
+        Route::get('/mensajes', fn() => view('mensajes'))->name('mensajes'); // ✅ agregado
         // Acciones existentes...
         Route::post('/estudiantes/{id}/estado', [AdminController::class, 'cambiarEstadoEstudiante'])->name('estudiantes.estado');
         Route::post('/empresas/{id}/estado', [AdminController::class, 'cambiarEstadoEmpresa'])->name('empresas.estado');
@@ -195,19 +194,31 @@ Route::post('/ayuda/contacto', [IndexController::class, 'contacto'])->name('ayud
    Rutas de API RESTful para los recursos del sistema.
    Usadas por el frontend con fetch/AJAX.
 ════════════════════════════════════════ */
-Route::prefix('api')->group(function () {
-    Route::apiResource('estudiantes', EstudianteController::class)->only(['index', 'show', 'store', 'update', 'destroy']);
-    Route::apiResource('empresas', EmpresaController::class)->only(['index', 'show', 'store', 'update', 'destroy']);
-    Route::apiResource('ofertas', OfertaController::class)->only(['index', 'show', 'store', 'update', 'destroy']);
-    Route::apiResource('chats', ChatController::class)->only(['index', 'show', 'store', 'destroy']);
-    Route::apiResource('mensajes', MensajeController::class)->only(['index', 'show', 'store', 'update', 'destroy']);
-    Route::apiResource('tickets', TicketSoporteController::class)->only(['index', 'show', 'store', 'update', 'destroy']);
+Route::prefix('api')
+    ->middleware(['auth', 'verified'])
+    ->group(function () {
 
-    Route::get('/provincias/{id}/localidades', function ($id_provincia) {
-        $localidades = \App\Models\Localidad::where('id_provincia', $id_provincia)
-            ->orderBy('nombre', 'asc')
-            ->get(['id_localidad', 'nombre']);
+        // ── Chats ──
+        Route::get('/chats/buscar-o-crear', [ChatController::class, 'buscarOCrear'])
+            ->name('chats.buscar-o-crear');
 
-        return response()->json($localidades);
+        Route::apiResource('chats', ChatController::class)
+            ->only(['index', 'show', 'store', 'destroy']);
+
+        // ── Mensajes ──
+        Route::get('/chats/{id_chat}/mensajes', [MensajeController::class, 'getMensajesByChat'])
+            ->name('chats.mensajes');
+        Route::post('/mensajes', [MensajeController::class, 'store'])
+            ->name('mensajes.store'); 
+
+        // ── Recursos públicos que sí pueden necesitar auth ──
+        Route::apiResource('tickets', TicketSoporteController::class)
+            ->only(['index', 'show', 'store', 'update', 'destroy']);
+
+        // ── Localidades ──
+        Route::get('/provincias/{id}/localidades', function ($id) {
+            return \App\Models\Localidad::where('id_provincia', $id)
+                ->orderBy('nombre')
+                ->get(['id_localidad', 'nombre']);
+        });
     });
-});

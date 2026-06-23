@@ -6,8 +6,25 @@
 
 <div class="panel-page">
 
+    {{-- ══ BANNER ══ --}}
+    <div id="banner-trigger" style="position:relative; left:50%; transform:translateX(-50%); width:100vw; margin-top:-1.5rem; height:320px; overflow:hidden; cursor:pointer;" title="Tocar para cambiar el banner">
+        <div id="bannerPreview" style="width:100%; height:100%; background:{{ $empresa->banner ? 'url(\'' . \Illuminate\Support\Facades\Storage::url($empresa->banner) . '\') center/cover no-repeat' : 'linear-gradient(135deg, var(--surface) 0%, var(--border) 100%)' }}; display:flex; align-items:center; justify-content:center;">
+            @if(!$empresa->banner)
+                <span style="color:var(--muted); font-size:0.85rem;">
+                    <i class="bi bi-image"></i> Tocar para subir un banner
+                </span>
+            @endif
+        </div>
+        <div id="banner-overlay" style="position:absolute; inset:0; background:rgba(0,0,0,0.4); display:flex; align-items:center; justify-content:center; opacity:0; transition:opacity .15s;">
+            <span style="color:#fff; font-size:0.9rem;"><i class="bi bi-camera-fill"></i> Cambiar banner</span>
+        </div>
+    </div>
+    <input type="file" id="banner" name="banner" accept="image/*"
+           form="formEditarEmpresa" style="display:none;"
+           onchange="previewBanner(this)">
+
     {{-- ══ HEADER ══ --}}
-    <div class="perfil-header-card">
+    <div class="perfil-header-card" style="border-radius: 0 0 var(--radius) var(--radius); border-top:none;">
         <div class="perfil-header-inner">
 
             <div class="perfil-avatar" id="logoPreview"
@@ -308,11 +325,33 @@
 </style>
 
 <script>
-// Preview en vivo del logo al elegir un archivo
+// ── Preview banner ──
+function previewBanner(input) {
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const preview = document.getElementById('bannerPreview');
+            preview.style.background = `url('${e.target.result}') center/cover no-repeat`;
+            preview.innerHTML = '';
+        };
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+
+// ── Hover overlay del banner ──
+const bannerTrigger = document.getElementById('banner-trigger');
+const bannerOverlay = document.getElementById('banner-overlay');
+if (bannerTrigger && bannerOverlay) {
+    bannerTrigger.addEventListener('mouseenter', () => bannerOverlay.style.opacity = '1');
+    bannerTrigger.addEventListener('mouseleave', () => bannerOverlay.style.opacity = '0');
+    bannerTrigger.addEventListener('click', () => document.getElementById('banner').click());
+}
+
+// ── Preview logo ──
 function previewLogo(input) {
     if (input.files && input.files[0]) {
         const reader = new FileReader();
-        reader.onload = function (e) {
+        reader.onload = function(e) {
             const avatar = document.getElementById('logoPreview');
             avatar.style.backgroundImage = `url('${e.target.result}')`;
             avatar.style.backgroundSize = 'cover';
@@ -323,7 +362,7 @@ function previewLogo(input) {
     }
 }
 
-// Select dependiente: al cambiar provincia, recargamos las localidades disponibles
+// ── Select dependiente provincia → localidad ──
 document.getElementById('id_provincia').addEventListener('change', function () {
     const idProvincia = this.value;
     const selectLocalidad = document.getElementById('id_localidad');

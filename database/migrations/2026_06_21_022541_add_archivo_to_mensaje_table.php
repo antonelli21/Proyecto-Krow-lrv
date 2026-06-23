@@ -12,15 +12,19 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('mensaje', function (Blueprint $table) {
-            $table->string('archivo')->nullable()->after('contenido');
-            $table->string('archivo_nombre')->nullable()->after('archivo');
+            // Agregamos los campos como nullable porque no todos los mensajes tienen archivos
+            $table->string('ruta_archivo')->nullable()->after('contenido');
+            $table->string('nombre_archivo')->nullable()->after('ruta_archivo');
         });
     }
 
+    /**
+     * Reverse the migrations.
+     */
     public function down(): void
     {
         Schema::table('mensaje', function (Blueprint $table) {
-            $table->dropColumn(['archivo', 'archivo_nombre']);
+            $table->dropColumn(['ruta_archivo', 'nombre_archivo']);
         });
     }
 };
