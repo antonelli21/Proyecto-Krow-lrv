@@ -145,10 +145,25 @@ public function cambiarEstadoEmpresa(Request $request, $id)
     public function cambiarEstadoOferta(Request $request, $id)
     {
         $request->validate([
-            'estado' => 'required|in:activa,pausada,cerrada'
+            'estado' => 'required|in:Activa,Pausada,Cerrada',
+            'motivo' => 'nullable|string|max:500',
         ]);
 
-        Oferta::findOrFail($id)->update(['estado' => $request->estado]);
+        $oferta = Oferta::findOrFail($id);
+
+        if ($request->estado === 'Pausada') {
+            $oferta->update([
+                'estado'             => 'Pausada',
+                'pausada_por_admin'  => true,
+                'motivo_pausa_admin' => $request->motivo ?? null,
+            ]);
+        } else {
+            $oferta->update([
+                'estado'             => $request->estado,
+                'pausada_por_admin'  => false,
+                'motivo_pausa_admin' => null,
+            ]);
+        }
 
         return redirect()->back()->with('success', "Oferta actualizada a {$request->estado}.");
     }
