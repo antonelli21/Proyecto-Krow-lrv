@@ -2,6 +2,64 @@
 
 @section('title', 'Base de Empresas — KROW')
 
+
+@section('banner')
+<div style="
+    width:100%;
+    height:clamp(140px, 22vw, 220px);
+    position:relative;
+    overflow:hidden;
+">
+
+    <img src="{{ asset('img/banner-estudiante.jpg') }}"
+         alt="Mis Postulaciones"
+         style="width:100%; height:100%; object-fit:cover; display:block;">
+
+    <div style="
+        position:absolute;
+        inset:0;
+        background:linear-gradient(
+            to right,
+            rgba(0,0,0,.8),
+            rgba(0,0,0,.8)
+        );
+    "></div>
+
+    <div style="
+        position:absolute;
+        inset:0;
+        display:flex;
+        flex-direction:column;
+        justify-content:center;
+        align-items:center;
+        text-align:center;
+        z-index:2;
+        padding:12px;
+    ">
+
+        <h1 style="
+            color:#fff;
+            margin:0;
+            font-size:clamp(1.2rem, 3vw, 2rem);
+            font-weight:800;
+        ">
+            Base de Empresas
+        </h1>
+
+        <p style="
+            color:rgba(255,255,255,.85);
+            margin-top:6px;
+            max-width:600px;
+            font-size:clamp(.75rem,1.5vw,.95rem);
+        ">
+
+    Explorá las empresas registradas en KROW y conocé sus oportunidades laborales.
+        </p>
+
+    </div>
+</div>
+@endsection
+
 @section('content')
 
 @php
@@ -103,9 +161,14 @@ $ubicaciones = $empresas->map(function($emp) {
                 {{ \Illuminate\Support\Str::limit($emp->descripcion ?? 'Sin descripción', 120) }}
             </div>
 
-            <a href="#" class="empresa-toggle" style="text-decoration:none;">
-                <span>Ver perfil &gt;</span>
-            </a>
+            <div class="empresa-actions">
+    <a href="{{ route('empresas.perfil', $emp->id_empresa) }}" class="empresa-btn empresa-btn--perfil">
+        Ver perfil
+    </a>
+    <a href="{{ route('inicio', ['empresa_id' => $emp->id_empresa]) }}" class="empresa-btn empresa-btn--ofertas">
+        Ver ofertas
+    </a>
+</div>
 
     </article>
         @endforeach
@@ -121,6 +184,55 @@ $ubicaciones = $empresas->map(function($emp) {
 
 
 <style>
+    .empresa-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+}
+
+.empresa-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    border-radius: var(--radius);
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background .2s, color .2s;
+    flex: 1;
+    justify-content: center;
+}
+
+.empresa-btn--perfil {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text);
+}
+
+.empresa-btn--perfil:hover {
+    background: var(--surface);
+    border-color: var(--accent);
+    color: var(--accent);
+}
+
+.empresa-btn--ofertas {
+    background: var(--accent);
+    border: 1px solid transparent;
+    color: #0D1A13;
+}
+
+.empresa-btn--ofertas:hover {
+    filter: brightness(1.4);
+}
+
+.empresa-btn-count {
+    background: rgba(0,0,0,.15);
+    border-radius: 20px;
+    padding: 1px 7px;
+    font-size: 11px;
+    font-weight: 700;
+}
     /* ── TOOLBAR RESPONSIVE ── */
     .empresas-toolbar {
         display: flex;

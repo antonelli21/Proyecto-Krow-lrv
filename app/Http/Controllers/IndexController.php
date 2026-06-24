@@ -14,7 +14,7 @@ class IndexController extends Controller
 {
     public function inicio(Request $request)
     {
-        $query = Oferta::with(['empresa', 'provincia', 'localidad'])->where('estado', 'activa');
+        $query = Oferta::with(['empresa', 'provincia', 'localidad', 'carrera', 'habilidades'])->where('estado', 'activa');
 
         // Filtro de búsqueda
         if ($request->filled('buscar')) {
@@ -27,6 +27,11 @@ class IndexController extends Controller
                     });
             });
         }
+
+        // Filtro por empresa (desde Base de Empresas)
+if ($request->filled('empresa_id')) {
+    $query->where('id_empresa', $request->empresa_id);
+}
 
         // Provincia
         if ($request->filled('provincia')) {
@@ -56,6 +61,14 @@ class IndexController extends Controller
         if ($request->filled('modalidad')) {
             $query->whereIn('modalidad', $request->modalidad);
         }
+
+// Tecnologías (múltiples)
+if ($request->filled('tecnologias')) {
+    $techs = $request->tecnologias;
+    $query->whereHas('habilidades', function ($q) use ($techs) {
+        $q->whereIn('nombre', $techs);
+    });
+}
 
         // Fecha de publicación
         if ($request->filled('fecha') && $request->fecha !== 'total') {
@@ -172,4 +185,13 @@ class IndexController extends Controller
 
         return back()->with('contacto_ok', true);
     }
+
+    public function perfilEmpresa($id)
+{
+    $empresa = Empresa::with(['localidad', 'provincia', 'ofertas'])
+        ->where('estado', 'aprobada')
+        ->findOrFail($id);
+
+    return view('empresa-perfil-publico', compact('empresa'));
+}
 }

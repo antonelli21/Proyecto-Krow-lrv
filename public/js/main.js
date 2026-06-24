@@ -261,7 +261,17 @@ function initFiltersSidebar() {
   const containerTags = document.getElementById('tags-container');
 
   if (inputTech && btnAdd && containerTags) {
-    let tagsList = [];
+    let tagsList = [...containerTags.querySelectorAll('input[name="tecnologias[]"]')]
+      .map(i => i.value.toLowerCase());
+
+    // Activar remove en tags ya renderizados por Blade
+    containerTags.querySelectorAll('.tech-tag').forEach(tag => {
+      const val = tag.querySelector('input[name="tecnologias[]"]')?.value;
+      tag.querySelector('.btn-remove-tag')?.addEventListener('click', () => {
+        tagsList = tagsList.filter(t => t !== val);
+        tag.remove();
+      });
+    });
 
     function createTag(text) {
       const cleanedText = text.trim();
@@ -311,17 +321,17 @@ function initFiltersSidebar() {
     });
   }
   const filtersForm = document.querySelector('.filters-form');
-const mainContent = document.getElementById('main-content');
-const resultCount = document.getElementById('result-count');
-const buscarInput = document.getElementById('buscar');
+  const mainContent = document.getElementById('main-content');
+  const resultCount = document.getElementById('result-count');
+  const buscarInput = document.getElementById('buscar');
 
-if (!filtersForm || !mainContent) return;
+  if (!filtersForm || !mainContent) return;
 
-async function fetchOfertas() {
+  async function fetchOfertas() {
     const params = new URLSearchParams(new FormData(filtersForm));
 
     const res = await fetch('/?' + params.toString(), {
-        headers: { 'Accept': 'application/json' }
+      headers: { 'Accept': 'application/json' }
     });
 
     const data = await res.json();
@@ -330,24 +340,56 @@ async function fetchOfertas() {
     if (cardContainer) cardContainer.innerHTML = data.html;
 
     if (resultCount) {
-        resultCount.textContent = 'Se encontraron ' + data.total + ' resultados';
+      resultCount.textContent = 'Se encontraron ' + data.total + ' resultados';
     }
-}
 
-// Búsqueda al escribir con debounce
-let debounceTimer;
-if (buscarInput) {
+    const tituloBanner = document.getElementById('banner-title');
+    const subtitleBanner = document.getElementById('banner-subtitle');
+    const imgBanner = document.getElementById('banner-img');
+    if (tituloBanner) {
+      const categoriaRaw = params.get('categoria');
+
+      const sinCategoria =
+        !categoriaRaw ||
+        categoriaRaw.trim() === '' ||
+        categoriaRaw.toLowerCase() === 'todas';
+
+      const categoria = categoriaRaw
+        ? categoriaRaw.toLowerCase().replace(/\s+/g, '-')
+        : null;
+
+      tituloBanner.textContent = sinCategoria
+        ? 'Ofertas de Empleo'
+        : categoriaRaw;
+
+      if (subtitleBanner) {
+        subtitleBanner.textContent = sinCategoria
+          ? 'Descubrí nuevas oportunidades y comenzá tu próxima experiencia laboral.'
+          : '';
+      }
+
+      if (imgBanner) {   // ← guard movido acá, solo aplica a la imagen
+        imgBanner.src = sinCategoria
+          ? "{{ asset('/img/banner-estudiante.jpg') }}"
+          : `{{ asset('/img') }}/${categoria}.jpg`;
+      }
+    }
+  }
+
+  // Búsqueda al escribir con debounce
+  let debounceTimer;
+  if (buscarInput) {
     buscarInput.addEventListener('input', () => {
-        clearTimeout(debounceTimer);
-        debounceTimer = setTimeout(fetchOfertas, 500);
+      clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(fetchOfertas, 500);
     });
-}
+  }
 
-// Botón aplicar filtros
-filtersForm.addEventListener('submit', (e) => {
+  // Botón aplicar filtros
+  filtersForm.addEventListener('submit', (e) => {
     e.preventDefault();
     fetchOfertas();
-});
+  });
 }
 
 // Inicializar filtros cuando el DOM esté listo
@@ -355,7 +397,7 @@ if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', initFiltersSidebar);
 } else {
   initFiltersSidebar();
-  
+
 }
 
 /* ════════════════════════════════════════
@@ -654,19 +696,19 @@ document.addEventListener('DOMContentLoaded', () => {
 })();
 
 function abrirModalAvatar(url) {
-    const modal = document.getElementById('avatarModal');
-    const modalImg = document.getElementById('imgModalTarget');
-    if(modal && modalImg) {
-        modal.style.display = "block";
-        modalImg.src = url;
-    }
+  const modal = document.getElementById('avatarModal');
+  const modalImg = document.getElementById('imgModalTarget');
+  if (modal && modalImg) {
+    modal.style.display = "block";
+    modalImg.src = url;
+  }
 }
 
 function cerrarModalAvatar() {
-    const modal = document.getElementById('avatarModal');
-    if(modal) {
-        modal.style.display = "none";
-    }
+  const modal = document.getElementById('avatarModal');
+  if (modal) {
+    modal.style.display = "none";
+  }
 }
 
 
@@ -1032,12 +1074,13 @@ function adminConfirm(name) {
 
   function initSort() {
     const select = document.getElementById('sort-select');
-    const main = document.getElementById('main-content');
-    if (!select || !main) return;
+    const container = document.getElementById('cards-list'); // ← cards-list, no cards-container
+    if (!select || !container) return;
 
     select.addEventListener('change', function () {
-      const cards = [...main.querySelectorAll('.job-card')];
+      const cards = [...container.querySelectorAll('.job-card')];
       if (!cards.length) return;
+
       cards.sort((a, b) => {
         const sa = Number(a.dataset.salario ?? 0);
         const sb = Number(b.dataset.salario ?? 0);
@@ -1047,8 +1090,8 @@ function adminConfirm(name) {
         if (this.value === 'salario-desc') return sb - sa;
         return fb - fa;
       });
-      const ref = main.querySelector('.pagination');
-      cards.forEach(c => main.insertBefore(c, ref ?? null));
+
+      cards.forEach(c => container.appendChild(c));
     });
   }
 

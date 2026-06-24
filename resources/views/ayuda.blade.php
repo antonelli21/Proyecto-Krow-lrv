@@ -2,6 +2,63 @@
 
 @section('title', 'Ayuda — KROW')
 
+@section('banner')
+<div style="
+    width:100%;
+    height:clamp(140px, 22vw, 220px);
+    position:relative;
+    overflow:hidden;
+">
+
+    <img src="{{ asset('img/banner-estudiante.jpg') }}"
+         alt="Mis Postulaciones"
+         style="width:100%; height:100%; object-fit:cover; display:block;">
+
+    <div style="
+        position:absolute;
+        inset:0;
+        background:linear-gradient(
+            to right,
+            rgba(0,0,0,.8),
+            rgba(0,0,0,.8)
+        );
+    "></div>
+
+    <div style="
+        position:absolute;
+        inset:0;
+        display:flex;
+        flex-direction:column;
+        justify-content:center;
+        align-items:center;
+        text-align:center;
+        z-index:2;
+        padding:12px;
+    ">
+
+        <h1 style="
+            color:#fff;
+            margin:0;
+            font-size:clamp(1.2rem, 3vw, 2rem);
+            font-weight:800;
+        ">
+            Centro de Ayuda
+        </h1>
+
+        <p style="
+            color:rgba(255,255,255,.85);
+            margin-top:6px;
+            max-width:600px;
+            font-size:clamp(.75rem,1.5vw,.95rem);
+        ">
+
+    Encontrá respuestas a las consultas más frecuentes y obtené asistencia para usar KROW.
+        </p>
+
+    </div>
+</div>
+@endsection
+
 @section('content')
 
 @php

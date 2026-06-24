@@ -654,7 +654,7 @@
             <div class="form-group">
                 <label for="tecnologia-input">Tecnologias/Herramientas</label>
                 <div class="tag-input-wrapper">
-                    <input type="text" id="tecnologia-input" name="tecnologia"
+                    <input type="text" id="tecnologia-input"
                         placeholder="Ej: C#, Oracle, Git..."
                         class="filter-input-text"
                         value="{{ request('tecnologia') }}">
@@ -795,10 +795,18 @@
         });
 
         form.addEventListener('submit', (e) => {
-            let todoValido = true;
-            camposRequeridos.forEach(id => {
-                if (!validarCampo(id)) todoValido = false;
-            });
+            form.addEventListener('submit', (e) => {
+    // Si hay texto sin agregar como tag, lo agrega antes de validar
+    if (inputTech && inputTech.value.trim()) {
+        createTag(inputTech.value.trim());
+    }
+
+    let todoValido = true;
+    camposRequeridos.forEach(id => {
+        if (!validarCampo(id)) todoValido = false;
+    });
+    // ... resto igual
+});
 
             if (!todoValido) {
                 e.preventDefault();

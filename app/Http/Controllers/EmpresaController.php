@@ -281,6 +281,30 @@ class EmpresaController extends Controller
         $oferta->fecha_publicacion = now();
         $oferta->estado            = 'Activa';
         $oferta->save();
+        // Guardar habilidades
+if ($request->has('tecnologias') && is_array($request->tecnologias) && count($request->tecnologias) > 0) {
+    $tecnologias = is_array($request->tecnologias)
+        ? $request->tecnologias
+        : explode(',', $request->tecnologias);
+
+    $ids = [];
+    foreach ($tecnologias as $nombre) {
+        $nombre = trim($nombre);
+        if (!$nombre) continue;
+
+        // Busca insensible a mayúsculas, crea si no existe
+        $habilidad = \App\Models\Habilidad::whereRaw('LOWER(nombre) = ?', [strtolower($nombre)])
+            ->first();
+
+        if (!$habilidad) {
+            $habilidad = \App\Models\Habilidad::create(['nombre' => ucfirst(strtolower($nombre))]);
+        }
+
+        $ids[] = $habilidad->id_habilidad;
+    }
+
+    $oferta->habilidades()->sync($ids);
+}
 
         return redirect()->route('empresa.home')->with('success', 'Oferta creada con éxito.');
     }
