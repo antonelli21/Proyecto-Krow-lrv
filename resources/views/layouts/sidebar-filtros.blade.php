@@ -133,23 +133,31 @@
     </div>
   </div>
 
-  {{-- Tecnologías --}}
-  <div class="filter-accordion open">
+{{-- Tecnologías --}}
+<div class="filter-accordion open">
     <div class="accordion-header">
-      <span>Tecnologías / Herramientas</span>
-      <span class="accordion-chevron">−</span>
+        <span>Tecnologías / Herramientas</span>
+        <span class="accordion-chevron">−</span>
     </div>
     <div class="accordion-content">
-      <div class="tag-input-wrapper">
-        <input type="text" id="tecnologia-input" name="tecnologia"
-          placeholder="Ej: C#, Oracle, Git..."
-          class="filter-input-text"
-          value="{{ request('tecnologia') }}">
-        <button type="button" id="btn-add-tag" class="btn-input-append">+</button>
-      </div>
-      <div id="tags-container" class="tags-flex-container"></div>
+        <div class="tag-input-wrapper">
+            <input type="text" id="tecnologia-input"
+                placeholder="Ej: C#, Oracle, Git..."
+                class="filter-input-text">
+            <button type="button" id="btn-add-tag" class="btn-input-append">+</button>
+        </div>
+        <div id="tags-container" class="tags-flex-container">
+            {{-- Restaurar tags desde request --}}
+            @foreach(request('tecnologias', []) as $tec)
+                <div class="tech-tag" data-tech="{{ $tec }}">
+                    <span>{{ $tec }}</span>
+                    <input type="hidden" name="tecnologias[]" value="{{ $tec }}">
+                    <button type="button" class="btn-remove-tag">&times;</button>
+                </div>
+            @endforeach
+        </div>
     </div>
-  </div>
+</div>
 
   {{-- Fecha de publicación --}}
   <div class="filter-accordion">

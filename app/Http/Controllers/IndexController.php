@@ -14,7 +14,7 @@ class IndexController extends Controller
 {
     public function inicio(Request $request)
     {
-        $query = Oferta::with(['empresa', 'provincia', 'localidad'])->where('estado', 'activa');
+        $query = Oferta::with(['empresa', 'provincia', 'localidad', 'carrera', 'habilidades'])->where('estado', 'activa');
 
         // Filtro de búsqueda
         if ($request->filled('buscar')) {
@@ -61,6 +61,14 @@ if ($request->filled('empresa_id')) {
         if ($request->filled('modalidad')) {
             $query->whereIn('modalidad', $request->modalidad);
         }
+
+// Tecnologías (múltiples)
+if ($request->filled('tecnologias')) {
+    $techs = $request->tecnologias;
+    $query->whereHas('habilidades', function ($q) use ($techs) {
+        $q->whereIn('nombre', $techs);
+    });
+}
 
         // Fecha de publicación
         if ($request->filled('fecha') && $request->fecha !== 'total') {

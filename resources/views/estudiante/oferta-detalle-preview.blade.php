@@ -15,7 +15,7 @@
     $experiencia  = $oferta->experiencia_requerida ?? '';
     $descripcion  = $oferta->descripcion     ?? '';
     $requisitos   = $oferta->requisitos      ?? '';
-    $tecnologias  = $oferta->tecnologias     ?? [];   
+    $tecnologias  = $oferta->habilidades     ?? [];    
     $estado       = $oferta->estado          ?? 'activa';
     
     // Corregido: Ahora apunta a ->direccion de la empresa

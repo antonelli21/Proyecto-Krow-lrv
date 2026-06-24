@@ -261,7 +261,17 @@ function initFiltersSidebar() {
   const containerTags = document.getElementById('tags-container');
 
   if (inputTech && btnAdd && containerTags) {
-    let tagsList = [];
+    let tagsList = [...containerTags.querySelectorAll('input[name="tecnologias[]"]')]
+      .map(i => i.value.toLowerCase());
+
+    // Activar remove en tags ya renderizados por Blade
+    containerTags.querySelectorAll('.tech-tag').forEach(tag => {
+      const val = tag.querySelector('input[name="tecnologias[]"]')?.value;
+      tag.querySelector('.btn-remove-tag')?.addEventListener('click', () => {
+        tagsList = tagsList.filter(t => t !== val);
+        tag.remove();
+      });
+    });
 
     function createTag(text) {
       const cleanedText = text.trim();
