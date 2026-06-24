@@ -28,6 +28,11 @@ class IndexController extends Controller
             });
         }
 
+        // Filtro por empresa (desde Base de Empresas)
+if ($request->filled('empresa_id')) {
+    $query->where('id_empresa', $request->empresa_id);
+}
+
         // Provincia
         if ($request->filled('provincia')) {
             $query->whereHas('provincia', function ($q) use ($request) {
@@ -172,4 +177,13 @@ class IndexController extends Controller
 
         return back()->with('contacto_ok', true);
     }
+
+    public function perfilEmpresa($id)
+{
+    $empresa = Empresa::with(['localidad', 'provincia', 'ofertas'])
+        ->where('estado', 'aprobada')
+        ->findOrFail($id);
+
+    return view('empresa-perfil-publico', compact('empresa'));
+}
 }

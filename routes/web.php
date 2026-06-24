@@ -28,6 +28,7 @@ Route::get('/ayuda', function () {
 })->name('ayuda');
 
 Route::get('/empresas', [IndexController::class, 'empresas'])->name('empresas');
+Route::get('/empresas/{id}', [IndexController::class, 'perfilEmpresa'])->name('empresas.perfil');
 
 // Detalle de oferta — accesible por todos (invitado, estudiante, empresa, admin)
 Route::get('/ofertas/{id_oferta}', [OfertaController::class, 'detalle'])->name('ofertas.detalle');
@@ -131,6 +132,7 @@ Route::prefix('empresa')
         Route::patch('/oferta/{id}/estado',  [EmpresaController::class, 'cambiarEstadoOferta'])->name('ofertas.estado');
         Route::delete('/oferta/{id}',        [EmpresaController::class, 'eliminarOferta'])->name('ofertas.destroy');
        Route::get('/oferta/{id_oferta}/preview', [OfertaController::class, 'preview'])->name('ofertas.preview');
+       
     });
 /* ════════════════════════════════════════
    ADMIN
@@ -215,13 +217,13 @@ Route::prefix('api')
         Route::apiResource('tickets', TicketSoporteController::class)
             ->only(['index', 'show', 'store', 'update', 'destroy']);
 
-        Route::apiResource('estudiantes', EstudianteController::class)
-            ->only(['index', 'show', 'store', 'update', 'destroy']);
-
         // ── Localidades ──
         Route::get('/provincias/{id}/localidades', function ($id) {
             return \App\Models\Localidad::where('id_provincia', $id)
                 ->orderBy('nombre')
                 ->get(['id_localidad', 'nombre']);
         });
+
+        Route::apiResource('estudiantes', EstudianteController::class)
+            ->only(['index', 'show', 'store', 'update', 'destroy']);
     });
