@@ -7,7 +7,7 @@
 @section('banner')
 <div style="
     width:100%;
-    height:clamp(140px, 22vw, 420px);
+    height:clamp(140px, 18vw, 280px);
     position:relative;
     overflow:hidden;
 ">
