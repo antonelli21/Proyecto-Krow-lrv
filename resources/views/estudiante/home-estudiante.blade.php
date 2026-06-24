@@ -5,7 +5,7 @@
 @section('banner')
 <div style="
     width:100%;
-    height:clamp(140px, 22vw, 220px);
+    height:clamp(140px, 22vw, 420px);
     position:relative;
     overflow:hidden;
 ">
@@ -17,7 +17,7 @@
     <div style="
         position:absolute;
         inset:0;
-        background:linear-gradient(to right, rgba(0,0,0,.6), rgba(0,0,0,.6));
+        background:linear-gradient(to right, rgba(0,0,0,.8), rgba(0,0,0,.8));
     "></div>
 
 </div>
@@ -25,7 +25,7 @@
 
 @section('content')
 
-<div class="panel-page" style="margin-top: -160px; position: relative; z-index: 5; background-color:var(--bg); border-radius: 8px; border:1px solid var(--surface);">
+<div class="panel-page" style="margin-top: -260px; position: relative; z-index: 5; background-color:var(--bg); border-radius: 8px; border:1px solid var(--surface);">
 
   <h1 class="panel-page-title">Panel del Estudiante</h1>
   <p class="panel-page-sub">Seguí el estado de tus postulaciones y gestioná tu perfil</p>

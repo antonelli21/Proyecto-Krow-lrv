@@ -2,8 +2,31 @@
 
 @section('title', 'Panel Empresa — KROW')
 
+
+@section('banner')
+<div style="
+    width:100%;
+    height:clamp(140px, 22vw, 420px);
+    position:relative;
+    overflow:hidden;
+">
+
+    <img src="{{ asset('img/banner-estudiante.jpg') }}"
+         alt="Banner"
+         style="width:100%; height:100%; object-fit:cover; display:block;">
+
+    <div style="
+        position:absolute;
+        inset:0;
+        background:linear-gradient(to right, rgba(0,0,0,.8), rgba(0,0,0,.8));
+    "></div>
+
+</div>
+@endsection
+
 @section('content')
-<div class="panel-page">
+
+<div class="panel-page" style="margin-top: -260px; position: relative; z-index: 5; background-color:var(--bg); border-radius: 8px; border:1px solid var(--surface);">
 
     <h1 class="panel-page-title">Panel de Empresa</h1>
     <p class="panel-page-sub">Gestiona tus ofertas laborales y revisá los postulantes</p>

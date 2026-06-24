@@ -611,7 +611,7 @@
                         <select name="area" id="area" class="form-select" required>
                             <option value="" disabled selected>Seleccionar...</option>
                             @foreach(['Ingeniería', 'Tecnología', 'Industria y producción', 'Marketing', 'Ventas', 'Recursos Humanos', 'Diseño', 'Administración', 'Finanzas'] as $cat)
-                                <option value="{{ $cat }}">[{{ $cat }}]</option>
+                                <option value="{{ $cat }}">{{ $cat }}</option>
                             @endforeach
                         </select>
                         <span class="select-chevron">▼</span>

@@ -54,11 +54,9 @@
     <div class="select-wrapper">
       <select id="categoria" name="categoria" class="filter-select">
         <option value="">Todas</option>
-        @if(isset($categoriasFiltro))
-        @foreach($categoriasFiltro as $cat)
-        <option value="{{ $cat }}" {{ request('categoria') === $cat ? 'selected' : '' }}>{{ $cat }}</option>
-        @endforeach
-        @endif
+        @foreach(['Ingeniería', 'Tecnología', 'Industria y producción', 'Marketing', 'Ventas', 'Recursos Humanos', 'Diseño', 'Administración', 'Finanzas'] as $cat)
+                                <option value="{{ $cat }}">{{ $cat }}</option>
+                            @endforeach
       </select>
       <i class="bi bi-chevron-down select-chevron"></i>
     </div>

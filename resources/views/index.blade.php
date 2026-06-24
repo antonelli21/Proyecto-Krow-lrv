@@ -3,25 +3,22 @@
 @section('title', 'KROW — Portal de Empleos')
 
 @section('banner')
-<div style="
+<div id="banner-index" style="
     width:100%;
-    height:clamp(140px, 22vw, 220px);
+    height:clamp(140px, 22vw, 420px);
     position:relative;
     overflow:hidden;
 ">
 
-    <img id="banner-img" src="{{ asset('img/banner-estudiante.jpg') }}"
-         alt="Mis Postulaciones"
-         style="width:100%; height:100%; object-fit:cover; display:block;">
+    <img id="banner-img"
+     src="{{ asset('img/banner-estudiante.jpg') }}"
+     alt="Banner"
+     style="width:100%; height:100%; object-fit:cover; display:block;">
 
     <div style="
         position:absolute;
         inset:0;
-        background:linear-gradient(
-            to right,
-            rgba(0,0,0,.8),
-            rgba(0,0,0,.8)
-        );
+        background:linear-gradient(to right, rgba(0,0,0,.8), rgba(0,0,0,.8));
     "></div>
 
     <div style="
@@ -36,34 +33,17 @@
         padding:12px;
     ">
 
-        @php
-    $tituloBanner = request('categoria') ?: 'Ofertas de Empleo';
-@endphp
-
-<h1 ID="banner-title" style="
+<h1 id="banner-title" style="
     color:#fff;
-    margin:0;
     font-size:clamp(1.2rem, 3vw, 2rem);
     font-weight:800;
+    margin-top:-250px;
 ">
-    {{ $tituloBanner }}
+    Krow
 </h1>
-
-@if(!request('categoria'))
-    <p id="banner-subtitle" style="
-        color:rgba(255,255,255,.85);
-        margin-top:6px;
-        max-width:600px;
-        font-size:clamp(.75rem,1.5vw,.95rem);
-    ">
-        Descubrí nuevas oportunidades y comenzá tu próxima experiencia laboral.
-    </p>
-@endif
-
-    </div>
+</div>
 </div>
 @endsection
-
 
 @section('content')
 @php
@@ -71,7 +51,8 @@ $rol = auth()->check() ? (auth()->user()->rol ?? 'invitado') : 'invitado';
 $ofertas = $ofertas ?? collect();
 @endphp
 
-<div class="page-body" id="page-body" data-rol="{{ $rol }}">
+
+<div class="page-body" id="page-body" data-rol="{{ $rol }}" style="margin-top: -260px; position: relative; z-index: 5;       background-color:var(--bg); border-radius: 8px; border:1px solid var(--surface);">
 
     <div class="mobile-sidebar-bar">
         <button class="sidebar-mobile-toggle" id="sidebar-drawer-toggle" aria-controls="sidebar-filtros" aria-expanded="false" aria-label="Abrir filtros">
