@@ -6,7 +6,7 @@
 @section('banner')
 <div style="
     width:100%;
-    height:clamp(140px, 22vw, 420px);
+    height:clamp(140px, 18vw, 280px);
     position:relative;
     overflow:hidden;
 ">
@@ -34,7 +34,7 @@ $ubicaciones = $empresas->map(function($emp) {
 @endphp
 
 
-<div class="empresas-page" style="margin-top: -260px; position: relative; z-index: 5; background-color:var(--bg); border-radius: 8px; border:1px solid var(--surface);">
+<div class="empresas-page" style="margin-top: clamp(-190px, -16vw, -140px); position: relative; z-index: 5; background-color:var(--bg); border-radius: 8px; border:1px solid var(--surface);">
 
     <div class="empresas-header">
         <h1>Base de Empresas</h1>

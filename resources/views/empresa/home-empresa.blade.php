@@ -6,7 +6,7 @@
 @section('banner')
 <div style="
     width:100%;
-    height:clamp(140px, 22vw, 420px);
+   height:clamp(140px, 18vw, 280px);
     position:relative;
     overflow:hidden;
 ">
@@ -26,7 +26,7 @@
 
 @section('content')
 
-<div class="panel-page" style="margin-top: -260px; position: relative; z-index: 5; background-color:var(--bg); border-radius: 8px; border:1px solid var(--surface);">
+<div class="panel-page" style="margin-top: clamp(-190px, -16vw, -140px); position: relative; z-index: 5; background-color:var(--bg); border-radius: 8px; border:1px solid var(--surface);">
 
     <h1 class="panel-page-title">Panel de Empresa</h1>
     <p class="panel-page-sub">Gestiona tus ofertas laborales y revisá los postulantes</p>
@@ -49,8 +49,8 @@
         </div>
         <div class="stat-card">
             <div>
-                <p class="stat-card-label">Vistas Totales</p>
-                <span class="stat-card-value">{{ $totalVistas ?? 0 }}</span>
+                <p class="stat-card-label">Ofertas Pausadas</p>
+                <span class="stat-card-value">{{ $ofertas->where('estado', 'Pausada')->count() }}</span>
             </div>
             <i class="bi bi-eye stat-card-icon"></i>
         </div>

@@ -5,7 +5,7 @@
 @section('banner')
 <div style="
     width:100%;
-    height:clamp(140px, 22vw, 420px);
+    height:clamp(140px, 18vw, 280px);
     position:relative;
     overflow:hidden;
 ">
@@ -25,7 +25,7 @@
 
 @section('content')
 
-<div class="panel-page" style="margin-top: -260px; position: relative; z-index: 5; background-color:var(--bg); border-radius: 8px; border:1px solid var(--surface);">
+<div class="panel-page" style="margin-top: clamp(-190px, -16vw, -140px); position: relative; z-index: 5; background-color:var(--bg); border-radius: 8px; border:1px solid var(--surface);">
 
   <h1 class="panel-page-title">Panel del Estudiante</h1>
   <p class="panel-page-sub">Seguí el estado de tus postulaciones y gestioná tu perfil</p>
@@ -48,10 +48,10 @@
     </div>
     <div class="stat-card">
       <div>
-        <p class="stat-card-label">Mensajes</p>
-        <span class="stat-card-value">0</span>
+        <p class="stat-card-label">Postulaciones Rechazadas</p>
+        <span class="stat-card-value"  id="stat-rechazo">0</span>
       </div>
-      <i class="bi bi-chat-dots stat-card-icon"></i>
+      <i class="bi bi-send stat-card-icon"></i>
     </div>
   </div>
 
@@ -260,6 +260,8 @@
     document.getElementById('stat-totales').innerText = postulaciones.length;
     document.getElementById('stat-activas').innerText =
       postulaciones.filter(p => p.estado && p.estado !== 'Rechazado').length;
+    document.getElementById('stat-rechazo').innerText =
+      postulaciones.filter(p => p.estado && p.estado === 'Rechazado').length;
   }
 
   function renderTable(postulaciones) {

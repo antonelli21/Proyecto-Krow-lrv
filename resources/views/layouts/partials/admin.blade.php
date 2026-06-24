@@ -2,7 +2,7 @@
     <p class="panel-card-title">Administración</p>
     <div class="admin-alert">
         <i class="bi bi-exclamation-triangle-fill"></i>
-        {{ $panelData['ofertas_pendientes'] ?? 0 }} ofertas pendientes de revisión
+        {{ $panelData['empresas_pendientes'] ?? 0 }} empresas pendientes de revisión
     </div>
     <div class="admin-alert" style="background:rgba(46,204,154,.08);border-color:rgba(46,204,154,.3);color:var(--accent);">
         <i class="bi bi-people-fill"></i>

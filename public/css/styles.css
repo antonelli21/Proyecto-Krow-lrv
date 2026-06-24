@@ -1216,7 +1216,6 @@ body {
    PAGE BODY — grid 3 columnas
 ════════════════════════════════════════ */
 .page-body {
-  flex: 1;
   display: grid;
   grid-template-columns: var(--sidebar-w) minmax(0, 1fr) var(--right-w);
   align-items: start;
@@ -1239,7 +1238,7 @@ body {
   padding: 8px 8px;
   align-self: start;
   top: calc(var(--header-h) + 8px);
-  max-height: calc(100vh - var(--header-h) - 32px);
+  max-height: calc(96vh - var(--header-h) - 32px);
   overflow-y: auto;
   scrollbar-width: thin;
   scrollbar-color: var(--accent) transparent;
@@ -2110,7 +2109,7 @@ body {
     display: flex;
     flex-direction: column;
     gap: 12px;
-    padding: 16px 12px 0;
+    padding: 16px 12px;
     width: 100%;
   }
 
@@ -7033,4 +7032,25 @@ textarea.filter-input-text:focus {
 
 .empresa-filtro-limpiar:hover {
   text-decoration: underline;
+}
+
+@media (max-width: 1440px) {
+
+  #page-body,
+  .empresas-page,
+  .ayuda-page,
+  .panel-page {
+    margin-top: clamp(-150px, -7vw, -150px) !important;
+    border-radius: 8px 8px 0 0;
+  }
+}
+
+@media (max-width: 480px) {
+
+  #page-body,
+  .empresas-page,
+  .ayuda-page,
+  .panel-page {
+    margin-top: -30px !important;
+  }
 }
