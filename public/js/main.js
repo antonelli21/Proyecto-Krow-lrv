@@ -344,9 +344,22 @@ function initFiltersSidebar() {
     }
 
     const tituloBanner = document.getElementById('banner-title');
-    const subtitleBanner = document.getElementById('banner-subtitle');
-    const imgBanner = document.getElementById('banner-img');
+    const indexBanner = document.getElementById('banner-index');
+
+    const coloresCategorias = {
+      'Ingeniería': '#3B82F6',             // Azul brillante
+      'Tecnología': '#6366F1',             // Índigo
+      'Industria y producción': '#F97316', // Naranja moderno
+      'Marketing': '#D946EF',              // Fucsia
+      'Ventas': '#22C55E',                 // Verde
+      'Recursos Humanos': '#06B6D4',       // Cian
+      'Diseño': '#EAB308',                 // Amarillo dorado
+      'Administración': '#64748B',         // Gris profesional
+      'Finanzas': '#14B8A6'                // Turquesa
+    };
+
     if (tituloBanner) {
+
       const categoriaRaw = params.get('categoria');
 
       const sinCategoria =
@@ -354,24 +367,25 @@ function initFiltersSidebar() {
         categoriaRaw.trim() === '' ||
         categoriaRaw.toLowerCase() === 'todas';
 
-      const categoria = categoriaRaw
-        ? categoriaRaw.toLowerCase().replace(/\s+/g, '-')
-        : null;
-
       tituloBanner.textContent = sinCategoria
-        ? 'Ofertas de Empleo'
+        ? 'Krow'
         : categoriaRaw;
 
-      if (subtitleBanner) {
-        subtitleBanner.textContent = sinCategoria
-          ? 'Descubrí nuevas oportunidades y comenzá tu próxima experiencia laboral.'
-          : '';
+      if (sinCategoria) {
+        indexBanner.style.background = '';
+      } else {
+        indexBanner.style.background =
+          coloresCategorias[categoriaRaw] || '#475569';
       }
 
-      if (imgBanner) {   // ← guard movido acá, solo aplica a la imagen
-        imgBanner.src = sinCategoria
-          ? "{{ asset('/img/banner-estudiante.jpg') }}"
-          : `{{ asset('/img') }}/${categoria}.jpg`;
+      const imgBanner = document.getElementById('banner-img');
+
+      if (sinCategoria) {
+        imgBanner.style.display = 'block';
+      } else {
+        imgBanner.style.display = 'none';
+        indexBanner.style.background =
+          coloresCategorias[categoriaRaw] || '#475569';
       }
     }
   }

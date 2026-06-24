@@ -6,57 +6,21 @@
 @section('banner')
 <div style="
     width:100%;
-    height:clamp(140px, 22vw, 220px);
+    height:clamp(140px, 22vw, 420px);
     position:relative;
     overflow:hidden;
 ">
 
     <img src="{{ asset('img/banner-estudiante.jpg') }}"
-         alt="Mis Postulaciones"
+         alt="Banner"
          style="width:100%; height:100%; object-fit:cover; display:block;">
 
     <div style="
         position:absolute;
         inset:0;
-        background:linear-gradient(
-            to right,
-            rgba(0,0,0,.8),
-            rgba(0,0,0,.8)
-        );
+        background:linear-gradient(to right, rgba(0,0,0,.8), rgba(0,0,0,.8));
     "></div>
 
-    <div style="
-        position:absolute;
-        inset:0;
-        display:flex;
-        flex-direction:column;
-        justify-content:center;
-        align-items:center;
-        text-align:center;
-        z-index:2;
-        padding:12px;
-    ">
-
-        <h1 style="
-            color:#fff;
-            margin:0;
-            font-size:clamp(1.2rem, 3vw, 2rem);
-            font-weight:800;
-        ">
-            Base de Empresas
-        </h1>
-
-        <p style="
-            color:rgba(255,255,255,.85);
-            margin-top:6px;
-            max-width:600px;
-            font-size:clamp(.75rem,1.5vw,.95rem);
-        ">
-
-    Explorá las empresas registradas en KROW y conocé sus oportunidades laborales.
-        </p>
-
-    </div>
 </div>
 @endsection
 
@@ -69,7 +33,8 @@ $ubicaciones = $empresas->map(function($emp) {
 })->filter()->unique()->values();
 @endphp
 
-<main class="empresas-page">
+
+<div class="empresas-page" style="margin-top: -260px; position: relative; z-index: 5; background-color:var(--bg); border-radius: 8px; border:1px solid var(--surface);">
 
     <div class="empresas-header">
         <h1>Base de Empresas</h1>
