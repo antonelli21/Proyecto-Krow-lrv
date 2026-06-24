@@ -208,11 +208,15 @@ if ($request->filled('tecnologias')) {
     }
 
     public function perfilEmpresa($id)
-{
-    $empresa = Empresa::with(['localidad', 'provincia', 'ofertas'])
-        ->where('estado', 'aprobada')
-        ->findOrFail($id);
+    {
+        $empresa = Empresa::with(['localidad', 'provincia'])
+            ->where('estado', 'aprobada')
+            ->findOrFail($id);
 
-    return view('empresa-perfil-publico', compact('empresa'));
-}
+        $ofertas = \App\Models\Oferta::where('id_empresa', $empresa->id_empresa)
+            ->where('estado', 'Activa')
+            ->get();
+
+        return view('empresa.perfil-publico', compact('empresa', 'ofertas'));
+    }
 }

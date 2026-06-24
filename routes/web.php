@@ -94,25 +94,18 @@ Route::prefix('estudiante')
     ->name('estudiante.')
     ->middleware(['auth', 'verified', 'role:estudiante', 'alumno.activo']) // <-- ¡OJO! Acordate de meter acá tu middleware de bloqueo
     ->group(function () {
-        Route::get('/home',           function () {
-            return view('estudiante.home-estudiante');
-        })->name('home');
-        Route::get('/empresas',       function () {
-            return view('empresas');
-        })->name('empresas');
-        Route::get('/perfil',         [EstudianteController::class, 'verPerfil'])->name('perfil');
-        Route::get('/mensajes',       function () {
-            return view('mensajes');
-        })->name('mensajes');
-        Route::get('/oferta/{id}',    function ($id) {
-            return view('estudiante.oferta-detalle', compact('id'));
-        })->name('oferta');
-        Route::get('/lista',          [EstudianteController::class, 'lista'])->name('lista');
-        Route::get('/perfil/editar',  [EstudianteController::class, 'editarPerfil'])->name('perfil.editar');
-        Route::put('/perfil/update',  [EstudianteController::class, 'updatePerfil'])->name('perfil.update');
-        Route::get('/ofertas', [EstudianteController::class, 'obtenerOfertas'])->name('ofertas');
-        Route::post('/ofertas/{id_oferta}/postular', [OfertaController::class, 'postular'])->name('ofertas.postular');
-        Route::get('/oferta/{id_oferta}/preview', [OfertaController::class, 'preview'])->name('ofertas.preview');
+        Route::get('/home',                             function () {     return view('estudiante.home-estudiante');})->name('home');
+        Route::get('/empresas',                         function () {return view('empresas');})->name('empresas');
+        Route::get('/perfil',                           [EstudianteController::class, 'verPerfil'])->name('perfil');
+        Route::get('/mensajes',                         function () {return view('mensajes');})->name('mensajes');
+        Route::get('/oferta/{id}',                      function ($id) {return view('estudiante.oferta-detalle', compact('id'));})->name('oferta');
+        Route::get('/lista',                            [EstudianteController::class, 'lista'])->name('lista');
+        Route::get('/perfil/editar',                    [EstudianteController::class, 'editarPerfil'])->name('perfil.editar');
+        Route::put('/perfil/update',                    [EstudianteController::class, 'updatePerfil'])->name('perfil.update');
+        Route::get('/ofertas',                          [EstudianteController::class, 'obtenerOfertas'])->name('ofertas');
+        Route::post('/ofertas/{id_oferta}/postular',    [OfertaController::class, 'postular'])->name('ofertas.postular');
+        Route::get('/oferta/{id_oferta}/preview',       [OfertaController::class, 'preview'])->name('ofertas.preview');
+        Route::get('/empresa/{empresa}',                [EmpresaController::class, 'verPerfilPublico'])->name('empresa.perfil');
     });
 
 Route::prefix('empresa')
@@ -129,9 +122,9 @@ Route::prefix('empresa')
         Route::get('/perfil/editar',                [EmpresaController::class, 'editarPerfil'])->name('perfil.editar');
         Route::put('/perfil/update',                [EmpresaController::class, 'updatePerfil'])->name('perfil.update');
         Route::get('/estudiante/{id}',              [EmpresaController::class, 'verPerfilEstudiante'])->name('estudiante.perfil'); // ← 
-        Route::patch('/oferta/{id}/estado',  [EmpresaController::class, 'cambiarEstadoOferta'])->name('ofertas.estado');
-        Route::delete('/oferta/{id}',        [EmpresaController::class, 'eliminarOferta'])->name('ofertas.destroy');
-       Route::get('/oferta/{id_oferta}/preview', [OfertaController::class, 'preview'])->name('ofertas.preview');
+        Route::patch('/oferta/{id}/estado',         [EmpresaController::class, 'cambiarEstadoOferta'])->name('ofertas.estado');
+        Route::delete('/oferta/{id}',               [EmpresaController::class, 'eliminarOferta'])->name('ofertas.destroy');
+       Route::get('/oferta/{id_oferta}/preview',    [OfertaController::class, 'preview'])->name('ofertas.preview');
        
     });
 /* ════════════════════════════════════════

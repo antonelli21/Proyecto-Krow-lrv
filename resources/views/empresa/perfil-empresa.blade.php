@@ -8,7 +8,8 @@
     {{-- Imagen o placeholder --}}
     @if($empresa->banner)
         <img src="{{ \Illuminate\Support\Facades\Storage::url($empresa->banner) }}"
-             alt="Banner" style="width:100%; height:100%; object-fit:cover; display:block;">
+            alt="Banner"
+            style="width:100%; height:100%; object-fit:cover; object-position:center; display:block; image-rendering:auto;">
     @else
         <div style="width:100%; height:100%; background:linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);"></div>
     @endif

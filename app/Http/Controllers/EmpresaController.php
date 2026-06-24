@@ -344,6 +344,16 @@ if ($request->has('tecnologias') && is_array($request->tecnologias) && count($re
         return view('empresa.perfil-estudiante', compact('estudiante'));
     }
 
+    public function verPerfilPublico(Empresa $empresa)
+    {
+        $empresa->load(['localidad', 'provincia']);
+        $ofertas = \App\Models\Oferta::where('id_empresa', $empresa->id_empresa)
+                    ->where('estado', 'Activa')
+                    ->get();
+
+        return view('empresa.perfil-publico', compact('empresa'));
+    }
+
     public function crearOferta()
     {
         $provincias = Provincia::orderBy('nombre', 'asc')->get();
