@@ -111,6 +111,13 @@ public function preview($id_oferta)
 
     public function update(Request $request, Oferta $oferta)
     {
+        if ($oferta->pausada_por_admin && $request->estado === 'Activa') {
+        return response()->json([
+            'success' => false,
+            'mensaje' => 'Esta oferta fue pausada por un administrador. Enviá un ticket para solicitar su reactivación.',
+        ], 403);
+        }
+
         $data = $request->validate([
             'titulo' => 'sometimes|required|string|max:100',
             'descripcion' => 'sometimes|required|string',
@@ -128,7 +135,6 @@ public function preview($id_oferta)
         ]);
 
         $oferta->update($data);
-
         return response()->json($oferta);
     }
 

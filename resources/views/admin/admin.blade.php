@@ -522,11 +522,11 @@
                   <i class="bi bi-eye"></i>
                 </button>
                 <button class="btn-icon btn-aprobar" title="Activar"
-                        onclick="submitEstado('{{ route('admin.ofertas.estado', $o->id_oferta) }}', 'activa')">
+                        onclick="submitEstado('{{ route('admin.ofertas.estado', $o->id_oferta) }}', 'Activa')">
                   <i class="bi bi-check-circle"></i>
                 </button>
                 <button class="btn-icon btn-suspender" title="Pausar"
-                        onclick="submitEstado('{{ route('admin.ofertas.estado', $o->id_oferta) }}', 'pausada')">
+                        onclick="submitEstado('{{ route('admin.ofertas.estado', $o->id_oferta) }}', 'Pausada')">
                   <i class="bi bi-pause-circle"></i>
                 </button>
                 <button class="btn-icon btn-eliminar" title="Eliminar"
@@ -564,15 +564,15 @@
                   <p class="admin-detalle-block-title">Acciones</p>
                   <div class="admin-detalle-actions">
                     <button class="btn-admin-aprobar"
-                            onclick="submitEstado('{{ route('admin.ofertas.estado', $o->id_oferta) }}', 'activa')">
+                            onclick="submitEstado('{{ route('admin.ofertas.estado', $o->id_oferta) }}', 'Activa')">
                       <i class="bi bi-check-circle"></i> Activar
                     </button>
                     <button class="btn-admin-suspender"
-                            onclick="submitEstado('{{ route('admin.ofertas.estado', $o->id_oferta) }}', 'pausada')">
+                            onclick="submitEstadoConMotivo('{{ route('admin.ofertas.estado', $o->id_oferta) }}', 'Pausada', this)">
                       <i class="bi bi-pause-circle"></i> Pausar
                     </button>
                     <button class="btn-admin-rechazar"
-                            onclick="submitEstado('{{ route('admin.ofertas.estado', $o->id_oferta) }}', 'cerrada')">
+                            onclick="submitEstado('{{ route('admin.ofertas.estado', $o->id_oferta) }}', 'Cerrada')">
                       <i class="bi bi-x-circle"></i> Cerrar
                     </button>
                     <button class="btn-admin-rechazar"
@@ -613,6 +613,7 @@
 <form id="form-estado" method="POST" style="display:none;">
   @csrf
   <input type="hidden" name="estado" id="form-estado-valor">
+  <input type="hidden" name="motivo" id="form-estado-motivo">
 </form>
 
 {{-- Formulario oculto para eliminaciones --}}
@@ -629,6 +630,17 @@
 function submitEstado(url, estado) {
   const form = document.getElementById('form-estado');
   document.getElementById('form-estado-valor').value = estado;
+  document.getElementById('form-estado-motivo').value = '';
+  form.action = url;
+  form.submit();
+}
+
+/* ── Cambio de estado con motivo opcional (para pausar ofertas) ── */
+function submitEstadoConMotivo(url, estado, btn) {
+  const motivo = prompt('Motivo de la pausa (opcional, se mostrará a la empresa):') ?? '';
+  const form = document.getElementById('form-estado');
+  document.getElementById('form-estado-valor').value = estado;
+  document.getElementById('form-estado-motivo').value = motivo;
   form.action = url;
   form.submit();
 }

@@ -37,11 +37,14 @@ class Oferta extends Model
         'id_provincia',
         'fecha_cierre',
         'estado',
+        'pausada_por_admin',
+        'motivo_pausa_admin',
     ];
 
     protected $casts = [
         'fecha_publicacion' => 'datetime',
         'fecha_cierre' => 'date',
+        'pausada_por_admin' => 'boolean',
     ];
 
     public function empresa(): BelongsTo

@@ -122,17 +122,40 @@
                     </td>
                     <td>
                         <div class="acciones-oferta">
-                        <button class="btn-toggle-estado"
+                        @if($oferta->pausada_por_admin && $oferta->estado === 'Pausada')
+                            <button class="btn-toggle-estado"
+                                    style="opacity:0.5; cursor:not-allowed;"
+                                    disabled
+                                    title="Pausada por el administrador. Enviá un ticket para solicitar reactivación.">
+                                Pausada por Admin
+                            </button>
+                        @else
+                            <button class="btn-toggle-estado"
                                     data-id="{{ $oferta->id_oferta }}"
                                     data-estado="{{ $oferta->estado }}"
                                     onclick="toggleEstadoOferta({{ $oferta->id_oferta }}, '{{ $oferta->estado }}')">
                                 {{ $oferta->estado === 'Activa' ? 'Pausar' : 'Activar' }}
                             </button>
+                        @endif
                             <button class="btn-eliminar-oferta"
                                     onclick="confirmarEliminar({{ $oferta->id_oferta }}, '{{ addslashes($oferta->titulo) }}')">
                                 <i class="bi bi-trash"></i>
                             </button>    
                         </div>
+                        @if($oferta->pausada_por_admin && $oferta->estado === 'Pausada')
+                            <div style="margin-top:6px;">
+                                @if($oferta->motivo_pausa_admin)
+                                    <small style="color:var(--muted); display:block; margin-bottom:4px;">
+                                        Motivo: {{ $oferta->motivo_pausa_admin }}
+                                    </small>
+                                @endif
+                                <a href="{{ route('ayuda') }}#contacto"
+                                   class="link-accion"
+                                   style="font-size:0.8rem;">
+                                    <i class="bi bi-ticket"></i> Enviar ticket
+                                </a>
+                            </div>
+                        @endif
                     </td>
                 </tr>
                 @endforeach
@@ -189,12 +212,26 @@
             <div class="oferta-mobile-footer">
                 <a href="{{ route('empresa.ofertas.postulantes', $oferta->id_oferta) }}"
                    class="link-accion">Postulantes →</a>
-                <button class="btn-toggle-estado"
-                        data-id="{{ $oferta->id_oferta }}"
-                        data-estado="{{ $oferta->estado }}"
-                        onclick="toggleEstadoOferta({{ $oferta->id_oferta }}, '{{ $oferta->estado }}')">
-                    {{ $oferta->estado === 'Activa' ? 'Pausar' : 'Activar' }}
-                </button>
+                @if($oferta->pausada_por_admin && $oferta->estado === 'Pausada')
+                    <button class="btn-toggle-estado"
+                            style="opacity:0.5; cursor:not-allowed;"
+                            disabled
+                            title="Pausada por el administrador.">
+                        Pausada por Admin
+                    </button>
+                    <a href="{{ route('ayuda') }}#contacto"
+                       class="link-accion"
+                       style="font-size:0.8rem;">
+                        <i class="bi bi-ticket"></i> Ticket
+                    </a>
+                @else
+                    <button class="btn-toggle-estado"
+                            data-id="{{ $oferta->id_oferta }}"
+                            data-estado="{{ $oferta->estado }}"
+                            onclick="toggleEstadoOferta({{ $oferta->id_oferta }}, '{{ $oferta->estado }}')">
+                        {{ $oferta->estado === 'Activa' ? 'Pausar' : 'Activar' }}
+                    </button>
+                @endif
                 <button class="btn-eliminar-oferta"
                         onclick="confirmarEliminar({{ $oferta->id_oferta }}, '{{ addslashes($oferta->titulo) }}')">
                     <i class="bi bi-trash"></i>
