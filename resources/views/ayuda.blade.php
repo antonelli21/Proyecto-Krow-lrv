@@ -5,7 +5,7 @@
 @section('banner')
 <div style="
     width:100%;
-    height:clamp(140px, 22vw, 420px);
+    height:clamp(140px, 18vw, 280px);
     position:relative;
     overflow:hidden;
 ">
@@ -468,7 +468,7 @@ $faqs = [
 </style>
 
 
-<main class="ayuda-page" style="margin-top: -260px; position: relative; z-index: 5; background-color:var(--bg); border-radius: 8px; border:1px solid var(--surface);">
+<main class="ayuda-page" style="margin-top: clamp(-190px, -16vw, -140px); position: relative; z-index: 5; background-color:var(--bg); border-radius: 8px; border:1px solid var(--surface);">
 
   {{-- FAQs --}}
   <section>

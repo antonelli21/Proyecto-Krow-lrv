@@ -110,8 +110,8 @@ if ($request->filled('tecnologias')) {
     $panelData['sin_cv'] = empty($estudiante->cv);
                 $estudiante = $user->estudiante;
                 $panelData['postulaciones'] = Postulacion::where('id_estudiante', $estudiante->id_estudiante)->count();
-                $panelData['en_revision'] = Postulacion::where('id_estudiante', $estudiante->id_estudiante)->where('estado', 'en_revision')->count();
-                $panelData['contactado'] = Postulacion::where('id_estudiante', $estudiante->id_estudiante)->where('estado', 'contacto')->count();
+                $panelData['en_revision'] = Postulacion::where('id_estudiante', $estudiante->id_estudiante)->where('estado', 'preseleccionado')->count();
+                $panelData['contactado'] = Postulacion::where('id_estudiante', $estudiante->id_estudiante)->where('estado', 'en contacto')->count();
                 $panelData['ultimas_ofertas'] = Oferta::with('empresa')->where('estado', 'activa')->orderBy('fecha_publicacion', 'desc')->take(3)->get();
                 
             } elseif ($user->rol === 'empresa' && $user->empresa) {
@@ -124,7 +124,7 @@ if ($request->filled('tecnologias')) {
                 $panelData['total_usuarios'] = \App\Models\User::count();
                 $panelData['empresas_activas'] = Empresa::where('estado', 'aprobada')->count();
                 $panelData['ofertas_publicadas'] = Oferta::where('estado', 'activa')->count();
-                $panelData['ofertas_pendientes'] = Oferta::where('estado', 'pendiente')->count();
+                $panelData['empresas_pendientes'] = Empresa::where('estado', 'pendiente')->count();
                 $panelData['nuevos_registros'] = \App\Models\User::whereDate('fecha_creacion', \Carbon\Carbon::today())->count();
             }
         }
