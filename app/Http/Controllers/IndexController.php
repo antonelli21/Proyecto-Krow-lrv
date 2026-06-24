@@ -88,11 +88,32 @@ if ($request->filled('tecnologias')) {
         if (Auth::check()) {
             $user = Auth::user();
             if ($user->rol === 'estudiante' && $user->estudiante) {
+                $estudiante = $user->estudiante->load('habilidades');
+    
+    // Calcular completitud del perfil
+    $campos = [
+        'foto_perfil'        => 10,
+        'cv'                 => 20,
+        'telefono'           => 10,
+        'descripcion'        => 15,
+        'linkedin'           => 10,
+        'modalidad_deseada'  => 10,
+        'portfolio'          => 10,
+    ];
+    $completitud = 0;
+    foreach ($campos as $campo => $peso) {
+        if (!empty($estudiante->$campo)) $completitud += $peso;
+    }
+    if ($estudiante->habilidades->count() > 0) $completitud += 15;
+    
+    $panelData['completitud'] = $completitud;
+    $panelData['sin_cv'] = empty($estudiante->cv);
                 $estudiante = $user->estudiante;
                 $panelData['postulaciones'] = Postulacion::where('id_estudiante', $estudiante->id_estudiante)->count();
                 $panelData['en_revision'] = Postulacion::where('id_estudiante', $estudiante->id_estudiante)->where('estado', 'en_revision')->count();
                 $panelData['contactado'] = Postulacion::where('id_estudiante', $estudiante->id_estudiante)->where('estado', 'contacto')->count();
                 $panelData['ultimas_ofertas'] = Oferta::with('empresa')->where('estado', 'activa')->orderBy('fecha_publicacion', 'desc')->take(3)->get();
+                
             } elseif ($user->rol === 'empresa' && $user->empresa) {
                 $empresa = $user->empresa;
                 $ofertasIds = $empresa->ofertas()->pluck('id_oferta');

@@ -158,6 +158,24 @@
 
             @if(!auth()->check() || auth()->user()->rol === 'estudiante')
             <div class="sidebar-card">
+                {{-- Alerta de error (CV faltante, etc) --}}
+    @if(session('error'))
+        <div style="
+            padding:10px 12px;
+            background:rgba(239,68,68,.08);
+            border:1px solid rgba(239,68,68,.25);
+            border-radius:var(--radius);
+            font-size:0.82rem;
+            color:#ef4444;
+            margin-bottom:12px;
+            display:flex;
+            align-items:flex-start;
+            gap:8px;
+        ">
+            <i class="bi bi-exclamation-triangle-fill" style="flex-shrink:0;margin-top:2px;"></i>
+            <span>{!! session('error') !!}</span>
+        </div>
+    @endif
                 @auth
                     @if ($yaPostulado)
                         <button class="btn-postular ya-postulado" disabled>

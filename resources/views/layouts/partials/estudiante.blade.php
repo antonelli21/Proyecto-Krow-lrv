@@ -37,12 +37,87 @@
         @endif
     </div>
 </div>
-<div class="panel-card">
-    <p class="panel-card-title">Tu perfil</p>
-    <p style="font-size:0.85rem;color:var(--muted);margin-bottom:12px;">
-        Completá tu perfil para que las empresas te encuentren.
-    </p>
-    <a href="{{ url('/estudiante/perfil') }}" class="btn-apply-filters" style="display:block;text-align:center;text-decoration:none;">
-        <i class="bi bi-person-circle"></i> Ver mi perfil
-    </a>
+<div class="panel-card" style="padding:0;overflow:hidden;">
+
+    {{-- Header con fondo accent-dim --}}
+    <div style="
+        padding:14px 16px 12px;
+        background:var(--accent-dim);
+        border-bottom:1px solid var(--border-accent);
+        display:flex;
+        align-items:center;
+        justify-content:space-between;
+        gap:8px;
+    ">
+        <p class="panel-card-title" style="margin:0;">Tu perfil</p>
+        @php $completitud = $panelData['completitud'] ?? 0; @endphp
+        <span style="
+            font-family:var(--font-display);
+            font-size:1.1rem;
+            font-weight:800;
+            color:{{ $completitud >= 80 ? 'var(--accent)' : ($completitud >= 50 ? '#f59e0b' : '#ef4444') }};
+        ">{{ $completitud }}%</span>
+    </div>
+
+    {{-- Barra de progreso --}}
+    <div style="height:4px;background:var(--border);width:100%;">
+        <div style="
+            height:100%;
+            width:{{ $completitud }}%;
+            background:{{ $completitud >= 80 ? 'var(--accent)' : ($completitud >= 50 ? '#f59e0b' : '#ef4444') }};
+            transition:width .4s ease;
+        "></div>
+    </div>
+
+    <div style="padding:14px 16px 16px;display:flex;flex-direction:column;gap:10px;">
+
+        {{-- Advertencias --}}
+        @if($panelData['sin_cv'] ?? false)
+        <div style="
+            display:flex;
+            align-items:center;
+            gap:8px;
+            padding:8px 12px;
+            background:rgba(239,68,68,.08);
+            border:1px solid rgba(239,68,68,.25);
+            border-radius:var(--radius);
+            font-size:0.78rem;
+            color:#ef4444;
+        ">
+            <i class="bi bi-exclamation-triangle-fill" style="flex-shrink:0;"></i>
+            CV no cargado — requerido para postularte
+        </div>
+        @endif
+
+        @if($completitud < 80)
+        <div style="
+            display:flex;
+            align-items:center;
+            gap:8px;
+            padding:8px 12px;
+            background:var(--bg-hover);
+            border:1px solid var(--border);
+            border-radius:var(--radius);
+            font-size:0.78rem;
+            color:var(--muted);
+        ">
+            <i class="bi bi-person-check" style="flex-shrink:0;color:var(--accent);"></i>
+            Completá tu perfil para destacar ante las empresas
+        </div>
+        @endif
+
+        {{-- Botón --}}
+        <a href="{{ url('/estudiante/perfil') }}" class="btn-apply-filters" style="
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            gap:6px;
+            text-decoration:none;
+            margin-top:2px;
+        ">
+            <i class="bi bi-person-circle"></i>
+            {{ $completitud >= 80 ? 'Ver mi perfil' : 'Completar perfil' }}
+        </a>
+
+    </div>
 </div>

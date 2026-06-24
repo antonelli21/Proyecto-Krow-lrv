@@ -45,11 +45,16 @@ public function preview($id_oferta)
         public function postular($id_oferta)
         {
             $oferta = Oferta::findOrFail($id_oferta);
-            $estudiante = auth()->user()->estudiante;
+    $estudiante = auth()->user()->estudiante;
 
-            if (!$estudiante) {
-                return back()->with('error', 'No tenés un perfil de estudiante.');
-            }
+    if (!$estudiante) {
+        return back()->with('error', 'No tenés un perfil de estudiante.');
+    }
+
+    // Bloquear si no tiene CV
+    if (empty($estudiante->cv)) {
+        return back()->with('error', 'Necesitás cargar tu CV antes de postularte. <a style="color:var(--accent);" href="' . route('estudiante.perfil.editar') . '">Ir a mi perfil</a>');
+    }
 
             // Verificar si ya se postuló
             $yaPostulado = $oferta->postulaciones()
