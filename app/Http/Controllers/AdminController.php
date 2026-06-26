@@ -347,4 +347,37 @@ private function eliminarUserConDependencias(int $idUsuario): void
     // Finalmente el user
     User::destroy($idUsuario);
 }
+public function listarReportes()
+{
+    $seccion = 'reportes';
+
+    $totalReportes   = \DB::table('ticket_soporte')->count();
+    $reportesAbiertos = \DB::table('ticket_soporte')->where('estado', 'Abierto')->count();
+    $reportesEnProceso = \DB::table('ticket_soporte')->where('estado', 'En Proceso')->count();
+    $reportesResueltos = \DB::table('ticket_soporte')->where('estado', 'Resuelto')->count();
+
+    $reportes = \DB::table('ticket_soporte')
+        ->leftJoin('users', 'ticket_soporte.id_usuario', '=', 'users.id')
+        ->select(
+            'ticket_soporte.*',
+            'users.email as user_email',
+            'users.name as user_name'
+        )
+        ->orderBy('ticket_soporte.fecha_creacion', 'desc')
+        ->paginate(20);
+
+    return view('admin.admin', compact(
+        'seccion',
+        'totalReportes', 'reportesAbiertos', 'reportesEnProceso', 'reportesResueltos',
+        'reportes'
+    ));
+}
+
+public function cambiarEstadoReporte(Request $request, $id)
+{
+    $request->validate(['estado' => 'required|in:Abierto,En Proceso,Resuelto']);
+    \DB::table('ticket_soporte')->where('id_ticket', $id)->update(['estado' => $request->estado]);
+    return redirect()->back()->with('success', 'Ticket actualizado.');
+}
+
 }

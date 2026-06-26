@@ -57,6 +57,9 @@
     <a href="{{ route('admin.ofertas') }}" class="admin-tab {{ $seccion === 'ofertas' ? 'active' : '' }}">
       <i class="bi bi-briefcase"></i> Ofertas
     </a>
+    <a href="{{ route('admin.reportes') }}" class="admin-tab {{ $seccion === 'reportes' ? 'active' : '' }}">
+  <i class="bi bi-ticket-perforated"></i> Reportes
+</a>
   </div>
 
   {{-- ════════════════════════════════════════
@@ -649,7 +652,182 @@
     </div>
   </div>
   @endif
+@if($seccion === 'reportes')
+<div class="admin-tab-panel active" id="panel-reportes">
 
+  <div class="admin-stats">
+    <div class="admin-stat">
+      <div class="admin-stat-label label-total"><i class="bi bi-ticket-perforated"></i> Total</div>
+      <div class="admin-stat-value">{{ $totalReportes }}</div>
+    </div>
+    <div class="admin-stat">
+      <div class="admin-stat-label label-pendiente"><i class="bi bi-envelope"></i> Abiertos</div>
+      <div class="admin-stat-value">{{ $reportesAbiertos }}</div>
+    </div>
+    <div class="admin-stat">
+      <div class="admin-stat-label label-suspendido"><i class="bi bi-arrow-repeat"></i> En Proceso</div>
+      <div class="admin-stat-value">{{ $reportesEnProceso }}</div>
+    </div>
+    <div class="admin-stat">
+      <div class="admin-stat-label label-activo"><i class="bi bi-check2-all"></i> Resueltos</div>
+      <div class="admin-stat-value">{{ $reportesResueltos }}</div>
+    </div>
+  </div>
+
+  <div class="admin-toolbar">
+    <div class="admin-search">
+      <i class="bi bi-search"></i>
+      <input type="text" placeholder="Buscar por nombre, email o asunto...">
+    </div>
+    <select class="admin-filter-select" data-filter="estado">
+      <option value="">Todos los estados</option>
+      <option value="abierto">Abierto</option>
+      <option value="en proceso">En Proceso</option>
+      <option value="resuelto">Resuelto</option>
+    </select>
+  </div>
+
+  <div class="admin-table-wrap">
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th>Remitente</th>
+          <th>Asunto</th>
+          <th>Fecha</th>
+          <th>Estado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        @forelse($reportes as $r)
+        @php
+  $badgeRep = match($r->estado) {
+    'Abierto'    => 'pendiente',
+    'En Proceso' => 'suspendido',
+    'Resuelto'   => 'activo',
+    default      => 'pendiente'
+  };
+  // user_name/user_email vienen del JOIN (usuario registrado)
+  // nombre_remitente/email_remitente vienen del formulario (siempre presentes)
+  $nombreMostrar = $r->user_name      ?? $r->nombre_remitente ?? '—';
+  $emailMostrar  = $r->user_email     ?? $r->email_remitente  ?? '—';
+  $asuntoReal    = $r->asunto;
+@endphp
+        <tr data-id="rep{{ $r->id_ticket }}"
+            data-search="{{ strtolower($nombreMostrar . ' ' . $emailMostrar . ' ' . $asuntoReal) }}"
+            data-estado="{{ strtolower($r->estado) }}"
+            id="fila-reporte-{{ $r->id_ticket }}"
+            style="{{ $r->estado === 'Abierto' ? 'font-weight:600;' : '' }}">
+          <td class="td-nombre">
+            {{ $nombreMostrar }}
+            <br><span class="td-id">{{ $emailMostrar }}</span>
+          </td>
+          <td style="max-width:260px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+            {{ $asuntoReal }}
+          </td>
+          <td class="td-fecha">
+            {{ \Carbon\Carbon::parse($r->fecha_creacion)->format('d/m/Y H:i') }}
+          </td>
+          <td>
+            <span class="badge-admin badge-{{ $badgeRep }}" id="badge-rep-{{ $r->id_ticket }}">
+              {{ $r->estado }}
+            </span>
+          </td>
+          <td>
+            <div class="td-acciones">
+              <button class="btn-icon btn-ver" title="Ver ticket"
+                      onclick="toggleAdminDetalle('rep{{ $r->id_ticket }}', this)">
+                <i class="bi bi-eye"></i>
+              </button>
+            </div>
+          </td>
+        </tr>
+
+        {{-- DETALLE EXPANDIBLE --}}
+        <tr class="admin-detalle-row" id="admin-det-rep{{ $r->id_ticket }}">
+          <td colspan="5">
+            <div class="admin-detalle-inner" style="grid-template-columns: 180px 1fr 200px;">
+
+              <div>
+                <p class="admin-detalle-block-title">Remitente</p>
+                <p class="admin-detalle-value" style="font-weight:600;">{{ $nombreMostrar }}</p>
+                <p class="admin-detalle-value">{{ $emailMostrar }}</p>
+                <p class="admin-detalle-value" style="margin-top:8px; font-size:11.5px; color:var(--muted);">
+                  {{ \Carbon\Carbon::parse($r->fecha_creacion)->format('d/m/Y H:i') }}
+                </p>
+                @if($r->id_usuario)
+                  <p class="admin-detalle-value" style="margin-top:4px; font-size:11.5px; color:var(--accent);">
+                    <i class="bi bi-person-check"></i> Usuario registrado
+                  </p>
+                @else
+                  <p class="admin-detalle-value" style="margin-top:4px; font-size:11.5px; color:var(--muted);">
+                    <i class="bi bi-person-x"></i> No registrado
+                  </p>
+                @endif
+              </div>
+
+              <div>
+                <p class="admin-detalle-block-title">{{ $asuntoReal }}</p>
+                <p class="admin-detalle-value" style="white-space:pre-line; line-height:1.7;">{{ $r->descripcion }}</p>
+              </div>
+
+              <div>
+                <p class="admin-detalle-block-title">Acciones</p>
+                <div class="admin-detalle-actions">
+
+                  {{-- Cambiar estado --}}
+                  <form method="POST" action="{{ route('admin.reportes.estado', $r->id_ticket) }}"
+                        style="display:flex; flex-direction:column; gap:6px;">
+                    @csrf
+                    <select name="estado" class="admin-filter-select"
+                            style="font-size:12px; padding:6px 10px;"
+                            onchange="this.form.submit()">
+                      <option value="Abierto"    {{ $r->estado === 'Abierto'    ? 'selected' : '' }}>Abierto</option>
+                      <option value="En Proceso" {{ $r->estado === 'En Proceso' ? 'selected' : '' }}>En Proceso</option>
+                      <option value="Resuelto"   {{ $r->estado === 'Resuelto'   ? 'selected' : '' }}>Resuelto</option>
+                    </select>
+                  </form>
+
+                  {{-- Contactar --}}
+                  @if($r->id_usuario)
+                    <a href="{{ route('admin.mensajes', ['postulante_id' => $r->id_usuario]) }}"
+                       class="btn-admin-contactar" style="margin-top:6px;">
+                      <i class="bi bi-chat-dots"></i> Contactar
+                    </a>
+                  @else
+                    <a href="mailto:{{ $emailMostrar }}"
+                       class="btn-admin-contactar" style="margin-top:6px;">
+                      <i class="bi bi-envelope"></i> Enviar email
+                    </a>
+                  @endif
+
+                </div>
+              </div>
+
+            </div>
+          </td>
+        </tr>
+        @empty
+        <tr>
+          <td colspan="5" style="text-align:center;padding:2rem;color:var(--muted);">
+            No hay tickets de contacto aún.
+          </td>
+        </tr>
+        @endforelse
+      </tbody>
+    </table>
+
+    @if($reportes->hasPages())
+      <div style="padding:16px;">{{ $reportes->links() }}</div>
+    @endif
+
+    <div class="admin-empty" style="display:none">
+      <i class="bi bi-search"></i>
+      <p>No se encontraron tickets con esos filtros.</p>
+    </div>
+  </div>
+</div>
+@endif
 </div>
 
 {{-- Formulario oculto para cambios de estado --}}

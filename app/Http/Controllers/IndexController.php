@@ -168,44 +168,29 @@ if ($request->filled('tecnologias')) {
     }
 
     public function contacto(Request $request)
-    {
-        $request->validate([
-            'nombre'  => 'required|min:2',
-            'email'   => 'required|email',
-            'asunto'  => 'required|min:3',
-            'mensaje' => 'required|min:20',
-        ]);
+{
+    $request->validate([
+        'nombre'  => 'required|string|min:2|max:100',
+        'email'   => 'required|email|max:150',
+        'asunto'  => 'required|string|min:3|max:200',
+        'mensaje' => 'required|string|min:20',
+    ]);
 
-        // Parche SSL temporal para entorno local
-        config([
-            'mail.mailers.smtp.stream' => [
-                'ssl' => [
-                    'allow_self_signed' => true,
-                    'verify_peer' => false,
-                    'verify_peer_name' => false,
-                ],
-            ],
-        ]);
+    // Buscar si el email corresponde a un usuario registrado
+    $idUsuario = \App\Models\User::where('email', $request->email)->value('id');
 
-        try {
-            Mail::raw("Mensaje de: {$request->nombre} <{$request->email}>\n\nAsunto: {$request->asunto}\n\nMensaje:\n{$request->mensaje}", function ($message) use ($request) {
-                $message->to(env('MAIL_FROM_ADDRESS', 'soporte@krow.com'))
-                    ->replyTo($request->email, $request->nombre)
-                    ->subject("Contacto KROW: {$request->asunto}");
-            });
-        } catch (\Exception $e) {
-            if ($request->ajax() || $request->wantsJson()) {
-                return response()->json(['error' => 'No se pudo enviar el correo. Intente más tarde.'], 500);
-            }
-            return back()->withErrors(['email' => 'No se pudo enviar el correo: ' . $e->getMessage()]);
-        }
+    \DB::table('ticket_soporte')->insert([
+    'id_usuario'        => \App\Models\User::where('email', $request->email)->value('id'),
+    'nombre_remitente'  => $request->nombre,
+    'email_remitente'   => $request->email,
+    'asunto'            => $request->asunto,
+    'descripcion'       => $request->mensaje,
+    'estado'            => 'Abierto',
+    'fecha_creacion'    => now(),
+]);
 
-        if ($request->ajax() || $request->wantsJson()) {
-            return response()->json(['success' => true, 'message' => 'Mensaje enviado correctamente.']);
-        }
-
-        return back()->with('contacto_ok', true);
-    }
+    return redirect()->back()->with('contacto_ok', true);
+}
 
     public function perfilEmpresa($id)
     {
