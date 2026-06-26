@@ -106,6 +106,7 @@ Route::prefix('estudiante')
         Route::post('/ofertas/{id_oferta}/postular',    [OfertaController::class, 'postular'])->name('ofertas.postular');
         Route::get('/oferta/{id_oferta}/preview',       [OfertaController::class, 'preview'])->name('ofertas.preview');
         Route::get('/empresa/{empresa}',                [EmpresaController::class, 'verPerfilPublico'])->name('empresa.perfil');
+        Route::delete('/postulacion/{id}', [EstudianteController::class, 'cancelarPostulacion']);
     });
 
 Route::prefix('empresa')
@@ -135,22 +136,33 @@ Route::prefix('admin')
     ->name('admin.')
     ->middleware(['auth', 'verified', 'role:admin'])
     ->group(function () {
-        // Vistas principales existentes
-        Route::get('/home', [AdminController::class, 'home'])->name('home');
-        Route::get('/empresas', [AdminController::class, 'listarEmpresas'])->name('empresas');
-        Route::get('/estudiantes', [AdminController::class, 'listarEstudiantes'])->name('estudiantes');
-        // NUEVA: Vista de ofertas de empresas aprobadas
-        Route::get('/ofertas', [AdminController::class, 'listarOfertas'])->name('ofertas');
-        Route::get('/mensajes', fn() => view('mensajes'))->name('mensajes'); // ✅ agregado
-        // Acciones existentes...
+        Route::get('/home',           [AdminController::class, 'home'])->name('home');
+        Route::get('/empresas',       [AdminController::class, 'listarEmpresas'])->name('empresas');
+        Route::get('/estudiantes',    [AdminController::class, 'listarEstudiantes'])->name('estudiantes');
+        Route::get('/ofertas',        [AdminController::class, 'listarOfertas'])->name('ofertas');
+        Route::get('/mensajes',       fn() => view('mensajes'))->name('mensajes');
+
+        // Estado individual
         Route::post('/estudiantes/{id}/estado', [AdminController::class, 'cambiarEstadoEstudiante'])->name('estudiantes.estado');
-        Route::post('/empresas/{id}/estado', [AdminController::class, 'cambiarEstadoEmpresa'])->name('empresas.estado');
+        Route::post('/empresas/{id}/estado',    [AdminController::class, 'cambiarEstadoEmpresa'])->name('empresas.estado');
+        Route::post('/ofertas/{id}/estado',     [AdminController::class, 'cambiarEstadoOferta'])->name('ofertas.estado');
+
+        // Eliminación individual
         Route::delete('/estudiantes/{id}', [AdminController::class, 'eliminarEstudiante'])->name('estudiantes.destroy');
-        Route::delete('/empresas/{id}', [AdminController::class, 'eliminarEmpresa'])->name('empresas.destroy');
+        Route::delete('/empresas/{id}',    [AdminController::class, 'eliminarEmpresa'])->name('empresas.destroy');
+        Route::delete('/ofertas/{id}',     [AdminController::class, 'eliminarOferta'])->name('ofertas.destroy');
 
+        // Bulk estudiantes
+        Route::post('/estudiantes/bulk-estado',   [AdminController::class, 'bulkEstadoEstudiantes'])->name('estudiantes.bulk-estado');
+        Route::post('/estudiantes/bulk-destroy',  [AdminController::class, 'bulkDestroyEstudiantes'])->name('estudiantes.bulk-destroy');
 
-        Route::post('/ofertas/{id}/estado', [AdminController::class, 'cambiarEstadoOferta'])->name('ofertas.estado');
-        Route::delete('/ofertas/{id}', [AdminController::class, 'eliminarOferta'])->name('ofertas.destroy');
+        // Bulk empresas
+        Route::post('/empresas/bulk-estado',      [AdminController::class, 'bulkEstadoEmpresas'])->name('empresas.bulk-estado');
+        Route::post('/empresas/bulk-destroy',     [AdminController::class, 'bulkDestroyEmpresas'])->name('empresas.bulk-destroy');
+
+        // Bulk ofertas
+        Route::post('/ofertas/bulk-estado',       [AdminController::class, 'bulkEstadoOfertas'])->name('ofertas.bulk-estado');
+        Route::post('/ofertas/bulk-destroy',      [AdminController::class, 'bulkDestroyOfertas'])->name('ofertas.bulk-destroy');
     });
 
 /* ════════════════════════════════════════

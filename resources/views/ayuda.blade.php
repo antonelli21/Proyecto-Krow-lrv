@@ -496,7 +496,7 @@ $faqs = [
 
   {{-- Formulario de contacto --}}
   <section>
-    <div class="contacto-card">
+    <div class="contacto-card" id="Contacto" style="scroll-margin-top: 100px;">
       <h2 class="ayuda-section-title" style="margin-bottom:4px;">Contáctanos</h2>
       <p class="ayuda-section-sub">¿No encontraste lo que buscabas? Envianos un mensaje y te responderemos lo antes posible.</p>
 

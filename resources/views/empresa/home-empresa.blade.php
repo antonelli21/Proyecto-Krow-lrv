@@ -25,6 +25,19 @@
 @endsection
 
 @section('content')
+<!-- Dialog confirmar — genérico -->
+<dialog id="dialogConfirmar" class="modal-confirmar">
+    <div class="modal-confirmar-content">
+        <h3 class="modal-confirmar-title" id="dialogConfirmarTitle">Confirmar acción</h3>
+        <p class="modal-confirmar-msg" id="dialogConfirmarMsg"></p>
+        <div class="modal-confirmar-btns">
+            <button onclick="document.getElementById('dialogConfirmar').close()"
+                    class="btn-cancelar-dialog">Cancelar</button>
+            <button id="btnConfirmarAccion"
+                    class="btn-confirmar-eliminar">Confirmar</button>
+        </div>
+    </div>
+</dialog>
 
 <div class="panel-page" style="margin-top: clamp(-190px, -16vw, -140px); position: relative; z-index: 5; background-color:var(--bg); border-radius: 8px; border:1px solid var(--surface);">
 
@@ -68,10 +81,42 @@
     @if(isset($ofertas) && count($ofertas) > 0)
 
     <!-- Desktop: tabla -->
+    <div id="bulk-bar-emp" style="display:none; align-items:center; gap:8px; padding:10px 14px; background:var(--surface); border:1px solid var(--accent); border-radius:var(--radius); margin-bottom:12px; flex-wrap:wrap;">
+  <span id="bulk-count-emp" style="font-size:12.5px; font-weight:700; color:var(--accent); margin-right:4px;"></span>
+
+  <button onclick="bulkEmpEstado('Activa')"
+          style="display:inline-flex; align-items:center; gap:5px; padding:5px 11px; font-size:12px; font-weight:700; border-radius:6px; cursor:pointer; border:1px solid var(--border); background:var(--bg); color:var(--text); transition:border-color 0.15s, color 0.15s;"
+          onmouseover="this.style.borderColor='var(--accent)';this.style.color='var(--accent)'"
+          onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--text)'">
+    <i class="bi bi-check-circle"></i> Activar
+  </button>
+
+  <button onclick="bulkEmpEstado('Pausada')"
+          style="display:inline-flex; align-items:center; gap:5px; padding:5px 11px; font-size:12px; font-weight:700; border-radius:6px; cursor:pointer; border:1px solid var(--border); background:var(--bg); color:var(--text); transition:border-color 0.15s, color 0.15s;"
+          onmouseover="this.style.borderColor='var(--accent)';this.style.color='var(--accent)'"
+          onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--text)'">
+    <i class="bi bi-pause-circle"></i> Pausar
+  </button>
+
+  <button onclick="bulkEmpEliminar()"
+          style="display:inline-flex; align-items:center; gap:5px; padding:5px 11px; font-size:12px; font-weight:700; border-radius:6px; cursor:pointer; border:1px solid rgba(212,24,61,.4); background:transparent; color:#e05577; transition:background 0.15s;"
+          onmouseover="this.style.background='rgba(212,24,61,0.08)'"
+          onmouseout="this.style.background='transparent'">
+    <i class="bi bi-trash"></i> Eliminar
+  </button>
+
+  <button onclick="clearBulkEmp()"
+          style="display:inline-flex; align-items:center; gap:5px; padding:5px 11px; font-size:12px; font-weight:700; border-radius:6px; cursor:pointer; border:1px solid var(--border); background:transparent; color:var(--muted); margin-left:auto; transition:color 0.15s;"
+          onmouseover="this.style.color='var(--text)'"
+          onmouseout="this.style.color='var(--muted)'">
+    Cancelar
+  </button>
+</div>
     <div class="table-responsive-desktop">
         <table class="ofertas-table">
             <thead>
                 <tr>
+                    <th style="width:36px;"><input type="checkbox" id="check-all-emp" class="check-all-emp"></th>
                     <th>Puesto</th>
                     <th>Ubicación</th>
                     <th>Tipo</th>
@@ -98,6 +143,7 @@
                     };
                 @endphp
                 <tr id="fila-oferta-{{ $oferta->id_oferta }}">
+                    <td><input type="checkbox" class="check-emp" data-id="{{ $oferta->id_oferta }}"></td>
                     <td class="td-puesto td-clickable"
                         onclick="abrirModalOferta({{ $oferta->id_oferta }})">
                         {{ $oferta->titulo }}
@@ -468,6 +514,7 @@
         .stats-row       { grid-template-columns: 1fr; }
         .section-actions { flex-direction: column; }
     }
+   
 </style>
 
 <script>
@@ -546,12 +593,29 @@ if (statActivas) {
     // ── Eliminar ──────────────────────────────────
     let ofertaAEliminar = null;
 
-    function confirmarEliminar(idOferta, titulo) {
-        ofertaAEliminar = idOferta;
-        document.getElementById('msgEliminar').textContent =
-            `¿Confirmás eliminar "${titulo}"? Se borrarán todas las postulaciones asociadas y no se puede deshacer.`;
-        document.getElementById('dialogEliminar').showModal();
-    }
+    async function confirmarEliminar(idOferta, titulo) {
+    const ok = await modalConfirm(
+        'Eliminar oferta',
+        `¿Confirmás eliminar "${titulo}"? Se borrarán todas las postulaciones asociadas y no se puede deshacer.`,
+        'Sí, eliminar'
+    );
+    if (!ok) return;
+
+    fetch(`/empresa/oferta/${idOferta}`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' }
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (!data.success) { alert('Error al eliminar.'); return; }
+        document.getElementById(`fila-oferta-${idOferta}`)?.remove();
+        document.getElementById(`card-oferta-${idOferta}`)?.remove();
+        // Actualizar contador
+        const stat = document.querySelectorAll('.stat-card')[0]?.querySelector('.stat-card-value');
+        if (stat) stat.textContent = document.querySelectorAll('.badge-estado-oferta.estado-activa').length / 2;
+    })
+    .catch(() => alert('Error de red.'));
+}
 
     document.getElementById('btnConfirmarEliminar').addEventListener('click', function () {
         if (!ofertaAEliminar) return;
@@ -589,6 +653,97 @@ if (statActivas) {
             this.close();
         }
     });
+    /* ── Empresa bulk ── */
+document.getElementById('check-all-emp')?.addEventListener('change', function() {
+  document.querySelectorAll('.check-emp').forEach(c => c.checked = this.checked);
+  updateBulkEmp();
+});
+document.addEventListener('change', e => {
+  if (!e.target.classList.contains('check-emp')) return;
+  const all = document.querySelectorAll('.check-emp');
+  const checkAll = document.getElementById('check-all-emp');
+  if (checkAll) checkAll.checked = [...all].every(c => c.checked);
+  updateBulkEmp();
+});
+
+function getSelectedEmp() {
+  return [...document.querySelectorAll('.check-emp:checked')].map(c => c.dataset.id);
+}
+function updateBulkEmp() {
+  const ids = getSelectedEmp();
+  const bar = document.getElementById('bulk-bar-emp');
+  if (!bar) return;
+  bar.style.display = ids.length > 0 ? 'flex' : 'none';
+  document.getElementById('bulk-count-emp').textContent =
+    `${ids.length} seleccionada${ids.length !== 1 ? 's' : ''}`;
+}
+function clearBulkEmp() {
+  document.querySelectorAll('.check-emp, #check-all-emp').forEach(c => c.checked = false);
+  updateBulkEmp();
+}
+function bulkEmpEstado(estado) {
+  const ids = getSelectedEmp();
+  if (!ids.length) return;
+  Promise.all(ids.map(id =>
+    fetch(`/empresa/oferta/${id}/estado`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+      body: JSON.stringify({ estado })
+    }).then(r => r.json())
+  )).then(() => location.reload());
+}
+async function bulkEmpEliminar() {
+    const ids = getSelectedEmp();
+    if (!ids.length) return;
+
+    const ok = await modalConfirm(
+        'Eliminar ofertas',
+        `¿Eliminar ${ids.length} oferta(s) seleccionada(s)? No se puede deshacer.`,
+        'Sí, eliminar'
+    );
+    if (!ok) return;
+
+    Promise.all(ids.map(id =>
+        fetch(`/empresa/oferta/${id}`, {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' }
+        }).then(r => r.json())
+    )).then(() => location.reload());
+}
+// Devuelve una Promise<boolean>, igual que el adminConfirm del admin
+function modalConfirm(titulo, mensaje, labelBoton = 'Confirmar') {
+    return new Promise(resolve => {
+        const dialog = document.getElementById('dialogConfirmar');
+        document.getElementById('dialogConfirmarTitle').textContent = titulo;
+        document.getElementById('dialogConfirmarMsg').textContent   = mensaje;
+
+        const btn = document.getElementById('btnConfirmarAccion');
+        btn.textContent = labelBoton;
+
+        // Limpiar listener anterior para evitar doble-disparo
+        const nuevo = btn.cloneNode(true);
+        btn.parentNode.replaceChild(nuevo, btn);
+
+        nuevo.addEventListener('click', () => {
+            dialog.close();
+            resolve(true);
+        });
+
+        dialog.addEventListener('close', () => resolve(false), { once: true });
+
+        // Cerrar clickeando backdrop
+        dialog.addEventListener('click', function handler(e) {
+            const rect = dialog.getBoundingClientRect();
+            if (e.clientX < rect.left || e.clientX > rect.right ||
+                e.clientY < rect.top  || e.clientY > rect.bottom) {
+                dialog.close();
+                dialog.removeEventListener('click', handler);
+            }
+        });
+
+        dialog.showModal();
+    });
+}
 </script>
 
 @endsection

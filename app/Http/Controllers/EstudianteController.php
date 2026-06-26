@@ -204,5 +204,16 @@ class EstudianteController extends Controller
         return response()->json($ofertas);
     }
 
+    public function cancelarPostulacion(Request $request, $id)
+{
+    $estudiante = auth()->user()->estudiante;
 
+    $postulacion = \App\Models\Postulacion::where('id_postulacion', $id)
+        ->where('id_estudiante', $estudiante->id_estudiante)
+        ->firstOrFail();
+
+    $postulacion->delete();
+
+    return response()->json(['success' => true]);
+}
 }

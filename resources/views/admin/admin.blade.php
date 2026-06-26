@@ -105,6 +105,20 @@
       </select>
     </div>
 
+    <div class="bulk-bar" id="bulk-bar-alumnos" style="display:none;">
+      <span class="bulk-count"></span>
+      <button onclick="bulkAccion('panel-alumnos','estado','activo')">
+        <i class="bi bi-check-circle"></i> Activar
+      </button>
+      <button onclick="bulkAccion('panel-alumnos','estado','suspendido')">
+        <i class="bi bi-slash-circle"></i> Suspender
+      </button>
+      <button class="bulk-btn-danger" onclick="bulkAccion('panel-alumnos','delete')">
+        <i class="bi bi-trash"></i> Eliminar
+      </button>
+      <button class="bulk-btn-cancel" onclick="clearBulk('panel-alumnos')">Cancelar</button>
+    </div>
+
     <div class="admin-table-wrap">
       <table class="admin-table">
         <thead>
@@ -208,7 +222,6 @@
                             data-delete-name="{{ $a->nombre }} {{ $a->apellido }}">
                       <i class="bi bi-trash"></i> Eliminar
                     </button>
-                    {{-- ✅ Contactar estudiante --}}
                     @if($a->id_usuario)
                       <a href="{{ route('admin.mensajes', ['postulante_id' => $a->id_usuario]) }}"
                          class="btn-admin-contactar">
@@ -279,6 +292,20 @@
         <option value="rechazada">Rechazada</option>
         <option value="suspendida">Suspendida</option>
       </select>
+    </div>
+
+    <div class="bulk-bar" id="bulk-bar-empresas" style="display:none;">
+      <span class="bulk-count"></span>
+      <button onclick="bulkAccion('panel-empresas','estado','aprobada')">
+        <i class="bi bi-check-circle"></i> Aprobar
+      </button>
+      <button onclick="bulkAccion('panel-empresas','estado','suspendida')">
+        <i class="bi bi-slash-circle"></i> Suspender
+      </button>
+      <button class="bulk-btn-danger" onclick="bulkAccion('panel-empresas','delete')">
+        <i class="bi bi-trash"></i> Eliminar
+      </button>
+      <button class="bulk-btn-cancel" onclick="clearBulk('panel-empresas')">Cancelar</button>
     </div>
 
     <div class="admin-table-wrap">
@@ -386,7 +413,6 @@
                             data-delete-name="{{ $e->nombre_empresa }}">
                       <i class="bi bi-trash"></i> Eliminar
                     </button>
-                    {{-- ✅ Contactar empresa --}}
                     @if($e->id_usuario)
                       <a href="{{ route('admin.mensajes', ['postulante_id' => $e->id_usuario]) }}"
                          class="btn-admin-contactar">
@@ -469,6 +495,23 @@
         <option value="part-time">Part-Time</option>
         <option value="full-time">Full-Time</option>
       </select>
+    </div>
+
+    <div class="bulk-bar" id="bulk-bar-ofertas" style="display:none;">
+      <span class="bulk-count"></span>
+      <button onclick="bulkAccion('panel-ofertas','estado','Activa')">
+        <i class="bi bi-check-circle"></i> Activar
+      </button>
+      <button onclick="bulkAccion('panel-ofertas','estado','Pausada')">
+        <i class="bi bi-pause-circle"></i> Pausar
+      </button>
+      <button onclick="bulkAccion('panel-ofertas','estado','Cerrada')">
+        <i class="bi bi-x-circle"></i> Cerrar
+      </button>
+      <button class="bulk-btn-danger" onclick="bulkAccion('panel-ofertas','delete')">
+        <i class="bi bi-trash"></i> Eliminar
+      </button>
+      <button class="bulk-btn-cancel" onclick="clearBulk('panel-ofertas')">Cancelar</button>
     </div>
 
     <div class="admin-table-wrap">
@@ -568,7 +611,7 @@
                       <i class="bi bi-check-circle"></i> Activar
                     </button>
                     <button class="btn-admin-suspender"
-                            onclick="submitEstadoConMotivo('{{ route('admin.ofertas.estado', $o->id_oferta) }}', 'Pausada', this)">
+                            onclick="submitEstadoConMotivo('{{ route('admin.ofertas.estado', $o->id_oferta) }}', 'Pausada')">
                       <i class="bi bi-pause-circle"></i> Pausar
                     </button>
                     <button class="btn-admin-rechazar"
@@ -616,17 +659,65 @@
   <input type="hidden" name="motivo" id="form-estado-motivo">
 </form>
 
-{{-- Formulario oculto para eliminaciones --}}
+{{-- Formulario oculto para eliminaciones individuales --}}
 <form id="form-delete" method="POST" style="display:none;">
   @csrf
   @method('DELETE')
 </form>
 
+{{-- Modal confirmación genérico (usado por bulk y eliminaciones) --}}
+<dialog id="dialogConfirmar" class="modal-confirmar">
+  <div class="modal-confirmar-content">
+    <h3 class="modal-confirmar-title" id="dialogConfirmarTitle">Confirmar acción</h3>
+    <p class="modal-confirmar-msg" id="dialogConfirmarMsg"></p>
+    <div class="modal-confirmar-btns">
+      <button onclick="document.getElementById('dialogConfirmar').close()"
+              class="btn-cancelar-dialog">Cancelar</button>
+      <button id="btnConfirmarAccion" class="btn-confirmar-eliminar">Confirmar</button>
+    </div>
+  </div>
+</dialog>
+
 @endsection
 
 @section('scripts')
 <script>
-/* ── Cambio de estado ── */
+
+/* ════════════════════════════════════════
+   MODAL CONFIRM — reemplaza confirm() nativo
+════════════════════════════════════════ */
+function modalConfirm(titulo, mensaje, labelBoton = 'Confirmar') {
+  return new Promise(resolve => {
+    const dialog = document.getElementById('dialogConfirmar');
+    document.getElementById('dialogConfirmarTitle').textContent = titulo;
+    document.getElementById('dialogConfirmarMsg').textContent   = mensaje;
+
+    // Clonar botón para limpiar listeners anteriores
+    const btnViejo = document.getElementById('btnConfirmarAccion');
+    const btn = btnViejo.cloneNode(true);
+    btn.textContent = labelBoton;
+    btnViejo.parentNode.replaceChild(btn, btnViejo);
+
+    btn.addEventListener('click', () => { dialog.close(); resolve(true); });
+    dialog.addEventListener('close', () => resolve(false), { once: true });
+
+    // Cerrar clickeando el backdrop
+    dialog.addEventListener('click', function handler(e) {
+      const rect = dialog.getBoundingClientRect();
+      if (e.clientX < rect.left || e.clientX > rect.right ||
+          e.clientY < rect.top  || e.clientY > rect.bottom) {
+        dialog.close();
+        dialog.removeEventListener('click', handler);
+      }
+    });
+
+    dialog.showModal();
+  });
+}
+
+/* ════════════════════════════════════════
+   CAMBIO DE ESTADO INDIVIDUAL
+════════════════════════════════════════ */
 function submitEstado(url, estado) {
   const form = document.getElementById('form-estado');
   document.getElementById('form-estado-valor').value = estado;
@@ -635,8 +726,7 @@ function submitEstado(url, estado) {
   form.submit();
 }
 
-/* ── Cambio de estado con motivo opcional (para pausar ofertas) ── */
-function submitEstadoConMotivo(url, estado, btn) {
+function submitEstadoConMotivo(url, estado) {
   const motivo = prompt('Motivo de la pausa (opcional, se mostrará a la empresa):') ?? '';
   const form = document.getElementById('form-estado');
   document.getElementById('form-estado-valor').value = estado;
@@ -645,29 +735,212 @@ function submitEstadoConMotivo(url, estado, btn) {
   form.submit();
 }
 
-/* ── Detalle expandible ── */
-window.toggleAdminDetalle = function(id, btn) {
-  const row = document.getElementById('admin-det-' + id);
-  if (!row) return;
-  row.classList.toggle('open');
+/* ════════════════════════════════════════
+   DETALLE EXPANDIBLE
+════════════════════════════════════════ */
+window.toggleAdminDetalle = function(id) {
+  document.getElementById('admin-det-' + id)?.classList.toggle('open');
 };
 
-/* ── Eliminar con modal ── */
+/* ════════════════════════════════════════
+   ELIMINAR INDIVIDUAL — usa modal
+════════════════════════════════════════ */
 document.addEventListener('click', async e => {
   const btn = e.target.closest('[data-delete-url]');
   if (!btn) return;
+
   const name = btn.dataset.deleteName || 'este registro';
   const url  = btn.dataset.deleteUrl;
   if (!url) return;
-  const confirmed = await adminConfirm(name);
-  if (!confirmed) return;
+
+  const ok = await modalConfirm(
+    'Eliminar registro',
+    `¿Confirmás eliminar "${name}"? Esta acción no se puede deshacer.`,
+    'Sí, eliminar'
+  );
+  if (!ok) return;
+
   const form = document.getElementById('form-delete');
   form.action = url;
   form.submit();
 });
+
+/* ════════════════════════════════════════
+   CHECKBOXES
+════════════════════════════════════════ */
+document.addEventListener('DOMContentLoaded', () => {
+
+  // check-all → marca/desmarca solo filas visibles (no detalle-rows)
+  document.querySelectorAll('.check-all').forEach(chkAll => {
+    const panel = chkAll.closest('.admin-tab-panel');
+    chkAll.addEventListener('change', () => {
+      panel.querySelectorAll('tbody tr:not(.admin-detalle-row)').forEach(row => {
+        if (row.style.display !== 'none') {
+          const c = row.querySelector('.check-row');
+          if (c) c.checked = chkAll.checked;
+        }
+      });
+      updateBulkBar(panel);
+    });
+  });
+
+  // check-row individual
+  document.addEventListener('change', e => {
+    if (!e.target.classList.contains('check-row')) return;
+    const panel = e.target.closest('.admin-tab-panel');
+    if (!panel) return;
+    const rows   = [...panel.querySelectorAll('.check-row')];
+    const chkAll = panel.querySelector('.check-all');
+    if (chkAll) chkAll.checked = rows.length > 0 && rows.every(c => c.checked);
+    updateBulkBar(panel);
+  });
+});
+
+function getSelectedIds(panel) {
+  return [...panel.querySelectorAll('.check-row:checked')]
+    .map(c => c.closest('tr')?.dataset.id)
+    .filter(Boolean);
+}
+
+function updateBulkBar(panel) {
+  const ids = getSelectedIds(panel);
+  const bar = panel.querySelector('.bulk-bar');
+  if (!bar) return;
+  bar.querySelector('.bulk-count').textContent =
+    `${ids.length} seleccionado${ids.length !== 1 ? 's' : ''}`;
+  bar.style.display = ids.length > 0 ? 'flex' : 'none';
+}
+
+function clearBulk(panelId) {
+  const panel = document.getElementById(panelId);
+  panel.querySelectorAll('.check-row, .check-all').forEach(c => c.checked = false);
+  updateBulkBar(panel);
+}
+
+/* ════════════════════════════════════════
+   RUTAS BULK — mapa correcto panel → segmento URL
+════════════════════════════════════════ */
+const bulkUrlMap = {
+  'panel-alumnos':   'estudiantes',
+  'panel-empresas':  'empresas',
+  'panel-ofertas':   'ofertas',
+};
+
+async function bulkAccion(panelId, accion, estado) {
+  const panel    = document.getElementById(panelId);
+  const ids      = getSelectedIds(panel);
+  if (!ids.length) return;
+
+  const segmento = bulkUrlMap[panelId];
+  const count    = ids.length;
+
+  if (accion === 'delete') {
+    const ok = await modalConfirm(
+      'Eliminar registros',
+      `¿Confirmás eliminar ${count} registro${count !== 1 ? 's' : ''}? Esta acción no se puede deshacer.`,
+      'Sí, eliminar'
+    );
+    if (!ok) return;
+    submitBulkForm(`/admin/${segmento}/bulk-destroy`, ids);
+  } else {
+    // Para estado no hace falta confirmación, va directo
+    submitBulkForm(`/admin/${segmento}/bulk-estado`, ids, { estado });
+  }
+}
+
+function submitBulkForm(url, ids, extras = {}) {
+  const csrf = document.querySelector('meta[name=csrf-token]')?.content ?? '{{ csrf_token() }}';
+  const form = document.createElement('form');
+  form.method = 'POST';
+  form.action = url;
+  form.style.display = 'none';
+
+  const addHidden = (n, v) => {
+    const i = document.createElement('input');
+    i.type = 'hidden';
+    i.name = n;
+    i.value = v;
+    form.appendChild(i);
+  };
+
+  addHidden('_token', csrf);
+  ids.forEach(id => addHidden('ids[]', id));
+  Object.entries(extras).forEach(([k, v]) => addHidden(k, v));
+
+  document.body.appendChild(form);
+  form.submit();
+}
+
 </script>
 
 <style>
+/* ── Modal confirmar ── */
+dialog:not([open]) { display: none !important; }
+
+.modal-confirmar {
+  position: fixed;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface);
+  padding: 0;
+  width: min(400px, 92vw);
+  margin: 0;
+  z-index: 9999;
+}
+.modal-confirmar::backdrop {
+  background: rgba(0,0,0,0.5);
+  backdrop-filter: blur(3px);
+}
+.modal-confirmar-content { padding: 24px; }
+.modal-confirmar-title   { font-size: 18px; font-weight: 600; color: var(--text); margin-bottom: 10px; }
+.modal-confirmar-msg     { color: var(--muted); margin-bottom: 24px; font-size: 14px; line-height: 1.5; }
+.modal-confirmar-btns    { display: flex; gap: 10px; justify-content: flex-end; }
+.btn-cancelar-dialog     { padding: 8px 16px; background: var(--bg); border: 1px solid var(--border); color: var(--text); border-radius: 6px; cursor: pointer; font-size: 13px; }
+.btn-cancelar-dialog:hover { border-color: var(--text); }
+.btn-confirmar-eliminar  { padding: 8px 16px; background: #dc3545; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: 700; }
+.btn-confirmar-eliminar:hover { background: #b02a37; }
+
+/* ── Bulk bar ── */
+.bulk-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  background: var(--surface);
+  border: 1px solid var(--accent);
+  border-radius: var(--radius);
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+.bulk-count {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--accent);
+  margin-right: 4px;
+}
+.bulk-bar button {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 11px;
+  font-size: 12px;
+  font-weight: 700;
+  font-family: var(--font-display);
+  border-radius: var(--radius);
+  cursor: pointer;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text);
+  transition: border-color 0.15s, color 0.15s, background 0.15s;
+}
+.bulk-bar button:hover        { border-color: var(--accent); color: var(--accent); }
+.bulk-bar .bulk-btn-danger    { border-color: rgba(212,24,61,.4); color: #e05577; background: transparent; }
+.bulk-bar .bulk-btn-danger:hover { background: rgba(212,24,61,.08); border-color: #e05577; }
+.bulk-bar .bulk-btn-cancel    { color: var(--muted); margin-left: auto; }
+.bulk-bar .bulk-btn-cancel:hover { color: var(--text); border-color: var(--border); }
+
 /* ── Botón contactar ── */
 .btn-admin-contactar {
   display: inline-flex;
@@ -685,47 +958,16 @@ document.addEventListener('click', async e => {
   text-decoration: none;
   transition: background 0.15s, color 0.15s;
 }
-
 .btn-admin-contactar:hover {
   background: var(--accent);
   color: #0D1A13;
 }
 
-/* ── Fix global: evita desborde horizontal ── */
-@media (max-width: 640px) {
-  *,
-  *::before,
-  *::after {
-    box-sizing: border-box;
-  }
-
-  html, body {
-    overflow-x: hidden;
-    max-width: 100vw;
-  }
-
-  .admin-page {
-    overflow-x: hidden;
-    max-width: 100%;
-  }
-
-  .btn-admin-contactar {
-    width: 100%;
-    justify-content: center;
-    padding: 10px 16px;
-    font-size: 13px;
-  }
-}
-
 /* ── Tablet ancho (900–1200px) ── */
 @media (max-width: 1200px) {
-  .admin-page {
-    padding: 28px 16px 56px;
-  }
+  .admin-page { padding: 28px 16px 56px; }
   .admin-table td:nth-child(4),
-  .admin-table th:nth-child(4) {
-    display: none;
-  }
+  .admin-table th:nth-child(4) { display: none; }
 }
 
 /* ── Tablet (≤ 900px) ── */
@@ -748,13 +990,14 @@ document.addEventListener('click', async e => {
 
 /* ── Mobile (≤ 640px) ── */
 @media (max-width: 640px) {
-  .admin-page { padding: 16px 10px 48px; max-width: 100%; width: 100%; }
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body { overflow-x: hidden; max-width: 100vw; }
+  .admin-page { padding: 16px 10px 48px; overflow-x: hidden; max-width: 100%; width: 100%; }
   .admin-page-title { font-size: 19px; gap: 7px; }
   .admin-page-sub { font-size: 12.5px; margin-bottom: 18px; }
   .admin-tabs { gap: 0; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; margin-bottom: 20px; }
   .admin-tabs::-webkit-scrollbar { display: none; }
   .admin-tab { padding: 10px 16px; font-size: 12.5px; white-space: nowrap; flex-shrink: 0; }
-  .tab-count { font-size: 10px; padding: 1px 5px; }
   .admin-stats { grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 16px; }
   .admin-stat { padding: 12px 14px; }
   .admin-stat-label { font-size: 9.5px; gap: 4px; }
@@ -794,6 +1037,10 @@ document.addEventListener('click', async e => {
   .admin-action-notice { position: fixed; right: 24px; bottom: 24px; max-width: 100%; z-index: 99; }
   .admin-empty { padding: 36px 16px; }
   .admin-empty i { font-size: 28px; }
+  .bulk-bar { flex-direction: column; align-items: stretch; }
+  .bulk-bar button { justify-content: center; }
+  .bulk-bar .bulk-btn-cancel { margin-left: 0; }
+  .btn-admin-contactar { width: 100%; justify-content: center; padding: 10px 16px; font-size: 13px; }
 }
 </style>
 

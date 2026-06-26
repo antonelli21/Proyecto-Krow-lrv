@@ -172,38 +172,6 @@ public function cambiarEstadoEmpresa(Request $request, $id)
        ELIMINACIONES
     ════════════════════════════════════════ */
 
-    public function eliminarEstudiante($id)
-    {
-        $estudiante = Estudiante::findOrFail($id);
-        $idUsuario  = $estudiante->id_usuario;
-
-        // Borrar relaciones antes de eliminar el estudiante
-        $estudiante->habilidades()->detach();         // estudiante_habilidad
-        $estudiante->postulaciones()->delete();        // postulaciones
-
-        $estudiante->delete();
-
-        if ($idUsuario) {
-            User::destroy($idUsuario);
-        }
-
-        return redirect()->back()->with('success', 'Estudiante y usuario eliminados.');
-    }
-
-    public function eliminarEmpresa($id)
-    {
-        $empresa   = Empresa::findOrFail($id);
-        $idUsuario = $empresa->id_usuario;
-
-        Oferta::where('id_empresa', $empresa->id_empresa)->delete();
-        $empresa->delete();
-
-        if ($idUsuario) {
-            User::destroy($idUsuario);
-        }
-
-        return redirect()->back()->with('success', 'Empresa, ofertas y usuario eliminados.');
-    }
 
     public function eliminarOferta($id)
     {
@@ -211,4 +179,172 @@ public function cambiarEstadoEmpresa(Request $request, $id)
 
         return redirect()->back()->with('success', 'Oferta eliminada.');
     }
+
+
+public function bulkEstadoEstudiantes(Request $request)
+{
+    $request->validate([
+        'ids'    => 'required|array',
+        'ids.*'  => 'integer|exists:estudiante,id_estudiante',
+        'estado' => 'required|in:activo,suspendido,pendiente',
+    ]);
+
+    Estudiante::whereIn('id_estudiante', $request->ids)
+        ->update(['estado' => $request->estado]);
+
+    return redirect()->back()->with('success', count($request->ids) . ' estudiantes actualizados a ' . $request->estado . '.');
+}
+
+
+public function bulkEstadoEmpresas(Request $request)
+{
+    $request->validate([
+        'ids'    => 'required|array',
+        'ids.*'  => 'integer|exists:empresa,id_empresa',
+        'estado' => 'required|in:aprobada,suspendida,pendiente,rechazada',
+    ]);
+
+    foreach ($request->ids as $id) {
+        $empresa = Empresa::find($id);
+        if (!$empresa) continue;
+
+        $empresa->update(['estado' => $request->estado]);
+
+        if (in_array($request->estado, ['suspendida', 'rechazada'])) {
+            $empresa->ofertas()->update(['estado' => 'pausada']);
+        } elseif ($request->estado === 'aprobada') {
+            $empresa->ofertas()->update(['estado' => 'activa']);
+        }
+    }
+
+    return redirect()->back()->with('success', count($request->ids) . ' empresas actualizadas.');
+}
+
+public function bulkEstadoOfertas(Request $request)
+{
+    $request->validate([
+        'ids'    => 'required|array',
+        'ids.*'  => 'integer|exists:oferta,id_oferta',
+        'estado' => 'required|in:Activa,Pausada,Cerrada',
+    ]);
+
+    Oferta::whereIn('id_oferta', $request->ids)
+        ->update(['estado' => $request->estado]);
+
+    return redirect()->back()->with('success', count($request->ids) . ' ofertas actualizadas.');
+}
+
+public function bulkDestroyOfertas(Request $request)
+{
+    $request->validate([
+        'ids'   => 'required|array',
+        'ids.*' => 'integer|exists:oferta,id_oferta',
+    ]);
+
+    Oferta::whereIn('id_oferta', $request->ids)->delete();
+
+    return redirect()->back()->with('success', count($request->ids) . ' ofertas eliminadas.');
+}
+
+public function eliminarEstudiante($id)
+{
+    $estudiante = Estudiante::findOrFail($id);
+    $idUsuario  = $estudiante->id_usuario;
+
+    $estudiante->habilidades()->detach();
+    $estudiante->postulaciones()->delete();
+    $estudiante->delete();
+
+    if ($idUsuario) {
+    $this->eliminarUserConDependencias($idUsuario);
+}
+
+    return redirect()->back()->with('success', 'Estudiante y usuario eliminados.');
+}
+
+public function bulkDestroyEstudiantes(Request $request)
+{
+    $request->validate([
+        'ids'   => 'required|array',
+        'ids.*' => 'integer|exists:estudiante,id_estudiante',
+    ]);
+
+    foreach ($request->ids as $id) {
+        $estudiante = Estudiante::find($id);
+        if (!$estudiante) continue;
+
+        $idUsuario = $estudiante->id_usuario;
+        $estudiante->habilidades()->detach();
+        $estudiante->postulaciones()->delete();
+        $estudiante->delete();
+
+        if ($idUsuario) {
+    $this->eliminarUserConDependencias($idUsuario);
+}
+    }
+
+    return redirect()->back()->with('success', count($request->ids) . ' estudiantes eliminados.');
+}
+
+public function eliminarEmpresa($id)
+{
+    $empresa   = Empresa::findOrFail($id);
+    $idUsuario = $empresa->id_usuario;
+
+    Oferta::where('id_empresa', $empresa->id_empresa)->delete();
+    $empresa->delete();
+
+    if ($idUsuario) {
+    $this->eliminarUserConDependencias($idUsuario);
+}
+
+    return redirect()->back()->with('success', 'Empresa, ofertas y usuario eliminados.');
+}
+
+public function bulkDestroyEmpresas(Request $request)
+{
+    $request->validate([
+        'ids'   => 'required|array',
+        'ids.*' => 'integer|exists:empresa,id_empresa',
+    ]);
+
+    foreach ($request->ids as $id) {
+        $empresa = Empresa::find($id);
+        if (!$empresa) continue;
+
+        $idUsuario = $empresa->id_usuario;
+        Oferta::where('id_empresa', $empresa->id_empresa)->delete();
+        $empresa->delete();
+
+        if ($idUsuario) {
+    $this->eliminarUserConDependencias($idUsuario);
+}
+    }
+
+    return redirect()->back()->with('success', count($request->ids) . ' empresas eliminadas.');
+}
+
+/**
+ * Borra todas las tablas hijas de un user antes de eliminar el registro users.
+ * Orden respeta las FKs: chats y mensajes primero, luego tickets, notificaciones, etc.
+ */
+private function eliminarUserConDependencias(int $idUsuario): void
+{
+    // Chats donde el user es participante (id_usuario_1 o id_usuario_2)
+    $chatIds = \DB::table('chat')
+        ->where('id_usuario_1', $idUsuario)
+        ->orWhere('id_usuario_2', $idUsuario)
+        ->pluck('id_chat');
+
+    if ($chatIds->isNotEmpty()) {
+        \DB::table('mensaje')->whereIn('id_chat', $chatIds)->delete();
+        \DB::table('chat')->whereIn('id_chat', $chatIds)->delete();
+    }
+
+    // Tickets de soporte
+    \DB::table('ticket_soporte')->where('id_usuario', $idUsuario)->delete();
+
+    // Finalmente el user
+    User::destroy($idUsuario);
+}
 }
