@@ -380,4 +380,60 @@ public function cambiarEstadoReporte(Request $request, $id)
     return redirect()->back()->with('success', 'Ticket actualizado.');
 }
 
+/* 
+   PAPELERA
+*/
+public function papelera()
+{
+    $seccion = 'papelera';
+
+    $postulacionesEliminadas = \App\Models\Postulacion::onlyTrashed()
+        ->with(['estudiante', 'oferta.empresa'])
+        ->orderBy('deleted_at', 'desc')
+        ->paginate(20, ['*'], 'page_post');
+
+    $ofertasEliminadas = \App\Models\Oferta::onlyTrashed()
+        ->with('empresa')
+        ->orderBy('deleted_at', 'desc')
+        ->paginate(20, ['*'], 'page_ofe');
+
+    return view('admin.admin', compact(
+        'seccion',
+        'postulacionesEliminadas',
+        'ofertasEliminadas'
+    ));
+}
+
+public function restaurarPostulacion($id)
+{
+    \App\Models\Postulacion::onlyTrashed()->findOrFail($id)->restore();
+    return redirect()->back()->with('success', 'Postulación restaurada.');
+}
+
+public function restaurarOferta($id)
+{
+    $oferta = \App\Models\Oferta::onlyTrashed()->findOrFail($id);
+
+    // Restaura la oferta
+    $oferta->restore();
+
+    // Restaura todas las postulaciones eliminadas de esa oferta
+    $oferta->postulaciones()
+        ->onlyTrashed()
+        ->restore();
+
+    return redirect()->back()->with('success', 'Oferta y sus postulaciones restauradas.');
+}
+
+public function eliminarPostulacionDefinitivo($id)
+{
+    \App\Models\Postulacion::onlyTrashed()->findOrFail($id)->forceDelete();
+    return redirect()->back()->with('success', 'Postulación eliminada definitivamente.');
+}
+
+public function eliminarOfertaDefinitivo($id)
+{
+    \App\Models\Oferta::onlyTrashed()->findOrFail($id)->forceDelete();
+    return redirect()->back()->with('success', 'Oferta eliminada definitivamente.');
+}
 }

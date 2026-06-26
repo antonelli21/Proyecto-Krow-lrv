@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes; 
 use App\Models\Empresa;
 use App\Models\Localidad;
 use App\Models\Provincia;
@@ -17,6 +18,7 @@ use App\Models\Postulacion;
 class Oferta extends Model
 {
     use HasFactory;
+     use SoftDeletes;
 
     public $timestamps = false;
     protected $table = 'oferta';

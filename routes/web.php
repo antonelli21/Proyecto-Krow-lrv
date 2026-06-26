@@ -166,6 +166,13 @@ Route::prefix('admin')
 
         Route::get('/reportes',                    [AdminController::class, 'listarReportes'])->name('reportes');
 Route::post('/reportes/{id}/estado',       [AdminController::class, 'cambiarEstadoReporte'])->name('reportes.estado');
+
+
+Route::get('/papelera',                                    [AdminController::class, 'papelera'])->name('papelera');
+Route::post('/papelera/postulacion/{id}/restaurar',        [AdminController::class, 'restaurarPostulacion'])->name('papelera.postulacion.restaurar');
+Route::post('/papelera/oferta/{id}/restaurar',             [AdminController::class, 'restaurarOferta'])->name('papelera.oferta.restaurar');
+Route::delete('/papelera/postulacion/{id}',                [AdminController::class, 'eliminarPostulacionDefinitivo'])->name('papelera.postulacion.destroy');
+Route::delete('/papelera/oferta/{id}',                     [AdminController::class, 'eliminarOfertaDefinitivo'])->name('papelera.oferta.destroy');
     });
 
 /* ════════════════════════════════════════
