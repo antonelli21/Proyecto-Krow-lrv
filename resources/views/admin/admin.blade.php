@@ -60,6 +60,9 @@
     <a href="{{ route('admin.reportes') }}" class="admin-tab {{ $seccion === 'reportes' ? 'active' : '' }}">
   <i class="bi bi-ticket-perforated"></i> Reportes
 </a>
+<a href="{{ route('admin.papelera') }}" class="admin-tab {{ $seccion === 'papelera' ? 'active' : '' }}">
+  <i class="bi bi-trash2"></i> Papelera
+</a>
   </div>
 
   {{-- ════════════════════════════════════════
@@ -828,8 +831,123 @@
   </div>
 </div>
 @endif
-</div>
+@if($seccion === 'papelera')
+<div class="admin-tab-panel active" id="panel-papelera">
 
+  {{-- ── OFERTAS ELIMINADAS ── --}}
+  <h3 style="font-size:15px; font-weight:700; color:var(--text); margin-bottom:12px;">
+    <i class="bi bi-briefcase"></i> Ofertas eliminadas
+  </h3>
+
+  <div class="admin-table-wrap" style="margin-bottom:32px;">
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th>Título</th>
+          <th>Empresa</th>
+          <th>Eliminada</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        @forelse($ofertasEliminadas as $o)
+        <tr>
+          <td class="td-nombre">{{ $o->titulo }}</td>
+          <td class="td-carrera">{{ $o->empresa->nombre_empresa ?? '—' }}</td>
+          <td class="td-fecha">{{ \Carbon\Carbon::parse($o->deleted_at)->format('d/m/Y H:i') }}</td>
+          <td>
+            <div class="td-acciones">
+              {{-- Restaurar --}}
+              <form method="POST" action="{{ route('admin.papelera.oferta.restaurar', $o->id_oferta) }}" style="display:inline;">
+                @csrf
+                <button class="btn-icon btn-aprobar" title="Restaurar">
+                  <i class="bi bi-arrow-counterclockwise"></i>
+                </button>
+              </form>
+              {{-- Eliminar definitivo --}}
+              <button class="btn-icon btn-eliminar" title="Eliminar definitivamente"
+                      data-delete-url="{{ route('admin.papelera.oferta.destroy', $o->id_oferta) }}"
+                      data-delete-name="{{ $o->titulo }} (permanente)">
+                <i class="bi bi-trash"></i>
+              </button>
+            </div>
+          </td>
+        </tr>
+        @empty
+        <tr>
+          <td colspan="4" style="text-align:center;padding:2rem;color:var(--muted);">
+            No hay ofertas eliminadas.
+          </td>
+        </tr>
+        @endforelse
+      </tbody>
+    </table>
+    @if($ofertasEliminadas->hasPages())
+      <div style="padding:16px;">{{ $ofertasEliminadas->links() }}</div>
+    @endif
+  </div>
+
+  {{-- ── POSTULACIONES ELIMINADAS ── --}}
+  <h3 style="font-size:15px; font-weight:700; color:var(--text); margin-bottom:12px;">
+    <i class="bi bi-send"></i> Postulaciones eliminadas
+  </h3>
+
+  <div class="admin-table-wrap">
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th>Estudiante</th>
+          <th>Oferta</th>
+          <th>Empresa</th>
+          <th>Eliminada</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        @forelse($postulacionesEliminadas as $p)
+        <tr>
+          <td class="td-nombre">
+            {{ $p->estudiante->nombre ?? '—' }} {{ $p->estudiante->apellido ?? '' }}
+            <br><span class="td-id">{{ $p->estudiante->user->email ?? '—' }}</span>
+          </td>
+          <td class="td-carrera">{{ $p->oferta->titulo ?? '—' }}</td>
+          <td class="td-carrera">{{ $p->oferta->empresa->nombre_empresa ?? '—' }}</td>
+          <td class="td-fecha">{{ \Carbon\Carbon::parse($p->deleted_at)->format('d/m/Y H:i') }}</td>
+          <td>
+            <div class="td-acciones">
+              {{-- Restaurar --}}
+              <form method="POST" action="{{ route('admin.papelera.postulacion.restaurar', $p->id_postulacion) }}" style="display:inline;">
+                @csrf
+                <button class="btn-icon btn-aprobar" title="Restaurar">
+                  <i class="bi bi-arrow-counterclockwise"></i>
+                </button>
+              </form>
+              {{-- Eliminar definitivo --}}
+              <button class="btn-icon btn-eliminar" title="Eliminar definitivamente"
+                      data-delete-url="{{ route('admin.papelera.postulacion.destroy', $p->id_postulacion) }}"
+                      data-delete-name="postulación de {{ $p->estudiante->nombre ?? '' }} (permanente)">
+                <i class="bi bi-trash"></i>
+              </button>
+            </div>
+          </td>
+        </tr>
+        @empty
+        <tr>
+          <td colspan="5" style="text-align:center;padding:2rem;color:var(--muted);">
+            No hay postulaciones eliminadas.
+          </td>
+        </tr>
+        @endforelse
+      </tbody>
+    </table>
+    @if($postulacionesEliminadas->hasPages())
+      <div style="padding:16px;">{{ $postulacionesEliminadas->links() }}</div>
+    @endif
+  </div>
+
+</div>
+@endif
+</div>
 {{-- Formulario oculto para cambios de estado --}}
 <form id="form-estado" method="POST" style="display:none;">
   @csrf
