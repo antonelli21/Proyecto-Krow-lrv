@@ -125,7 +125,7 @@ Route::prefix('empresa')
         Route::get('/estudiante/{id}',              [EmpresaController::class, 'verPerfilEstudiante'])->name('estudiante.perfil'); // ← 
         Route::patch('/oferta/{id}/estado',         [EmpresaController::class, 'cambiarEstadoOferta'])->name('ofertas.estado');
         Route::delete('/oferta/{id}',               [EmpresaController::class, 'eliminarOferta'])->name('ofertas.destroy');
-       Route::get('/oferta/{id_oferta}/preview',    [OfertaController::class, 'preview'])->name('ofertas.preview');
+        Route::get('/oferta/{id_oferta}/preview',    [OfertaController::class, 'preview'])->name('ofertas.preview');
        
     });
 /* ════════════════════════════════════════
@@ -165,7 +165,7 @@ Route::prefix('admin')
         Route::post('/ofertas/bulk-destroy',      [AdminController::class, 'bulkDestroyOfertas'])->name('ofertas.bulk-destroy');
 
         Route::get('/reportes',                    [AdminController::class, 'listarReportes'])->name('reportes');
-Route::post('/reportes/{id}/estado',       [AdminController::class, 'cambiarEstadoReporte'])->name('reportes.estado');
+        Route::post('/reportes/{id}/estado',       [AdminController::class, 'cambiarEstadoReporte'])->name('reportes.estado');
     });
 
 /* ════════════════════════════════════════

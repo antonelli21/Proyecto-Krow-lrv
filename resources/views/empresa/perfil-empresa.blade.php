@@ -45,7 +45,9 @@
             <a href="{{ route('empresa.perfil.editar') }}" class="btn-accent" style="font-size:0.82rem; padding:6px 16px;">
                 <i class="fas fa-edit"></i> Editar perfil
             </a>
-            <a href="{{ url('empresa/ofertas') }}" class="btn-outline" style="font-size:0.82rem; padding:6px 16px; color:#fff; border-color:rgba(255,255,255,0.4);">
+            <a href="{{ route('inicio', ['empresa_id' => $empresa->id_empresa]) }}"
+            class="empresa-btn empresa-btn--ofertas btn-outline"
+            style="font-size:0.82rem; padding:6px 16px; color:#fff; border-color:rgba(255,255,255,0.4);">
                 <i class="fas fa-eye"></i> Ver ofertas
             </a>
         </div>
