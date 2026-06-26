@@ -125,7 +125,7 @@ Route::prefix('empresa')
         Route::get('/estudiante/{id}',              [EmpresaController::class, 'verPerfilEstudiante'])->name('estudiante.perfil'); // ← 
         Route::patch('/oferta/{id}/estado',         [EmpresaController::class, 'cambiarEstadoOferta'])->name('ofertas.estado');
         Route::delete('/oferta/{id}',               [EmpresaController::class, 'eliminarOferta'])->name('ofertas.destroy');
-       Route::get('/oferta/{id_oferta}/preview',    [OfertaController::class, 'preview'])->name('ofertas.preview');
+        Route::get('/oferta/{id_oferta}/preview',    [OfertaController::class, 'preview'])->name('ofertas.preview');
        
     });
 /* ════════════════════════════════════════

@@ -345,7 +345,7 @@ private function eliminarUserConDependencias(int $idUsuario): void
     \DB::table('ticket_soporte')->where('id_usuario', $idUsuario)->delete();
 
     // Finalmente el user
-    User::destroy($idUsuario);
+    User::where('id', $idUsuario)->delete();
 }
 public function listarReportes()
 {

@@ -282,7 +282,7 @@ class EmpresaController extends Controller
         $oferta->estado            = 'Activa';
         $oferta->save();
         // Guardar habilidades
-if ($request->has('tecnologias') && is_array($request->tecnologias) && count($request->tecnologias) > 0) {
+    if ($request->has('tecnologias') && is_array($request->tecnologias) && count($request->tecnologias) > 0) {
     $tecnologias = is_array($request->tecnologias)
         ? $request->tecnologias
         : explode(',', $request->tecnologias);
