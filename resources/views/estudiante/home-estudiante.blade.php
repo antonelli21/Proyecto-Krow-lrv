@@ -24,7 +24,19 @@
 @endsection
 
 @section('content')
-
+<!-- Dialog confirmar — genérico -->
+<dialog id="dialogConfirmar" class="modal-confirmar">
+    <div class="modal-confirmar-content">
+        <h3 class="modal-confirmar-title" id="dialogConfirmarTitle">Confirmar acción</h3>
+        <p class="modal-confirmar-msg" id="dialogConfirmarMsg"></p>
+        <div class="modal-confirmar-btns">
+            <button onclick="document.getElementById('dialogConfirmar').close()"
+                    class="btn-cancelar-dialog">Cancelar</button>
+            <button id="btnConfirmarAccion"
+                    class="btn-confirmar-eliminar">Confirmar</button>
+        </div>
+    </div>
+</dialog>
 <div class="panel-page" style="margin-top: clamp(-190px, -16vw, -140px); position: relative; z-index: 5; background-color:var(--bg); border-radius: 8px; border:1px solid var(--surface);">
 
   <h1 class="panel-page-title">Panel del Estudiante</h1>
@@ -64,16 +76,28 @@
       </a>
     </div>
   </div>
-
+<div id="bulk-bar-est" style="display:none; align-items:center; gap:8px; padding:10px 14px; background:var(--surface); border:1px solid var(--accent); border-radius:8px; margin-bottom:12px; flex-wrap:wrap;">
+  <span id="bulk-count-est" style="font-size:12.5px; font-weight:700; color:var(--accent);"></span>
+  <button id="bulk-delete-est"
+          style="display:inline-flex; align-items:center; gap:5px; padding:5px 11px; font-size:12px; font-weight:700; border-radius:6px; cursor:pointer; border:1px solid rgba(212,24,61,.4); background:transparent; color:#e05577;">
+    <i class="bi bi-trash"></i> Eliminar seleccionadas
+  </button>
+  <button onclick="clearBulkEst()"
+          style="display:inline-flex; align-items:center; gap:5px; padding:5px 11px; font-size:12px; border-radius:6px; cursor:pointer; border:1px solid var(--border); background:transparent; color:var(--muted); margin-left:auto;">
+    Cancelar
+  </button>
+</div>
   <table class="postulaciones-table">
     <thead>
       <tr>
+        <th style="width:36px;"><input type="checkbox" id="check-all-est"></th>
         <th>Puesto</th>
         <th>Tipo</th>
         <th>Salario</th>
         <th>Estado</th>
         <th>Fecha</th>
         <th>Detalle</th>
+        <th>X</th>
       </tr>
     </thead>
     <tbody id="tabla-postulaciones">
@@ -231,6 +255,28 @@
     .postulaciones-table td { padding: 12px; font-size: 13px; }
     .detalle-inner { grid-template-columns: 1fr 1fr; }
   }
+
+  .modal-confirmar {
+  position: fixed;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface);
+  padding: 0;
+  width: min(400px, 92vw);
+  margin: 0;
+}
+.modal-confirmar::backdrop {
+  background: rgba(0,0,0,0.5);
+  backdrop-filter: blur(3px);
+}
+.modal-confirmar-content { padding: 24px; }
+.modal-confirmar-title   { font-size: 18px; font-weight: 600; color: var(--text); margin-bottom: 10px; }
+.modal-confirmar-msg     { color: var(--muted); margin-bottom: 24px; font-size: 14px; }
+.modal-confirmar-btns    { display: flex; gap: 10px; justify-content: flex-end; }
+.btn-cancelar-dialog     { padding: 8px 16px; background: var(--bg); border: 1px solid var(--border); color: var(--text); border-radius: 6px; cursor: pointer; }
+.btn-confirmar-eliminar  { padding: 8px 16px; background: #dc3545; color: white; border: none; border-radius: 6px; cursor: pointer; }
 </style>
 
 @endsection
@@ -292,29 +338,45 @@
       const empresa = oferta.empresa ? oferta.empresa.nombre_empresa : 'Confidencial';
 
       html += `
-        <tr>
-          <td>
-            <div class="td-puesto">${oferta.titulo}</div>
-            <div class="td-empresa">${empresa}</div>
-          </td>
-          <td>
-            <span class="badge-tipo" style="border:0.5px solid var(--border);color:var(--muted);padding:3px 10px;border-radius:20px;font-size:11.5px;">
-              ${oferta.tipo_oferta}
-            </span>
-          </td>
-          <td>${salario}</td>
-          <td>
-            <span class="badge-estado estado-${cfg.clase}">${cfg.texto}</span>
-          </td>
-          <td class="td-fecha">${fecha}</td>
-          <td>
-            <button class="toggle-detalle"
-                    onclick="abrirModalOferta(${oferta.id_oferta})"
-                    style="text-decoration: underline; text-underline-offset: 3px; border: none; background: transparent; cursor: pointer; color: var(--primary);">
-              Ver Oferta
-            </button>
-          </td>
-        </tr>`;
+  <tr data-postulacion-id="${p.id_postulacion}">
+    <td><input type="checkbox" class="check-est" data-id="${p.id_postulacion}"></td>
+    <td>
+      <div class="td-puesto">${oferta.titulo}</div>
+      <div class="td-empresa">${empresa}</div>
+    </td>
+    <td data-label="Tipo">
+      <span class="badge-tipo" style="border:0.5px solid var(--border);color:var(--muted);padding:3px 10px;border-radius:20px;font-size:11.5px;">
+        ${oferta.tipo_oferta}
+      </span>
+    </td>
+    <td data-label="Salario">${salario}</td>
+    <td data-label="Estado">
+      <span class="badge-estado estado-${cfg.clase}">${cfg.texto}</span>
+    </td>
+    <td data-label="Fecha" class="td-fecha">${fecha}</td>
+    <td data-label="Detalle">
+      <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+        <button onclick="abrirModalOferta(${oferta.id_oferta})"
+                style="text-decoration:underline; text-underline-offset:3px; border:none; background:transparent; cursor:pointer; color:var(--primary); font-size:13px;">
+          Ver oferta
+        </button>
+        
+        </button>
+      </div>
+      <td data-label="Accion"> 
+        <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+          <button onclick="eliminarPostulacion(${p.id_postulacion}, '${oferta.titulo.replace(/'/g, "\\'")}')"
+                style="background:none; border:none; color:#e05577; cursor:pointer; font-size:15px;padding-right:8px;border-radius:6px; transition:background 0.2s; line-height:1;"
+                title="Eliminar postulación"
+                onmouseover="this.style.background='rgba(212,24,61,0.1)'"
+                onmouseout="this.style.background='none'">
+          <i class="bi bi-trash"></i>
+        </div>
+      </td>
+
+      
+
+  </tr>`;
     });
 
     tbody.innerHTML = html;
@@ -338,5 +400,134 @@
       cerrarModalOferta();
     }
   });
+  /* ── Estudiante bulk ── */
+document.getElementById('check-all-est')?.addEventListener('change', function() {
+  document.querySelectorAll('.check-est').forEach(c => c.checked = this.checked);
+  updateBulkEst();
+});
+document.addEventListener('change', e => {
+  if (!e.target.classList.contains('check-est')) return;
+  const all = [...document.querySelectorAll('.check-est')];
+  const checkAll = document.getElementById('check-all-est');
+  if (checkAll) checkAll.checked = all.length > 0 && all.every(c => c.checked);
+  updateBulkEst();
+});
+
+function getSelectedEst() {
+  return [...document.querySelectorAll('.check-est:checked')].map(c => c.dataset.id);
+}
+function updateBulkEst() {
+  const ids = getSelectedEst();
+  const bar = document.getElementById('bulk-bar-est');
+  if (!bar) return;
+  bar.style.display = ids.length > 0 ? 'flex' : 'none';
+  document.getElementById('bulk-count-est').textContent =
+    `${ids.length} seleccionada${ids.length !== 1 ? 's' : ''}`;
+}
+function clearBulkEst() {
+  document.querySelectorAll('.check-est, #check-all-est').forEach(c => c.checked = false);
+  updateBulkEst();
+}
+
+document.getElementById('bulk-delete-est')?.addEventListener('click', async () => {
+    const ids = getSelectedEst();
+    if (!ids.length) return;
+
+    const ok = await modalConfirm(
+        'Eliminar postulaciones',
+        `¿Eliminar ${ids.length} postulación(es)? No se puede deshacer.`,
+        'Sí, eliminar'
+    );
+    if (!ok) return;
+
+    Promise.all(ids.map(id =>
+        fetch(`/estudiante/postulacion/${id}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]')?.content ?? ''
+            }
+        }).then(r => r.json())
+    )).then(() => {
+        ids.forEach(id => {
+            document.querySelector(`tr[data-postulacion-id="${id}"]`)?.remove();
+        });
+        clearBulkEst();
+        // Actualizar stats contando filas restantes
+        const total = document.querySelectorAll('#tabla-postulaciones tr[data-postulacion-id]').length;
+        document.getElementById('stat-totales').textContent = total;
+        document.getElementById('stat-activas').textContent =
+            [...document.querySelectorAll('.badge-estado')].filter(b => !b.classList.contains('estado-rechazado')).length;
+    });
+});
+// Devuelve una Promise<boolean>, igual que el adminConfirm del admin
+function modalConfirm(titulo, mensaje, labelBoton = 'Confirmar') {
+    return new Promise(resolve => {
+        const dialog = document.getElementById('dialogConfirmar');
+        document.getElementById('dialogConfirmarTitle').textContent = titulo;
+        document.getElementById('dialogConfirmarMsg').textContent   = mensaje;
+
+        const btn = document.getElementById('btnConfirmarAccion');
+        btn.textContent = labelBoton;
+
+        // Limpiar listener anterior para evitar doble-disparo
+        const nuevo = btn.cloneNode(true);
+        btn.parentNode.replaceChild(nuevo, btn);
+
+        nuevo.addEventListener('click', () => {
+            dialog.close();
+            resolve(true);
+        });
+
+        dialog.addEventListener('close', () => resolve(false), { once: true });
+
+        // Cerrar clickeando backdrop
+        dialog.addEventListener('click', function handler(e) {
+            const rect = dialog.getBoundingClientRect();
+            if (e.clientX < rect.left || e.clientX > rect.right ||
+                e.clientY < rect.top  || e.clientY > rect.bottom) {
+                dialog.close();
+                dialog.removeEventListener('click', handler);
+            }
+        });
+
+        dialog.showModal();
+    });
+}
+async function eliminarPostulacion(idPostulacion, tituloOferta) {
+  const ok = await modalConfirm(
+    'Eliminar postulación',
+    `¿Confirmás eliminar tu postulación a "${tituloOferta}"? Esta acción no se puede deshacer.`,
+    'Sí, eliminar'
+  );
+  if (!ok) return;
+
+  fetch(`/estudiante/postulacion/${idPostulacion}`, {
+    method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]')?.content ?? ''
+    }
+  })
+  .then(r => r.json())
+  .then(data => {
+    if (!data.success) { alert('Error al eliminar.'); return; }
+
+    // Quitar la fila del DOM
+    document.querySelector(`tr[data-postulacion-id="${idPostulacion}"]`)?.remove();
+
+    // Actualizar stats
+    const filas = document.querySelectorAll('#tabla-postulaciones tr[data-postulacion-id]');
+    document.getElementById('stat-totales').textContent = filas.length;
+    document.getElementById('stat-activas').textContent =
+      [...filas].filter(f => !f.querySelector('.badge-estado.estado-rechazado')).length;
+    document.getElementById('stat-rechazo').textContent =
+      [...filas].filter(f => f.querySelector('.badge-estado.estado-rechazado')).length;
+
+    // Limpiar selección bulk si la fila estaba seleccionada
+    clearBulkEst();
+  })
+  .catch(() => alert('Error de red.'));
+}
 </script>
 @endsection
