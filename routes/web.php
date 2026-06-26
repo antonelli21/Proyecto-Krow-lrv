@@ -163,6 +163,9 @@ Route::prefix('admin')
         // Bulk ofertas
         Route::post('/ofertas/bulk-estado',       [AdminController::class, 'bulkEstadoOfertas'])->name('ofertas.bulk-estado');
         Route::post('/ofertas/bulk-destroy',      [AdminController::class, 'bulkDestroyOfertas'])->name('ofertas.bulk-destroy');
+
+        Route::get('/reportes',                    [AdminController::class, 'listarReportes'])->name('reportes');
+Route::post('/reportes/{id}/estado',       [AdminController::class, 'cambiarEstadoReporte'])->name('reportes.estado');
     });
 
 /* ════════════════════════════════════════
