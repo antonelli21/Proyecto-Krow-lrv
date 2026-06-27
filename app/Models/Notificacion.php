@@ -31,7 +31,7 @@ class Notificacion extends Model
     ];
  
     protected $fillable = [
-        'usuario_id',
+        'id_usuario',
         'titulo',
         'mensaje',
         'url',
@@ -49,7 +49,7 @@ class Notificacion extends Model
  
     public function usuario()
     {
-        return $this->belongsTo(User::class, 'usuario_id');
+        return $this->belongsTo(User::class, 'id_usuario');
     }
  
     // ─── Scopes ───────────────────────────────────────────────
@@ -67,7 +67,7 @@ class Notificacion extends Model
      */
     public function scopeDelUsuario(Builder $query, int $usuarioId): Builder
     {
-        return $query->where('usuario_id', $usuarioId);
+        return $query->where('id_usuario', $usuarioId);
     }
  
     /**

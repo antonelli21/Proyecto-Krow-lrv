@@ -242,88 +242,98 @@ class EmpresaController extends Controller
         return view('empresa.postulantes-empresa', compact('oferta', 'postulantes'));
     }
 
-    public function storeOferta(Request $request)
-    {
-        $data = $request->validate([
-            'titulo'                => 'required|string|max:100',
-            'tipo_trabajo'          => 'required|string',
-            'modalidad'             => 'required|string',
-            'rango_salarial'        => 'nullable|string|max:100',
-            'experiencia_requerida' => 'required|string',
-            'descripcion'           => 'required|string',
-            'requisitos'            => 'nullable|string',
-            'id_localidad'          => 'nullable|exists:localidad,id_localidad',
-            'id_provincia'          => 'nullable|exists:provincia,id_provincia',
-            'area'                  => 'required|string|max:50',
-            'id_carrera'            => 'required|exists:carrera,id_carrera',
-        ]);
+        public function storeOferta(Request $request)
+        {
+            $data = $request->validate([
+                'titulo'                => 'required|string|max:100',
+                'tipo_trabajo'          => 'required|string',
+                'modalidad'             => 'required|string',
+                'rango_salarial'        => 'nullable|string|max:100',
+                'experiencia_requerida' => 'required|string',
+                'descripcion'           => 'required|string',
+                'requisitos'            => 'nullable|string',
+                'id_localidad'          => 'nullable|exists:localidad,id_localidad',
+                'id_provincia'          => 'nullable|exists:provincia,id_provincia',
+                'area'                  => 'required|string|max:50',
+                'id_carrera'            => 'required|exists:carrera,id_carrera',
+            ]);
 
-        $oferta = new \App\Models\Oferta();
+            $oferta = new \App\Models\Oferta();
+            $oferta->titulo       = $data['titulo'];
+            $oferta->descripcion  = $data['descripcion'];
+            $oferta->requisitos   = $data['requisitos'] ?? null;
+            $oferta->id_localidad = $data['id_localidad'] ?? null;
+            $oferta->id_provincia = $data['id_provincia'] ?? null;
+            $oferta->area         = $data['area'];
+            $oferta->id_carrera   = $data['id_carrera'];
 
-        $oferta->titulo       = $data['titulo'];
-        $oferta->descripcion  = $data['descripcion'];
-        $oferta->requisitos   = $data['requisitos'] ?? null;
-        $oferta->id_localidad = $data['id_localidad'] ?? null;
-        $oferta->id_provincia = $data['id_provincia'] ?? null;
-        $oferta->area         = $data['area'];
-        $oferta->id_carrera   = $data['id_carrera'];
+            if (!empty($data['rango_salarial'])) {
+                preg_match_all('/\d+/', str_replace('.', '', $data['rango_salarial']), $matches);
+                $numeros = $matches[0];
+                $oferta->salario_min = $numeros[0] ?? null;
+                $oferta->salario_max = $numeros[1] ?? null;
+            } else {
+                $oferta->salario_min = null;
+                $oferta->salario_max = null;
+            }
 
-        if (!empty($data['rango_salarial'])) {
-            preg_match_all('/\d+/', str_replace('.', '', $data['rango_salarial']), $matches);
-            $numeros = $matches[0];
-            $oferta->salario_min = $numeros[0] ?? null;
-            $oferta->salario_max = $numeros[1] ?? null;
-        } else {
-            $oferta->salario_min = null;
-            $oferta->salario_max = null;
+            $oferta->modalidad = ucfirst(strtolower($data['modalidad']));
+            $oferta->tipo_oferta = $data['tipo_trabajo'] === 'practica-profesional'
+                ? 'Practica Profesional'
+                : ucwords(str_replace('-', ' ', $data['tipo_trabajo']));
+            $oferta->experiencia_requerida = $data['experiencia_requerida'] === 'sin-experiencia'
+                ? 'Sin Experiencia'
+                : ucwords(str_replace('-', ' ', $data['experiencia_requerida']));
+
+            $oferta->id_empresa        = auth()->user()->empresa->id_empresa;
+            $oferta->fecha_publicacion = now();
+            $oferta->estado            = 'Activa';
+            $oferta->save();
+
+            // Guardar habilidades
+            if ($request->has('tecnologias') && is_array($request->tecnologias) && count($request->tecnologias) > 0) {
+                $ids = [];
+                foreach ($request->tecnologias as $nombre) {
+                    $nombre = trim($nombre);
+                    if (!$nombre) continue;
+                    $habilidad = \App\Models\Habilidad::whereRaw('LOWER(nombre) = ?', [strtolower($nombre)])->first();
+                    if (!$habilidad) {
+                        $habilidad = \App\Models\Habilidad::create(['nombre' => ucfirst(strtolower($nombre))]);
+                    }
+                    $ids[] = $habilidad->id_habilidad;
+                }
+                $oferta->habilidades()->sync($ids);
+            }
+
+            // ── Notificar a todos los estudiantes ─────────────────────
+            $ahora      = now();
+            $estudiantes = \App\Models\User::where('rol', 'estudiante')->pluck('id');
+
+            if ($estudiantes->isNotEmpty()) {
+                \DB::table('notificaciones')->insert(
+                    $estudiantes->map(fn($id) => [
+                        'id_usuario'  => $id,
+                        'titulo'      => 'Nueva oferta disponible',
+                        'mensaje'     => "Se publicó la oferta '{$oferta->titulo}'.",
+                        'url' => route('estudiante.ofertas-detalle-preview', $oferta->id_oferta),
+                        'tipo'        => 'info',
+                        'leida'       => false,
+                        'created_at'  => $ahora,
+                        'updated_at'  => $ahora,
+                    ])->toArray()
+                );
+            }
+
+            return redirect()->route('empresa.home')->with('success', 'Oferta creada con éxito.');
         }
 
-        $oferta->modalidad = ucfirst(strtolower($data['modalidad']));
 
-        $oferta->tipo_oferta = $data['tipo_trabajo'] === 'practica-profesional'
-            ? 'Practica Profesional'
-            : ucwords(str_replace('-', ' ', $data['tipo_trabajo']));
 
-        $oferta->experiencia_requerida = $data['experiencia_requerida'] === 'sin-experiencia'
-            ? 'Sin Experiencia'
-            : ucwords(str_replace('-', ' ', $data['experiencia_requerida']));
 
-        $oferta->id_empresa        = auth()->user()->empresa->id_empresa;
-        $oferta->fecha_publicacion = now();
-        $oferta->estado            = 'Activa';
-        $oferta->save();
-        // Guardar habilidades
-    if ($request->has('tecnologias') && is_array($request->tecnologias) && count($request->tecnologias) > 0) {
-    $tecnologias = is_array($request->tecnologias)
-        ? $request->tecnologias
-        : explode(',', $request->tecnologias);
-
-    $ids = [];
-    foreach ($tecnologias as $nombre) {
-        $nombre = trim($nombre);
-        if (!$nombre) continue;
-
-        // Busca insensible a mayúsculas, crea si no existe
-        $habilidad = \App\Models\Habilidad::whereRaw('LOWER(nombre) = ?', [strtolower($nombre)])
-            ->first();
-
-        if (!$habilidad) {
-            $habilidad = \App\Models\Habilidad::create(['nombre' => ucfirst(strtolower($nombre))]);
-        }
-
-        $ids[] = $habilidad->id_habilidad;
-    }
-
-    $oferta->habilidades()->sync($ids);
-}
-
-        return redirect()->route('empresa.home')->with('success', 'Oferta creada con éxito.');
-    }
 
     public function actualizarEstadoPostulante(Request $request, $postulacionId)
     {
-        $postulacion = Postulacion::with('oferta')->findOrFail($postulacionId);
-
+        $postulacion = Postulacion::with('oferta', 'estudiante')->findOrFail($postulacionId);
         if ($postulacion->oferta->id_empresa !== auth()->user()->empresa->id_empresa) {
             abort(403, 'No autorizado');
         }
@@ -336,9 +346,46 @@ class EmpresaController extends Controller
         }
 
         $postulacion->estado = $estado;
-        $postulacion->save();
+            $postulacion->save();
 
-        return response()->json(['success' => true, 'estado' => $postulacion->estado]);
+            $notificaciones = [
+        'Preseleccionado' => [
+            'titulo'  => 'Avanzaste en la preselección',
+            'mensaje' => "La empresa revisó tu postulación a '{$postulacion->oferta->titulo}' y avanzaste a la siguiente etapa.",
+            'tipo'    => 'success',
+        ],
+        'En Contacto' => [
+            'titulo'  => 'Una empresa quiere contactarte',
+            'mensaje' => "La empresa está interesada en tu postulación a '{$postulacion->oferta->titulo}'.",
+            'tipo'    => 'success',
+        ],
+        'Rechazado' => [
+            'titulo'  => 'Tu postulación no avanzó',
+            'mensaje' => "La empresa finalizó el proceso de selección para '{$postulacion->oferta->titulo}'.",
+            'tipo'    => 'warning',
+        ],
+        'Postulado' => [
+            'titulo'  => 'Postulación recibida',
+            'mensaje' => "Tu postulación a '{$postulacion->oferta->titulo}' fue registrada correctamente.",
+            'tipo'    => 'info',
+        ],
+    ];
+
+            if (isset($notificaciones[$estado])) {
+                $n = $notificaciones[$estado];
+                \DB::table('notificaciones')->insert([
+                    'id_usuario'  => $postulacion->estudiante->id_usuario,
+                    'titulo'      => $n['titulo'],
+                    'mensaje'     => $n['mensaje'],
+                    'url'         => route('estudiante.home'),
+                    'tipo'        => $n['tipo'],
+                    'leida'       => false,
+                    'created_at'  => now(),
+                    'updated_at'  => now(),
+                ]);
+            }
+
+            return response()->json(['success' => true, 'estado' => $postulacion->estado]);
     }
 
     public function verPerfilEstudiante($id)

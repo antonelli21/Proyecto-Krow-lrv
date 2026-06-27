@@ -6,16 +6,14 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('notificaciones', function (Blueprint $table) {
             $table->id();
 
             // Usuario que recibe la notificación
-            $table->foreignId('usuario_id')->constrained('users')->onDelete('cascade');
+            $table->unsignedBigInteger('id_usuario');
+            $table->foreign('id_usuario')->references('id')->on('users')->onDelete('cascade');
 
             // Contenido
             $table->string('titulo');
@@ -34,9 +32,6 @@ return new class extends Migration
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('notificaciones');

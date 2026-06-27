@@ -98,7 +98,7 @@ Route::prefix('estudiante')
         Route::get('/empresas',                         function () {return view('empresas');})->name('empresas');
         Route::get('/perfil',                           [EstudianteController::class, 'verPerfil'])->name('perfil');
         Route::get('/mensajes',                         function () {return view('mensajes');})->name('mensajes');
-        Route::get('/oferta/{id}',                      function ($id) {return view('estudiante.oferta-detalle', compact('id'));})->name('oferta');
+        Route::get('/oferta/{id}', [OfertaController::class, 'detalle'])->name('oferta');
         Route::get('/lista',                            [EstudianteController::class, 'lista'])->name('lista');
         Route::get('/perfil/editar',                    [EstudianteController::class, 'editarPerfil'])->name('perfil.editar');
         Route::put('/perfil/update',                    [EstudianteController::class, 'updatePerfil'])->name('perfil.update');
@@ -201,6 +201,9 @@ Route::prefix('notificaciones/api')->name('notificaciones.api.')->group(function
     Route::get('/contador',      [NotificacionController::class, 'contarNoLeidas'])       ->name('contador');
     Route::post('/marcar-leida', [NotificacionController::class, 'marcarLeida'])          ->name('marcar-leida');
     Route::post('/marcar-todas', [NotificacionController::class, 'marcarTodasComoLeidas'])->name('marcar-todas');
+    Route::delete('/eliminar/{id}', [NotificacionController::class, 'eliminar'])->name('eliminar');
+    // Opcional
+    Route::delete('/eliminar-todas', [NotificacionController::class, 'eliminarTodas'])->name('eliminar-todas');
 });
  
 

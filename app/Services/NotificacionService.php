@@ -21,7 +21,7 @@ class NotificacionService
         string $tipo = Notificacion::TIPO_INFO
     ): Notificacion {
         return Notificacion::create([
-            'usuario_id' => $usuarioId,
+            'id_usuario' => $usuarioId,
             'titulo'     => $titulo,
             'mensaje'    => $mensaje,
             'url'        => $url,
@@ -192,4 +192,18 @@ class NotificacionService
             'fecha'   => $n->created_at->diffForHumans(),
         ];
     }
+
+
+        public function eliminar(int $notificacionId, int $usuarioId): bool
+        {
+            return Notificacion::delUsuario($usuarioId)
+                ->where('id', $notificacionId)
+                ->delete() > 0;
+        }
+
+        public function eliminarTodas(int $usuarioId): int
+        {
+            return Notificacion::delUsuario($usuarioId)
+                ->delete();
+        }
 }

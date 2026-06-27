@@ -24,10 +24,15 @@ class NotificacionController extends Controller
     public function historial()
     {
         $notificaciones = $this->notificacionService->obtenerHistorial(Auth::id());
+        $rol = Auth::user()->rol;
 
-        return view('notificaciones.index', compact('notificaciones'));
+        return match($rol) {
+            'estudiante' => view('estudiante.notificaciones.index', compact('notificaciones')),
+            'empresa'    => view('empresa.notificaciones.index', compact('notificaciones')),
+            'admin'      => view('admin.notificaciones.index', compact('notificaciones')),
+            default      => abort(403),
+        };
     }
-
     // ─── API Endpoints (usados por el dropdown) ───────────────
 
     /**
@@ -84,5 +89,20 @@ class NotificacionController extends Controller
             'success'  => true,
             'marcadas' => $cantidad,
         ]);
+    }
+
+
+        public function eliminar($id)
+    {
+        $this->notificacionService->eliminar($id, Auth::id());
+
+        return response()->json(['success' => true]);
+    }
+
+    public function eliminarTodas()
+    {
+        $this->notificacionService->eliminarTodas(Auth::id());
+
+        return response()->json(['success' => true]);
     }
 }
