@@ -87,10 +87,11 @@ $ofertas = $ofertas ?? collect();
                 </p>
             </div>
             <div class="sort-bar">
-                <select class="sort-select" id="sort-select" aria-label="Ordenar resultados">
-                    <option value="recientes">Más recientes</option>
-                    <option value="salario-asc">Menor salario</option>
-                    <option value="salario-desc">Mayor salario</option>
+                <select class="sort-select" id="sort-select" aria-label="Ordenar resultados"
+                        onchange="document.getElementById('orden-hidden').value = this.value; fetchOfertas();">
+                    <option value="recientes"    {{ request('orden', 'recientes') === 'recientes'    ? 'selected' : '' }}>Más recientes</option>
+                    <option value="salario-asc"  {{ request('orden') === 'salario-asc'  ? 'selected' : '' }}>Menor salario</option>
+                    <option value="salario-desc" {{ request('orden') === 'salario-desc' ? 'selected' : '' }}>Mayor salario</option>
                 </select>
             </div>
         </div>

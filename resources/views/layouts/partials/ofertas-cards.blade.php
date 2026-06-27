@@ -29,6 +29,13 @@ $fechaTxt = data_get($oferta, 'fecha_texto',
 $logoLetras = strtoupper(substr($empresa ?: '?', 0, 2));
 @endphp
 
+@php
+$logoUrl = null;
+if (!empty($oferta->empresa->logo)) {
+    $logoUrl = \Illuminate\Support\Facades\Storage::url($oferta->empresa->logo);
+}
+@endphp
+
 <article
     class="job-card"
     data-id="{{ $id }}"
@@ -36,7 +43,10 @@ $logoLetras = strtoupper(substr($empresa ?: '?', 0, 2));
     data-fecha="{{ $oferta->fecha_publicacion ? \Carbon\Carbon::parse($oferta->fecha_publicacion)->timestamp : 0 }}" style="margin-bottom:1rem;">
 
     <div class="job-card-top">
-        <div class="company-logo" aria-hidden="true">{{ $logoLetras }}</div>
+        <div class="company-logo" aria-hidden="true"
+             style="{{ $logoUrl ? 'background-image:url(\'' . $logoUrl . '\'); background-size:cover; background-position:center; font-size:0;' : '' }}">
+            @if(!$logoUrl){{ $logoLetras }}@endif
+        </div>
         <div class="job-info">
             <h3 class="job-title">{{ $titulo }}</h3>
             <p class="job-meta">
