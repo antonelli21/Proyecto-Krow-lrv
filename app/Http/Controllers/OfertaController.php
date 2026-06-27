@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Oferta;
 use Illuminate\Http\Request;
+use App\Models\User;
+use App\Services\NotificacionService;
+use App\Models\Notificacion;
 
 class OfertaController extends Controller
 {

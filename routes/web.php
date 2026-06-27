@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\IndexController;
 use App\Http\Controllers\ConfiguracionController;
-
+use App\Http\Controllers\NotificacionController;
 /* ════════════════════════════════════════
    RUTAS PÚBLICAS
    Accesibles por cualquier visitante sin necesidad de autenticación.
@@ -183,13 +183,27 @@ Route::delete('/papelera/oferta/{id}',                     [AdminController::cla
 
 
 
+
+
+
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/mensajes',       function () {
         return view('mensajes');
     })->name('mensajes');
-    Route::get('/notificaciones', function () {
-        return view('notificaciones');
-    })->name('notificaciones');
+
+
+Route::get('/notificaciones', [NotificacionController::class, 'historial'])
+    ->name('notificaciones.historial');
+ 
+// API endpoints (consumidos por el dropdown vía fetch)
+Route::prefix('notificaciones/api')->name('notificaciones.api.')->group(function () {
+    Route::get('/resumen',       [NotificacionController::class, 'resumen'])              ->name('resumen');
+    Route::get('/contador',      [NotificacionController::class, 'contarNoLeidas'])       ->name('contador');
+    Route::post('/marcar-leida', [NotificacionController::class, 'marcarLeida'])          ->name('marcar-leida');
+    Route::post('/marcar-todas', [NotificacionController::class, 'marcarTodasComoLeidas'])->name('marcar-todas');
+});
+ 
+
 
     Route::get('/configuracion',             [ConfiguracionController::class, 'index'])->name('configuracion');
     Route::put('/configuracion/password',    [ConfiguracionController::class, 'cambiarPassword'])->name('configuracion.password');
