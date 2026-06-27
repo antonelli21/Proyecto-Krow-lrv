@@ -5,7 +5,9 @@ use Illuminate\Support\Facades\Storage;
 use App\Models\Estudiante;
 use Illuminate\Http\Request;
 use App\Models\Oferta;
+use App\Models\Mensaje;
 class EstudianteController extends Controller
+
 {
     public function index()
     {
@@ -28,6 +30,20 @@ class EstudianteController extends Controller
         );
     }
 
+    public function homeEstudiante()
+    {
+        $userId = auth()->id();
+
+        $mensajesSinLeer = \App\Models\Mensaje::whereHas('chat', function($q) use ($userId) {
+                $q->where('id_usuario_1', $userId)
+                ->orWhere('id_usuario_2', $userId);
+            })
+            ->where('id_remitente', '!=', $userId)
+            ->where('leido', false)
+            ->count();
+
+        return view('estudiante.home-estudiante', compact('mensajesSinLeer'));
+    }
 
     public function store(Request $request)
     {

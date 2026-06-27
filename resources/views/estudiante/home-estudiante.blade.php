@@ -71,9 +71,29 @@
   <div class="section-header">
     <h2 class="section-title">Mis Postulaciones</h2>
     <div class="section-actions">
-      <a href="{{ route('mensajes') }}" class="btn-outline">
+      <a href="{{ route('mensajes') }}" class="btn-outline" style="position:relative;">
         <i class="bi bi-chat-dots"></i> Mensajes
-      </a>
+        @if(isset($mensajesSinLeer) && $mensajesSinLeer > 0)
+            <span style="
+                position:absolute;
+                top:-8px;
+                right:-8px;
+                background:#e05577;
+                color:#fff;
+                font-size:0.7rem;
+                font-weight:700;
+                min-width:18px;
+                height:18px;
+                border-radius:50%;
+                display:flex;
+                align-items:center;
+                justify-content:center;
+                padding:0 4px;
+                line-height:1;
+                border:2px solid var(--bg);
+            ">{{ $mensajesSinLeer > 99 ? '99+' : $mensajesSinLeer }}</span>
+        @endif
+    </a>
     </div>
   </div>
 <div id="bulk-bar-est" style="display:none; align-items:center; gap:8px; padding:10px 14px; background:var(--surface); border:1px solid var(--accent); border-radius:8px; margin-bottom:12px; flex-wrap:wrap;">

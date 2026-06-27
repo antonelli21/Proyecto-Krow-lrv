@@ -94,7 +94,7 @@ Route::prefix('estudiante')
     ->name('estudiante.')
     ->middleware(['auth', 'verified', 'role:estudiante', 'alumno.activo']) // <-- ¡OJO! Acordate de meter acá tu middleware de bloqueo
     ->group(function () {
-        Route::get('/home',                             function () {     return view('estudiante.home-estudiante');})->name('home');
+        Route::get('/home',                             [EstudianteController::class, 'homeEstudiante'])->name('home');
         Route::get('/empresas',                         function () {return view('empresas');})->name('empresas');
         Route::get('/perfil',                           [EstudianteController::class, 'verPerfil'])->name('perfil');
         Route::get('/mensajes',                         function () {return view('mensajes');})->name('mensajes');
@@ -106,7 +106,7 @@ Route::prefix('estudiante')
         Route::post('/ofertas/{id_oferta}/postular',    [OfertaController::class, 'postular'])->name('ofertas.postular');
         Route::get('/oferta/{id_oferta}/preview',       [OfertaController::class, 'preview'])->name('ofertas.preview');
         Route::get('/empresa/{empresa}',                [EmpresaController::class, 'verPerfilPublico'])->name('empresa.perfil');
-        Route::delete('/postulacion/{id}', [EstudianteController::class, 'cancelarPostulacion']);
+        Route::delete('/postulacion/{id}',              [EstudianteController::class, 'cancelarPostulacion']);
     });
 
 Route::prefix('empresa')
