@@ -103,8 +103,23 @@ public function preview($id_oferta)
             'fecha_cierre' => 'nullable|date',
             'estado' => 'nullable|in:Activa,Pausada,Cerrada',
         ]);
-
         $oferta = Oferta::create($data);
+
+        // Notificar a todos los estudiantes de forma masiva
+        $estudiantes = User::where('rol', 'estudiante')->pluck('id');
+
+        $notificaciones = $estudiantes->map(fn($id) => [
+            'id_usuario'   => $id,
+            'titulo'       => 'Nueva oferta disponible',
+            'mensaje'      => "Se publicó la oferta '{$oferta->titulo}'.",
+            'url'          => route('estudiante.oferta', $oferta->id_oferta),
+            'tipo'         => 'info',
+            'leida'        => false,
+            'created_at'   => now(),
+        ])->toArray();
+
+        // Un solo insert en vez de N inserts
+        \DB::table('notificaciones')->insert($notificaciones);
 
         return response()->json($oferta, 201);
     }
