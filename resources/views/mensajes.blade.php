@@ -629,42 +629,54 @@
             margin-bottom: 12px;
         }
 
-            .btn-recarga {
-                display: inline-flex;
-                align-items: center;
-                justify-content: center;
-                width: 36px;
-                height: 36px;
-                border: 2px solid #FFD700;          /* Borde dorado */
-                border-radius: 8px;                /* Esquinas ligeramente redondeadas */
-                background: rgba(255, 215, 0, 0.1); /* Fondo dorado tenue */
-                color: #FFD700;                    /* Ícono dorado */
-                cursor: pointer;
-                font-size: 1.1rem;
-                transition: all 0.3s ease;
-                animation: pulse-gold 2s infinite ease-in-out; /* Animación de brillo */
-            }
+    .btn-recarga {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 36px;
+        height: 36px;
+        border: 1px solid var(--border, #d0d0d0);
+        border-radius: 8px;
+        background: var(--muted, #f0f0f0);   /* Usa el color de superficie */
+        color: var(--primary, #333);              /* Color de texto principal */
+        cursor: pointer;
+        font-size: 1.1rem;
+        transition: all 0.3s ease;
+        box-shadow: var(--shadow-card, none);   /* Sombra sutil (opcional) */
+    }
 
-            .btn-recarga:hover {
-                background: rgba(255, 215, 0, 0.25);
-                box-shadow: 0 0 15px rgba(255, 215, 0, 0.5); /* Resplandor al pasar el mouse */
-            }
+    .btn-recarga:hover {
+        background: var(--bg-hover, #e0e0e0);
+        border-color: var(--accent, #077552);  /* Resalta con el color acento */
+        color: var(--accent, #077552);
+        transform: scale(1.05);
+    }
 
-            .btn-recarga:active {
-                transform: scale(0.92); /* Efecto de presión al hacer clic */
-            }
+    .btn-recarga:active {
+        transform: scale(0.92);
+    }
 
-            /* Animación de pulso (caja dorada) */
-            @keyframes pulse-gold {
-                0% {
-                    box-shadow: 0 0 0 0 rgba(255, 215, 0, 0.4);
-                }
-                70% {
-                    box-shadow: 0 0 0 8px rgba(255, 215, 0, 0);
-                }
-                100% {
-                    box-shadow: 0 0 0 0 rgba(255, 215, 0, 0);
-                
+    /* ── Animación de giro ── */
+    @keyframes spin {
+        0%   { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+
+    .btn-recarga i.girar {
+        animation: spin 0.6s linear;
+    }
+
+                    @keyframes pulse-gold {
+                        0% {
+                            box-shadow: 0 0 0 0 rgba(255, 215, 0, 0.4);
+                        }
+                        70% {
+                            box-shadow: 0 0 0 8px rgba(255, 215, 0, 0);
+                        }
+                        100% {
+                            box-shadow: 0 0 0 0 rgba(255, 215, 0, 0);
+                        }
+                    }
                 /* ── Responsive: Tablet ── */
                 @media (min-width: 641px) and (max-width: 900px) {
                     .mensajes-sidebar {
@@ -679,7 +691,31 @@
                     .mensaje-burbuja {
                         max-width: 75% !important;
                     }
+
+                    /* Footer reducido en tablet */
+                    body:has(.mensajes-page) footer,
+                    body:has(.mensajes-page) .footer,
+                    body:has(.mensajes-page) #main-footer {
+                        padding: 2px 8px !important;
+                        min-height: 24px !important;
+                        font-size: 9px !important;
+                        line-height: 1.2 !important;
+                        border-top: 0.5px solid var(--border) !important;
+                    }
                 }
+
+                /* ── Responsive: Móvil (ocultar footer completamente) ── */
+                @media (max-width: 640px) {
+                    body:has(.mensajes-page) footer,
+                    body:has(.mensajes-page) .footer,
+                    body:has(.mensajes-page) #main-footer {
+                        display: none !important;
+                    }
+                }
+
+
+
+
 </style>
 @endsection
 
@@ -1037,16 +1073,18 @@
     searchEl?.addEventListener('input', cargarChats);
 
     // ── Botón de actualizar (el que ya existe en el HTML) ──────────────────────
-    const btnRecarga = document.getElementById('btn-recarga');
-    if (btnRecarga) {
-        btnRecarga.addEventListener('click', function() {
-            const icono = this.querySelector('i');
-            icono.classList.add('girar');
-            cargarChats();
-            setTimeout(() => icono.classList.remove('girar'), 1000);
-        });
-    }
+        const btnRecarga = document.getElementById('btn-recarga');
+        if (btnRecarga) {
+            btnRecarga.addEventListener('click', function() {
+                const icono = this.querySelector('i');
+                icono.classList.add('girar');    // Inicia la animación de giro
 
+                // Espera a que termine el giro (600ms) y recarga la página
+                setTimeout(() => {
+                    window.location.reload();    // Refresca TODO (como F5)
+                }, 600);
+            });
+        }
     // ── Inicialización ───────────────────────────────────────────────────────────
 
     document.addEventListener('DOMContentLoaded', () => {
