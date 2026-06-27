@@ -242,3 +242,22 @@ Route::prefix('api')
         Route::apiResource('estudiantes', EstudianteController::class)
             ->only(['index', 'show', 'store', 'update', 'destroy']);
     });
+
+Route::get('/error-500', function () {
+    abort(500);
+});
+Route::get('/error-503', function () {
+    abort(503);
+});
+Route::get('/error-401', function () {
+    abort(401);
+});
+Route::get('/error-403', function () {
+    abort(403);
+});
+Route::get('/error-404', function () {
+    abort(404);
+});
+Route::get('/error-419', function () {
+    abort(419);
+});
