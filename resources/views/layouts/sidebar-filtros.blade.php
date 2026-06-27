@@ -25,7 +25,7 @@
     <label for="provincia">Provincia</label>
     <div class="select-wrapper">
       <select id="provincia" name="provincia" class="filter-select">
-        <option value="" disabled {{ !request('provincia') ? 'selected' : '' }}>Seleccioná una provincia</option>
+        <option value="" {{ !request('provincia') ? 'selected' : '' }}>Todas las provincias</option>
         @if(isset($provinciasFiltro))
         @foreach($provinciasFiltro as $prov)
         <option value="{{ $prov->nombre }}" data-id="{{ $prov->id_provincia }}" {{ request('provincia') === $prov->nombre ? 'selected' : '' }}>{{ $prov->nombre }}</option>
@@ -175,8 +175,10 @@
   </div>
 
   <div class="filters-actions" style="margin-top: 20px; width: 100%;">
+    <input type="hidden" name="orden" id="orden-hidden" value="{{ request('orden', 'recientes') }}">
     <button type="submit" class="btn-aplicar-filtros" style="width: 100%; padding: 10px; background: var(--accent, #FFC107); color: #0D1A13; font-family: var(--font-display); font-weight: 800; border: none; border-radius: var(--radius, 6px); cursor: pointer; transition: background 0.2s;">
       Aplicar filtros
     </button>
   </div>
+
 </form>

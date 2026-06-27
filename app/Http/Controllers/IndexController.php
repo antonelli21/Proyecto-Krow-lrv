@@ -80,9 +80,18 @@ if ($request->filled('tecnologias')) {
                 $query->where('fecha_publicacion', '>=', \Carbon\Carbon::now()->subMonth());
             }
         }
+        $orden = $request->get('orden', 'recientes');
+        if ($orden === 'salario-asc') {
+            $query->orderBy('salario_min', 'asc');
+        } elseif ($orden === 'salario-desc') {
+            $query->orderBy('salario_min', 'desc');
+        } else {
+            $query->orderBy('fecha_publicacion', 'desc');
+        }
 
-        $ofertas = $query->orderBy('fecha_publicacion', 'desc')->paginate(6)->withQueryString();
+        $ofertas = $query->paginate(6)->withQueryString();
 
+        
         // Datos para el right panel
         $panelData = [];
         if (Auth::check()) {

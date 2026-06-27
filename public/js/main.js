@@ -327,7 +327,8 @@ function initFiltersSidebar() {
 
   if (!filtersForm || !mainContent) return;
 
-  async function fetchOfertas() {
+  window.fetchOfertas = async function() {
+
     const params = new URLSearchParams(new FormData(filtersForm));
 
     const res = await fetch('/?' + params.toString(), {
@@ -1088,24 +1089,24 @@ function adminConfirm(name) {
 
   function initSort() {
     const select = document.getElementById('sort-select');
-    const container = document.getElementById('cards-list'); // ← cards-list, no cards-container
+    const container = document.getElementById('cards-list');
     if (!select || !container) return;
 
     select.addEventListener('change', function () {
-      const cards = [...container.querySelectorAll('.job-card')];
-      if (!cards.length) return;
+        const cards = [...container.querySelectorAll('.job-card')];
+        if (!cards.length) return;
 
-      cards.sort((a, b) => {
-        const sa = Number(a.dataset.salario ?? 0);
-        const sb = Number(b.dataset.salario ?? 0);
-        const fa = Number(a.dataset.fecha ?? 0);
-        const fb = Number(b.dataset.fecha ?? 0);
-        if (this.value === 'salario-asc') return sa - sb;
-        if (this.value === 'salario-desc') return sb - sa;
-        return fb - fa;
-      });
+        cards.sort((a, b) => {
+            const sa = Number(a.dataset.salario ?? 0);
+            const sb = Number(b.dataset.salario ?? 0);
+            const fa = Number(a.dataset.fecha ?? 0);
+            const fb = Number(b.dataset.fecha ?? 0);
+            if (this.value === 'salario-asc') return sa - sb;
+            if (this.value === 'salario-desc') return sb - sa;
+            return fb - fa;
+        });
 
-      cards.forEach(c => container.appendChild(c));
+        cards.forEach(c => container.appendChild(c));
     });
   }
 
@@ -1127,7 +1128,6 @@ function adminConfirm(name) {
   document.addEventListener('DOMContentLoaded', () => {
     renderRightPanel();
     initBookmarks();
-    initSort();
     initRoleSwitcher();
   });
 })();
