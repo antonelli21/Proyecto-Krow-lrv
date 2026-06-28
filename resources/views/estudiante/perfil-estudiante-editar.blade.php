@@ -43,8 +43,9 @@
         </div>
     </div>
 
+
     {{-- ══ FORMULARIO ══ --}}
-    <div class="perfil-sections">
+        <div style="max-width: 720px; margin: 0 auto; display: flex; flex-direction: column; gap: 1.5rem;">
 
         <form id="formEditarPerfil" action="{{ route('estudiante.perfil.update') }}" method="POST" enctype="multipart/form-data">
             @csrf

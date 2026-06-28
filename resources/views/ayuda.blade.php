@@ -459,6 +459,30 @@ $faqs = [
     }
   }
 
+
+    /* ── Mapa ── */
+  .mapa-container{
+      width:100%;
+      height:380px;
+      border:1px solid var(--border);
+      border-radius:8px;
+      overflow:hidden;
+      margin-top:16px;
+  }
+
+  .mapa-container iframe{
+      width:100%;
+      height:100%;
+      border:0;
+      display:block;
+  }
+
+  @media (max-width:640px){
+      .mapa-container{
+          height:280px;
+      }
+  }
+
   /* ── Ajuste para layout de 3 columnas ── */
   @media (max-width: 680px) {
     .page-body .ayuda-page {
@@ -547,6 +571,26 @@ $faqs = [
       </form>
     </div>
   </section>
+    {{-- Ubicación --}}
+    <section>
+        <div class="contacto-card">
+            <h2 class="ayuda-section-title" style="margin-bottom:4px;">¿Dónde estamos?</h2>
+            <p class="ayuda-section-sub">
+                Podés visitarnos en nuestras oficinas de la UTN Haedo.
+            </p>
+
+            <div class="mapa-container">
+                <iframe
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3282.5591441910246!2d-58.60461128823923!3d-34.64057945933379!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x95bc951c0fe2d9f5%3A0x9f1c540898efecbe!2sUTN%20HAEDO!5e0!3m2!1ses-419!2sar!4v1782676186106!5m2!1ses-419!2sar"
+                    loading="lazy"
+                    allowfullscreen
+                    referrerpolicy="strict-origin-when-cross-origin">
+                </iframe>
+            </div>
+        </div>
+    </section>
+
+
 
 </main>
 

@@ -349,13 +349,19 @@
                 </div>
 
                 <div class="card-right">
-                    <a href="#" class="btn-download">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
-                            <circle cx="12" cy="12" r="3"/>
-                        </svg>
-                        Mirar CV
-                    </a>
+                    @if(!empty($postulante->cv))
+                        <a href="{{ Storage::url($postulante->cv) }}" target="_blank" class="btn-download">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                                <circle cx="12" cy="12" r="3"/>
+                            </svg>
+                            Ver CV
+                        </a>
+                    @else
+                        <span class="btn-download" style="opacity:0.4; cursor:not-allowed; pointer-events:none;">
+                            Sin CV
+                        </span>
+                    @endif
 
                     <div class="social-links">
                         @if(!empty($postulante->linkedin))

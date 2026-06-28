@@ -23,40 +23,42 @@
            form="formEditarEmpresa" style="display:none;"
            onchange="previewBanner(this)">
 
-    {{-- ══ HEADER ══ --}}
-    <div class="perfil-header-card" style="border-radius: 0 0 var(--radius) var(--radius); border-top:none;">
-        <div class="perfil-header-inner">
+    {{-- ══ HEADER centrado ══ --}}
+    <div style="max-width: 720px; margin: 0 auto;">
+        <div class="perfil-header-card">
+            <div class="perfil-header-inner">
 
-            <div class="perfil-avatar" id="logoPreview"
-                 style="cursor:pointer; position:relative; {{ $empresa->logo ? 'background-image:url(\'' . \Illuminate\Support\Facades\Storage::url($empresa->logo) . '\'); background-size:cover; background-position:center;' : '' }}"
-                 onclick="document.getElementById('logo').click()"
-                 title="Tocar para cambiar el logo">
-                <span id="logoInitial">
-                    @if(!$empresa->logo)
-                        {{ strtoupper(substr($empresa->nombre_empresa ?? $usuario->name ?? 'E', 0, 1)) }}
-                    @endif
-                </span>
-                <div class="avatar-overlay">
-                    <i class="bi bi-camera-fill"></i>
+                <div class="perfil-avatar" id="logoPreview"
+                     style="cursor:pointer; position:relative; {{ $empresa->logo ? 'background-image:url(\'' . \Illuminate\Support\Facades\Storage::url($empresa->logo) . '\'); background-size:cover; background-position:center;' : '' }}"
+                     onclick="document.getElementById('logo').click()"
+                     title="Tocar para cambiar el logo">
+                    <span id="logoInitial">
+                        @if(!$empresa->logo)
+                            {{ strtoupper(substr($empresa->nombre_empresa ?? $usuario->name ?? 'E', 0, 1)) }}
+                        @endif
+                    </span>
+                    <div class="avatar-overlay">
+                        <i class="bi bi-camera-fill"></i>
+                    </div>
                 </div>
-            </div>
-            <input type="file" id="logo" name="logo" accept="image/*"
-                   form="formEditarEmpresa"
-                   style="display:none;" onchange="previewLogo(this)">
+                <input type="file" id="logo" name="logo" accept="image/*"
+                       form="formEditarEmpresa"
+                       style="display:none;" onchange="previewLogo(this)">
 
-            <div class="perfil-header-info" style="flex: 1;">
-                <h1 class="panel-page-title">Editar perfil</h1>
-                <p class="panel-page-sub">{{ $empresa->nombre_empresa ?? $usuario->name ?? '' }}</p>
-                @error('logo') <span class="config-error">{{ $message }}</span> @enderror
+                <div class="perfil-header-info" style="flex: 1;">
+                    <h1 class="panel-page-title">Editar perfil</h1>
+                    <p class="panel-page-sub">{{ $empresa->nombre_empresa ?? $usuario->name ?? '' }}</p>
+                    @error('logo') <span class="config-error">{{ $message }}</span> @enderror
+                </div>
+                <a href="{{ route('empresa.perfil') }}" class="btn-outline">
+                    <i class="bi bi-arrow-left"></i> Volver al perfil
+                </a>
             </div>
-            <a href="{{ route('empresa.perfil') }}" class="btn-outline">
-                <i class="bi bi-arrow-left"></i> Volver al perfil
-            </a>
         </div>
     </div>
 
     {{-- ══ FORMULARIO ══ --}}
-    <div class="perfil-sections">
+    <div style="max-width: 720px; margin: 0 auto; display: flex; flex-direction: column; gap: 1.5rem;">
 
         <form id="formEditarEmpresa" action="{{ route('empresa.perfil.update') }}" method="POST" enctype="multipart/form-data">
             @csrf
@@ -325,7 +327,6 @@
 </style>
 
 <script>
-// ── Preview banner ──
 function previewBanner(input) {
     if (input.files && input.files[0]) {
         const reader = new FileReader();
@@ -338,7 +339,6 @@ function previewBanner(input) {
     }
 }
 
-// ── Hover overlay del banner ──
 const bannerTrigger = document.getElementById('banner-trigger');
 const bannerOverlay = document.getElementById('banner-overlay');
 if (bannerTrigger && bannerOverlay) {
@@ -347,7 +347,6 @@ if (bannerTrigger && bannerOverlay) {
     bannerTrigger.addEventListener('click', () => document.getElementById('banner').click());
 }
 
-// ── Preview logo ──
 function previewLogo(input) {
     if (input.files && input.files[0]) {
         const reader = new FileReader();
@@ -362,7 +361,6 @@ function previewLogo(input) {
     }
 }
 
-// ── Select dependiente provincia → localidad ──
 document.getElementById('id_provincia').addEventListener('change', function () {
     const idProvincia = this.value;
     const selectLocalidad = document.getElementById('id_localidad');

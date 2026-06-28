@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+use Illuminate\Support\Facades\Storage;
 
 use App\Models\Empresa;
 use Illuminate\Http\Request;
@@ -236,6 +237,7 @@ class EmpresaController extends Controller
                     'estado'            => $postulacion->estado,
                     'linkedin'          => $estudiante->linkedin ?? null,
                     'github'            => $estudiante->github ?? null,
+                    'cv'                => $estudiante->cv ?? null,
                 ];
             });
 
