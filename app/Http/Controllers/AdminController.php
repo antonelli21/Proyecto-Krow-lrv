@@ -98,16 +98,52 @@ class AdminController extends Controller
         return redirect()->back()->with('success', 'Estado del estudiante actualizado.');
     }
 
-public function cambiarEstadoEmpresa(Request $request, $id)
-{
-    $request->validate([
-        'estado' => 'required|in:aprobada,suspendida,pendiente,rechazada'
-    ]);
+    public function cambiarEstadoEmpresa(Request $request, $id)
+    {
+        $request->validate([
+            'estado' => 'required|in:aprobada,suspendida,pendiente,rechazada'
+        ]);
 
-    $empresa = Empresa::findOrFail($id);
-    $estadoAnterior = $empresa->estado;
-    $empresa->update(['estado' => $request->estado]);
+        $empresa = Empresa::findOrFail($id);
+        $estadoAnterior = $empresa->estado;
+        $empresa->update(['estado' => $request->estado]);
+        if ($estadoAnterior !== $request->estado && in_array($request->estado, ['aprobada', 'suspendida', 'rechazada'])) {
 
+        $notifs = [
+            'aprobada'   => [
+                'titulo'  => 'Tu cuenta fue aprobada',
+                'mensaje' => 'El administrador aprobó tu cuenta. Ya podés publicar ofertas laborales.',
+                'tipo'    => 'success',
+                'url'     => route('empresa.home'),
+            ],
+            'suspendida' => [
+                'titulo'  => 'Tu cuenta fue suspendida',
+                'mensaje' => 'El administrador suspendió tu cuenta. Contactate con soporte para más información.',
+                'tipo'    => 'danger',
+                'url'     => route('configuracion'),
+            ],
+            'rechazada'  => [
+                'titulo'  => 'Tu cuenta fue rechazada',
+                'mensaje' => 'El administrador rechazó el registro de tu empresa. Contactate con soporte.',
+                'tipo'    => 'danger',
+                'url'     => route('configuracion'),
+            ],
+        ];
+
+        if (isset($notifs[$request->estado])) {
+            $n = $notifs[$request->estado];
+            \DB::table('notificaciones')->insert([
+                'id_usuario'  => $empresa->id_usuario,
+                'titulo'      => $n['titulo'],
+                'mensaje'     => $n['mensaje'],
+                'url'         => $n['url'],
+                'tipo'        => $n['tipo'],
+                'leida'       => false,
+                'created_at'  => now(),
+                'updated_at'  => now(),
+            ]);
+        }
+    }
     // 🔥 SINCRONIZACIÓN AUTOMÁTICA DE OFERTAS
     if (in_array($request->estado, ['suspendida', 'rechazada'])) {
 
@@ -149,7 +185,7 @@ public function cambiarEstadoEmpresa(Request $request, $id)
             'motivo' => 'nullable|string|max:500',
         ]);
 
-        $oferta = Oferta::findOrFail($id);
+        $oferta = Oferta::with('empresa')->findOrFail($id);
 
         if ($request->estado === 'Pausada') {
             $oferta->update([
@@ -157,6 +193,20 @@ public function cambiarEstadoEmpresa(Request $request, $id)
                 'pausada_por_admin'  => true,
                 'motivo_pausa_admin' => $request->motivo ?? null,
             ]);
+
+            // ── Notificar a la empresa ─────────────────────────────
+            \DB::table('notificaciones')->insert([
+                'id_usuario'  => $oferta->empresa->id_usuario,
+                'titulo'      => 'Tu publicación fue pausada',
+                'mensaje'     => "La oferta \"{$oferta->titulo}\" fue pausada por el administrador."
+                                . ($request->motivo ? " Motivo: {$request->motivo}." : ''),
+                'url'         => route('empresa.home'),
+                'tipo'        => 'warning',
+                'leida'       => false,
+                'created_at'  => now(),
+                'updated_at'  => now(),
+            ]);
+
         } else {
             $oferta->update([
                 'estado'             => $request->estado,

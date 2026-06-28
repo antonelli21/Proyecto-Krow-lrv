@@ -17,18 +17,34 @@ class TicketSoporteController extends Controller
         return response()->json($ticketSoporte->load('user'));
     }
 
-    public function store(Request $request)
-    {
-        $data = $request->validate([
-            'id_usuario' => 'required|exists:users,id',
-            'asunto' => 'required|string|max:100',
-            'descripcion' => 'required|string',
-            'estado' => 'nullable|in:Abierto,En Proceso,Resuelto',
-        ]);
+        public function store(Request $request)
+        {
+            $data = $request->validate([
+                'id_usuario'  => 'required|exists:users,id',
+                'asunto'      => 'required|string|max:100',
+                'descripcion' => 'required|string',
+                'estado'      => 'nullable|in:Abierto,En Proceso,Resuelto',
+            ]);
 
-        $ticket = TicketSoporte::create($data);
+            $ticket    = TicketSoporte::create($data);
+            $remitente = \App\Models\User::find($data['id_usuario']);
 
-        return response()->json($ticket, 201);
+            \App\Models\User::where('rol', 'admin')->each(function ($admin) use ($ticket, $remitente) {
+                \DB::table('notificaciones')->insert([
+                    'id_usuario'  => $admin->id,
+                    'titulo'      => 'Nuevo reporte de soporte',
+                    'mensaje'     => "{$remitente->name} abrió un ticket: \"{$ticket->asunto}\".",
+                    'url'         => route('admin.reportes'),
+                    'tipo'        => 'danger',
+                    'leida'       => false,
+                    'created_at'  => now(),
+                    'updated_at'  => now(),
+                ]);
+            });
+
+
+
+      return response()->json($ticket, 201);
     }
 
     public function update(Request $request, TicketSoporte $ticketSoporte)

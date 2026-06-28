@@ -13,9 +13,6 @@ class EnviarRecordatorios extends Command
 
     protected $description = 'Envía recordatorios diarios a estudiantes con perfil incompleto y nuevas ofertas.';
 
-    /**
-     * Execute the console command.
-     */
     public function handle(NotificacionService $notificacionService)
     {
         $estudiantes = User::where('rol', 'estudiante')->get();
@@ -39,6 +36,17 @@ class EnviarRecordatorios extends Command
                 Notificacion::TIPO_WARNING
             );
         }
+
+        // Recordatorio a todos los admins: revisar nuevas ofertas
+        User::where('rol', 'admin')->each(function ($admin) use ($notificacionService) {
+            $notificacionService->crearSiNoExisteHoy(
+                $admin->id,
+                'Revisá las nuevas ofertas',
+                'Hay ofertas publicadas hoy pendientes de revisión.',
+                route('admin.ofertas'),
+                Notificacion::TIPO_WARNING
+            );
+        });
 
         $this->info("Recordatorios enviados a {$estudiantes->count()} estudiantes.");
 

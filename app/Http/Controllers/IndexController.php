@@ -177,30 +177,43 @@ if ($request->filled('tecnologias')) {
     }
 
     public function contacto(Request $request)
-{
-    $request->validate([
-        'nombre'  => 'required|string|min:2|max:100',
-        'email'   => 'required|email|max:150',
-        'asunto'  => 'required|string|min:3|max:200',
-        'mensaje' => 'required|string|min:20',
-    ]);
+    {
+        $request->validate([
+            'nombre'  => 'required|string|min:2|max:100',
+            'email'   => 'required|email|max:150',
+            'asunto'  => 'required|string|min:3|max:200',
+            'mensaje' => 'required|string|min:20',
+        ]);
 
-    // Buscar si el email corresponde a un usuario registrado
-    $idUsuario = \App\Models\User::where('email', $request->email)->value('id');
+        $idUsuario = \App\Models\User::where('email', $request->email)->value('id');
 
-    \DB::table('ticket_soporte')->insert([
-    'id_usuario'        => \App\Models\User::where('email', $request->email)->value('id'),
-    'nombre_remitente'  => $request->nombre,
-    'email_remitente'   => $request->email,
-    'asunto'            => $request->asunto,
-    'descripcion'       => $request->mensaje,
-    'estado'            => 'Abierto',
-    'fecha_creacion'    => now(),
-]);
+        \DB::table('ticket_soporte')->insert([
+            'id_usuario'       => $idUsuario,
+            'nombre_remitente' => $request->nombre,
+            'email_remitente'  => $request->email,
+            'asunto'           => $request->asunto,
+            'descripcion'      => $request->mensaje,
+            'estado'           => 'Abierto',
+            'fecha_creacion'   => now(),
+        ]);
 
-    return redirect()->back()->with('contacto_ok', true);
-}
+        // ── Notificar a todos los admins ──────────────────────
+        $ahora = now();
+        \App\Models\User::where('rol', 'admin')->each(function ($admin) use ($request, $ahora) {
+            \DB::table('notificaciones')->insert([
+                'id_usuario'  => $admin->id,
+                'titulo'      => 'Nuevo reporte de soporte',
+                'mensaje'     => "{$request->nombre} abrió un ticket: \"{$request->asunto}\".",
+                'url'         => route('admin.reportes'),
+                'tipo'        => 'danger',
+                'leida'       => false,
+                'created_at'  => $ahora,
+                'updated_at'  => $ahora,
+            ]);
+        });
 
+        return redirect()->back()->with('contacto_ok', true);
+    }
     public function perfilEmpresa($id)
     {
         $empresa = Empresa::with(['localidad', 'provincia'])

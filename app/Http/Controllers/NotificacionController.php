@@ -68,7 +68,7 @@ class NotificacionController extends Controller
             'id' => [
                 'required',
                 'integer',
-                Rule::exists('notificaciones', 'id')->where('usuario_id', Auth::id()),
+                Rule::exists('notificaciones', 'id')->where('id_usuario', Auth::id()),
             ],
         ]);
 

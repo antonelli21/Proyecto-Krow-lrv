@@ -47,19 +47,17 @@ public function preview($id_oferta)
     // aquí guardás la postulación en la BD cuando tengas el modelo
         public function postular($id_oferta)
         {
-            $oferta = Oferta::findOrFail($id_oferta);
-    $estudiante = auth()->user()->estudiante;
+            $oferta     = Oferta::with('empresa')->findOrFail($id_oferta);
+            $estudiante = auth()->user()->estudiante;
 
-    if (!$estudiante) {
-        return back()->with('error', 'No tenés un perfil de estudiante.');
-    }
+            if (!$estudiante) {
+                return back()->with('error', 'No tenés un perfil de estudiante.');
+            }
 
-    // Bloquear si no tiene CV
-    if (empty($estudiante->cv)) {
-        return back()->with('error', 'Necesitás cargar tu CV antes de postularte. <a style="color:var(--accent);" href="' . route('estudiante.perfil.editar') . '">Ir a mi perfil</a>');
-    }
+            if (empty($estudiante->cv)) {
+                return back()->with('error', 'Necesitás cargar tu CV antes de postularte. <a style="color:var(--accent);" href="' . route('estudiante.perfil.editar') . '">Ir a mi perfil</a>');
+            }
 
-            // Verificar si ya se postuló
             $yaPostulado = $oferta->postulaciones()
                 ->where('id_estudiante', $estudiante->id_estudiante)
                 ->exists();
@@ -72,6 +70,18 @@ public function preview($id_oferta)
                 'id_estudiante'     => $estudiante->id_estudiante,
                 'fecha_postulacion' => now(),
                 'estado'            => 'Postulado',
+            ]);
+
+            // ── Notificar a la empresa ─────────────────────────────
+            \DB::table('notificaciones')->insert([
+                'id_usuario'  => $oferta->empresa->id_usuario,
+                'titulo'      => 'Nuevo postulante',
+                'mensaje'     => "{$estudiante->nombre} {$estudiante->apellido} se postuló a \"{$oferta->titulo}\".",
+                'url'         => route('empresa.ofertas.postulantes', $oferta->id_oferta),
+                'tipo'        => 'info',
+                'leida'       => false,
+                'created_at'  => now(),
+                'updated_at'  => now(),
             ]);
 
             return back()->with('success', '¡Te postulaste exitosamente!');

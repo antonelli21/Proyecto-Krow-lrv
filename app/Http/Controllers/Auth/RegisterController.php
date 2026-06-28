@@ -155,7 +155,7 @@ class RegisterController extends Controller
             'email_verification_expires' => now()->addMinutes(30),
         ]);
 
-        Empresa::create([
+        $empresa = Empresa::create([
             'id_usuario'          => $user->id,
             'nombre_empresa'      => $validated['nombre_empresa'],
             'razon_social'        => $validated['razon_social'],
@@ -168,6 +168,20 @@ class RegisterController extends Controller
             'representante'       => $request->input('representante', $validated['nombre_empresa']),
             'email_representante' => $validated['email'],
         ]);
+
+        // ── Notificar a todos los admins ──────────────────────
+        \App\Models\User::where('rol', 'admin')->each(function ($admin) use ($empresa, $validated) {
+            \DB::table('notificaciones')->insert([
+                'id_usuario'  => $admin->id,
+                'titulo'      => 'Nueva empresa registrada',
+                'mensaje'     => "\"{$validated['nombre_empresa']}\" se registró y espera aprobación.",
+                'url'         => route('admin.empresas'),
+                'tipo'        => 'warning',
+                'leida'       => false,
+                'created_at'  => now(),
+                'updated_at'  => now(),
+            ]);
+        });
 
         Mail::to($user->email)->send(new VerificacionEmail($user->name, $codigoVerificacion));
 
