@@ -190,9 +190,8 @@
       <div class="footer-column">
         <h4>Redes Sociales</h4>
         <ul>
-          <li><a href="#">LinkedIn</a></li>
-          <li><a href="#">Instagram</a></li>
-          <li><a href="#">Twitter</a></li>
+          <li><a href="https://www.linkedin.com/school/utn-facultad-regional-haedo/">LinkedIn</a></li>
+          <li><a href="https://www.instagram.com/utn.frh/?hl=es">Instagram</a></li>
         </ul>
       </div>
       <div class="footer-column">

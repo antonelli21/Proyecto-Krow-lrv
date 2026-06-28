@@ -1976,10 +1976,16 @@ body {
   width: 100%;
   background: none;
   border: none;
-  padding: 18px 14px;
   border-bottom: 1px solid var(--border);
+  padding: 14px 14px 16px;
   margin-bottom: 14px;
-  color: var(--primary);
+  color: var(--accent);
+  font-size: 1.1rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-family: var(--font-display);
+  cursor: pointer;
 }
 
 .sidebar-toggle-btn {
