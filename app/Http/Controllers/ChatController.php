@@ -11,10 +11,24 @@ class ChatController extends Controller
     public function index()
     {
         $userId = auth()->id();
-        $chats = Chat::with(['usuario1:id,name', 'usuario2:id,name', 'ultimoMensaje'])
+        $chats = Chat::with([
+                'usuario1:id,name,rol',
+                'usuario1.estudiante:id_usuario,foto_perfil',
+                'usuario1.empresa:id_usuario,logo',
+                'usuario2:id,name,rol',
+                'usuario2.estudiante:id_usuario,foto_perfil',
+                'usuario2.empresa:id_usuario,logo',
+                'ultimoMensaje'
+            ])
             ->where('id_usuario_1', $userId)
             ->orWhere('id_usuario_2', $userId)
             ->get();
+
+        // Agregar avatar_ruta a cada usuario
+        $chats->each(function($chat) {
+            if ($chat->usuario1) $chat->usuario1->append('avatar_ruta');
+            if ($chat->usuario2) $chat->usuario2->append('avatar_ruta');
+        });
 
         return response()->json($chats);
     }
@@ -84,7 +98,18 @@ class ChatController extends Controller
                 'id_usuario_2' => $otroId,
             ]);
 
-        $chat->load(['usuario1:id,name', 'usuario2:id,name', 'mensajes']);
+        $chat->load([
+            'usuario1:id,name,rol',
+            'usuario1.estudiante:id_usuario,foto_perfil',
+            'usuario1.empresa:id_usuario,logo',
+            'usuario2:id,name,rol',
+            'usuario2.estudiante:id_usuario,foto_perfil',
+            'usuario2.empresa:id_usuario,logo',
+            'mensajes'
+        ]);
+
+        if ($chat->usuario1) $chat->usuario1->append('avatar_ruta');
+        if ($chat->usuario2) $chat->usuario2->append('avatar_ruta');
 
         return response()->json($chat); // ✅ Devuelve el chat, no un error
     }
