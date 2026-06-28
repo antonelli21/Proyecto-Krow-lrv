@@ -51,7 +51,7 @@ class User extends Authenticatable
         // Ocultar el código de verificación en las respuestas JSON
         'email_verification_code',
     ];
-
+    protected $appends = ['avatar_ruta']; 
     /**
      * Get the attributes that should be cast.
      * Se agregó el cast de email_verification_expires a datetime.
@@ -87,5 +87,15 @@ class User extends Authenticatable
     public function sentMessages(): HasMany
     {
         return $this->hasMany(Mensaje::class, 'id_remitente', 'id');
+    }
+    public function getAvatarRutaAttribute(): ?string
+    {
+        if ($this->rol === 'estudiante') {
+            return $this->estudiante?->foto_perfil ?? null;
+        }
+        if ($this->rol === 'empresa') {
+            return $this->empresa?->logo ?? null;
+        }
+        return null;
     }
 }
