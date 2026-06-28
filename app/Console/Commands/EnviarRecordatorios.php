@@ -18,21 +18,21 @@ class EnviarRecordatorios extends Command
         $estudiantes = User::where('rol', 'estudiante')->get();
 
         foreach ($estudiantes as $estudiante) {
-            // Recordatorio 1: nuevas ofertas
+            // Recordatorio 1: nuevas ofertas → raíz
             $notificacionService->crearSiNoExisteHoy(
                 $estudiante->id,
                 'Nuevas ofertas disponibles',
                 'Revisá las ofertas laborales publicadas hoy.',
-                route('notificaciones.historial'),
+                '/',
                 Notificacion::TIPO_INFO
             );
 
-            // Recordatorio 2: completar perfil
+            // Recordatorio 2: completar perfil → perfil del estudiante
             $notificacionService->crearSiNoExisteHoy(
                 $estudiante->id,
                 'Completá tu perfil',
                 'Tu perfil incompleto reduce tus chances de ser preseleccionado.',
-                route('configuracion'),
+                '/estudiante/perfil',
                 Notificacion::TIPO_WARNING
             );
         }
@@ -43,7 +43,7 @@ class EnviarRecordatorios extends Command
                 $admin->id,
                 'Revisá las nuevas ofertas',
                 'Hay ofertas publicadas hoy pendientes de revisión.',
-                route('admin.ofertas'),
+                '/admin/home',
                 Notificacion::TIPO_WARNING
             );
         });
