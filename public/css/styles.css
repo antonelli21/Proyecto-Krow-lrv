@@ -5359,7 +5359,11 @@ textarea.filter-input-text:focus {
 /* ════════════════════════════════════════
    NOTIFICACIONES DROPDOWN
 ════════════════════════════════════════ */
-@keyframes notif-spin { to { transform: rotate(360deg); } }
+@keyframes notif-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
 
 .notif-wrapper {
   position: relative;
@@ -6715,4 +6719,65 @@ textarea.filter-input-text:focus {
   .panel-page {
     margin-top: -30px !important;
   }
+}
+
+
+/* ════════════════════════════════════════
+   BUSCADOR PRINCIPAL — encima de las cards
+════════════════════════════════════════ */
+.krow-search-bar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.krow-search-icon {
+  position: absolute;
+  left: 14px;
+  color: var(--muted);
+  font-size: 1rem;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.krow-search-input {
+  width: 100%;
+  padding: 12px 44px 12px 40px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text);
+  font-size: 0.95rem;
+  font-family: var(--font-body);
+  transition: border-color .2s ease, box-shadow .2s ease;
+  outline: none;
+}
+
+.krow-search-input::placeholder {
+  color: var(--muted);
+  opacity: .7;
+}
+
+.krow-search-input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-dim);
+}
+
+.krow-search-clear {
+  position: absolute;
+  right: 12px;
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  padding: 4px;
+  border-radius: 4px;
+  transition: color .15s ease, background .15s ease;
+}
+
+.krow-search-clear:hover {
+  color: var(--text);
+  background: var(--bg-hover);
 }
