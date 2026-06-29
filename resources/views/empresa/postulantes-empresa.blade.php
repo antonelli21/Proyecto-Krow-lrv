@@ -276,10 +276,10 @@
         @forelse($postulantes as $postulante)
         @php
             $badgeConfig = [
-                'Postulado'       => ['class' => 'status-pending',  'text' => '📋 Postulado'],
-                'Preseleccionado' => ['class' => 'status-accepted', 'text' => '⭐ Preseleccionado'],
-                'En Contacto'     => ['class' => 'status-accepted', 'text' => '💬 En Contacto'],
-                'Rechazado'       => ['class' => 'status-rejected', 'text' => '❌ Rechazado'],
+                'Postulado'       => ['class' => 'status-pending',  'text' => 'Postulado'],
+                'Preseleccionado' => ['class' => 'status-accepted', 'text' => 'Preseleccionado'],
+                'En Contacto'     => ['class' => 'status-accepted', 'text' => 'En Contacto'],
+                'Rechazado'       => ['class' => 'status-rejected', 'text' => 'Rechazado'],
             ];
             $config = $badgeConfig[$postulante->estado] ?? $badgeConfig['Postulado'];
         @endphp
