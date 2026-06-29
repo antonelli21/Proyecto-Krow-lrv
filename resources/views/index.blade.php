@@ -104,20 +104,27 @@ $ofertas = $ofertas ?? collect();
     </main>
 
     {{-- RIGHT PANEL --}}
-    <div id="right-panel">
-        <div class="role-panel-content" data-panel-role="invitado">
+<div id="right-panel" class="right-panel">
+    @auth
+        @if(auth()->user()->rol === 'estudiante')
+            <div class="role-panel-content">
+                @include('layouts.partials.estudiante')
+            </div>
+        @elseif(auth()->user()->rol === 'empresa')
+            <div class="role-panel-content">
+                @include('layouts.partials.empresa')
+            </div>
+        @elseif(auth()->user()->rol === 'admin')
+            <div class="role-panel-content">
+                @include('layouts.partials.admin')
+            </div>
+        @endif
+    @else
+        <div class="role-panel-content">
             @include('layouts.partials.invitado')
         </div>
-        <div class="role-panel-content" data-panel-role="estudiante" style="display: none;">
-            @include('layouts.partials.estudiante')
-        </div>
-        <div class="role-panel-content" data-panel-role="empresa" style="display: none;">
-            @include('layouts.partials.empresa')
-        </div>
-        <div class="role-panel-content" data-panel-role="admin" style="display: none;">
-            @include('layouts.partials.admin')
-        </div>
-    </div>
+    @endauth
+</div>
 
 
 </div>{{-- /page-body --}}

@@ -327,7 +327,7 @@ function initFiltersSidebar() {
 
   if (!filtersForm || !mainContent) return;
 
-  window.fetchOfertas = async function() {
+  window.fetchOfertas = async function () {
 
     const params = new URLSearchParams(new FormData(filtersForm));
 
@@ -1068,13 +1068,7 @@ function adminConfirm(name) {
 (function () {
   'use strict';
 
-  function renderRightPanel() {
-    const pageBody = document.getElementById('page-body');
-    const rolActual = pageBody?.dataset.rol || 'invitado';
-    document.querySelectorAll('.role-panel-content').forEach(panel => {
-      panel.style.display = panel.dataset.panelRole === rolActual ? 'block' : 'none';
-    });
-  }
+
 
   function initBookmarks() {
     document.getElementById('main-content')
@@ -1093,20 +1087,20 @@ function adminConfirm(name) {
     if (!select || !container) return;
 
     select.addEventListener('change', function () {
-        const cards = [...container.querySelectorAll('.job-card')];
-        if (!cards.length) return;
+      const cards = [...container.querySelectorAll('.job-card')];
+      if (!cards.length) return;
 
-        cards.sort((a, b) => {
-            const sa = Number(a.dataset.salario ?? 0);
-            const sb = Number(b.dataset.salario ?? 0);
-            const fa = Number(a.dataset.fecha ?? 0);
-            const fb = Number(b.dataset.fecha ?? 0);
-            if (this.value === 'salario-asc') return sa - sb;
-            if (this.value === 'salario-desc') return sb - sa;
-            return fb - fa;
-        });
+      cards.sort((a, b) => {
+        const sa = Number(a.dataset.salario ?? 0);
+        const sb = Number(b.dataset.salario ?? 0);
+        const fa = Number(a.dataset.fecha ?? 0);
+        const fb = Number(b.dataset.fecha ?? 0);
+        if (this.value === 'salario-asc') return sa - sb;
+        if (this.value === 'salario-desc') return sb - sa;
+        return fb - fa;
+      });
 
-        cards.forEach(c => container.appendChild(c));
+      cards.forEach(c => container.appendChild(c));
     });
   }
 
@@ -1118,7 +1112,6 @@ function adminConfirm(name) {
       if (!btn) return;
       const nuevoRol = btn.dataset.rol;
       document.documentElement.dataset.role = nuevoRol;
-      renderRightPanel();
       switcher.querySelectorAll('.role-btn').forEach(b => {
         b.classList.toggle('active', b.dataset.rol === nuevoRol);
       });
@@ -1126,7 +1119,6 @@ function adminConfirm(name) {
   }
 
   document.addEventListener('DOMContentLoaded', () => {
-    renderRightPanel();
     initBookmarks();
     initRoleSwitcher();
   });

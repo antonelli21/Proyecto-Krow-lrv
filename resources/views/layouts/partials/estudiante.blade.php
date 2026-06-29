@@ -15,25 +15,31 @@
 </div>
 <div class="panel-card">
     <p class="panel-card-title">Últimas ofertas</p>
-    <div class="recent-offers" style="display:flex;flex-direction:column;gap:12px;">
+    <div style="display:flex;flex-direction:column;gap:4px;">
         @if(isset($panelData['ultimas_ofertas']) && $panelData['ultimas_ofertas']->count() > 0)
-        @foreach($panelData['ultimas_ofertas'] as $oferta)
-        <a href="{{ route('ofertas.detalle', $oferta->id_oferta) }}" style="display:flex;align-items:center;gap:10px;text-decoration:none;">
-            <div class="company-thumb" style="width:32px;height:32px;font-size:0.7rem;">
-                @if($oferta->empresa && $oferta->empresa->logo)
-                <img src="{{ asset('storage/' . $oferta->empresa->logo) }}" alt="Logo" style="width:100%;height:100%;object-fit:cover;">
-                @else
-                <span>{{ strtoupper(substr($oferta->empresa->nombre_empresa ?? '?', 0, 2)) }}</span>
-                @endif
-            </div>
-            <div>
-                <div style="font-size:0.85rem;color:var(--text);font-weight:600;line-height:1.2;">{{ $oferta->titulo }}</div>
-                <div style="font-size:0.75rem;color:var(--muted);">{{ $oferta->empresa->nombre_empresa ?? 'KROW' }}</div>
-            </div>
-        </a>
-        @endforeach
+            @foreach($panelData['ultimas_ofertas'] as $oferta)
+            <a href="{{ route('ofertas.detalle', $oferta->id_oferta) }}"
+               class="panel-person-row">
+                {{-- Logo empresa --}}
+                <div class="panel-avatar" style="border-radius:var(--radius);">
+                    @if($oferta->empresa && $oferta->empresa->logo)
+                        <img src="{{ asset('storage/' . $oferta->empresa->logo) }}"
+                             alt="Logo"
+                             style="width:100%;height:100%;object-fit:cover;">
+                    @else
+                        <span style="font-size:0.65rem;">{{ strtoupper(substr($oferta->empresa->nombre_empresa ?? '?', 0, 2)) }}</span>
+                    @endif
+                </div>
+                {{-- Info --}}
+                <div class="panel-person-info">
+                    <span class="panel-person-name">{{ $oferta->titulo }}</span>
+                    <span class="panel-person-sub">{{ $oferta->empresa->nombre_empresa ?? 'KROW' }}</span>
+                </div>
+                <i class="bi bi-chevron-right panel-chevron"></i>
+            </a>
+            @endforeach
         @else
-        <p style="font-size:0.85rem;color:var(--muted);">No hay ofertas recientes.</p>
+            <p style="font-size:0.85rem;color:var(--muted);padding:4px 0;">No hay ofertas recientes.</p>
         @endif
     </div>
 </div>
@@ -121,3 +127,65 @@
 
     </div>
 </div>
+
+<style>
+.panel-person-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 10px;
+    border-radius: var(--radius);
+    border: 1px solid transparent;
+    text-decoration: none;
+    transition: background .15s ease, border-color .15s ease;
+}
+.panel-person-row:hover {
+    background: var(--bg-hover);
+    border-color: var(--border);
+}
+.panel-person-row:hover .panel-chevron {
+    color: var(--accent);
+}
+.panel-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    overflow: hidden;
+    flex-shrink: 0;
+    background: var(--surface);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--accent);
+}
+.panel-person-info {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+.panel-person-name {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.3;
+}
+.panel-person-sub {
+    font-size: 0.75rem;
+    color: var(--muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.panel-chevron {
+    margin-left: auto;
+    font-size: 0.75rem;
+    color: var(--muted);
+    flex-shrink: 0;
+    transition: color .15s ease;
+}
+</style>
