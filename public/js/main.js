@@ -323,7 +323,28 @@ function initFiltersSidebar() {
   const filtersForm = document.querySelector('.filters-form');
   const mainContent = document.getElementById('main-content');
   const resultCount = document.getElementById('result-count');
+  // Búsqueda al escribir con debounce — input externo sincronizado al form
   const buscarInput = document.getElementById('buscar');
+  if (buscarInput) {
+    // Asegurar que el form del sidebar tenga el campo buscar
+    let hiddenBuscar = filtersForm.querySelector('input[name="buscar"]');
+    if (!hiddenBuscar) {
+      hiddenBuscar = document.createElement('input');
+      hiddenBuscar.type = 'hidden';
+      hiddenBuscar.name = 'buscar';
+      filtersForm.appendChild(hiddenBuscar);
+    }
+
+    let debounceTimer;
+    buscarInput.addEventListener('input', () => {
+      hiddenBuscar.value = buscarInput.value;
+      clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(fetchOfertas, 500);
+    });
+
+    // Sincronizar valor inicial (si viene de URL)
+    hiddenBuscar.value = buscarInput.value;
+  }
 
   if (!filtersForm || !mainContent) return;
 

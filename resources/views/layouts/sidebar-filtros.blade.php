@@ -1,4 +1,4 @@
-<button class="sidebar-toggle" id="sidebar-toggle" aria-label="Colapsar filtros">
+<button class="sidebar-toggle" aria-label="Colapsar filtros" style="cursor: default;">
   <span>Filtros</span>
 </button>
 
@@ -10,16 +10,6 @@
 
 <form action="{{ url()->current() }}" method="GET" class="filters-form">
 
-  <div class="filter-group text-search-group">
-    <label for="buscar">Buscar</label>
-    <div class="search-input-wrapper">
-      <i class="bi bi-search search-icon"></i>
-      <input type="text" id="buscar" name="buscar"
-        placeholder="Buscar trabajo, empresa..."
-        class="filter-input-text"
-        value="{{ request('buscar') }}">
-    </div>
-  </div>
 
   <div class="filter-group">
     <label for="provincia">Provincia</label>
