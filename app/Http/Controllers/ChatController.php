@@ -13,11 +13,11 @@ class ChatController extends Controller
         $userId = auth()->id();
         $chats = Chat::with([
                 'usuario1:id,name,rol',
-                'usuario1.estudiante:id_usuario,foto_perfil',
-                'usuario1.empresa:id_usuario,logo',
+                'usuario1.estudiante:id_usuario,id_estudiante,foto_perfil',
+                'usuario1.empresa:id_usuario,id_empresa,logo',
                 'usuario2:id,name,rol',
-                'usuario2.estudiante:id_usuario,foto_perfil',
-                'usuario2.empresa:id_usuario,logo',
+                'usuario2.estudiante:id_usuario,id_estudiante,foto_perfil',
+                'usuario2.empresa:id_usuario,id_empresa,logo',
                 'ultimoMensaje'
             ])
             ->where('id_usuario_1', $userId)
@@ -26,8 +26,8 @@ class ChatController extends Controller
 
         // Agregar avatar_ruta a cada usuario
         $chats->each(function($chat) {
-            if ($chat->usuario1) $chat->usuario1->append('avatar_ruta');
-            if ($chat->usuario2) $chat->usuario2->append('avatar_ruta');
+            if ($chat->usuario1) $chat->usuario1->append(['avatar_ruta', 'perfil_id']);
+            if ($chat->usuario2) $chat->usuario2->append(['avatar_ruta', 'perfil_id']);
         });
 
         return response()->json($chats);
@@ -100,16 +100,16 @@ class ChatController extends Controller
 
         $chat->load([
             'usuario1:id,name,rol',
-            'usuario1.estudiante:id_usuario,foto_perfil',
-            'usuario1.empresa:id_usuario,logo',
+            'usuario1.estudiante:id_usuario,id_estudiante,foto_perfil',
+            'usuario1.empresa:id_usuario,id_empresa,logo',
             'usuario2:id,name,rol',
-            'usuario2.estudiante:id_usuario,foto_perfil',
-            'usuario2.empresa:id_usuario,logo',
+            'usuario2.estudiante:id_usuario,id_estudiante,foto_perfil',
+            'usuario2.empresa:id_usuario,id_empresa,logo',
             'mensajes'
         ]);
 
-        if ($chat->usuario1) $chat->usuario1->append('avatar_ruta');
-        if ($chat->usuario2) $chat->usuario2->append('avatar_ruta');
+        if ($chat->usuario1) $chat->usuario1->append(['avatar_ruta', 'perfil_id']);
+        if ($chat->usuario2) $chat->usuario2->append(['avatar_ruta', 'perfil_id']);
 
         return response()->json($chat); // ✅ Devuelve el chat, no un error
     }

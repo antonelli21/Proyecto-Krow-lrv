@@ -896,10 +896,9 @@
 
     const abrirChat = (chat, otro) => {
         if (!chat || !otro) return;
-
         chatActivoId = chat.id_chat;
         const nombre = otro.name || 'Usuario';
-
+        console.log('perfil_id:', otro.perfil_id, 'rol:', otro.rol, 'otro completo:', JSON.stringify(otro));    
         if (panelAvatar) {
             if (otro.avatar_ruta) {
                 panelAvatar.innerHTML = `<img src="/storage/${otro.avatar_ruta}" alt="Avatar">`;
@@ -908,7 +907,19 @@
                 panelAvatar.style.background = 'var(--accent)';
             }
         }
-        if (panelNombre) panelNombre.textContent = nombre;
+        // Armar URL según el rol del otro usuario
+        const miRol = document.documentElement.dataset.role || '{{ auth()->user()->rol ?? "" }}';
+        let perfilUrl = '#';
+
+        if (otro.rol === 'estudiante' && otro.perfil_id) {
+            perfilUrl = miRol === 'empresa' ? `/empresa/estudiante/${otro.perfil_id}` : '#';
+        } else if (otro.rol === 'empresa' && otro.perfil_id) {
+            perfilUrl = `/empresas/${otro.perfil_id}`;
+        }
+
+        if (panelNombre) {
+            panelNombre.innerHTML = `<a href="${perfilUrl}" style="color:inherit; text-decoration:none; cursor:pointer;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">${escaparHTML(nombre)}</a>`;
+        }
         if (panelRol)    panelRol.textContent    = otro.rol || '';
         if (panelHeader) panelHeader.style.display = 'flex';
         if (vacioEl)     vacioEl.style.display     = 'none';
