@@ -53,152 +53,158 @@
 @section('content')
 <div class="panel-page">
 
-    {{-- Datos de la Empresa --}}
-    <div class="perfil-card">
-        <div class="perfil-card-header">
-            <i class="fas fa-building"></i> Datos de la Empresa
-        </div>
-        <div class="perfil-grid">
-            <div class="info-item">
-                <div class="info-label">Rubro principal</div>
-                <div class="info-value">{{ $empresa->rubro ?? 'No especificado' }}</div>
+    <div class="perfil-sections">
+        <div class="perfil-column-main">
+            {{-- Datos de la Empresa --}}
+            <div class="perfil-card">
+                <div class="perfil-card-header">
+                    <i class="fas fa-building"></i> Datos de la Empresa
+                </div>
+                <div class="perfil-grid">
+                    <div class="info-item">
+                        <div class="info-label">Rubro principal</div>
+                        <div class="info-value">{{ $empresa->rubro ?? 'No especificado' }}</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Tamaño</div>
+                        <div class="info-value">{{ $empresa->tamano_empresa ?? 'No especificado' }}</div>
+                    </div>
+                    @if(!empty($empresa->descripcion))
+                    <div class="info-item" style="grid-column: 1 / -1;">
+                        <div class="info-label">Descripción</div>
+                        <div class="info-value">{{ $empresa->descripcion }}</div>
+                    </div>
+                    @endif
+                </div>
             </div>
-            <div class="info-item">
-                <div class="info-label">Tamaño</div>
-                <div class="info-value">{{ $empresa->tamano_empresa ?? 'No especificado' }}</div>
-            </div>
-            @if(!empty($empresa->descripcion))
-            <div class="info-item" style="grid-column: 1 / -1;">
-                <div class="info-label">Descripción</div>
-                <div class="info-value">{{ $empresa->descripcion }}</div>
-            </div>
-            @endif
-        </div>
-    </div>
 
-    {{-- Ubicación --}}
-    <div class="perfil-card">
-        <div class="perfil-card-header">
-            <i class="fas fa-map-marker-alt"></i> Ubicación
-        </div>
-        <div class="perfil-grid">
-            <div class="info-item">
-                <div class="info-label">Dirección</div>
-                <div class="info-value">{{ $empresa->direccion ?? 'No especificada' }}</div>
+            {{-- Ofertas activas --}}
+            <div class="perfil-card">
+                <div class="perfil-card-header">
+                    <i class="fas fa-briefcase"></i> Ofertas activas
+                </div>
+                @if($ofertas->isNotEmpty())
+                    <div class="perfil-grid">
+                        @foreach($ofertas as $oferta)
+                            <a href="{{ route('ofertas.detalle', $oferta->id_oferta) }}"
+                               style="text-decoration:none;">
+                                <div class="info-item" style="border-left-color:var(--accent); cursor:pointer; transition: opacity .15s;" onmouseover="this.style.opacity='.8'" onmouseout="this.style.opacity='1'">
+                                    <div class="info-label">{{ $oferta->modalidad ?? '' }} · {{ $oferta->tipo_oferta ?? '' }}</div>
+                                    <div class="info-value" style="font-weight:700;">{{ $oferta->titulo }}</div>
+                                    <div style="color:var(--accent); font-size:0.85rem; margin-top:4px;">
+                                        @if($oferta->salario_min)
+                                            AR$ {{ number_format($oferta->salario_min, 0, ',', '.') }}
+                                            @if($oferta->salario_max)
+                                                — AR$ {{ number_format($oferta->salario_max, 0, ',', '.') }}
+                                            @endif
+                                        @endif
+                                    </div>
+                                </div>
+                            </a>
+                        @endforeach
+                    </div>
+                @else
+                    <div class="info-item">
+                        <div class="info-value" style="color:var(--muted);">No hay ofertas activas en este momento.</div>
+                    </div>
+                @endif
             </div>
-            <div class="info-item">
-                <div class="info-label">Localidad / Provincia</div>
-                <div class="info-value">{{ $empresa->localidad->nombre ?? '' }} — {{ $empresa->provincia->nombre ?? '' }}</div>
-            </div>
-        </div>
-    </div>
+        </div> {{-- fin perfil-column-main --}}
 
-    {{-- Ofertas activas --}}
-    <div class="perfil-card">
-        <div class="perfil-card-header">
-            <i class="fas fa-briefcase"></i> Ofertas activas
-        </div>
-        @if($ofertas->isNotEmpty())
-            <div class="perfil-grid">
-                @foreach($ofertas as $oferta)
-                    <a href="{{ route('ofertas.detalle', $oferta->id_oferta) }}"
-                       style="text-decoration:none;">
-                        <div class="info-item" style="border-left-color:var(--accent); cursor:pointer; transition: opacity .15s;" onmouseover="this.style.opacity='.8'" onmouseout="this.style.opacity='1'">
-                            <div class="info-label">{{ $oferta->modalidad ?? '' }} · {{ $oferta->tipo_oferta ?? '' }}</div>
-                            <div class="info-value" style="font-weight:700;">{{ $oferta->titulo }}</div>
-                            <div style="color:var(--accent); font-size:0.85rem; margin-top:4px;">
-                                @if($oferta->salario_min)
-                                    AR$ {{ number_format($oferta->salario_min, 0, ',', '.') }}
-                                    @if($oferta->salario_max)
-                                        — AR$ {{ number_format($oferta->salario_max, 0, ',', '.') }}
-                                    @endif
-                                @endif
-                            </div>
+        <div class="perfil-column-sidebar">
+            {{-- Ubicación --}}
+            <div class="perfil-card">
+                <div class="perfil-card-header">
+                    <i class="fas fa-map-marker-alt"></i> Ubicación
+                </div>
+                <div class="perfil-grid">
+                    <div class="info-item">
+                        <div class="info-label">Dirección</div>
+                        <div class="info-value">{{ $empresa->direccion ?? 'No especificada' }}</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Localidad / Provincia</div>
+                        <div class="info-value">{{ $empresa->localidad->nombre ?? '' }} — {{ $empresa->provincia->nombre ?? '' }}</div>
+                    </div>
+                </div>
+            </div>
+
+            {{-- Contacto y Redes --}}
+            <div class="perfil-card">
+                <div class="perfil-card-header">
+                    <i class="fas fa-address-book"></i> Contacto y Redes
+                </div>
+                <div class="perfil-grid">
+
+                    <div class="info-item">
+                        <div class="info-label">Correo electrónico</div>
+                        <div class="info-value">
+                            @if(!empty($empresa->email_contacto))
+                                <a href="mailto:{{ $empresa->email_contacto }}" class="link-accion">
+                                    <i class="fas fa-envelope"></i> Enviar correo
+                                </a>
+                            @else
+                                <span class="text-muted">No especificado</span>
+                            @endif
                         </div>
-                    </a>
-                @endforeach
-            </div>
-        @else
-            <div class="info-item">
-                <div class="info-value" style="color:var(--muted);">No hay ofertas activas en este momento.</div>
-            </div>
-        @endif
-    </div>
+                    </div>
 
-    {{-- Contacto y Redes --}}
-    <div class="perfil-card">
-        <div class="perfil-card-header">
-            <i class="fas fa-address-book"></i> Contacto y Redes
-        </div>
-        <div class="perfil-grid">
+                    <div class="info-item">
+                        <div class="info-label">Teléfono</div>
+                        <div class="info-value">{{ $empresa->telefono ?? 'No especificado' }}</div>
+                    </div>
 
-            <div class="info-item">
-                <div class="info-label">Correo electrónico</div>
-                <div class="info-value">
-                    @if(!empty($empresa->email_contacto))
-                        <a href="mailto:{{ $empresa->email_contacto }}" class="link-accion">
-                            <i class="fas fa-envelope"></i> Enviar correo
-                        </a>
-                    @else
-                        <span class="text-muted">No especificado</span>
+                    <div class="info-item">
+                        <div class="info-label">Sitio web</div>
+                        <div class="info-value">
+                            @if(!empty($empresa->sitio_web))
+                                <a href="{{ $empresa->sitio_web }}" target="_blank" class="link-accion">
+                                    <i class="fas fa-external-link-alt"></i> Visitar sitio web
+                                </a>
+                            @else
+                                <span class="text-muted">No cargado</span>
+                            @endif
+                        </div>
+                    </div>
+
+                    <div class="info-item">
+                        <div class="info-label">LinkedIn</div>
+                        <div class="info-value">
+                            @if(!empty($empresa->linkedin))
+                                <a href="{{ $empresa->linkedin }}" target="_blank" class="link-accion">
+                                    <i class="fab fa-linkedin"></i> Ver perfil
+                                </a>
+                            @else
+                                <span class="text-muted">No agregado</span>
+                            @endif
+                        </div>
+                    </div>
+
+                    @if(!empty($empresa->instagram))
+                    <div class="info-item">
+                        <div class="info-label">Instagram</div>
+                        <div class="info-value">
+                            <a href="{{ $empresa->instagram }}" target="_blank" class="link-accion">
+                                <i class="fab fa-instagram"></i> Ver perfil
+                            </a>
+                        </div>
+                    </div>
                     @endif
-                </div>
-            </div>
 
-            <div class="info-item">
-                <div class="info-label">Teléfono</div>
-                <div class="info-value">{{ $empresa->telefono ?? 'No especificado' }}</div>
-            </div>
-
-            <div class="info-item">
-                <div class="info-label">Sitio web</div>
-                <div class="info-value">
-                    @if(!empty($empresa->sitio_web))
-                        <a href="{{ $empresa->sitio_web }}" target="_blank" class="link-accion">
-                            <i class="fas fa-external-link-alt"></i> Visitar sitio web
-                        </a>
-                    @else
-                        <span class="text-muted">No cargado</span>
+                    @if(!empty($empresa->facebook))
+                    <div class="info-item">
+                        <div class="info-label">Facebook</div>
+                        <div class="info-value">
+                            <a href="{{ $empresa->facebook }}" target="_blank" class="link-accion">
+                                <i class="fab fa-facebook"></i> Ver página
+                            </a>
+                        </div>
+                    </div>
                     @endif
+
                 </div>
             </div>
-
-            <div class="info-item">
-                <div class="info-label">LinkedIn</div>
-                <div class="info-value">
-                    @if(!empty($empresa->linkedin))
-                        <a href="{{ $empresa->linkedin }}" target="_blank" class="link-accion">
-                            <i class="fab fa-linkedin"></i> Ver perfil
-                        </a>
-                    @else
-                        <span class="text-muted">No agregado</span>
-                    @endif
-                </div>
-            </div>
-
-            @if(!empty($empresa->instagram))
-            <div class="info-item">
-                <div class="info-label">Instagram</div>
-                <div class="info-value">
-                    <a href="{{ $empresa->instagram }}" target="_blank" class="link-accion">
-                        <i class="fab fa-instagram"></i> Ver perfil
-                    </a>
-                </div>
-            </div>
-            @endif
-
-            @if(!empty($empresa->facebook))
-            <div class="info-item">
-                <div class="info-label">Facebook</div>
-                <div class="info-value">
-                    <a href="{{ $empresa->facebook }}" target="_blank" class="link-accion">
-                        <i class="fab fa-facebook"></i> Ver página
-                    </a>
-                </div>
-            </div>
-            @endif
-
-        </div>
+        </div> {{-- fin perfil-column-sidebar --}}
     </div>
 
 </div>

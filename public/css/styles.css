@@ -4614,21 +4614,14 @@ body {
   gap: 1.75rem;
   /* 28px */
   margin-top: 1.5rem;
+  align-items: start; /* Evita que las columnas compartan distribución de altura */
 }
 
-/* En la estructura de la empresa, forzamos bloques pesados al ancho completo si es necesario */
-.perfil-sections .perfil-card:nth-child(1),
-/* Datos de la Empresa */
-.perfil-sections .perfil-card:nth-child(3) {
-  /* Ofertas publicadas */
-  grid-column: 1;
-}
-
-.perfil-sections .perfil-card:nth-child(2),
-/* Ubicación */
-.perfil-sections .perfil-card:nth-child(4) {
-  /* Contacto y Redes */
-  grid-column: 2;
+.perfil-column-main,
+.perfil-column-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
 }
 
 /* --- 4. Componente Card (Contenedores Semánticos) --- */
@@ -4663,9 +4656,7 @@ body {
 }
 
 /* Ajustes de columnas para barra lateral */
-.perfil-card[style*="grid-column: 2"] .perfil-grid,
-.perfil-sections .perfil-card:nth-child(2) .perfil-grid,
-.perfil-sections .perfil-card:nth-child(4) .perfil-grid {
+.perfil-column-sidebar .perfil-grid {
   grid-template-columns: 1fr;
   /* Columna única para widgets de contacto/ubicación */
 }
@@ -4883,16 +4874,7 @@ textarea.filter-input-text:focus {
     grid-template-columns: 1fr;
   }
 
-  .perfil-sections .perfil-card:nth-child(1),
-  .perfil-sections .perfil-card:nth-child(2),
-  .perfil-sections .perfil-card:nth-child(3),
-  .perfil-sections .perfil-card:nth-child(4) {
-    grid-column: 1 / -1;
-  }
-
-  .perfil-card[style*="grid-column: 2"] .perfil-grid,
-  .perfil-sections .perfil-card:nth-child(2) .perfil-grid,
-  .perfil-sections .perfil-card:nth-child(4) .perfil-grid {
+  .perfil-column-sidebar .perfil-grid {
     grid-template-columns: repeat(2, 1fr);
     /* En tablet sí caben a dos columnas */
   }
@@ -4901,9 +4883,7 @@ textarea.filter-input-text:focus {
 @media (max-width: 768px) {
 
   .perfil-grid,
-  .perfil-card[style*="grid-column: 2"] .perfil-grid,
-  .perfil-sections .perfil-card:nth-child(2) .perfil-grid,
-  .perfil-sections .perfil-card:nth-child(4) .perfil-grid {
+  .perfil-column-sidebar .perfil-grid {
     grid-template-columns: 1fr;
     /* Todo a una columna en móviles */
   }
@@ -4977,25 +4957,9 @@ textarea.filter-input-text:focus {
 .perfil-sections {
   display: grid;
   grid-template-columns: 2fr 1fr;
-  /* Columna principal amplia + Barra lateral */
   gap: 1.75rem;
-  /* 28px */
   margin-top: 1.5rem;
-}
-
-/* En la estructura de la empresa, forzamos bloques pesados al ancho completo si es necesario */
-.perfil-sections .perfil-card:nth-child(1),
-/* Datos de la Empresa */
-.perfil-sections .perfil-card:nth-child(3) {
-  /* Ofertas publicadas */
-  grid-column: 1;
-}
-
-.perfil-sections .perfil-card:nth-child(2),
-/* Ubicación */
-.perfil-sections .perfil-card:nth-child(4) {
-  /* Contacto y Redes */
-  grid-column: 2;
+  align-items: start;
 }
 
 /* --- 4. Componente Card (Contenedores Semánticos) --- */
@@ -5030,9 +4994,7 @@ textarea.filter-input-text:focus {
 }
 
 /* Ajustes de columnas para barra lateral */
-.perfil-card[style*="grid-column: 2"] .perfil-grid,
-.perfil-sections .perfil-card:nth-child(2) .perfil-grid,
-.perfil-sections .perfil-card:nth-child(4) .perfil-grid {
+.perfil-column-sidebar .perfil-grid {
   grid-template-columns: 1fr;
   /* Columna única para widgets de contacto/ubicación */
 }
@@ -5268,9 +5230,7 @@ textarea.filter-input-text:focus {
 @media (max-width: 768px) {
 
   .perfil-grid,
-  .perfil-card[style*="grid-column: 2"] .perfil-grid,
-  .perfil-sections .perfil-card:nth-child(2) .perfil-grid,
-  .perfil-sections .perfil-card:nth-child(4) .perfil-grid {
+  .perfil-column-sidebar .perfil-grid {
     grid-template-columns: 1fr;
     /* Todo a una columna en móviles */
   }

@@ -145,171 +145,150 @@
 
     {{-- SECCIONES --}}
     <div class="perfil-sections">
+        <div class="perfil-column-main">
 
-        <div class="perfil-card">
-            <div class="perfil-card-header">
-                <i class="fas fa-building"></i> Datos de la Empresa
-            </div>
-            <div class="perfil-grid">
-                <div class="info-item">
-                    <div class="info-label">Rubro principal</div>
-                    <div class="info-value">{{ $empresa->rubro ?? 'No especificado' }}</div>
+            <div class="perfil-card">
+                <div class="perfil-card-header">
+                    <i class="fas fa-building"></i> Datos de la Empresa
                 </div>
-                <div class="info-item">
-                    <div class="info-label">Razón social</div>
-                    <div class="info-value">{{ $empresa->razon_social ?? 'No especificada' }}</div>
-                </div>
-                <div class="info-item">
-                    <div class="info-label">CUIT</div>
-                    <div class="info-value">{{ $empresa->cuit ?? 'No especificado' }}</div>
-                </div>
-                <div class="info-item">
-                    <div class="info-label">Tamaño de la empresa</div>
-                    <div class="info-value">{{ $empresa->tamano_empresa ?? 'No especificado' }}</div>
-                </div>
-                <div class="info-item" style="grid-column: 1 / -1;">
-                    <div class="info-label">Descripción de la organización</div>
-                    <div class="info-value">{{ $empresa->descripcion ?? 'Sin descripción' }}</div>
-                </div>
-            </div>
-        </div>
-
-        <div class="perfil-card">
-            <div class="perfil-card-header">
-                <i class="fas fa-id-badge"></i> Representante
-            </div>
-            <div class="perfil-grid">
-                <div class="info-item">
-                    <div class="info-label">Nombre</div>
-                    <div class="info-value">{{ $empresa->representante ?? 'No especificado' }}</div>
-                </div>
-                <div class="info-item">
-                    <div class="info-label">Email</div>
-                    <div class="info-value">{{ $empresa->email_representante ?? 'No especificado' }}</div>
-                </div>
-            </div>
-        </div>
-
-        <div class="perfil-card">
-            <div class="perfil-card-header">
-                <i class="fas fa-map-marker-alt"></i> Ubicación
-            </div>
-            <div class="perfil-grid">
-                <div class="info-item">
-                    <div class="info-label">Dirección</div>
-                    <div class="info-value">{{ $empresa->direccion ?? 'No especificada' }}</div>
-                </div>
-                <div class="info-item">
-                    <div class="info-label">Localidad / Provincia</div>
-                    <div class="info-value">{{ $empresa->localidad->nombre ?? '' }} — {{ $empresa->provincia->nombre ?? '' }}</div>
-                </div>
-            </div>
-        </div>
-
-        <div class="perfil-card">
-            <div class="perfil-card-header">
-                <i class="fas fa-briefcase"></i> Ofertas publicadas
-            </div>
-            @if ($ofertas->isNotEmpty())
                 <div class="perfil-grid">
-                    @foreach ($ofertas as $of)
-                        <div class="info-item" style="border-left-color: var(--accent);">
-                            <div class="info-label">{{ $of->modalidad ?? 'No especificada' }}</div>
-                            <div class="info-value" style="font-weight: 700;">{{ $of->titulo ?? '' }}</div>
-                            <div class="info-label" style="color: var(--accent); margin-top: 4px;">
-                                @if($of->salario_min)
-                                    AR$ {{ number_format($of->salario_min, 0, ',', '.') }}
-                                @endif
-                            </div>
+                    <div class="info-item">
+                        <div class="info-label">Rubro principal</div>
+                        <div class="info-value">{{ $empresa->rubro ?? 'No especificado' }}</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Razón social</div>
+                        <div class="info-value">{{ $empresa->razon_social ?? 'No especificada' }}</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">CUIT</div>
+                        <div class="info-value">{{ $empresa->cuit ?? 'No especificado' }}</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Tamaño de la empresa</div>
+                        <div class="info-value">{{ $empresa->tamano_empresa ?? 'No especificado' }}</div>
+                    </div>
+                    <div class="info-item" style="grid-column: 1 / -1;">
+                        <div class="info-label">Descripción de la organización</div>
+                        <div class="info-value">{{ $empresa->descripcion ?? 'Sin descripción' }}</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="perfil-card">
+                <div class="perfil-card-header">
+                    <i class="fas fa-id-badge"></i> Representante
+                </div>
+                <div class="perfil-grid">
+                    <div class="info-item">
+                        <div class="info-label">Nombre</div>
+                        <div class="info-value">{{ $empresa->representante ?? 'No especificado' }}</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Email</div>
+                        <div class="info-value">{{ $empresa->email_representante ?? 'No especificado' }}</div>
+                    </div>
+                </div>
+            </div>
+        </div> {{-- fin perfil-column-main --}}
+
+        <div class="perfil-column-sidebar">
+            {{-- Contacto y Redes --}}
+            <div class="perfil-card">
+                <div class="perfil-card-header">
+                    <i class="fas fa-address-book"></i> Contacto y Redes Profesionales
+                </div>
+                <div class="perfil-grid">
+
+                    <div class="info-item {{ !empty($empresa->email_contacto) ? 'info-item-link' : '' }}">
+                        <div class="info-label">Correo electrónico</div>
+                        <div class="info-value">
+                            @if(!empty($empresa->email_contacto))
+                                <a href="mailto:{{ $empresa->email_contacto }}?subject=Contacto Institucional desde KROW" class="link-accion">
+                                    <i class="fas fa-envelope"></i> Enviar correo electrónico
+                                </a>
+                            @else
+                                <span class="text-muted">No especificado</span>
+                            @endif
                         </div>
-                    @endforeach
-                </div>
-            @else
-                <div class="info-item" style="grid-column: 1 / -1;">
-                    <div class="info-value">No hay ofertas publicadas actualmente.</div>
-                </div>
-            @endif
-        </div>
+                    </div>
 
-        {{-- Contacto y Redes --}}
-        <div class="perfil-card">
-            <div class="perfil-card-header">
-                <i class="fas fa-address-book"></i> Contacto y Redes Profesionales
+                    <div class="info-item">
+                        <div class="info-label">Teléfono de contacto</div>
+                        <div class="info-value">{{ $empresa->telefono ?? 'No especificado' }}</div>
+                    </div>
+
+                    <div class="info-item {{ !empty($empresa->sitio_web) ? 'info-item-link' : '' }}">
+                        <div class="info-label">Sitio web oficial</div>
+                        <div class="info-value">
+                            @if (!empty($empresa->sitio_web))
+                                <a href="{{ $empresa->sitio_web }}" target="_blank" class="link-accion">
+                                    <i class="fas fa-external-link-alt fa-sm"></i> Visitar sitio web
+                                </a>
+                            @else
+                                <span class="text-muted">No cargado</span>
+                            @endif
+                        </div>
+                    </div>
+
+                    <div class="info-item {{ !empty($empresa->linkedin) ? 'info-item-link' : '' }}">
+                        <div class="info-label">LinkedIn</div>
+                        <div class="info-value">
+                            @if (!empty($empresa->linkedin))
+                                <a href="{{ $empresa->linkedin }}" target="_blank" class="link-accion">
+                                    <i class="fab fa-linkedin"></i> Ver perfil corporativo
+                                </a>
+                            @else
+                                <span class="text-muted">No agregado</span>
+                            @endif
+                        </div>
+                    </div>
+
+                    <div class="info-item {{ !empty($empresa->facebook) ? 'info-item-link' : '' }}">
+                        <div class="info-label">Facebook</div>
+                        <div class="info-value">
+                            @if (!empty($empresa->facebook))
+                                <a href="{{ $empresa->facebook }}" target="_blank" class="link-accion">
+                                    <i class="fab fa-facebook"></i> Ver página oficial
+                                </a>
+                            @else
+                                <span class="text-muted">No agregado</span>
+                            @endif
+                        </div>
+                    </div>
+
+                    <div class="info-item {{ !empty($empresa->instagram) ? 'info-item-link' : '' }}">
+                        <div class="info-label">Instagram</div>
+                        <div class="info-value">
+                            @if (!empty($empresa->instagram))
+                                <a href="{{ $empresa->instagram }}" target="_blank" class="link-accion">
+                                    <i class="fab fa-instagram"></i> Ver perfil
+                                </a>
+                            @else
+                                <span class="text-muted">No agregado</span>
+                            @endif
+                        </div>
+                    </div>
+
+                </div>
             </div>
-            <div class="perfil-grid">
 
-                <div class="info-item {{ !empty($empresa->email_contacto) ? 'info-item-link' : '' }}">
-                    <div class="info-label">Correo electrónico</div>
-                    <div class="info-value">
-                        @if(!empty($empresa->email_contacto))
-                            <a href="mailto:{{ $empresa->email_contacto }}?subject=Contacto Institucional desde KROW" class="link-accion">
-                                <i class="fas fa-envelope"></i> Enviar correo electrónico
-                            </a>
-                        @else
-                            <span class="text-muted">No especificado</span>
-                        @endif
+            <div class="perfil-card">
+                <div class="perfil-card-header">
+                    <i class="fas fa-map-marker-alt"></i> Ubicación
+                </div>
+                <div class="perfil-grid">
+                    <div class="info-item">
+                        <div class="info-label">Dirección</div>
+                        <div class="info-value">{{ $empresa->direccion ?? 'No especificada' }}</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Localidad / Provincia</div>
+                        <div class="info-value">{{ $empresa->localidad->nombre ?? '' }} — {{ $empresa->provincia->nombre ?? '' }}</div>
                     </div>
                 </div>
-
-                <div class="info-item">
-                    <div class="info-label">Teléfono de contacto</div>
-                    <div class="info-value">{{ $empresa->telefono ?? 'No especificado' }}</div>
-                </div>
-
-                <div class="info-item {{ !empty($empresa->sitio_web) ? 'info-item-link' : '' }}">
-                    <div class="info-label">Sitio web oficial</div>
-                    <div class="info-value">
-                        @if (!empty($empresa->sitio_web))
-                            <a href="{{ $empresa->sitio_web }}" target="_blank" class="link-accion">
-                                <i class="fas fa-external-link-alt fa-sm"></i> Visitar sitio web
-                            </a>
-                        @else
-                            <span class="text-muted">No cargado</span>
-                        @endif
-                    </div>
-                </div>
-
-                <div class="info-item {{ !empty($empresa->linkedin) ? 'info-item-link' : '' }}">
-                    <div class="info-label">LinkedIn</div>
-                    <div class="info-value">
-                        @if (!empty($empresa->linkedin))
-                            <a href="{{ $empresa->linkedin }}" target="_blank" class="link-accion">
-                                <i class="fab fa-linkedin"></i> Ver perfil corporativo
-                            </a>
-                        @else
-                            <span class="text-muted">No agregado</span>
-                        @endif
-                    </div>
-                </div>
-
-                <div class="info-item {{ !empty($empresa->facebook) ? 'info-item-link' : '' }}">
-                    <div class="info-label">Facebook</div>
-                    <div class="info-value">
-                        @if (!empty($empresa->facebook))
-                            <a href="{{ $empresa->facebook }}" target="_blank" class="link-accion">
-                                <i class="fab fa-facebook"></i> Ver página oficial
-                            </a>
-                        @else
-                            <span class="text-muted">No agregado</span>
-                        @endif
-                    </div>
-                </div>
-
-                <div class="info-item {{ !empty($empresa->instagram) ? 'info-item-link' : '' }}">
-                    <div class="info-label">Instagram</div>
-                    <div class="info-value">
-                        @if (!empty($empresa->instagram))
-                            <a href="{{ $empresa->instagram }}" target="_blank" class="link-accion">
-                                <i class="fab fa-instagram"></i> Ver perfil
-                            </a>
-                        @else
-                            <span class="text-muted">No agregado</span>
-                        @endif
-                    </div>
-                </div>
-
             </div>
-        </div>
+        </div> {{-- fin perfil-column-sidebar --}}
 
     </div>
 </div>
