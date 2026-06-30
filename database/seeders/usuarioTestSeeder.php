@@ -17,6 +17,27 @@ class UsuarioTestSeeder extends Seeder
      */
     public function run(): void
     {
+          // ── Copiar imágenes seed a storage ──────────────────────
+            $carpetas = ['banners', 'cvs', 'logos', 'perfiles'];
+
+            foreach ($carpetas as $carpeta) {
+                $origen  = public_path("img/seed/{$carpeta}");
+                $destino = storage_path("app/public/{$carpeta}");
+
+                if (!is_dir($origen)) continue;
+
+                @mkdir($destino, 0755, true);
+
+                foreach (glob("{$origen}/*") as $archivo) {
+                    $nombreArchivo  = basename($archivo);
+                    $destinoArchivo = "{$destino}/{$nombreArchivo}";
+                    if (!file_exists($destinoArchivo)) {
+                        copy($archivo, $destinoArchivo);
+                    }
+                }
+            }
+   
+
         // ═══════════════════════════════════════════════════════
         // PROVINCIAS
         // ═══════════════════════════════════════════════════════
@@ -307,8 +328,8 @@ class UsuarioTestSeeder extends Seeder
             'descripcion'            => 'Estudiante de Sistemas buscando su primera experiencia IT.',
             'modalidad_deseada'      => 'Remoto',
             'disponibilidad_horaria' => 'Mañana y Tarde',
-            'foto_perfil'            => null,
-            'cv'                     => null,
+            'foto_perfil'            => 'perfiles/A6HaYmuR50PzCoTzZmeGCM2ywMG7PUR6cYEecFqI.jpg',
+            'cv'                     => 'cvs/sMJgoV5Yi17aH6vt7JgbkmDgn5QVM5WMJM1ytZH8.pdf',
             'portfolio'              => 'https://juanperez.dev',
             'linkedin'               => 'https://linkedin.com/in/juanperez',
             'github'                 => 'https://github.com/juanperez',
@@ -351,8 +372,8 @@ class UsuarioTestSeeder extends Seeder
             'descripcion'            => 'Desarrollador Junior entusiasmado por los desafíos backend.',
             'modalidad_deseada'      => 'Presencial',
             'disponibilidad_horaria' => 'Tarde',
-            'foto_perfil'            => null,
-            'cv'                     => null,
+            'foto_perfil'            => 'perfiles/LwNnrzFtgKpfsd7HmX25v2yu4eLks0S0JuIGgdFY.jpg',
+            'cv'                     => 'cvs/E3bmSed83ZhufWg8Z9TDiPvNbldYphLFQfp41vMi.pdf',
             'portfolio'              => 'https://josemendoza.dev',
             'linkedin'               => 'https://linkedin.com/in/josemendoza',
             'github'                 => 'https://github.com/josemendoza',
@@ -395,8 +416,8 @@ class UsuarioTestSeeder extends Seeder
             'descripcion'            => 'Apasionada por el diseño de interfaces y la experiencia de usuario.',
             'modalidad_deseada'      => 'Hibrido',
             'disponibilidad_horaria' => 'Mañana',
-            'foto_perfil'            => null,
-            'cv'                     => null,
+            'foto_perfil'            => 'perfiles/Zpna5GumSRWamup99z0IsCtoUUIoXOzv51QJbiMJ.jpg',
+            'cv'                     => 'cvs/ttboHPqdWqUTA6CRVplR8KHsnW4UbctZdaAtjkqS.pdf',
             'portfolio'              => 'https://mariagarcia.design',
             'linkedin'               => 'https://linkedin.com/in/mariagarcia',
             'github'                 => 'https://github.com/mariagarcia',
@@ -439,8 +460,8 @@ class UsuarioTestSeeder extends Seeder
             'descripcion'            => 'Interesado en DevOps, automatización e infraestructura cloud.',
             'modalidad_deseada'      => 'Remoto',
             'disponibilidad_horaria' => 'Tarde y Noche',
-            'foto_perfil'            => null,
-            'cv'                     => null,
+            'foto_perfil'            => 'perfiles/RigT9bjUbJHlM1d9GiF5Tkl6hBjhYyDaLEnciVtp.jpg',
+            'cv'                     => 'cvs/QKOsi7cgs5H71WGuaDJPb4urEClEpG9d5IpW1JPs.pdf',
             'portfolio'              => null,
             'linkedin'               => 'https://linkedin.com/in/lucasromero',
             'github'                 => 'https://github.com/lucasromero',
@@ -483,7 +504,7 @@ class UsuarioTestSeeder extends Seeder
             'descripcion'            => 'Estudiante de desarrollo de videojuegos. Trabajo con Unity, C# y modelado 3D básico en Blender.',
             'modalidad_deseada'      => 'Presencial',
             'disponibilidad_horaria' => 'Tarde',
-            'foto_perfil'            => null,
+            'foto_perfil'            => 'perfiles/Om1TjxSXvKEIJfXYSftNfUUBCnjiE9tez4lGCmdF.jpg',
             'cv'                     => null,
             'portfolio'              => 'https://valedev.itch.io',
             'linkedin'               => 'https://linkedin.com/in/valetorres',
@@ -526,8 +547,8 @@ class UsuarioTestSeeder extends Seeder
             'descripcion'            => 'Estudiante de Marketing Digital. Manejo de campañas en Google Ads y redes sociales.',
             'modalidad_deseada'      => 'Remoto',
             'disponibilidad_horaria' => 'Mañana y Tarde',
-            'foto_perfil'            => null,
-            'cv'                     => null,
+            'foto_perfil'            => 'perfiles/ZyCfDj9qjj37UhNILDkcEENpWKaHTfPR4qnhr1PN.jpg',
+            'cv'                     => 'cvs/aOpCFMLpmc9lxn6GHiYMnhW9Qdo5RBhmNMyTwKXw.pdf',
             'portfolio'              => 'https://matiasfernandez.ar',
             'linkedin'               => 'https://linkedin.com/in/matiasfern',
             'github'                 => null,
@@ -573,8 +594,8 @@ class UsuarioTestSeeder extends Seeder
             'descripcion'            => 'Estudiante avanzada de Ingeniería Industrial con interés en mejora de procesos y logística.',
             'modalidad_deseada'      => 'Presencial',
             'disponibilidad_horaria' => 'Tarde',
-            'foto_perfil'            => null,
-            'cv'                     => null,
+            'foto_perfil'            => 'perfiles/q2m4DpYwCRJjVDLOezaNqJQkJno7pvAKlZqrzDWP.jpg',
+            'cv'                     => 'cvs/20ZTlHms6UqnsQTrtexWAzs5y93BkAt6lwFEFVqe.pdf',
             'portfolio'              => null,
             'linkedin'               => 'https://linkedin.com/in/sofiabeltran',
             'github'                 => null,
@@ -616,8 +637,8 @@ class UsuarioTestSeeder extends Seeder
             'descripcion'            => 'Fullstack en formación. Trabajo con Next.js en el frontend y Node.js en el backend.',
             'modalidad_deseada'      => 'Remoto',
             'disponibilidad_horaria' => 'Noche',
-            'foto_perfil'            => null,
-            'cv'                     => null,
+            'foto_perfil'            => 'perfiles/fYnVRae5uD1mr4Fj9bSUcCuHxZ0tsCg0W9vCZFA9.jpg',
+            'cv'                     => 'cvs/BuwaUVXkOOoQapSsazODRtPv9myNLif3090FRUAa.pdf',
             'portfolio'              => 'https://nicoaguilar.dev',
             'linkedin'               => 'https://linkedin.com/in/nicoaguilar',
             'github'                 => 'https://github.com/nicoaguilar',
@@ -660,8 +681,8 @@ class UsuarioTestSeeder extends Seeder
             'descripcion'            => 'Estudiante de Logística con experiencia en ayudantía de almacén e interés en supply chain.',
             'modalidad_deseada'      => 'Hibrido',
             'disponibilidad_horaria' => 'Mañana',
-            'foto_perfil'            => null,
-            'cv'                     => null,
+            'foto_perfil'            => 'perfiles/6VYTW8vvi8x4gxXp5TFsobKSJ353sDcQhbNq5f8x.jpg',
+            'cv'                     => 'cvs/BuRltFMI9ktFYHcMF4NSWBIRgYVh3GU2scAFtRre.pdf',
             'portfolio'              => null,
             'linkedin'               => 'https://linkedin.com/in/camilarios',
             'github'                 => null,
@@ -702,8 +723,8 @@ class UsuarioTestSeeder extends Seeder
             'descripcion'            => 'Desarrollador backend Java. Cuenta con experiencia en proyectos académicos con Spring Boot.',
             'modalidad_deseada'      => 'Presencial',
             'disponibilidad_horaria' => 'Tarde',
-            'foto_perfil'            => null,
-            'cv'                     => null,
+            'foto_perfil'            => 'perfiles/Ztx0P0b0zXVLaIyRFx1TW0jdrE9UWlSBoRAyNOvn.jpg',
+            'cv'                     => 'cvs/PggfCAIXEUsVF6UkZU6DpaCwSm2dHNsrg1CF6r5L.pdf',
             'portfolio'              => null,
             'linkedin'               => null,
             'github'                 => 'https://github.com/agustinmolina',
@@ -744,8 +765,8 @@ class UsuarioTestSeeder extends Seeder
             'descripcion'            => 'Apasionada por el diseño gráfico y la comunicación visual en redes sociales.',
             'modalidad_deseada'      => 'Remoto',
             'disponibilidad_horaria' => 'Mañana y Tarde',
-            'foto_perfil'            => null,
-            'cv'                     => null,
+            'foto_perfil'            => 'perfiles/XwsQazRdTM4EeVjkDud5fqj56drP5svfsqdUntAb.jpg',
+            'cv'                     => 'cvs/MVGtOvwMjCChZJfax7QfOGh594834JE0555jfqaU.pdf',
             'portfolio'              => 'https://flornavarro.behance.net',
             'linkedin'               => 'https://linkedin.com/in/flornavarro',
             'github'                 => null,
@@ -790,7 +811,8 @@ class UsuarioTestSeeder extends Seeder
             'email_contacto'      => 'contacto@techsolutions.com',
             'sitio_web'           => 'https://techsolutions.com',
             'descripcion'         => 'Empresa de desarrollo de sistemas cloud y outsourcing.',
-            'logo'                => null,
+            'logo'                => 'logos/7dF0Gq1RIKSk4jWM85thQs5HY5KpcC5M59Ptrb3v.jpg',
+            'banner'              => 'banners/fx5IFsYutoLOWndDcbYHMIJa1XolnBffvo3ozjTN.png',
             'representante'       => 'Carlos Gómez',
             'email_representante' => 'cgomez@techsolutions.com',
             'tamano_empresa'      => 'Mediana',
@@ -827,7 +849,8 @@ class UsuarioTestSeeder extends Seeder
             'email_contacto'      => 'hola@devhouse.com.ar',
             'sitio_web'           => 'https://devhouse.com.ar',
             'descripcion'         => 'Agencia de desarrollo ágil para startups y pymes.',
-            'logo'                => null,
+            'logo'                => 'logos/TxB4bjmp9dGmL78Sl1Zmu7tGOUc8grgEx1IIEgUx.png',
+            'banner'              => 'banners/Wdyy1BsOJZ3jDZzpAJyuDyYzyVGbx91NT21Lvjah.png',
             'representante'       => null,
             'email_representante' => null,
             'tamano_empresa'      => 'Pequena',
@@ -864,7 +887,8 @@ class UsuarioTestSeeder extends Seeder
             'email_contacto'      => 'rrhh@softland.com.ar',
             'sitio_web'           => 'https://softland.com.ar',
             'descripcion'         => 'ERP y soluciones de gestión para empresas medianas y grandes.',
-            'logo'                => null,
+            'logo'                => 'logos/CFynI3tmSNJ2NyFYgJv3xsqu4CHhqFFr046cZiwl.png',
+            'banner'              => 'banners/k6OT9W8ND4UdRzpIofMhUaVfK5HsnxjjnqnxEV0H.png',
             'representante'       => null,
             'email_representante' => null,
             'tamano_empresa'      => 'Mediana',
@@ -901,7 +925,8 @@ class UsuarioTestSeeder extends Seeder
             'email_contacto'      => 'info@gameforge.com.ar',
             'sitio_web'           => 'https://gameforge.com.ar',
             'descripcion'         => 'Estudio indie de videojuegos para PC y mobile.',
-            'logo'                => null,
+            'logo'                => 'logos/NGuBfgDd5TlexXEXnXMv6VEqRK0EB6AaeSswH2zt.png',
+            'banner'              => 'banners/kkbhz09w81cGtR9WCf7iz43NPpVmHVnIyHQHZMWE.png',
             'representante'       => null,
             'email_representante' => null,
             'tamano_empresa'      => 'Pequena',
@@ -942,7 +967,8 @@ class UsuarioTestSeeder extends Seeder
             'email_contacto'      => 'rrhh@logired.com.ar',
             'sitio_web'           => 'https://logired.com.ar',
             'descripcion'         => 'Empresa líder en logística de última milla y distribución nacional.',
-            'logo'                => null,
+            'logo'                => 'logos/p7TOvE5V7p7CCuBznBfVyElZ7DTp5VmVg6M8DOaI.webp',
+            'banner'              => 'banners/pdKwlzskFLth1hcb3JJqeo6s5BVQlTJbKSJE20Bs.png',
             'representante'       => 'Andrea Suárez',
             'email_representante' => 'asuarez@logired.com.ar',
             'tamano_empresa'      => 'Grande',
@@ -979,7 +1005,8 @@ class UsuarioTestSeeder extends Seeder
             'email_contacto'      => 'hola@cloudnine.com.ar',
             'sitio_web'           => 'https://cloudnine.com.ar',
             'descripcion'         => 'Startup que desarrolla herramientas SaaS para equipos de desarrollo de software.',
-            'logo'                => null,
+            'logo'                => 'logos/1KDx27CXzXkpvBBkpPy9ka488jkYbjVE7Ifaikxa.png',
+            'banner'              => 'banners/oF6TavZlXZntf8oiZz7NJEteww5bk8T0RMGs6Yhk.png',
             'representante'       => null,
             'email_representante' => null,
             'tamano_empresa'      => 'Microempresa',
@@ -1016,7 +1043,8 @@ class UsuarioTestSeeder extends Seeder
             'email_contacto'      => 'talentos@mercadocrecer.com',
             'sitio_web'           => 'https://mercadocrecer.com',
             'descripcion'         => 'Plataforma de e-commerce para pymes argentinas. Crecimiento acelerado.',
-            'logo'                => null,
+            'logo'                => 'logos/abG7f4QVmZOLnN7hYBBazgRuiSYq2xSPktcQry5N.png',
+            'banner'              => 'banners/zQNT3wXI1gBicp5IeCpdylOF40zRumNa5ENRx2iR.png',
             'representante'       => 'Laura Herrera',
             'email_representante' => 'lherrera@mercadocrecer.com',
             'tamano_empresa'      => 'Pequena',
@@ -1053,7 +1081,8 @@ class UsuarioTestSeeder extends Seeder
             'email_contacto'      => 'rrhh@industria.com.ar',
             'sitio_web'           => null,
             'descripcion'         => 'Empresa manufacturera buscando pasantes de ingeniería.',
-            'logo'                => null,
+            'logo'                => 'logos/4czFLUAa8Qt0prcHAcxDF7tKT1yJxX2lXAgY97jD.png',
+            'banner'              => 'banners/masvbMYh3toZ3N5prYetR9N7DBofFijg1hhuzHfK.png',
             'representante'       => null,
             'email_representante' => null,
             'tamano_empresa'      => 'Grande',
@@ -1073,7 +1102,7 @@ class UsuarioTestSeeder extends Seeder
             ['email' => 'admin@krow.com'],
             [
                 'name'                       => 'Administrador General',
-                'password'                   => Hash::make('password123'),
+                'password'                   => Hash::make('admin123admin456admin789'),
                 'rol'                        => 'admin',
                 'email_verified_at'          => Carbon::now(),
                 'email_verification_code'    => null,
