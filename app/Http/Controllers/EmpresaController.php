@@ -317,7 +317,7 @@ class EmpresaController extends Controller
                         'id_usuario'  => $id,
                         'titulo'      => 'Nueva oferta disponible',
                         'mensaje'     => "Se publicó la oferta '{$oferta->titulo}'.",
-                        'url' => route('estudiante.ofertas-detalle-preview', $oferta->id_oferta),
+                        'url' => route('ofertas.detalle', $oferta->id_oferta),
                         'tipo'        => 'info',
                         'leida'       => false,
                         'created_at'  => $ahora,

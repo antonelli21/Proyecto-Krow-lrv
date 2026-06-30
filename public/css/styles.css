@@ -2325,6 +2325,20 @@ body {
 .postulaciones-table thead tr {
   border-bottom: 1px solid var(--border);
 }
+.sidebar-card a.empresa-nombre-link {
+    font-weight: 600;
+    color: var(--text);
+    font-size: 0.95rem;
+    overflow-wrap: break-word;
+    word-break: break-word;
+    text-decoration: none;
+    transition: color 0.15s ease;
+}
+
+.sidebar-card a.empresa-nombre-link:hover {
+    color: var(--primary);
+    text-decoration: underline;
+}
 
 .ofertas-table th,
 .postulaciones-table th {

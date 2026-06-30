@@ -15,6 +15,13 @@
                     ?? '';
     $empresaSlug  = $oferta->empresa->slug   ?? '';
     $logoLetras   = strtoupper(substr($empresa ?: '?', 0, 2));
+    $empresaLogo  = $oferta->empresa->logo
+                    ?? $oferta->empresa->foto_perfil
+                    ?? $oferta->empresa->imagen
+                    ?? null;
+    $empresaLogoUrl = $empresaLogo
+                    ? (str_starts_with($empresaLogo, 'http') ? $empresaLogo : asset('storage/' . $empresaLogo))
+                    : null;
     $tipo         = $oferta->tipo_trabajo    ?? $oferta->tipo ?? '';
     $modalidad    = $oferta->modalidad       ?? '';
     $salario      = $oferta->rango_salarial  ?? $oferta->salario ?? '';
@@ -52,8 +59,14 @@
                 {{-- Encabezado ── --}}
                 <div class="oferta-head">
                     <div class="oferta-head-left">
-                        <div class="oferta-empresa-logo">{{ $logoLetras }}</div>
-                        <div class="oferta-head-text">
+                    <div class="oferta-empresa-logo">
+                            @if ($empresaLogoUrl)
+                                <img src="{{ $empresaLogoUrl }}" alt="{{ $empresa }}" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;">
+                            @else
+                                {{ $logoLetras }}
+                            @endif
+                        </div>
+                    <div class="oferta-head-text">
                             <h1 style="overflow-wrap: break-word; word-break: break-word;">{{ $titulo }}</h1>
                             <div class="oferta-empresa-meta">
                                 <span>{{ $empresa }}</span>
@@ -297,8 +310,16 @@
                 <div class="sidebar-card">
                     <div class="sidebar-card-title">Empresa</div>
                     <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
-                        <div class="oferta-empresa-logo" style="width:38px;height:38px;font-size:0.85rem; flex-shrink: 0;">{{ $logoLetras }}</div>
-                        <span style="font-weight:600; color:var(--text); font-size:0.95rem; overflow-wrap: break-word; word-break: break-word;">{{ $empresa }}</span>
+                        <div class="oferta-empresa-logo" style="width:38px;height:38px;font-size:0.85rem; flex-shrink: 0; overflow:hidden;">
+                            @if ($empresaLogoUrl)
+                                <img src="{{ $empresaLogoUrl }}" alt="{{ $empresa }}" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;">
+                            @else
+                                {{ $logoLetras }}
+                            @endif
+                        </div>
+                        <a href="{{ route('empresas.perfil', $oferta->empresa->id_empresa) }}" class="empresa-nombre-link">
+                            {{ $empresa }}
+                        </a>
                     </div>
                 </div>
             @endif

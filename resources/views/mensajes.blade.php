@@ -83,13 +83,19 @@
 {{-- ═══ ESTILOS ═══ --}}
 <style>
     /* ── Variables globales (heredadas de layouts.app) ── */
-    .mensajes-page {
-        display: flex;
-        height: calc(100vh - var(--header-h, 70px));
-        min-height: 500px;
-        overflow: hidden;
-        background: var(--bg);
-    }
+        .mensajes-page {
+            display: flex;
+            height: calc(100vh - var(--header-h, 70px));
+            min-height: 500px;
+            overflow: hidden;
+            background: var(--bg);
+        }
+
+        /* Ocultamos el footer completo en la página de mensajes para que no tape el chat */
+        body:has(.mensajes-page) .site-footer,
+        body:has(.mensajes-page) .footer-bottom {
+            display: none !important;
+        }
 
     /* ── Sidebar ── */
     .mensajes-sidebar {
@@ -912,10 +918,14 @@
         let perfilUrl = '#';
 
         if (otro.rol === 'estudiante' && otro.perfil_id) {
-            perfilUrl = miRol === 'empresa' ? `/empresa/estudiante/${otro.perfil_id}` : '#';
-        } else if (otro.rol === 'empresa' && otro.perfil_id) {
-            perfilUrl = `/empresas/${otro.perfil_id}`;
-        }
+    if (miRol === 'empresa') {
+        perfilUrl = `/empresa/estudiante/${otro.perfil_id}`;
+    } else if (miRol === 'admin') {
+        perfilUrl = `/admin/estudiante/${otro.perfil_id}`;
+    }
+} else if (otro.rol === 'empresa' && otro.perfil_id) {
+    perfilUrl = `/empresas/${otro.perfil_id}`;
+}
 
         if (panelNombre) {
             panelNombre.innerHTML = `<a href="${perfilUrl}" style="color:inherit; text-decoration:none; cursor:pointer;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">${escaparHTML(nombre)}</a>`;

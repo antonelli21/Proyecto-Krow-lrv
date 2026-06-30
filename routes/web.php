@@ -146,6 +146,7 @@ Route::prefix('admin')
         Route::post('/estudiantes/{id}/estado', [AdminController::class, 'cambiarEstadoEstudiante'])->name('estudiantes.estado');
         Route::post('/empresas/{id}/estado',    [AdminController::class, 'cambiarEstadoEmpresa'])->name('empresas.estado');
         Route::post('/ofertas/{id}/estado',     [AdminController::class, 'cambiarEstadoOferta'])->name('ofertas.estado');
+        Route::get('/estudiante/{id}',              [EmpresaController::class, 'verPerfilEstudiante'])->name('estudiante.perfil');
 
         // Eliminación individual
         Route::delete('/estudiantes/{id}', [AdminController::class, 'eliminarEstudiante'])->name('estudiantes.destroy');
