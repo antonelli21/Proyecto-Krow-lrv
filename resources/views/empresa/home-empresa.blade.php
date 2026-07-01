@@ -44,6 +44,12 @@
     <h1 class="panel-page-title">Panel de Empresa</h1>
     <p class="panel-page-sub">Gestiona tus ofertas laborales y revisá los postulantes</p>
 
+    @if(session('success'))
+        <div style="margin-bottom:16px;padding:13px 16px;border:1px solid rgba(46,204,154,.35);background:rgba(14,24,22,.96);color:#2ECC9A;font-size:13px;font-weight:700;display:flex;align-items:center;gap:8px;">
+            <i class="bi bi-check-circle"></i> {{ session('success') }}
+        </div>
+    @endif
+
     <!-- Stats -->
     <div class="stats-row">
         <div class="stat-card">

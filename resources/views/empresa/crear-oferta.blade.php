@@ -507,7 +507,19 @@
     </div>
 
     {{-- Card --}}
-    <div class="oferta-card">
+    <div class="oferta-card">        @if($errors->any())
+            <div style="margin-bottom:16px;padding:13px 16px;border:1px solid rgba(212,24,61,.35);background:rgba(14,24,22,.96);color:#e05577;font-size:13px;font-weight:700;display:flex;align-items:flex-start;gap:8px;">
+                <i class="bi bi-exclamation-circle"></i>
+                <div>
+                    <div>Completá todos los campos obligatorios para publicar la oferta.</div>
+                    <ul style="margin:6px 0 0 16px; font-weight:600;">
+                        @foreach($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            </div>
+        @endif
         <form class="oferta-form" id="ofertaForm" action="{{ route('empresa.ofertas.store') }}" method="POST" novalidate>
             @csrf
 
@@ -767,18 +779,35 @@
         const form = document.getElementById('ofertaForm');
         const btnSubmit = document.getElementById('btn-submit');
         const camposRequeridos = ['titulo', 'tipo_trabajo', 'modalidad', 'rango_salarial', 'descripcion', 'requisitos'];
+        const camposSelect = ['select-provincia', 'select-localidad', 'area', 'id_carrera', 'experiencia-requerida'];
 
         function validarCampo(id) {
             const el = document.getElementById(id);
             const errorEl = document.getElementById('error-' + id);
             let valido = true;
 
-            if (!el.value.trim()) {
+            if (!el || !el.value || !String(el.value).trim()) {
                 valido = false;
-                el.classList.add('error');
+                el?.classList.add('error');
                 if (errorEl) errorEl.classList.add('show');
             } else {
-                el.classList.remove('error');
+                el?.classList.remove('error');
+                if (errorEl) errorEl.classList.remove('show');
+            }
+            return valido;
+        }
+
+        function validarSelect(id) {
+            const el = document.getElementById(id);
+            const errorEl = document.getElementById('error-' + id);
+            let valido = true;
+
+            if (!el || !el.value || !String(el.value).trim()) {
+                valido = false;
+                el?.classList.add('error');
+                if (errorEl) errorEl.classList.add('show');
+            } else {
+                el?.classList.remove('error');
                 if (errorEl) errorEl.classList.remove('show');
             }
             return valido;
@@ -794,19 +823,26 @@
             }
         });
 
-        form.addEventListener('submit', (e) => {
-            form.addEventListener('submit', (e) => {
-    // Si hay texto sin agregar como tag, lo agrega antes de validar
-    if (inputTech && inputTech.value.trim()) {
-        createTag(inputTech.value.trim());
-    }
+        camposSelect.forEach(id => {
+            const el = document.getElementById(id);
+            if (el) {
+                el.addEventListener('change', () => validarSelect(id));
+                el.addEventListener('blur', () => validarSelect(id));
+            }
+        });
 
-    let todoValido = true;
-    camposRequeridos.forEach(id => {
-        if (!validarCampo(id)) todoValido = false;
-    });
-    // ... resto igual
-});
+        form.addEventListener('submit', (e) => {
+            if (inputTech && inputTech.value.trim()) {
+                createTag(inputTech.value.trim());
+            }
+
+            let todoValido = true;
+            camposRequeridos.forEach(id => {
+                if (!validarCampo(id)) todoValido = false;
+            });
+            camposSelect.forEach(id => {
+                if (!validarSelect(id)) todoValido = false;
+            });
 
             if (!todoValido) {
                 e.preventDefault();

@@ -250,14 +250,26 @@ class EmpresaController extends Controller
                 'titulo'                => 'required|string|max:100',
                 'tipo_trabajo'          => 'required|string',
                 'modalidad'             => 'required|string',
-                'rango_salarial'        => 'nullable|string|max:100',
+                'rango_salarial'        => 'required|string|max:100',
                 'experiencia_requerida' => 'required|string',
                 'descripcion'           => 'required|string',
-                'requisitos'            => 'nullable|string',
-                'id_localidad'          => 'nullable|exists:localidad,id_localidad',
-                'id_provincia'          => 'nullable|exists:provincia,id_provincia',
+                'requisitos'            => 'required|string',
+                'id_localidad'          => 'required|exists:localidad,id_localidad',
+                'id_provincia'          => 'required|exists:provincia,id_provincia',
                 'area'                  => 'required|string|max:50',
                 'id_carrera'            => 'required|exists:carrera,id_carrera',
+            ], [
+                'titulo.required' => 'El título del puesto es obligatorio.',
+                'tipo_trabajo.required' => 'Seleccioná el tipo de trabajo.',
+                'modalidad.required' => 'Seleccioná la modalidad.',
+                'rango_salarial.required' => 'Ingresá el rango salarial.',
+                'experiencia_requerida.required' => 'Seleccioná la experiencia requerida.',
+                'descripcion.required' => 'La descripción del puesto es obligatoria.',
+                'requisitos.required' => 'Los requisitos son obligatorios.',
+                'id_localidad.required' => 'Seleccioná una localidad.',
+                'id_provincia.required' => 'Seleccioná una provincia.',
+                'area.required' => 'Seleccioná una categoría.',
+                'id_carrera.required' => 'Seleccioná una carrera destinada.',
             ]);
 
             $oferta = new \App\Models\Oferta();
@@ -280,7 +292,7 @@ class EmpresaController extends Controller
             }
 
             $oferta->modalidad = ucfirst(strtolower($data['modalidad']));
-            $oferta->tipo_oferta = $data['tipo_trabajo'] === 'practica-profesional'
+            $oferta->tipo_oferta = $data['tipo_trabajo'] === 'Practica Profesional'
                 ? 'Practica Profesional'
                 : ucwords(str_replace('-', ' ', $data['tipo_trabajo']));
             $oferta->experiencia_requerida = $data['experiencia_requerida'] === 'sin-experiencia'
@@ -326,7 +338,7 @@ class EmpresaController extends Controller
                 );
             }
 
-            return redirect()->route('empresa.home')->with('success', 'Oferta creada con éxito.');
+            return redirect()->route('empresa.home')->with('success', 'La oferta se cargó correctamente.');
         }
 
 
