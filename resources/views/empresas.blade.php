@@ -34,9 +34,9 @@ $ubicaciones = $empresas->map(function($emp) {
 @endphp
 
 
-<div class="empresas-page" style="margin-top: clamp(-190px, -16vw, -140px); position: relative; z-index: 5; background-color:var(--bg); border-radius: 8px; border:1px solid var(--surface);">
+<div class="empresas-page" style="margin-top: clamp(-190px, -16vw, -140px); position: relative; z-index: 5; background-color:var(--bg); border-radius: 8px; border:1px solid var(--accent); max-width: 1480px; margin-left: auto; margin-right: auto; padding: 18px 18px 18px;">
 
-    <div class="empresas-header">
+    <div class="empresas-header" style="padding-top: 8px; padding-bottom: 10px; margin-bottom: 10px;">
         <h1>Base de Empresas</h1>
         <p>Explorá las empresas registradas en la plataforma y sus ofertas laborales activas.</p>
     </div>
@@ -182,7 +182,7 @@ $ubicaciones = $empresas->map(function($emp) {
 }
 
 .empresa-btn--ofertas {
-    background: var(--accent);
+    background: var(--primary);
     border: 1px solid transparent;
     color: #0D1A13;
 }
@@ -210,6 +210,14 @@ $ubicaciones = $empresas->map(function($emp) {
         border: 1px solid var(--border);
         border-radius: var(--radius);
     }
+
+    .empresas-page {
+        width: min(100%, 1480px);
+        margin-left: auto;
+        margin-right: auto;
+        padding-inline: 18px;
+    }
+
 
     .toolbar-search {
         flex: 1 1 300px;

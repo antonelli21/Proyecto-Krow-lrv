@@ -1,21 +1,16 @@
 :root {
-  --bg: #ebe1e1;
-  --surface: #cce2cc;
-  --primary: #051410;
+  --bg: #b8b8b8;
+  --surface: #ffffff;
+  --primary: #979797;
   --accent: #077552;
-  --text: #29262193;
-  --muted: #5a5a5a;
-  --border: #D0D0D0;
-  --destructive: #d4183d;
+  --text: #000000;
+  --title: #ecece68e;
   --muted: #4A6B5E;
   --border: #A8C4BA;
   --destructive: #D4183D;
   --destructive-fg: #ffffff;
-  --radius: 0.625rem;
   --radius: 0px;
   --bgnoti: #ffffff;
-  --accent-dim: rgba(212, 168, 67, .12);
-  --border-accent: rgba(212, 168, 67, .4);
   --accent-dim: rgba(46, 204, 154, .12);
   --border-accent: rgba(46, 204, 154, .4);
   --bg-card: var(--surface);
@@ -23,15 +18,13 @@
   --bg-hover: rgba(0, 0, 0, .04);
   --text-primary: var(--text);
   --text-secondary: var(--muted);
-  --text-muted: #9a9aaa;
   --text-muted: #5A5A5A;
   --header-h: 80px;
+  --gradient-start: #FFFFFF;
+  --gradient-end: #818181;
   --sidebar-w: 270px;
   --right-w: 290px;
   --shadow-card: 0 2px 14px rgba(0, 0, 0, .10);
-  --shadow-accent: 0 4px 20px rgba(212, 168, 67, .22);
-  --font-display: 'Syne', system-ui, sans-serif;
-  --font-body: 'DM Sans', system-ui, sans-serif;
   --shadow-accent: 0 4px 20px rgba(46, 204, 154, .22);
   --font-display: Arial, system-ui, sans-serif;
   --font-body: Arial, system-ui, sans-serif;
@@ -43,7 +36,10 @@
   --surface: #2C2C35;
   --primary: #D4A843;
   --accent: #D4A843;
+  --gradient-start: #c2c2c2;
+  --gradient-end: #D4A843;
   --text: #F5F3EE;
+  --title: #F5F3EE;
   --muted: #6B6B78;
   --border: #3A3A45;
   --bgnoti: #2C2C35;
@@ -89,6 +85,14 @@ body {
 
 body.no-scroll {
   overflow: hidden;
+}
+
+.gradient-text {
+  font-size: clamp(1.4rem, 3vw, 2rem);
+  font-weight: 800;
+  background: linear-gradient(45deg, var(--gradient-start), var(--gradient-end));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 main {
@@ -281,7 +285,7 @@ main {
   gap: 0.75rem;
   /* Espaciado equilibrado entre avatar, texto e icono */
   background-color: transparent;
-  color: var(--text-color, #ffffff);
+  color: var(--text-color, #000000);
   /* Color de texto blanco o variable */
   border: 1px solid rgba(255, 255, 255, 0.1);
   /* Un borde sutil para darle estructura */
@@ -897,8 +901,8 @@ main {
   padding: 8px 2rem 8px 12px;
   border: 1px solid var(--border);
   border-radius: 0px;
-  background-color: var(--bg);
-  color: var(--text);
+  background-color: #cecece;
+  color: #000000;
   font-size: 0.875rem;
   cursor: pointer;
   appearance: none;
@@ -1326,7 +1330,7 @@ body {
   font-family: var(--font-display);
   font-size: 22px;
   font-weight: 800;
-  color: var(--text);
+  color: var(--accent);
   line-height: 1.1;
 }
 
@@ -2571,13 +2575,13 @@ body {
   font-family: var(--font-display, system-ui);
   font-size: 28px;
   font-weight: 800;
-  color: var(--text);
+  color: var(--accent);
   margin-bottom: 6px;
 }
 
 .empresas-header p {
   font-size: 15px;
-  color: var(--muted);
+  color: var(--text);
 }
 
 /* ─── TOOLBAR ─── */
@@ -4109,20 +4113,6 @@ body {
   font-weight: 600;
 }
 
-.admin-name-link {
-  color: var(--text);
-  text-decoration: none;
-  display: inline-block;
-  transition: transform 0.2s ease, color 0.2s ease, text-decoration-color 0.2s ease;
-}
-
-.admin-name-link:hover,
-.admin-name-link:focus-visible {
-  color: var(--accent);
-  text-decoration: underline;
-  transform: translateX(3px);
-}
-
 .td-id {
   color: var(--text-muted);
   font-size: 12px;
@@ -4217,42 +4207,26 @@ body {
 }
 
 .btn-icon {
-  width: 32px;
-  height: 32px;
-  border-radius: 8px;
-  border: 1px solid var(--border);
-  background: var(--surface);
-  color: var(--text-muted);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 0px;
+  border: none;
+  background: transparent;
+  color: var(--muted);
+  display: grid;
+  place-items: center;
   cursor: pointer;
   font-size: 15px;
-  line-height: 1;
-  padding: 0;
-  margin: 0;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
-  transition: color var(--trans), background var(--trans), border-color var(--trans), transform var(--trans), box-shadow var(--trans);
+  transition: color var(--trans), background var(--trans);
 }
 
 .btn-icon:hover {
   background: var(--bg-hover);
   color: var(--text);
-  border-color: var(--accent);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
-}
-
-.btn-icon.btn-ver {
-  color: var(--accent);
-  background: rgba(99, 179, 237, 0.12);
-  border-color: rgba(99, 179, 237, 0.25);
 }
 
 .btn-icon.btn-ver:hover {
-  color: #fff;
-  background: var(--accent);
-  border-color: var(--accent);
+  color: var(--accent);
 }
 
 .btn-icon.btn-aprobar:hover {
@@ -5290,32 +5264,42 @@ textarea.filter-input-text:focus {
 
 
 
-/* --- Variante clara en tono violeta pastel para links en perfiles --- */
+/* --- Variante profesional en tono Plateado / Metalizado para Links --- */
 .info-item-link {
-  border-left: 4px solid #e9dcff !important;
-  background: linear-gradient(90deg, rgba(244, 240, 255, 0.85) 0%, rgba(255, 255, 255, 0.98) 100%) !important;
-  box-shadow: 0 2px 8px rgba(139, 92, 246, 0.06);
+  /* Borde izquierdo en gris plateado/cromado medio */
+  border-left: 4px solid #94a3b8 !important;
+  /* Degradado sutil simulando un reflejo metálico suave sobre el fondo */
+  background: linear-gradient(90deg, rgba(203, 213, 225, 0.09) 0%, var(--bg) 100%) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
   position: relative;
   overflow: hidden;
   transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
 }
 
-[data-theme="dark"] .info-item-link {
-  border-left-color: #64748b !important;
-  background: linear-gradient(90deg, rgba(100, 116, 139, 0.14) 0%, rgba(15, 23, 42, 0.9) 100%) !important;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+/* --- Variante Plateada Metalizada Universal (Adaptable a Modo Claro y Oscuro) --- */
+.info-item-link {
+  /* Borde izquierdo gris plateado/cromado intermedio */
+  border-left: 4px solid #64748b !important;
+  /* Fondo con un sutil reflejo metálico translúcido */
+  background: linear-gradient(90deg, rgba(100, 116, 139, 0.06) 0%, rgba(255, 255, 255, 0.01) 100%) !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
 }
 
 /* Efecto Hover */
 .info-item-link:hover {
   transform: translateY(-1px) translateX(2px) !important;
-  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.1) !important;
-  border-left-color: #d8c5ff !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05) !important;
+  border-left-color: #475569 !important;
+  /* Plata más oscuro y definido al pasar el mouse */
 }
 
-/* Texto del enlace en tono violeta suave para modo claro */
+/* TEXTO DEL ENLACE: Gris acero oscuro para garantizar legibilidad en fondos blancos */
 .info-item-link .link-accion {
-  color: #7c3aed !important;
+  color: #475569 !important;
+  /* Color gris pizarra de alta visibilidad */
   font-weight: 600;
   text-decoration: none;
   transition: color 0.15s ease-in-out;
@@ -5324,20 +5308,12 @@ textarea.filter-input-text:focus {
   gap: 6px;
 }
 
-[data-theme="dark"] .info-item-link .link-accion {
-  color: #cbd5e1 !important;
-}
-
 /* Hover del texto del enlace */
 .info-item-link .link-accion:hover,
 .info-item-link .link-accion:focus-visible {
-  color: #5b21b6 !important;
+  color: #1e293b !important;
+  /* Casi negro/grafito para un contraste óptimo en modo claro */
   text-decoration: underline;
-}
-
-[data-theme="dark"] .info-item-link .link-accion:hover,
-[data-theme="dark"] .info-item-link .link-accion:focus-visible {
-  color: #f8fafc !important;
 }
 
 /* Ícono decorativo en marca de agua */
@@ -5348,8 +5324,9 @@ textarea.filter-input-text:focus {
   top: 8px;
   right: 12px;
   font-size: 0.75rem;
-  color: #c4b5fd;
-  opacity: 0.2;
+  color: #64748b;
+  opacity: 0.15;
+  /* Muy sutil para que no ensucie el texto */
 }
 
 /* ════════════════════════════════════════

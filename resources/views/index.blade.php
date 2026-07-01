@@ -18,7 +18,7 @@
     <div  style="
         position:absolute;
         inset:0;
-        background:linear-gradient(to right, rgba(0,0,0,.8), rgba(0,0,0,.8));
+        background:linear-gradient(to right, rgba(0,0,0,.4), rgba(0,0,0,.4));
     "></div>
 
     <div id="pad" style="
@@ -32,11 +32,7 @@
         z-index:2;
         padding-top: 1.5rem;
     ">
-    <h1 id="banner-title" style="
-    font-size: clamp(1.4rem, 3vw, 2rem);
-    font-weight: 800;
-    color: var(--text);
-">Krow</h1>
+    <h1 id="banner-title" class="gradient-text">KROW</h1>
 </div>
 </div>
 @endsection
@@ -47,7 +43,7 @@ $rol = auth()->check() ? (auth()->user()->rol ?? 'invitado') : 'invitado';
 $ofertas = $ofertas ?? collect();
 @endphp
 
-<div class="page-body" id="page-body" data-rol="{{ $rol }}" style="margin-top: clamp(-190px, -16vw, -140px);  position: relative; z-index: 5;       background-color:var(--bg); border-radius: 8px; border:1px solid var(--surface); justify-content:start;">
+<div class="page-body" id="page-body" data-rol="{{ $rol }}" style="margin-top: clamp(-190px, -16vw, -140px);  position: relative; z-index: 5;       background-color:var(--bg); border-radius: 8px; border:1px solid var(--accent); justify-content:start;">
      
 
 
