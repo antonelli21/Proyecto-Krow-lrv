@@ -156,7 +156,9 @@
             <td><input type="checkbox" class="check-row"></td>
             <td>{{ $a->legajo ?? '—' }}</td>
             <td class="td-nombre">
-              {{ $a->apellido }}, {{ $a->nombre }}
+              <a href="{{ route('admin.estudiante.perfil', $a->id_estudiante) }}" class="admin-name-link">
+                {{ $a->apellido }}, {{ $a->nombre }}
+              </a>
               <br><span class="td-id">{{ $a->user->email ?? '—' }}</span>
             </td>
             <td class="td-carrera">{{ $a->carrera->nombre ?? '—' }}</td>
@@ -344,7 +346,9 @@
               data-estado="{{ $e->estado ?? 'pendiente' }}">
             <td><input type="checkbox" class="check-row"></td>
             <td class="td-nombre">
-              {{ $e->nombre_empresa }}
+              <a href="{{ route('empresas.perfil', $e->id_empresa) }}" class="admin-name-link">
+                {{ $e->nombre_empresa }}
+              </a>
               <br><span class="td-id">{{ $e->user->email ?? '—' }}</span>
             </td>
             <td class="td-carrera">{{ $e->rubro ?? '—' }}</td>
@@ -553,7 +557,11 @@
               data-modalidad="{{ strtolower($o->modalidad ?? '') }}"
               data-tipo="{{ strtolower(str_replace(' ', '-', $o->tipo_oferta ?? '')) }}">
             <td><input type="checkbox" class="check-row"></td>
-            <td class="td-nombre">{{ $o->titulo }}</td>
+            <td class="td-nombre">
+              <a href="{{ route('ofertas.detalle', $o->id_oferta) }}" class="admin-name-link">
+                {{ $o->titulo }}
+              </a>
+            </td>
             <td class="td-carrera">{{ $o->empresa->nombre_empresa ?? '—' }}</td>
             <td>{{ ucfirst($o->modalidad ?? '—') }}</td>
             <td><span class="badge-tipo">{{ ucfirst($o->tipo_oferta ?? '—') }}</span></td>

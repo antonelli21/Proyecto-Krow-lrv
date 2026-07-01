@@ -86,7 +86,7 @@
               <div class="info-label">Legajo universitario</div>
               <div class="info-value">{{ $estudiante->legajo ?? 'No especificado' }}</div>
             </div>
-            <div class="info-item">
+            <div class="info-item info-item-link">
               <div class="info-label">Portafolio</div>
               <div class="info-value">
                 @if(!empty($estudiante->portfolio))
@@ -98,7 +98,7 @@
                 @endif
               </div>
             </div>
-            <div class="info-item">
+            <div class="info-item info-item-link">
               <div class="info-label">Currículum Vitae</div>
               <div class="info-value">
                 @if(!empty($estudiante->cv))
@@ -114,6 +114,9 @@
         </div>
       </div>
 
+    </div> {{-- fin perfil-column-main --}}
+
+    <div class="perfil-column-sidebar">
       {{-- Preferencias Laborales --}}
       <div class="perfil-card">
         <div class="perfil-card-header">
@@ -132,9 +135,7 @@
           </div>
         </div>
       </div>
-    </div> {{-- fin perfil-column-main --}}
 
-    <div class="perfil-column-sidebar">
       {{-- Ubicación --}}
       <div class="perfil-card">
         <div class="perfil-card-header">
@@ -173,7 +174,7 @@
         </div>
         <div class="perfil-card-body">
           <div class="perfil-grid">
-            <div class="info-item">
+            <div class="info-item info-item-link">
               <div class="info-label">LinkedIn</div>
               <div class="info-value">
                 @if(!empty($estudiante->linkedin))
@@ -185,7 +186,7 @@
                 @endif
               </div>
             </div>
-            <div class="info-item">
+            <div class="info-item info-item-link">
               <div class="info-label">GitHub</div>
               <div class="info-value">
                 @if(!empty($estudiante->github))

@@ -133,6 +133,9 @@
                 </div>
             </div>
 
+        </div> {{-- fin perfil-column-main --}}
+
+        <div class="perfil-column-sidebar">
             {{-- Preferencias Laborales --}}
             <div class="perfil-card">
                 <div class="perfil-card-header">
@@ -151,9 +154,7 @@
                     </div>
                 </div>
             </div>
-        </div> {{-- fin perfil-column-main --}}
 
-        <div class="perfil-column-sidebar">
             {{-- Habilidades --}}
             <div class="perfil-card">
                 <div class="perfil-card-header">

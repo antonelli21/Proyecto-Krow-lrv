@@ -136,7 +136,7 @@
                 </div>
                 <div class="perfil-grid">
 
-                    <div class="info-item">
+                    <div class="info-item info-item-link">
                         <div class="info-label">Correo electrónico</div>
                         <div class="info-value">
                             @if(!empty($empresa->email_contacto))
@@ -154,7 +154,7 @@
                         <div class="info-value">{{ $empresa->telefono ?? 'No especificado' }}</div>
                     </div>
 
-                    <div class="info-item">
+                    <div class="info-item info-item-link">
                         <div class="info-label">Sitio web</div>
                         <div class="info-value">
                             @if(!empty($empresa->sitio_web))
@@ -167,7 +167,7 @@
                         </div>
                     </div>
 
-                    <div class="info-item">
+                    <div class="info-item info-item-link">
                         <div class="info-label">LinkedIn</div>
                         <div class="info-value">
                             @if(!empty($empresa->linkedin))
@@ -181,7 +181,7 @@
                     </div>
 
                     @if(!empty($empresa->instagram))
-                    <div class="info-item">
+                    <div class="info-item info-item-link">
                         <div class="info-label">Instagram</div>
                         <div class="info-value">
                             <a href="{{ $empresa->instagram }}" target="_blank" class="link-accion">
@@ -192,7 +192,7 @@
                     @endif
 
                     @if(!empty($empresa->facebook))
-                    <div class="info-item">
+                    <div class="info-item info-item-link">
                         <div class="info-label">Facebook</div>
                         <div class="info-value">
                             <a href="{{ $empresa->facebook }}" target="_blank" class="link-accion">

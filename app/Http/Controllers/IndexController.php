@@ -217,8 +217,13 @@ if ($request->filled('tecnologias')) {
     public function perfilEmpresa($id)
     {
         $empresa = Empresa::with(['localidad', 'provincia'])
-            ->where('estado', 'aprobada')
             ->findOrFail($id);
+
+        $esAdmin = auth()->check() && auth()->user()->rol === 'admin';
+
+        if ($empresa->estado !== 'aprobada' && !$esAdmin) {
+            abort(404);
+        }
 
         $ofertas = \App\Models\Oferta::where('id_empresa', $empresa->id_empresa)
             ->where('estado', 'Activa')

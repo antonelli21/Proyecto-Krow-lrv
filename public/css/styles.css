@@ -4109,6 +4109,20 @@ body {
   font-weight: 600;
 }
 
+.admin-name-link {
+  color: var(--text);
+  text-decoration: none;
+  display: inline-block;
+  transition: transform 0.2s ease, color 0.2s ease, text-decoration-color 0.2s ease;
+}
+
+.admin-name-link:hover,
+.admin-name-link:focus-visible {
+  color: var(--accent);
+  text-decoration: underline;
+  transform: translateX(3px);
+}
+
 .td-id {
   color: var(--text-muted);
   font-size: 12px;
@@ -4203,26 +4217,42 @@ body {
 }
 
 .btn-icon {
-  width: 30px;
-  height: 30px;
-  border-radius: 0px;
-  border: none;
-  background: transparent;
-  color: var(--muted);
-  display: grid;
-  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text-muted);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
   font-size: 15px;
-  transition: color var(--trans), background var(--trans);
+  line-height: 1;
+  padding: 0;
+  margin: 0;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+  transition: color var(--trans), background var(--trans), border-color var(--trans), transform var(--trans), box-shadow var(--trans);
 }
 
 .btn-icon:hover {
   background: var(--bg-hover);
   color: var(--text);
+  border-color: var(--accent);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+}
+
+.btn-icon.btn-ver {
+  color: var(--accent);
+  background: rgba(99, 179, 237, 0.12);
+  border-color: rgba(99, 179, 237, 0.25);
 }
 
 .btn-icon.btn-ver:hover {
-  color: var(--accent);
+  color: #fff;
+  background: var(--accent);
+  border-color: var(--accent);
 }
 
 .btn-icon.btn-aprobar:hover {
@@ -5260,42 +5290,32 @@ textarea.filter-input-text:focus {
 
 
 
-/* --- Variante profesional en tono Plateado / Metalizado para Links --- */
+/* --- Variante clara en tono violeta pastel para links en perfiles --- */
 .info-item-link {
-  /* Borde izquierdo en gris plateado/cromado medio */
-  border-left: 4px solid #94a3b8 !important;
-  /* Degradado sutil simulando un reflejo metálico suave sobre el fondo */
-  background: linear-gradient(90deg, rgba(203, 213, 225, 0.09) 0%, var(--bg) 100%) !important;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  border-left: 4px solid #e9dcff !important;
+  background: linear-gradient(90deg, rgba(244, 240, 255, 0.85) 0%, rgba(255, 255, 255, 0.98) 100%) !important;
+  box-shadow: 0 2px 8px rgba(139, 92, 246, 0.06);
   position: relative;
   overflow: hidden;
   transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
 }
 
-/* --- Variante Plateada Metalizada Universal (Adaptable a Modo Claro y Oscuro) --- */
-.info-item-link {
-  /* Borde izquierdo gris plateado/cromado intermedio */
-  border-left: 4px solid #64748b !important;
-  /* Fondo con un sutil reflejo metálico translúcido */
-  background: linear-gradient(90deg, rgba(100, 116, 139, 0.06) 0%, rgba(255, 255, 255, 0.01) 100%) !important;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
-  position: relative;
-  overflow: hidden;
-  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+[data-theme="dark"] .info-item-link {
+  border-left-color: #64748b !important;
+  background: linear-gradient(90deg, rgba(100, 116, 139, 0.14) 0%, rgba(15, 23, 42, 0.9) 100%) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
 /* Efecto Hover */
 .info-item-link:hover {
   transform: translateY(-1px) translateX(2px) !important;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05) !important;
-  border-left-color: #475569 !important;
-  /* Plata más oscuro y definido al pasar el mouse */
+  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.1) !important;
+  border-left-color: #d8c5ff !important;
 }
 
-/* TEXTO DEL ENLACE: Gris acero oscuro para garantizar legibilidad en fondos blancos */
+/* Texto del enlace en tono violeta suave para modo claro */
 .info-item-link .link-accion {
-  color: #475569 !important;
-  /* Color gris pizarra de alta visibilidad */
+  color: #7c3aed !important;
   font-weight: 600;
   text-decoration: none;
   transition: color 0.15s ease-in-out;
@@ -5304,12 +5324,20 @@ textarea.filter-input-text:focus {
   gap: 6px;
 }
 
+[data-theme="dark"] .info-item-link .link-accion {
+  color: #cbd5e1 !important;
+}
+
 /* Hover del texto del enlace */
 .info-item-link .link-accion:hover,
 .info-item-link .link-accion:focus-visible {
-  color: #1e293b !important;
-  /* Casi negro/grafito para un contraste óptimo en modo claro */
+  color: #5b21b6 !important;
   text-decoration: underline;
+}
+
+[data-theme="dark"] .info-item-link .link-accion:hover,
+[data-theme="dark"] .info-item-link .link-accion:focus-visible {
+  color: #f8fafc !important;
 }
 
 /* Ícono decorativo en marca de agua */
@@ -5320,9 +5348,8 @@ textarea.filter-input-text:focus {
   top: 8px;
   right: 12px;
   font-size: 0.75rem;
-  color: #64748b;
-  opacity: 0.15;
-  /* Muy sutil para que no ensucie el texto */
+  color: #c4b5fd;
+  opacity: 0.2;
 }
 
 /* ════════════════════════════════════════
