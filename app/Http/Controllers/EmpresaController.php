@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\Rule;
 
 use App\Models\Empresa;
 use Illuminate\Http\Request;
@@ -67,7 +68,13 @@ class EmpresaController extends Controller
 
         $data = $request->validate([
             'logo'                => 'nullable|image|mimes:jpg,jpeg,png,webp|max:3072',
-            'banner'              => 'nullable|image|mimes:jpg,jpeg,png,webp|max:5120', // Cambiado a 5MB
+            'banner' => [
+                'nullable',
+                'image',
+                'mimes:jpg,jpeg,png,webp',
+                'max:5120',
+                Rule::dimensions()->minWidth(1200)->minHeight(400),
+            ],
             'nombre_empresa'      => 'required|string|max:100',
             'razon_social'        => 'required|string|max:150',
             'cuit'                => 'required|numeric|digits_between:10,11|unique:empresa,cuit,' . $empresa->id_empresa . ',id_empresa',
@@ -85,6 +92,10 @@ class EmpresaController extends Controller
             'facebook'            => 'nullable|string|max:255',
             'id_localidad'        => 'nullable|exists:localidad,id_localidad',
             'id_provincia'        => 'nullable|exists:provincia,id_provincia',
+        ], [
+            'banner.dimensions' => 'El banner debe tener al menos 1200x400 píxeles para no verse pixelado.',
+            'banner.max'        => 'El banner no puede pesar más de 5MB.',
+            'logo.max'          => 'El logo no puede pesar más de 3MB.',
         ]);
 
         try {

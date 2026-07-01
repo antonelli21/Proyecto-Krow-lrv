@@ -1901,17 +1901,17 @@ body {
   color: var(--accent);
 }
 
-/* Efecto hover sutil en la foto del perfil */
 .avatar-expandible {
+  cursor: pointer;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.avatar-expandible:hover {
+.avatar-expandible:hover,
+.avatar-expandible:focus-visible {
   transform: scale(1.03);
-  box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.15);
 }
 
-/* El fondo del modal (oscuro traslúcido) */
 .avatar-modal {
   display: none;
   position: fixed;
@@ -1919,17 +1919,22 @@ body {
   z-index: 2000;
   background-color: rgba(10, 10, 20, 0.9);
   backdrop-filter: blur(5px);
-
   justify-content: center;
   align-items: center;
+  opacity: 0;
+  transition: opacity 0.25s ease;
 }
 
+.avatar-modal.open {
+  display: flex;
+  opacity: 1;
+}
 
 .avatar-modal-content {
   margin: auto;
   display: block;
-  width: min(70vw, 650px);
-  height: min(70vw, 650px);
+  width: min(85vw, 900px);
+  height: min(85vw, 900px);
   object-fit: cover;
   border-radius: 50%;
   border: 5px solid rgba(255, 255, 255, 0.15);
@@ -1937,7 +1942,6 @@ body {
   animation: zoomIn 0.25s ease-out;
 }
 
-/* Botón de cerrar */
 .avatar-modal-close {
   position: absolute;
   top: 40px;
@@ -1945,27 +1949,36 @@ body {
   color: #fff;
   font-size: 40px;
   font-weight: bold;
+  line-height: 1;
   cursor: pointer;
-  transition: color 0.2s;
+  background: none;
+  border: none;
+  padding: 8px;
+  transition: color 0.2s, transform 0.2s;
 }
 
 .avatar-modal-close:hover {
   color: #ffcc00;
+  transform: rotate(90deg);
 }
 
-/* Animación de apertura */
 @keyframes zoomIn {
-  from {
-    transform: scale(0.7);
-    opacity: 0;
-  }
-
-  to {
-    transform: scale(1);
-    opacity: 1;
-  }
+  from { transform: scale(0.7); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
 }
 
+@media (max-width: 480px) {
+  .avatar-modal-content {
+    width: min(90vw, 400px);
+    height: min(90vw, 400px);
+    border-width: 3px;
+  }
+  .avatar-modal-close {
+    top: 20px;
+    right: 20px;
+    font-size: 32px;
+  }
+}
 /* ════════════════════════════════════════
    SIDEBAR COLAPSABLE
 ════════════════════════════════════════ */

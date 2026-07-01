@@ -19,9 +19,12 @@
             <span style="color:#fff; font-size:0.9rem;"><i class="bi bi-camera-fill"></i> Cambiar banner</span>
         </div>
     </div>
-    <input type="file" id="banner" name="banner" accept="image/*"
-           form="formEditarEmpresa" style="display:none;"
-           onchange="previewBanner(this)">
+        <input type="file" id="banner" name="banner" accept="image/*"
+            form="formEditarEmpresa" style="display:none;"
+            onchange="previewBanner(this)">
+        <p style="text-align:center; color:var(--muted); font-size:0.8rem; margin-top:6px;">
+            Recomendado: 1200x400px o superior (JPG, PNG o WEBP)
+        </p>
 
     {{-- ══ HEADER centrado ══ --}}
     <div style="max-width: 720px; margin: 0 auto;">
@@ -329,13 +332,26 @@
 <script>
 function previewBanner(input) {
     if (input.files && input.files[0]) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            const preview = document.getElementById('bannerPreview');
-            preview.style.background = `url('${e.target.result}') center/cover no-repeat`;
-            preview.innerHTML = '';
+        const file = input.files[0];
+        const img = new Image();
+
+        img.onload = function() {
+            if (img.width < 1200 || img.height < 400) {
+                alert('La imagen es muy pequeña (' + img.width + 'x' + img.height + 'px). Se recomienda mínimo 1200x400px para evitar que se vea pixelada.');
+                input.value = '';
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const preview = document.getElementById('bannerPreview');
+                preview.style.background = `url('${e.target.result}') center/cover no-repeat`;
+                preview.innerHTML = '';
+            };
+            reader.readAsDataURL(file);
         };
-        reader.readAsDataURL(input.files[0]);
+
+        img.src = URL.createObjectURL(file);
     }
 }
 

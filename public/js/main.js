@@ -735,19 +735,17 @@ function abrirModalAvatar(url) {
   const modal = document.getElementById('avatarModal');
   const modalImg = document.getElementById('imgModalTarget');
   if (modal && modalImg) {
-    modal.style.display = "block";
     modalImg.src = url;
+    modal.classList.add('open');
   }
 }
 
 function cerrarModalAvatar() {
   const modal = document.getElementById('avatarModal');
   if (modal) {
-    modal.style.display = "none";
+    modal.classList.remove('open');
   }
 }
-
-
 /* ════════════════════════════════════════
    Home=ESTUDIANTE BETA.PHP 
 ════════════════════════════════════════ */

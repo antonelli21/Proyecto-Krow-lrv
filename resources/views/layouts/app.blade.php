@@ -212,6 +212,14 @@
     </div>
   </footer>
 
+  {{-- ════ MODAL GLOBAL PARA EXPANDIR AVATARES/LOGOS ════ --}}
+  {{-- Compartido por todos los perfiles (estudiante, empresa, admin). --}}
+  {{-- Se abre/cierra con las funciones abrirModalAvatar() / cerrarModalAvatar() de main.js --}}
+  <div id="avatarModal" class="avatar-modal" onclick="cerrarModalAvatar()">
+      <button type="button" class="avatar-modal-close" onclick="event.stopPropagation(); cerrarModalAvatar()">&times;</button>
+      <img class="avatar-modal-content" id="imgModalTarget" onclick="event.stopPropagation()">
+  </div>
+
   <script src="{{ asset('js/main.js') }}"></script>
   @yield('scripts')
 </body>

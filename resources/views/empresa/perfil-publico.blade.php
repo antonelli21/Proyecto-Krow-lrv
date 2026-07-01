@@ -3,7 +3,7 @@
 @section('title', ($empresa->nombre_empresa ?? 'Empresa') . ' — KROW')
 
 @section('banner')
-<div style="width:100%; height:320px; position:relative; overflow:hidden;">
+<div style="width:100%; height:320px; position:sticky; top:0; overflow:hidden; z-index:50;">
 
     {{-- Imagen o placeholder --}}
     @if($empresa->banner)
@@ -20,8 +20,10 @@
     <div style="position:absolute; bottom:0; left:50%; transform:translateX(-50%); z-index:2; display:flex; flex-direction:column; align-items:center; text-align:center; padding-bottom:16px; gap:6px; width:100%;">
 
         {{-- Logo --}}
-        <div style="width:84px; height:84px; border-radius:50%; border:3px solid rgba(255,255,255,0.35); overflow:hidden; background:var(--surface); display:flex; align-items:center; justify-content:center; font-size:2rem; font-weight:700; color:var(--accent); flex-shrink:0;
-            {{ $empresa->logo ? 'background-image:url(\'' . \Illuminate\Support\Facades\Storage::url($empresa->logo) . '\'); background-size:cover; background-position:center;' : '' }}">
+        <div class="{{ $empresa->logo ? 'avatar-expandible' : '' }}"
+             style="width:84px; height:84px; border-radius:50%; border:3px solid rgba(255,255,255,0.35); overflow:hidden; background:var(--surface); display:flex; align-items:center; justify-content:center; font-size:2rem; font-weight:700; color:var(--accent); flex-shrink:0;
+            {{ $empresa->logo ? 'background-image:url(\'' . \Illuminate\Support\Facades\Storage::url($empresa->logo) . '\'); background-size:cover; background-position:center;' : '' }}"
+             @if($empresa->logo) onclick="abrirModalAvatar('{{ \Illuminate\Support\Facades\Storage::url($empresa->logo) }}')" @endif>
             @if(!$empresa->logo)
                 {{ strtoupper(substr($empresa->nombre_empresa ?? 'E', 0, 1)) }}
             @endif
@@ -51,6 +53,13 @@
 @endsection
 
 @section('content')
+
+<style>
+main {
+    overflow: visible !important;
+}
+</style>
+
 <div class="panel-page">
 
     <div class="perfil-sections">

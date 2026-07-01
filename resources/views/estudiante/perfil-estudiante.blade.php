@@ -214,13 +214,6 @@
     </div>
 </div>
 
-{{-- ════ MODAL FLOTANTE PARA EXPANDIR LA FOTO (Agregar al final de la página antes del @endsection) ════ --}}
-@if($estudiante->foto_perfil)
-<div id="avatarModal" class="avatar-modal" onclick="cerrarModalAvatar()">
-    <span class="avatar-modal-close">&times;</span>
-    <img class="avatar-modal-content" id="imgModalTarget">
-</div>
-@endif
 
 
 @endsection
