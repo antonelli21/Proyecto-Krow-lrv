@@ -166,7 +166,7 @@
 
   <div class="filters-actions" style="margin-top: 20px; width: 100%;">
     <input type="hidden" name="orden" id="orden-hidden" value="{{ request('orden', 'recientes') }}">
-    <button type="submit" class="btn-aplicar-filtros" style="width: 100%; padding: 10px; background: var(--accent, #FFC107); color: #0D1A13; font-family: var(--font-display); font-weight: 800; border: none; border-radius: var(--radius, 6px); cursor: pointer; transition: background 0.2s;">
+    <button type="submit" class="btn-aplicar-filtros" style="width: 100%; padding: 10px; background: var(--accent, #FFC107); color: var(--text_btn, #111118); font-family: var(--font-display); font-weight: 800; border: none; border-radius: var(--radius, 6px); cursor: pointer; transition: background 0.2s;">
       Aplicar filtros
     </button>
   </div>

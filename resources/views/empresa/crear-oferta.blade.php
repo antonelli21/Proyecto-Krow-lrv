@@ -113,7 +113,7 @@
         padding: 0.65rem 0.875rem;
         border: 1px solid var(--border);
         border-radius: var(--radius);
-        background: var(--bg-input);
+        background: var(--toolbar_bg);
         color: var(--text);
         font-size: 0.95rem;
         font-family: var(--font-body);
@@ -279,8 +279,8 @@
     }
 
     .oferta-form .btn-input-append {
-        background-color: var(--primary);
-        color: #fff;
+        background-color: var(--accent);
+        color: var(--text_btn);
         border: none;
         border-radius: var(--radius);
         padding: 0.625rem 1rem;
@@ -365,8 +365,8 @@
         padding: 0.85rem;
         border: none;
         border-radius: var(--radius);
-        background: var(--primary);
-        color: #fff;
+        background: var(--accent);
+        color: var (--text_btn);
         font-family: var(--font-display);
         font-weight: 700;
         font-size: 1rem;
