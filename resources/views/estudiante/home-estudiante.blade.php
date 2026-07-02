@@ -37,7 +37,7 @@
         </div>
     </div>
 </dialog>
-<div class="panel-page" style="margin-top: clamp(-190px, -16vw, -140px); position: relative; z-index: 5; background-color:var(--bg); border-radius: 8px; border:1px solid var(--surface);">
+<div class="panel-page" style="margin-top: clamp(-190px, -16vw, -140px); position: relative; z-index: 5; background-color:var(--bg); border-radius: 8px; border:1px solid var(--accent);">
 
   <h1 class="panel-page-title">Panel del Estudiante</h1>
   <p class="panel-page-sub">Seguí el estado de tus postulaciones y gestioná tu perfil</p>
@@ -377,7 +377,7 @@
     <td data-label="Detalle">
       <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
         <button onclick="abrirModalOferta(${oferta.id_oferta})"
-                style="text-decoration:underline; text-underline-offset:3px; border:none; background:transparent; cursor:pointer; color:var(--primary); font-size:13px;">
+                style="text-decoration:underline; text-underline-offset:3px; border:none; background:transparent; cursor:pointer; color:var(--accent); font-size:13px;">
           Ver oferta
         </button>
         

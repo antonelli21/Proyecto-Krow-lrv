@@ -66,7 +66,7 @@ $faqs = [
     font-family: var(--font-display, system-ui);
     font-size: 24px;
     font-weight: 800;
-    color: var(--primary);
+    color: var(--accent);
     margin-bottom: 10px;
     line-height: 1.2;
   }
@@ -263,8 +263,8 @@ $faqs = [
   .btn-enviar {
     width: 100%;
     padding: 12px;
-    background: var(--primary);
-    color: #fff;
+    background: var(--accent);
+    color: var(--text_btn);
     border: none;
     border-radius: 0px;
     font-family: var(--font-display, system-ui);
@@ -492,7 +492,7 @@ $faqs = [
 </style>
 
 
-<main class="ayuda-page" style="margin-top: clamp(-190px, -16vw, -140px); position: relative; z-index: 5; background-color:var(--bg); border-radius: 8px; border:1px solid var(--surface);">
+<main class="ayuda-page" style="margin-top: clamp(-190px, -16vw, -140px); position: relative; z-index: 5; background-color:var(--bg); border-radius: 8px; border:1px solid var(--accent);">
 
   {{-- FAQs --}}
   <section>

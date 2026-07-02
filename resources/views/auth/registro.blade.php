@@ -80,7 +80,7 @@ $localidadesPorProvincia = \App\Models\Localidad::orderBy('nombre')
     border: 1px solid var(--border);
     border-radius: 0px;
     background: var(--bg-input);
-    color: var(--muted);
+    color: var(--text);
     font-family: var(--font-display);
     font-weight: 700;
     font-size: 0.9rem;
@@ -95,9 +95,9 @@ $localidadesPorProvincia = \App\Models\Localidad::orderBy('nombre')
   }
 
   .role-tab.active {
-    background: var(--primary);
-    color: #fff;
-    border-color: var(--primary);
+    background: var(--accent);
+    color: var(--text_btn);
+    border-color: var(--accent);
   }
 
   [data-theme="dark"] .role-tab.active {
@@ -157,7 +157,7 @@ $localidadesPorProvincia = \App\Models\Localidad::orderBy('nombre')
     padding: 0.7rem 2.8rem 0.7rem 2.6rem;
     border: 1px solid var(--border);
     border-radius: 0px;
-    background: var(--bg-input);
+    background: var(--toolbar_bg);
     color: var(--text);
     font-size: 0.95rem;
     font-family: var(--font-body);
@@ -249,8 +249,8 @@ $localidadesPorProvincia = \App\Models\Localidad::orderBy('nombre')
     padding: 0.85rem;
     border: none;
     border-radius: 0px;
-    background: var(--primary);
-    color: #fff;
+    background: var(--accent);
+    color: var(--text_btn);
     font-family: var(--font-display);
     font-weight: 700;
     font-size: 1rem;
@@ -279,7 +279,7 @@ $localidadesPorProvincia = \App\Models\Localidad::orderBy('nombre')
   }
 
   .auth-footer a {
-    color: var(--primary);
+    color: var(--accent);
     font-weight: 600;
     text-decoration: none;
   }

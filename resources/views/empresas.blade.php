@@ -170,7 +170,7 @@ $ubicaciones = $empresas->map(function($emp) {
 }
 
 .empresa-btn--perfil {
-    background: transparent;
+    background: var(--bg);
     border: 1px solid var(--border);
     color: var(--text);
 }
@@ -182,9 +182,9 @@ $ubicaciones = $empresas->map(function($emp) {
 }
 
 .empresa-btn--ofertas {
-    background: var(--primary);
+    background: var(--accent);
     border: 1px solid transparent;
-    color: #0D1A13;
+    color: var(--text_btn);
 }
 
 .empresa-btn--ofertas:hover {
@@ -261,7 +261,7 @@ $ubicaciones = $empresas->map(function($emp) {
         padding: 10px 32px 10px 12px;
         border: 1px solid var(--border);
         border-radius: var(--radius);
-        background: var(--bg);
+        background: var(--toolbar_bg);
         color: var(--text);
         font-size: 14px;
         appearance: none;
@@ -291,7 +291,7 @@ $ubicaciones = $empresas->map(function($emp) {
     .toolbar-count {
         margin-left: auto;
         font-size: 14px;
-        color: var(--muted);
+        color: var(--accent);
         font-weight: 500;
         white-space: nowrap;
     }

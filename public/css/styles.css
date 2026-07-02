@@ -4,18 +4,24 @@
   --primary: #979797;
   --accent: #077552;
   --text: #000000;
+  --text_btn: #ffffff;
   --title: #ecece68e;
   --muted: #4A6B5E;
   --border: #A8C4BA;
   --destructive: #D4183D;
   --destructive-fg: #ffffff;
   --radius: 0px;
+  --postulado: #f1c40f;
+  --preseleccionado: #c8925a;
+  --en_contacto: #44cc3f;
+  --rechazado: #d63737;
   --bgnoti: #ffffff;
   --accent-dim: rgba(46, 204, 154, .12);
   --border-accent: rgba(46, 204, 154, .4);
   --bg-card: var(--surface);
   --bg-input: var(--bg);
   --bg-hover: rgba(0, 0, 0, .04);
+  --toolbar_bg: #cecece;
   --text-primary: var(--text);
   --text-secondary: var(--muted);
   --text-muted: #5A5A5A;
@@ -39,10 +45,13 @@
   --gradient-start: #c2c2c2;
   --gradient-end: #D4A843;
   --text: #F5F3EE;
+  --text_btn: #ffffff;
+  --toolbar_bg: #cecece;
   --title: #F5F3EE;
   --muted: #6B6B78;
   --border: #3A3A45;
   --bgnoti: #2C2C35;
+  --toolbar_bg: #111118;
   --bg-card: #1e2030;
   --bg-input: #252838;
   --bg-hover: rgba(255, 255, 255, .04);
@@ -172,7 +181,7 @@ main {
   font-size: 1.6rem;
   font-weight: 800;
   letter-spacing: 0.06em;
-  color: var(--primary);
+  color: var(--accent);
   line-height: 1.1;
 }
 
@@ -285,9 +294,9 @@ main {
   gap: 0.75rem;
   /* Espaciado equilibrado entre avatar, texto e icono */
   background-color: transparent;
-  color: var(--text-color, #000000);
+  color: var(--text_btn, #000000);
   /* Color de texto blanco o variable */
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--border);
   /* Un borde sutil para darle estructura */
   border-radius: 50px;
   /* Bordes completamente redondeados (estilo píldora) */
@@ -306,7 +315,7 @@ main {
 .account-btn:hover {
   background-color: rgba(255, 255, 255, 0.05);
   /* Brillo sutil de fondo */
-  border-color: var(--primary, #d4af37);
+  border-color: var(--accent);
   /* Tu color amarillo corporativo destaca en el borde */
 }
 
@@ -340,6 +349,7 @@ main {
 .account-name {
   font-weight: 500;
   user-select: none;
+  color: var(--accent);
 }
 
 /* Icono de la flecha (Chevron) */
@@ -456,7 +466,7 @@ main {
   padding: 8px 16px;
   border-radius: 0px;
   border: none;
-  background-color: var(--primary);
+  background-color: var(--accent);
   color: #ffffff;
   text-decoration: none;
   transition: opacity 0.15s;
@@ -901,8 +911,8 @@ main {
   padding: 8px 2rem 8px 12px;
   border: 1px solid var(--border);
   border-radius: 0px;
-  background-color: #cecece;
-  color: #000000;
+  background-color: var(--toolbar_bg);
+  color: var(--text);
   font-size: 0.875rem;
   cursor: pointer;
   appearance: none;
@@ -911,7 +921,7 @@ main {
 
 .filter-select:focus {
   outline: none;
-  border-color: var(--primary);
+  border-color: var(--accent);
   box-shadow: none;
 }
 
@@ -1070,7 +1080,7 @@ main {
   align-items: center;
   gap: 0.5rem;
   background-color: var(--accent);
-  color: var(--primary);
+  color: var(--text_btn, #111118);
   padding: 0.4rem 0.75rem;
   border-radius: 0px;
   font-size: 0.85rem;
@@ -1290,8 +1300,8 @@ body {
   width: 100%;
   margin-top: 14px;
   padding: 8px 16px;
-  background: var(--primary);
-  color: #ffffff;
+  color: var(--text_btn);
+  background: var(--accent);
   border: none;
   border-radius: 0px;
   font-family: var(--font-display);
@@ -1517,7 +1527,7 @@ body {
 
 .btn-ver {
   padding: 8px 16px;
-  background: var(--primary);
+  background: var(--accent);
   color: #ffffff;
   border: none;
   border-radius: 0px;
@@ -1560,9 +1570,9 @@ body {
 
 .pg-btn:hover,
 .pg-btn.active {
-  background: var(--primary);
+  background: var(--accent);
   color: #ffffff;
-  border-color: var(--primary);
+  border-color: var(--accent);
   font-weight: 700;
 }
 
@@ -1716,8 +1726,8 @@ body {
 .btn-new-offer {
   width: 100%;
   padding: 8px 16px;
-  background: var(--primary);
-  color: #ffffff;
+  background: var(--accent);
+  color: var(--text_btn);
   border: none;
   border-radius: 0px;
   font-family: var(--font-display);
@@ -2216,6 +2226,7 @@ body {
   font-family: var(--font-display);
   font-size: 28px;
   font-weight: 800;
+  border-bottom: 3px solid var(--accent);
   color: var(--text);
   margin-bottom: 4px;
 }
@@ -2236,9 +2247,11 @@ body {
 
 .stat-card {
   background: var(--surface);
-  border: 1px solid var(--border);
+  border: 1px solid var(--accent);
   border-radius: 10px;
   padding: 22px 24px;
+  box-shadow: 0 2px 10px rgba(0,0,0,.06);
+  
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
@@ -2254,7 +2267,7 @@ body {
   font-family: var(--font-display);
   font-size: 36px;
   font-weight: 800;
-  color: var(--text);
+  color: var(--accent);
   line-height: 1;
 }
 
@@ -2290,9 +2303,9 @@ body {
   gap: 6px;
   padding: 8px 16px;
   border-radius: 0px;
-  border: 1px solid var(--border);
-  background: transparent;
-  color: var(--text);
+  border: 1px solid var(--accent);
+  background: var(--accent);
+  color: var(--text_btn);
   font-size: 13px;
   font-weight: 500;
   cursor: pointer;
@@ -2409,7 +2422,7 @@ body {
 .badge-tipo {
   display: inline-block;
   padding: 3px 10px;
-  border-radius: 0px;
+  border-radius: 4px;
   font-size: 11.5px;
   font-weight: 500;
   border: 1px solid var(--border);
@@ -2443,40 +2456,35 @@ body {
 /* Estados de postulación */
 .badge-estado {
   display: inline-block;
-  padding: 4px 12px;
-  border-radius: 0px;
+  padding: 6px 16px;
+  border-radius: 11.5px;
   font-size: 11.5px;
   font-weight: 600;
   white-space: nowrap;
 }
 
 .estado-postulado {
-  background: rgba(150, 150, 150, .15);
-  color: #9a9aaa;
+  background: #f5cc272d;
+  color: var(--postulado);
   border: 1px solid rgba(150, 150, 150, .3);
 }
 
-.estado-revision {
-  background: rgba(99, 179, 237, .15);
-  color: #63b3ed;
-  border: 1px solid rgba(99, 179, 237, .3);
-}
 
 .estado-preseleccionado {
   background: rgba(180, 120, 60, .15);
-  color: #c8925a;
+  color: var(--preseleccionado);
   border: 1px solid rgba(180, 120, 60, .3);
 }
 
 .estado-rechazado {
   background: rgba(212, 24, 61, .12);
-  color: #e05577;
+  color: var(--rechazado);
   border: 1px solid rgba(212, 24, 61, .3);
 }
 
 .estado-contacto {
   background: rgba(46, 204, 154, .12);
-  color: #2ECC9A;
+  color: var(--en_contacto);
   border: 1px solid rgba(46, 204, 154, .3);
 }
 
@@ -2605,7 +2613,7 @@ body {
   align-items: center;
   margin-bottom: 24px;
   padding: 14px 16px;
-  background: var(--surface);
+  background: var(--toolbar_bg);
   border: 1px solid var(--border);
   border-radius: 0px;
 }
@@ -2652,8 +2660,8 @@ body {
   padding: 10px 32px 10px 12px;
   border: 1px solid var(--border);
   border-radius: 0px;
-  background: var(--bg);
-  color: var(--text);
+  background: var(--toolbar_bg);
+  color: var(--text_btn);
   font-size: 14px;
   appearance: none;
   cursor: pointer;
@@ -3001,7 +3009,7 @@ body {
   font-family: var(--font-display, system-ui);
   font-size: 24px;
   font-weight: 800;
-  color: var(--primary);
+  color: var(--accent);
   margin-bottom: 10px;
   line-height: 1.2;
   margin: 3px;
@@ -3192,8 +3200,8 @@ body {
 .btn-enviar {
   width: 100%;
   padding: 12px;
-  background: var(--primary);
-  color: #fff;
+  background: var(--accent);
+  color: var(--text_btn);
   border: none;
   border-radius: 0px;
   font-family: var(--font-display, system-ui);
@@ -3375,9 +3383,9 @@ body {
 }
 
 .role-tab.active {
-  background: var(--primary);
-  color: #fff;
-  border-color: var(--primary);
+  background: var(--accent);
+  color: var(--text_btn);
+  border-color: var(--accent);
 }
 
 [data-theme="dark"] .role-tab.active {
@@ -3541,8 +3549,8 @@ body {
   padding: 0.85rem;
   border: none;
   border-radius: 0px;
-  background: var(--primary);
-  color: #fff;
+  background: var(--accent);
+  color: var(--text_btn);
   font-family: var(--font-display);
   font-weight: 700;
   font-size: 1rem;
@@ -3558,7 +3566,7 @@ body {
 
 [data-theme="dark"] .btn-submit {
   background: var(--accent);
-  color: #111118;
+  color: var(--text_btn);
 }
 
 /* ── Footer link ── */
@@ -3757,7 +3765,7 @@ body {
 }
 
 .link-recover {
-  color: var(--primary);
+  color: var(--accent);
   text-decoration: none;
   font-weight: 500;
   font-size: 0.85rem;
@@ -3778,8 +3786,8 @@ body {
   padding: 0.85rem;
   border: none;
   border-radius: 0px;
-  background: var(--primary);
-  color: #fff;
+  background: var(--accent);
+  color: var(--text_btn);
   font-family: var(--font-display);
   font-weight: 700;
   font-size: 1rem;
@@ -3795,7 +3803,7 @@ body {
 
 [data-theme="dark"] .btn-submit {
   background: var(--accent);
-  color: #111118;
+  color: var(--text_btn);
 }
 
 /* ── Footer link ── */
@@ -3807,7 +3815,7 @@ body {
 }
 
 .auth-footer a {
-  color: var(--primary);
+  color: var(--accent);
   font-weight: 600;
   text-decoration: none;
 }
@@ -4036,10 +4044,10 @@ body {
 
 .admin-filter-select {
   padding: 9px 30px 9px 12px;
-  background: var(--surface);
+  background: var(--toolbar_bg);
   border: 1px solid var(--border);
   border-radius: 0px;
-  color: var(--text);
+  color: var(--text_btn);
   font-size: 13px;
   appearance: none;
   cursor: pointer;
@@ -4761,7 +4769,7 @@ body {
 .btn-outline {
   background-color: transparent;
   color: var(--text);
-  border: 1px solid var(--border);
+  border: 1px solid var(--accent);
 }
 
 .btn-outline:hover {
@@ -4994,7 +5002,7 @@ textarea.filter-input-text:focus {
 .perfil-card-header {
   font-size: 1.15rem;
   font-weight: 700;
-  color: var(--primary);
+  color: var(--accent);
   border-bottom: 2px solid var(--border);
   padding-bottom: 0.75rem;
   display: flex;
@@ -5097,9 +5105,9 @@ textarea.filter-input-text:focus {
 }
 
 .btn-outline {
-  background-color: transparent;
-  color: var(--text);
-  border: 1px solid var(--border);
+  background-color: var(--accent);
+  color: var(--text_btn);
+  border: 1px solid var(--accent);
 }
 
 .btn-outline:hover {
@@ -5890,8 +5898,8 @@ textarea.filter-input-text:focus {
   padding: 0.875rem;
   border: none;
   border-radius: var(--radius);
-  background: var(--primary);
-  color: #fff;
+  background: var(--accent);
+  color: var(--text_btn, #111118);
   font-family: var(--font-display);
   font-weight: 700;
   font-size: 1rem;
@@ -5917,7 +5925,7 @@ textarea.filter-input-text:focus {
 
 [data-theme="dark"] .btn-postular {
   background: var(--accent);
-  color: #111118;
+  color: var(--text_btn, #111118);
 }
 
 [data-theme="dark"] .btn-postular:hover {
@@ -5927,7 +5935,7 @@ textarea.filter-input-text:focus {
 .btn-postular:disabled,
 .btn-postular.ya-postulado {
   background: var(--border);
-  color: var(--muted);
+  color: var(--accent);
   cursor: not-allowed;
   transform: none;
   box-shadow: none;

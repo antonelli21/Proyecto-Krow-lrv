@@ -341,7 +341,7 @@
     .mensaje-burbuja.propio .burbuja {
         border-bottom-right-radius: 4px;
         background: var(--accent);
-        color: #0D1A13;
+        color: var(--text_btn);
     }
 
     .mensaje-burbuja.ajeno .burbuja {
@@ -643,12 +643,12 @@
         height: 36px;
         border: 1px solid var(--border, #d0d0d0);
         border-radius: 8px;
-        background: var(--muted, #f0f0f0);   /* Usa el color de superficie */
-        color: var(--primary, #333);              /* Color de texto principal */
+        background: var(--accent);   
+        color: var(--text_btn);              
         cursor: pointer;
         font-size: 1.1rem;
         transition: all 0.3s ease;
-        box-shadow: var(--shadow-card, none);   /* Sombra sutil (opcional) */
+        box-shadow: var(--shadow-card, none);   
     }
 
     .btn-recarga:hover {
