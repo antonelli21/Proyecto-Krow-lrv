@@ -1252,9 +1252,9 @@ dialog:not([open]) { display: none !important; }
   gap: 6px;
   padding: 6px 14px;
   border-radius: var(--radius);
-  background: transparent;
+  background: var(--accent);
   border: 1px solid var(--accent);
-  color: var(--accent);
+  color: var(--text_btn);
   font-size: 12.5px;
   font-weight: 700;
   font-family: var(--font-display);

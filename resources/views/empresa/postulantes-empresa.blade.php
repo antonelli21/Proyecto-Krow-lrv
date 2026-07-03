@@ -50,13 +50,13 @@
     }
     .filter-btn:hover { background: var(--bg); }
     .filter-btn.active {
-        background: var(--primary);
-        color: #ffffff;
-        border-color: var(--primary);
+        background: var(--accent);
+        color: var(--text_btn);
+        border-color: var(--accent);
     }
     [data-theme="dark"] .filter-btn.active {
         background: var(--accent);
-        color: #111118;
+        color: var(--text_btn);
         border-color: var(--accent);
     }
 
@@ -91,7 +91,7 @@
         color: var(--text);
         margin-bottom: 4px;
     }
-    .applicant-name a { color: var(--primary); text-decoration: none; }
+    .applicant-name a { color: var(--accent); text-decoration: none; }
     .applicant-name a:hover { text-decoration: underline; }
     .applicant-career { font-size: 13px; color: var(--muted); margin-bottom: 4px; }
     .applicant-date { font-size: 11px; color: var(--muted); }
@@ -99,27 +99,33 @@
     /* Badge */
     .status-badge {
         display: inline-block;
-        padding: 4px 12px;
-        border-radius: 20px;
-        font-size: 12px;
-        font-weight: 500;
-        border: 1px solid transparent;
+        padding: 6px 16px;
+        border-radius: 11.5px;
+        font-size: 11.5px;
+        font-weight: 600;
         white-space: nowrap;
     }
+
     .status-pending {
-        background: rgba(100,100,100,0.1);
-        color: #9a9aaa;
-        border-color: rgba(100,100,100,0.3);
+        background: #f5cc272d;
+        color: var(--postulado);
+        border: 1px solid rgba(150, 150, 150, .3);
     }
+    .estado-preseleccionado {
+        background: rgba(180, 120, 60, .15);
+        color: var(--preseleccionado);
+        border: 1px solid rgba(180, 120, 60, .3);
+    }
+    
     .status-accepted {
-        background: rgba(46,204,154,0.12);
-        color: #2ECC9A;
-        border-color: rgba(46,204,154,0.3);
+        background: rgba(180, 120, 60, .15);
+        color: var(--preseleccionado);
+        border: 1px solid rgba(180, 120, 60, .3);
     }
     .status-rejected {
-        background: rgba(212,24,61,0.10);
-        color: #e05577;
-        border-color: rgba(212,24,61,0.3);
+        background: rgba(212, 24, 61, .12);
+        color: var(--rechazado);
+        border: 1px solid rgba(212, 24, 61, .3);
     }
 
     /* Layout dos columnas */
@@ -131,7 +137,7 @@
     .contact-info { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
     .contact-item { display: flex; align-items: center; gap: 8px; font-size: 14px; }
     .contact-icon { color: var(--muted); width: 18px; height: 18px; }
-    .contact-item a { color: var(--primary); text-decoration: none; }
+    .contact-item a { color: var(--text); text-decoration: none; }
     .contact-item a:hover { text-decoration: underline; }
 
     /* Botones de acción */
@@ -140,7 +146,7 @@
     .btn-accept {
         display: inline-flex; align-items: center; gap: 6px;
         padding: 8px 14px;
-        background: #2ECC9A; color: white;
+        background: #39a767; color: white;
         border: none; border-radius: 6px;
         font-size: 13px; font-weight: 500;
         cursor: pointer; transition: opacity 0.2s;
@@ -169,15 +175,22 @@
 
     /* Botones derecha */
     .btn-download {
-        display: flex; align-items: center; justify-content: center; gap: 8px;
+        display: flex; align-items: center; 
+        justify-content: center; 
+        gap: 8px;
         padding: 8px 16px;
-        background: var(--primary); color: white;
-        border: none; border-radius: 6px;
-        font-size: 13px; font-weight: 500;
-        cursor: pointer; text-decoration: none;
+        background: #979797; 
+        color: var(--text_btn);
+        border: none; 
+        border-radius: 6px;
+        font-size: 13px;
+        font-weight: 500;
+        cursor: pointer; 
+        text-decoration: none;
         transition: opacity 0.2s;
     }
-    [data-theme="dark"] .btn-download { background: var(--accent); color: #111118; }
+
+    [data-theme="dark"] .btn-download { background: #979797; color: var(--text_btn); }
     .btn-download:hover { opacity: 0.85; }
 
     .social-links { display: flex; gap: 8px; }
@@ -198,8 +211,8 @@
     .btn-contact {
         display: flex; align-items: center; justify-content: center; gap: 8px;
         padding: 8px 16px;
-        background: var(--bg); border: 1px solid var(--border);
-        color: var(--text); border-radius: 6px;
+        background: var(--accent); border: 1px solid var(--border);
+        color: var(--text_btn); border-radius: 6px;
         font-size: 13px; font-weight: 500;
         cursor: pointer; text-decoration: none; transition: all 0.2s;
     }

@@ -12,9 +12,13 @@
   --destructive-fg: #ffffff;
   --radius: 0px;
   --postulado: #f1c40f;
+  --pausar: #f1c40f;
   --preseleccionado: #c8925a;
   --en_contacto: #44cc3f;
   --rechazado: #d63737;
+  --activa: #077552;
+  --pausada: #FFC107;
+  --eliminada: #d63737;
   --bgnoti: #ffffff;
   --accent-dim: rgba(46, 204, 154, .12);
   --border-accent: rgba(46, 204, 154, .4);
@@ -46,6 +50,8 @@
   --gradient-end: #D4A843;
   --text: #F5F3EE;
   --text_btn: #ffffff;
+  --text-secundary: #000000;
+  --pausar: #f1c40f;
   --toolbar_bg: #cecece;
   --title: #F5F3EE;
   --muted: #6B6B78;
@@ -413,17 +419,17 @@ main {
 }
 
 .dropdown-item svg {
-  color: var(--muted);
+  color: var(--text);
   flex-shrink: 0;
 }
 
 .dropdown-item:hover {
-  background-color: var(--bg);
-  color: var(--primary);
+  background-color: var(--accent);
+  color: var(--text_btn);
 }
 
 [data-theme="dark"] .dropdown-item:hover {
-  color: var(--accent);
+  color: var(--text_btn);
 }
 
 .dropdown-item-danger {
@@ -457,7 +463,7 @@ main {
 
 .btn-ghost-sm:hover {
   border-color: var(--primary);
-  color: var(--primary);
+  color: var(--text_btn);
 }
 
 .btn-primary-sm {
@@ -4047,7 +4053,7 @@ body {
   background: var(--toolbar_bg);
   border: 1px solid var(--border);
   border-radius: 0px;
-  color: var(--text_btn);
+  color: var(--text);
   font-size: 13px;
   appearance: none;
   cursor: pointer;
@@ -4085,7 +4091,8 @@ body {
   font-family: var(--font-display);
   font-size: 11.5px;
   font-weight: 700;
-  color: var(--text-muted);
+  color: var(--text_btn);
+  background: var(--accent);
   text-transform: uppercase;
   letter-spacing: 0.7px;
   text-align: left;
@@ -4132,6 +4139,18 @@ body {
 /* Celda nombre */
 .td-nombre {
   font-weight: 600;
+}
+
+.admin-name-link {
+  color: var(--accent);
+  text-decoration: none;
+  transition: color .2s, text-decoration .2s;
+}
+
+.admin-name-link:hover,
+.admin-name-link:focus {
+  color: var(--text_btn);
+  text-decoration: underline;
 }
 
 .td-id {
@@ -4276,7 +4295,7 @@ body {
 }
 
 .admin-detalle-row td {
-  background: var(--bg);
+  background: var(--accent);
   padding: 20px 24px;
   border-bottom: 1px solid var(--border);
 }
@@ -4293,13 +4312,13 @@ body {
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 1px;
-  color: var(--text-muted);
+  color: var(--text);
   margin-bottom: 8px;
 }
 
 .admin-detalle-value {
   font-size: 13px;
-  color: var(--text);
+  color: var(--text_btn);
   line-height: 1.6;
 }
 
@@ -5002,7 +5021,7 @@ textarea.filter-input-text:focus {
 .perfil-card-header {
   font-size: 1.15rem;
   font-weight: 700;
-  color: var(--accent);
+  color: var(--primary);
   border-bottom: 2px solid var(--border);
   padding-bottom: 0.75rem;
   display: flex;
@@ -5105,9 +5124,9 @@ textarea.filter-input-text:focus {
 }
 
 .btn-outline {
-  background-color: var(--accent);
-  color: var(--text_btn);
-  border: 1px solid var(--accent);
+  background-color: transparent;
+  color: var(--text);
+  border: 1px solid var(--border);
 }
 
 .btn-outline:hover {
@@ -5898,8 +5917,8 @@ textarea.filter-input-text:focus {
   padding: 0.875rem;
   border: none;
   border-radius: var(--radius);
-  background: var(--accent);
-  color: var(--text_btn, #111118);
+  background: var(--primary);
+  color: #fff;
   font-family: var(--font-display);
   font-weight: 700;
   font-size: 1rem;
@@ -5925,7 +5944,7 @@ textarea.filter-input-text:focus {
 
 [data-theme="dark"] .btn-postular {
   background: var(--accent);
-  color: var(--text_btn, #111118);
+  color: #111118;
 }
 
 [data-theme="dark"] .btn-postular:hover {
@@ -5935,7 +5954,7 @@ textarea.filter-input-text:focus {
 .btn-postular:disabled,
 .btn-postular.ya-postulado {
   background: var(--border);
-  color: var(--accent);
+  color: var(--muted);
   cursor: not-allowed;
   transform: none;
   box-shadow: none;
