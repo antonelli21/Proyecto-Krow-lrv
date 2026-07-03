@@ -597,10 +597,16 @@
                         onclick="submitEstado('{{ route('admin.ofertas.estado', $o->id_oferta) }}', 'Activa')">
                   <i class="bi bi-check-circle"></i>
                 </button>
-                <button class="btn-icon btn-suspender" title="Pausar"
-                        onclick="submitEstado('{{ route('admin.ofertas.estado', $o->id_oferta) }}', 'Pausada')">
-                  <i class="bi bi-pause-circle"></i>
-                </button>
+                @if($estado !== 'pausada')
+                  <button class="btn-icon btn-suspender" title="Pausar"
+                          onclick="submitEstadoConMotivo('{{ route('admin.ofertas.estado', $o->id_oferta) }}', 'Pausada')">
+                    <i class="bi bi-pause-circle"></i>
+                  </button>
+                @else
+                  <button class="btn-icon" style="opacity:.3; cursor:not-allowed;" disabled title="Ya está pausada">
+                    <i class="bi bi-pause-circle"></i>
+                  </button>
+                @endif
                 <button class="btn-icon btn-eliminar" title="Eliminar"
                         data-delete-url="{{ route('admin.ofertas.destroy', $o->id_oferta) }}"
                         data-delete-name="{{ $o->titulo }}">
@@ -639,10 +645,16 @@
                             onclick="submitEstado('{{ route('admin.ofertas.estado', $o->id_oferta) }}', 'Activa')">
                       <i class="bi bi-check-circle"></i> Activar
                     </button>
-                    <button class="btn-admin-suspender"
-                            onclick="submitEstadoConMotivo('{{ route('admin.ofertas.estado', $o->id_oferta) }}', 'Pausada')">
-                      <i class="bi bi-pause-circle"></i> Pausar
-                    </button>
+                    @if($estado !== 'pausada')
+                      <button class="btn-admin-suspender"
+                              onclick="submitEstadoConMotivo('{{ route('admin.ofertas.estado', $o->id_oferta) }}', 'Pausada')">
+                        <i class="bi bi-pause-circle"></i> Pausar
+                      </button>
+                    @else
+                      <span class="btn-admin-suspender" style="opacity:.4; cursor:not-allowed;">
+                        <i class="bi bi-pause-circle"></i> Ya pausada
+                      </span>
+                    @endif
                     <button class="btn-admin-rechazar"
                             onclick="submitEstado('{{ route('admin.ofertas.estado', $o->id_oferta) }}', 'Cerrada')">
                       <i class="bi bi-x-circle"></i> Cerrar
@@ -997,6 +1009,38 @@
   </div>
 </dialog>
 
+{{-- Modal para motivo de pausa (reemplaza prompt() nativo) --}}
+<dialog id="dialogMotivo" class="modal-motivo">
+  <div class="modal-confirmar-content">
+    <h3 class="modal-confirmar-title" id="dialogMotivoTitle">Motivo de la pausa</h3>
+    <p class="modal-confirmar-msg" id="dialogMotivoMsg">Se mostrará a la empresa (opcional).</p>
+    <textarea id="dialogMotivoInput"
+              rows="8"
+              placeholder="Ej: la oferta no cumple con los requisitos de la plataforma..."
+              style="
+                width:100%;
+                box-sizing:border-box;
+                padding:12px 14px;
+                border-radius:6px;
+                border:1px solid var(--border);
+                background:var(--bg);
+                color:var(--text);
+                font-family:var(--font-body);
+                font-size:14px;
+                line-height:1.5;
+                resize:vertical;
+                margin-bottom:20px;
+              "></textarea>
+    <div class="modal-confirmar-btns">
+      <button onclick="document.getElementById('dialogMotivo').close()"
+              class="btn-cancelar-dialog">Cancelar</button>
+      <button id="btnConfirmarMotivo" class="btn-confirmar-eliminar" style="background:var(--pausada);">
+        Confirmar pausa
+      </button>
+    </div>
+  </div>
+</dialog>
+
 @endsection
 
 @section('scripts')
@@ -1035,6 +1079,49 @@ function modalConfirm(titulo, mensaje, labelBoton = 'Confirmar') {
 }
 
 /* ════════════════════════════════════════
+   MODAL MOTIVO — reemplaza prompt() nativo
+════════════════════════════════════════ */
+function modalMotivo(titulo = 'Motivo de la pausa', mensaje = 'Se mostrará a la empresa (opcional).') {
+  return new Promise(resolve => {
+    const dialog = document.getElementById('dialogMotivo');
+    document.getElementById('dialogMotivoTitle').textContent = titulo;
+    document.getElementById('dialogMotivoMsg').textContent   = mensaje;
+    const input = document.getElementById('dialogMotivoInput');
+    input.value = '';
+
+    // Clonar botón para limpiar listeners anteriores
+    const btnViejo = document.getElementById('btnConfirmarMotivo');
+    const btn = btnViejo.cloneNode(true);
+    btnViejo.parentNode.replaceChild(btn, btnViejo);
+
+    let confirmado = false;
+
+    btn.addEventListener('click', () => {
+      confirmado = true;
+      dialog.close();
+      resolve(input.value.trim());
+    });
+
+    dialog.addEventListener('close', () => {
+      if (!confirmado) resolve(null); // el admin canceló
+    }, { once: true });
+
+    // Cerrar clickeando el backdrop
+    dialog.addEventListener('click', function handler(e) {
+      const rect = dialog.getBoundingClientRect();
+      if (e.clientX < rect.left || e.clientX > rect.right ||
+          e.clientY < rect.top  || e.clientY > rect.bottom) {
+        dialog.close();
+        dialog.removeEventListener('click', handler);
+      }
+    });
+
+    dialog.showModal();
+    input.focus();
+  });
+}
+
+/* ════════════════════════════════════════
    CAMBIO DE ESTADO INDIVIDUAL
 ════════════════════════════════════════ */
 function submitEstado(url, estado) {
@@ -1045,8 +1132,10 @@ function submitEstado(url, estado) {
   form.submit();
 }
 
-function submitEstadoConMotivo(url, estado) {
-  const motivo = prompt('Motivo de la pausa (opcional, se mostrará a la empresa):') ?? '';
+async function submitEstadoConMotivo(url, estado) {
+  const motivo = await modalMotivo('Motivo de la pausa', 'Se mostrará a la empresa (opcional).');
+  if (motivo === null) return; // el admin canceló
+
   const form = document.getElementById('form-estado');
   document.getElementById('form-estado-valor').value = estado;
   document.getElementById('form-estado-motivo').value = motivo;
@@ -1196,6 +1285,23 @@ function submitBulkForm(url, ids, extras = {}) {
 /* ── Modal confirmar ── */
 dialog:not([open]) { display: none !important; }
 
+.modal-motivo {
+  position: fixed;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface);
+  padding: 0;
+  width: min(600px, 92vw);
+  margin: 0;
+  z-index: 9999;
+}
+.modal-motivo::backdrop {
+  background: rgba(0,0,0,0.5);
+  backdrop-filter: blur(3px);
+}
+
 .modal-confirmar {
   position: fixed;
   top: 50%; left: 50%;
@@ -1266,21 +1372,18 @@ dialog:not([open]) { display: none !important; }
   align-items: center;
   gap: 6px;
   padding: 6px 14px;
-  border-radius: var(--radius);
-  background: var(--accent);
-  border: 1px solid var(--accent);
-  color: var(--text_btn);
+  border-radius: 6px;
+  background: #077552;
+  border: none;
+  color: #ffffff;
   font-size: 12.5px;
   font-weight: 700;
   font-family: var(--font-display);
   cursor: pointer;
   text-decoration: none;
-  transition: background 0.15s, color 0.15s;
+  transition: filter var(--trans);
 }
-.btn-admin-contactar:hover {
-  background: var(--accent);
-  color: #0D1A13;
-}
+.btn-admin-contactar:hover { filter: brightness(1.1); }
 
 /* ════════════════════════════════════════
    PAGINACIÓN LARAVEL

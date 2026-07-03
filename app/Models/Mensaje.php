@@ -20,8 +20,9 @@ class Mensaje extends Model
         'id_remitente',
         'contenido',
         'leido',
-        'ruta_archivo',   
+        'ruta_archivo',
         'nombre_archivo',
+        'fecha_envio',
     ];
 
     protected $casts = [

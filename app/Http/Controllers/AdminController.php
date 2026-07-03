@@ -182,10 +182,15 @@ class AdminController extends Controller
     {
         $request->validate([
             'estado' => 'required|in:Activa,Pausada,Cerrada',
-            'motivo' => 'nullable|string|max:500',
+            'motivo' => 'nullable|string|max:1000',
         ]);
 
         $oferta = Oferta::with('empresa')->findOrFail($id);
+
+        // 🔒 Evitar pausar una oferta que ya está pausada (no se manda motivo dos veces)
+        if ($request->estado === 'Pausada' && $oferta->estado === 'Pausada') {
+            return redirect()->back()->with('error', 'Esta oferta ya está pausada. No se puede volver a pausar.');
+        }
 
         if ($request->estado === 'Pausada') {
             $oferta->update([
@@ -194,7 +199,7 @@ class AdminController extends Controller
                 'motivo_pausa_admin' => $request->motivo ?? null,
             ]);
 
-            // ── Notificar a la empresa ─────────────────────────────
+            // ── Notificar a la empresa (ya existente) ───────────────
             \DB::table('notificaciones')->insert([
                 'id_usuario'  => $oferta->empresa->id_usuario,
                 'titulo'      => 'Tu publicación fue pausada',
@@ -206,6 +211,29 @@ class AdminController extends Controller
                 'created_at'  => now(),
                 'updated_at'  => now(),
             ]);
+
+            // ── Enviar el motivo como mensaje real al chat con la empresa ──
+            if ($request->filled('motivo') && $oferta->empresa->id_usuario) {
+                $adminId       = auth()->id();
+                $empresaUserId = $oferta->empresa->id_usuario;
+
+                $chat = \App\Models\Chat::betweenUsers($adminId, $empresaUserId)->first();
+
+                if (!$chat) {
+                    $chat = \App\Models\Chat::create([
+                        'id_usuario_1' => $adminId,
+                        'id_usuario_2' => $empresaUserId,
+                    ]);
+                }
+
+                \App\Models\Mensaje::create([
+                    'id_chat'      => $chat->id_chat,
+                    'id_remitente' => $adminId,
+                    'contenido'    => "Tu oferta \"{$oferta->titulo}\" fue pausada. Motivo: {$request->motivo}",
+                    'leido'        => false,
+                    'fecha_envio'  => now(),
+                ]);
+            }
 
         } else {
             $oferta->update([

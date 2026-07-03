@@ -12,7 +12,7 @@
   --destructive-fg: #ffffff;
   --radius: 0px;
   --postulado: #f1c40f;
-  --pausar: #f1c40f;
+  --pausar: #d1c597;
   --preseleccionado: #c8925a;
   --en_contacto: #44cc3f;
   --rechazado: #d63737;
@@ -41,6 +41,28 @@
   --trans: .18s ease;
   --shadow-color: rgba(0, 0, 0, .45);
   --shadow-glow: rgba(20, 201, 144, 0.361);
+    --icon-idle: rgba(0, 0, 0, .35);
+  --icon-idle-bg: rgba(0, 0, 0, .04);
+  --icon-ver-bg: rgba(7, 117, 82, .12);
+  --icon-ver-color: var(--accent);
+  --icon-aprobar-bg: rgba(46, 204, 154, .15);
+  --icon-aprobar-color: #2ECC9A;
+  --icon-suspender-bg: rgba(212, 168, 67, .15);
+  --icon-suspender-color: #D4A843;
+  --icon-mensaje-bg: rgba(99, 179, 237, .15);
+  --icon-mensaje-color: #63b3ed;
+  --icon-eliminar-bg: rgba(212, 24, 61, .12);
+  --icon-eliminar-color: var(--destructive);
+  --icon-ver-border: var(--accent);
+  --icon-idle-border: rgba(0, 0, 0, .38);
+  --detalle-bg: #fafafa;
+  --btn-aprobar-bg: #2ECC9A;
+  --btn-aprobar-fg: #ffffff;
+  --btn-suspender-bg: #D4A843;
+  --btn-suspender-fg: #ffffff;
+  --btn-rechazar-bg: #D4183D;
+  --btn-rechazar-fg: #ffffff;
+
 }
 
 [data-theme="dark"] {
@@ -53,7 +75,7 @@
   --text: #F5F3EE;
   --text_btn: #ffffff;
   --text-secundary: #000000;
-  --pausar: #f1c40f;
+  --pausar: #c29d0a;
   --toolbar_bg: #cecece;
   --title: #F5F3EE;
   --muted: #6B6B78;
@@ -70,6 +92,27 @@
   --shadow-accent: 0 4px 20px rgba(212, 168, 67, .22);
   --shadow-color: rgba(255, 255, 255, .45);
   --shadow-glow: rgba(246, 186, 48, 0.315);
+    --icon-idle: rgba(255, 255, 255, .35);
+  --icon-idle-bg: rgba(255, 255, 255, .05);
+  --icon-ver-bg: rgba(212, 168, 67, .15);
+  --icon-ver-color: var(--accent);
+  --icon-aprobar-bg: rgba(46, 204, 154, .15);
+  --icon-aprobar-color: #2ECC9A;
+  --icon-suspender-bg: rgba(212, 168, 67, .15);
+  --icon-suspender-color: #D4A843;
+  --icon-mensaje-bg: rgba(99, 179, 237, .15);
+  --icon-mensaje-color: #63b3ed;
+  --icon-eliminar-bg: rgba(212, 24, 61, .15);
+  --icon-eliminar-color: var(--destructive);
+  --icon-ver-border: var(--accent);
+  --icon-idle-border: rgba(255, 255, 255, .10);
+  --detalle-bg: var(--bg-card); 
+  --btn-aprobar-bg: rgba(46, 204, 154, .15);
+  --btn-aprobar-fg: #2ECC9A;
+  --btn-suspender-bg: rgba(212, 168, 67, .15);
+  --btn-suspender-fg: #D4A843;
+  --btn-rechazar-bg: rgba(212, 24, 61, .10);
+  --btn-rechazar-fg: #e05577;
 }
 
 
@@ -4261,21 +4304,26 @@ body {
 .td-acciones {
   display: flex;
   align-items: center;
+  justify-content: flex-start;
   gap: 4px;
 }
 
 .btn-icon {
+  box-sizing: border-box;
   width: 30px;
   height: 30px;
-  border-radius: 0px;
-  border: none;
-  background: transparent;
-  color: var(--muted);
+  border-radius: 6px;
+  border: 1px solid var(--icon-idle-border);
+  background: var(--icon-idle-bg);
+  color: var(--icon-idle);
   display: grid;
   place-items: center;
   cursor: pointer;
-  font-size: 15px;
-  transition: color var(--trans), background var(--trans);
+  font-size: 14px;
+  line-height: 1;
+  padding: 0;
+  margin: 0;
+  transition: color var(--trans), background var(--trans), border-color var(--trans);
 }
 
 .btn-icon:hover {
@@ -4283,26 +4331,36 @@ body {
   color: var(--text);
 }
 
+/* Ver: resaltado permanente */
+.btn-icon.btn-ver {
+  background: var(--icon-ver-bg);
+  color: var(--icon-ver-color);
+  border: 1px solid var(--icon-ver-border);
+}
 .btn-icon.btn-ver:hover {
-  color: var(--accent);
+  background: var(--icon-ver-bg);
+  filter: brightness(1.15);
 }
 
 .btn-icon.btn-aprobar:hover {
-  color: #2ECC9A;
+  background: var(--icon-aprobar-bg);
+  color: var(--icon-aprobar-color);
 }
 
 .btn-icon.btn-suspender:hover {
-  color: #D4A843;
+  background: var(--icon-suspender-bg);
+  color: var(--icon-suspender-color);
 }
 
 .btn-icon.btn-mensaje:hover {
-  color: #63b3ed;
+  background: var(--icon-mensaje-bg);
+  color: var(--icon-mensaje-color);
 }
 
 .btn-icon.btn-eliminar:hover {
-  color: var(--destructive);
+  background: var(--icon-eliminar-bg);
+  color: var(--icon-eliminar-color);
 }
-
 /* ── Fila expandida (detalle) ── */
 .admin-detalle-row {
   display: none;
@@ -4313,10 +4371,11 @@ body {
 }
 
 .admin-detalle-row td {
-  background: var(--accent);
+  background: var(--detalle-bg);
   padding: 20px 24px;
   border-bottom: 1px solid var(--border);
 }
+
 
 .admin-detalle-inner {
   display: grid;
@@ -4330,16 +4389,15 @@ body {
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 1px;
-  color: var(--text);
+  color: var(--accent);
   margin-bottom: 8px;
 }
 
 .admin-detalle-value {
   font-size: 13px;
-  color: var(--text_btn);
+  color: var(--text);
   line-height: 1.6;
 }
-
 .admin-detalle-actions {
   display: flex;
   gap: 8px;
@@ -4352,60 +4410,52 @@ body {
   align-items: center;
   gap: 6px;
   padding: 7px 16px;
-  border-radius: 0px;
+  border-radius: 6px;
   border: none;
-  background: rgba(46, 204, 154, .15);
-  color: #2ECC9A;
+  background: var(--btn-aprobar-bg);
+  color: var(--btn-aprobar-fg);
   font-family: var(--font-display);
   font-size: 12.5px;
   font-weight: 700;
   cursor: pointer;
-  transition: background var(--trans);
+  transition: filter var(--trans);
 }
-
-.btn-admin-aprobar:hover {
-  background: rgba(46, 204, 154, .25);
-}
+.btn-admin-aprobar:hover { filter: brightness(1.08); }
 
 .btn-admin-rechazar {
   display: inline-flex;
   align-items: center;
   gap: 6px;
   padding: 7px 16px;
-  border-radius: 0px;
+  border-radius: 6px;
   border: none;
-  background: rgba(212, 24, 61, .10);
-  color: #e05577;
+  background: var(--btn-rechazar-bg);
+  color: var(--btn-rechazar-fg);
   font-family: var(--font-display);
   font-size: 12.5px;
   font-weight: 700;
   cursor: pointer;
-  transition: background var(--trans);
+  transition: filter var(--trans);
 }
-
-.btn-admin-rechazar:hover {
-  background: rgba(212, 24, 61, .20);
-}
+.btn-admin-rechazar:hover { filter: brightness(1.08); }
 
 .btn-admin-suspender {
   display: inline-flex;
   align-items: center;
   gap: 6px;
   padding: 7px 16px;
-  border-radius: 0px;
+  border-radius: 6px;
   border: none;
-  background: rgba(212, 168, 67, .12);
-  color: #D4A843;
+  background: var(--btn-suspender-bg);
+  color: var(--btn-suspender-fg);
   font-family: var(--font-display);
   font-size: 12.5px;
   font-weight: 700;
   cursor: pointer;
-  transition: background var(--trans);
+  transition: filter var(--trans);
 }
+.btn-admin-suspender:hover { filter: brightness(1.08); }
 
-.btn-admin-suspender:hover {
-  background: rgba(212, 168, 67, .22);
-}
 
 .admin-action-notice {
   position: fixed;
