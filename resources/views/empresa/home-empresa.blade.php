@@ -381,12 +381,30 @@
         border-radius: 20px;
         font-size: 12px;
         font-weight: 500;
-        border: 1px solid transparent;
+        border: 1px solid; 
         white-space: nowrap;
     }
-    .estado-activa  { background: rgba(46,204,154,0.12);  color: #2ECC9A; border-color: rgba(46,204,154,0.3); }
-    .estado-pausada { background: rgba(255,193,7,0.12);   color: #e6ac00; border-color: rgba(255,193,7,0.3); }
-    .estado-cerrada { background: rgba(100,100,100,0.1);  color: #9a9aaa; border-color: rgba(100,100,100,0.3); }
+    .estado-activa { 
+    /* Mezcla tu variable con transparente al 50% */
+        background-color: color-mix(in srgb, var(--activa) 60%, transparent); 
+        color: var(--text); 
+        border-color: var(--activa); 
+    }
+
+    /* Estado: Pausada */
+    .estado-pausada { 
+        background-color: color-mix(in srgb, var(--pausada) 60%, transparent); 
+        color: var(--text); 
+        border-color: var(--pausada); 
+    }
+
+    /* Estado: Cerrada */
+    .estado-cerrada { 
+        background-color: color-mix(in srgb, var(--cerrada) 60%, transparent); 
+        color: var(--text); 
+        border-color: var(--cerrada); 
+    }
+
 
     /* ── Acciones tabla ── */
     .acciones-oferta {
@@ -399,8 +417,8 @@
         font-size: 12px;
         padding: 4px 10px;
         border-radius: 6px;
-        border: 1px solid var(--border);
-        background: var(--bg);
+        border: 1px solid var(--pausar);
+        background: var(--pausar);
         color: var(--text);
         cursor: pointer;
         transition: all 0.2s;
