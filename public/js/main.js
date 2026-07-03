@@ -5,6 +5,20 @@ document.addEventListener('DOMContentLoaded', () => {
      Persiste en localStorage.
      Aplica data-theme="dark" al <html>.
   ════════════════════════════════════════ */
+
+
+    function actualizarAlturaHeader() {
+    const header = document.querySelector('.krow-header');
+    if (header) {
+      document.documentElement.style.setProperty('--header-height', header.offsetHeight + 'px');
+    }
+  }
+
+  actualizarAlturaHeader();
+  window.addEventListener('resize', actualizarAlturaHeader);
+  window.addEventListener('load', actualizarAlturaHeader);
+
+
   const root = document.documentElement;
   const themeBtn = document.getElementById('theme-toggle');
   const iconSun = themeBtn?.querySelector('.icon-sun');

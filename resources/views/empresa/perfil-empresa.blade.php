@@ -3,7 +3,7 @@
 @section('title', 'Perfil Empresa - Krow')
 
 @section('banner')
-<div style="width:100%; height:380px; position:relative; overflow:hidden;">
+<div class="perfil-banner-sticky" style="width:100%; height:380px; position:sticky; top:0; overflow:hidden; z-index:50;">
 
     {{-- Imagen o placeholder --}}
     @if($empresa->banner)
@@ -21,7 +21,7 @@
     <div style="position:absolute; bottom:0; left:50%; transform:translateX(-50%); z-index:2; display:flex; flex-direction:column; align-items:center; text-align:center; padding-bottom:16px; gap:6px; width:100%;">
 
         {{-- Logo circular --}}
-        <div class="{{ $empresa->logo ? 'avatar-expandible' : '' }}"
+        <div class="perfil-banner-logo {{ $empresa->logo ? 'avatar-expandible' : '' }}"
              style="width:84px; height:84px; border-radius:50%; border:3px solid rgba(255,255,255,0.35); overflow:hidden; background:var(--surface); display:flex; align-items:center; justify-content:center; font-size:2rem; font-weight:700; color:var(--accent); flex-shrink:0;
             {{ $empresa->logo ? 'background-image:url(\'' . \Illuminate\Support\Facades\Storage::url($empresa->logo) . '\'); background-size:cover; background-position:center;' : '' }}"
              @if($empresa->logo) onclick="abrirModalAvatar('{{ \Illuminate\Support\Facades\Storage::url($empresa->logo) }}')" @endif>
@@ -31,19 +31,19 @@
         </div>
 
         {{-- Nombre --}}
-        <h1 style="color:#fff; font-size:1.5rem; font-weight:800; margin:0; text-shadow:0 2px 8px rgba(0,0,0,0.7); line-height:1.2;">
+        <h1 class="perfil-banner-nombre" style="color:#fff; font-size:1.5rem; font-weight:800; margin:0; text-shadow:0 2px 8px rgba(0,0,0,0.7); line-height:1.2;">
             {{ $empresa->nombre_empresa ?? '' }}
         </h1>
 
         {{-- Rubro --}}
         @if(!empty($empresa->rubro))
-        <p style="color:rgba(255,255,255,0.8); font-size:0.9rem; margin:0; text-shadow:0 1px 4px rgba(0,0,0,0.6);">
+        <p class="perfil-banner-rubro" style="color:rgba(255,255,255,0.8); font-size:0.9rem; margin:0; text-shadow:0 1px 4px rgba(0,0,0,0.6);">
             {{ $empresa->rubro }}
         </p>
         @endif
 
         {{-- Botones --}}
-        <div style="display:flex; gap:10px; flex-wrap:wrap; justify-content:center; margin-top:4px;">
+        <div class="perfil-banner-actions" style="display:flex; gap:10px; flex-wrap:wrap; justify-content:center; margin-top:4px;">
             <a href="{{ route('empresa.perfil.editar') }}" class="btn-accent" style="font-size:0.82rem; padding:6px 16px;">
                 <i class="fas fa-edit"></i> Editar perfil
             </a>
@@ -72,6 +72,50 @@
 
 main {
     overflow: visible !important;
+}
+
+/* ══ Responsive del banner ══ */
+@media (max-width: 768px) {
+    .perfil-banner-sticky {
+        height: 260px !important;
+    }
+    .perfil-banner-logo {
+        width: 64px !important;
+        height: 64px !important;
+        font-size: 1.5rem !important;
+    }
+    .perfil-banner-nombre {
+        font-size: 1.15rem !important;
+    }
+    .perfil-banner-rubro {
+        font-size: 0.8rem !important;
+    }
+    .perfil-banner-actions a {
+        font-size: 0.75rem !important;
+        padding: 5px 12px !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .perfil-banner-sticky {
+        height: 220px !important;
+    }
+    .perfil-banner-logo {
+        width: 52px !important;
+        height: 52px !important;
+        font-size: 1.2rem !important;
+        border-width: 2px !important;
+    }
+    .perfil-banner-nombre {
+        font-size: 1rem !important;
+    }
+    .perfil-banner-actions {
+        gap: 6px !important;
+    }
+    .perfil-banner-actions a {
+        font-size: 0.7rem !important;
+        padding: 4px 10px !important;
+    }
 }
 
 </style>
