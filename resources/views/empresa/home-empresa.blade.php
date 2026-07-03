@@ -4,23 +4,36 @@
 
 
 @section('banner')
-<div style="
+<div id="banner-index" style="
     width:100%;
-   height:clamp(140px, 18vw, 280px);
+    height: 600px;
     position:relative;
     overflow:hidden;
+    background-image: url('{{ asset('img/banner.jpg') }}');
+    background-size: cover;
+    background-position: top;
+    background-repeat: no-repeat;
+    margin:0;
 ">
 
-    <img src="{{ asset('img/banner-estudiante.jpg') }}"
-         alt="Banner"
-         style="width:100%; height:100%; object-fit:cover; display:block;">
-
-    <div style="
+    <div  style="
         position:absolute;
         inset:0;
-        background:linear-gradient(to right, rgba(0,0,0,.8), rgba(0,0,0,.8));
+        background:linear-gradient(to right, rgba(0,0,0,.6), rgba(0,0,0,.4));
     "></div>
 
+    <div id="pad" style="
+        position:absolute;
+        inset:0;
+        display:flex;
+        flex-direction:column;
+        justify-content:start;
+        align-items:center;
+        text-align:center;
+        z-index:2;
+        padding-top: 1.5rem;
+    ">
+</div>
 </div>
 @endsection
 
@@ -39,7 +52,9 @@
     </div>
 </dialog>
 
-<div class="panel-page" style="margin-top: clamp(-190px, -16vw, -140px); position: relative; z-index: 5; background-color:var(--bg); border-radius: 8px; border:1px solid var(--surface);">
+<div class="panel-page" style="position: relative; z-index: 5; margin-top: -510px !important; margin-bottom:80px;background-color:var(--bg) ;opacity: 0.95; border-radius: 8px; border:1px solid var(--accent); justify-content:start;box-shadow:
+0 20px 50px var(--shadow-color),
+0 0px 30px var(--shadow-glow);">
 
     <h1 class="panel-page-title">Panel de Empresa</h1>
     <p class="panel-page-sub">Gestiona tus ofertas laborales y revisá los postulantes</p>

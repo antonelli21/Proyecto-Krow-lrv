@@ -383,15 +383,15 @@ function initFiltersSidebar() {
     const indexBanner = document.getElementById('banner-index');
 
     const coloresCategorias = {
-      'Ingeniería': '#3B82F6',             // Azul brillante
-      'Tecnología': '#6366F1',             // Índigo
-      'Industria y producción': '#F97316', // Naranja moderno
-      'Marketing': '#D946EF',              // Fucsia
-      'Ventas': '#22C55E',                 // Verde
-      'Recursos Humanos': '#06B6D4',       // Cian
-      'Diseño': '#EAB308',                 // Amarillo dorado
-      'Administración': '#64748B',         // Gris profesional
-      'Finanzas': '#14B8A6'                // Turquesa
+      'Ingeniería': '#2563EB',             // Azul
+      'Tecnología': '#4F46E5',             // Índigo
+      'Industria y producción': '#EA580C', // Naranja oscuro
+      'Marketing': '#C026D3',              // Magenta
+      'Ventas': '#16A34A',                 // Verde
+      'Recursos Humanos': '#0891B2',       // Cian
+      'Diseño': '#CA8A04',                 // Dorado oscuro
+      'Administración': '#475569',         // Gris azulado
+      'Finanzas': '#0F766E'                // Verde petróleo
     };
 
     if (tituloBanner) {

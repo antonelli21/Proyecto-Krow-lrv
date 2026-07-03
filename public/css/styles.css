@@ -35,6 +35,8 @@
   --font-display: Arial, system-ui, sans-serif;
   --font-body: Arial, system-ui, sans-serif;
   --trans: .18s ease;
+  --shadow-color: rgba(0, 0, 0, .45);
+  --shadow-glow: rgba(20, 201, 144, 0.361);
 }
 
 [data-theme="dark"] {
@@ -60,6 +62,8 @@
   --accent-dim: rgba(212, 168, 67, .10);
   --border-accent: rgba(212, 168, 67, .35);
   --shadow-accent: 0 4px 20px rgba(212, 168, 67, .22);
+  --shadow-color: rgba(255, 255, 255, .45);
+  --shadow-glow: rgba(246, 186, 48, 0.315);
 }
 
 
@@ -1977,8 +1981,15 @@ body {
 }
 
 @keyframes zoomIn {
-  from { transform: scale(0.7); opacity: 0; }
-  to { transform: scale(1); opacity: 1; }
+  from {
+    transform: scale(0.7);
+    opacity: 0;
+  }
+
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 
 @media (max-width: 480px) {
@@ -1987,12 +1998,14 @@ body {
     height: min(90vw, 400px);
     border-width: 3px;
   }
+
   .avatar-modal-close {
     top: 20px;
     right: 20px;
     font-size: 32px;
   }
 }
+
 /* ════════════════════════════════════════
    SIDEBAR COLAPSABLE
 ════════════════════════════════════════ */
@@ -2254,8 +2267,8 @@ body {
   border: 1px solid var(--accent);
   border-radius: 10px;
   padding: 22px 24px;
-  box-shadow: 0 2px 10px rgba(0,0,0,.06);
-  
+  box-shadow: 0 2px 10px rgba(0, 0, 0, .06);
+
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
@@ -2359,19 +2372,20 @@ body {
 .postulaciones-table thead tr {
   border-bottom: 1px solid var(--border);
 }
+
 .sidebar-card a.empresa-nombre-link {
-    font-weight: 600;
-    color: var(--text);
-    font-size: 0.95rem;
-    overflow-wrap: break-word;
-    word-break: break-word;
-    text-decoration: none;
-    transition: color 0.15s ease;
+  font-weight: 600;
+  color: var(--text);
+  font-size: 0.95rem;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  text-decoration: none;
+  transition: color 0.15s ease;
 }
 
 .sidebar-card a.empresa-nombre-link:hover {
-    color: var(--primary);
-    text-decoration: underline;
+  color: var(--primary);
+  text-decoration: underline;
 }
 
 .ofertas-table th,
@@ -4643,7 +4657,8 @@ body {
   gap: 1.75rem;
   /* 28px */
   margin-top: 1.5rem;
-  align-items: start; /* Evita que las columnas compartan distribución de altura */
+  align-items: start;
+  /* Evita que las columnas compartan distribución de altura */
 }
 
 .perfil-column-main,
@@ -6698,26 +6713,7 @@ textarea.filter-input-text:focus {
   text-decoration: underline;
 }
 
-@media (max-width: 1440px) {
 
-  #page-body,
-  .empresas-page,
-  .ayuda-page,
-  .panel-page {
-    margin-top: clamp(-150px, -7vw, -150px) !important;
-    border-radius: 8px 8px 0 0;
-  }
-}
-
-@media (max-width: 480px) {
-
-  #page-body,
-  .empresas-page,
-  .ayuda-page,
-  .panel-page {
-    margin-top: -30px !important;
-  }
-}
 
 
 /* ════════════════════════════════════════

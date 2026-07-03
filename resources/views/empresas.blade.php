@@ -4,23 +4,36 @@
 
 
 @section('banner')
-<div style="
+<div id="banner-index" style="
     width:100%;
-    height:clamp(140px, 18vw, 280px);
+    height: 600px;
     position:relative;
     overflow:hidden;
+    background-image: url('{{ asset('img/banner.jpg') }}');
+    background-size: cover;
+    background-position: top;
+    background-repeat: no-repeat;
+    margin:0;
 ">
 
-    <img src="{{ asset('img/banner-estudiante.jpg') }}"
-         alt="Banner"
-         style="width:100%; height:100%; object-fit:cover; display:block;">
-
-    <div style="
+    <div  style="
         position:absolute;
         inset:0;
-        background:linear-gradient(to right, rgba(0,0,0,.8), rgba(0,0,0,.8));
+        background:linear-gradient(to right, rgba(0,0,0,.6), rgba(0,0,0,.4));
     "></div>
 
+    <div id="pad" style="
+        position:absolute;
+        inset:0;
+        display:flex;
+        flex-direction:column;
+        justify-content:start;
+        align-items:center;
+        text-align:center;
+        z-index:2;
+        padding-top: 1.5rem;
+    ">
+</div>
 </div>
 @endsection
 
@@ -34,7 +47,9 @@ $ubicaciones = $empresas->map(function($emp) {
 @endphp
 
 
-<div class="empresas-page" style="margin-top: clamp(-190px, -16vw, -140px); position: relative; z-index: 5; background-color:var(--bg); border-radius: 8px; border:1px solid var(--accent); max-width: 1480px; margin-left: auto; margin-right: auto; padding: 18px 18px 18px;">
+<div class="empresas-page" style="position: relative; z-index: 5; margin-top: -510px !important; margin-bottom:80px;background-color:var(--bg) ;opacity: 0.95; border-radius: 8px; border:1px solid var(--accent); justify-content:start;box-shadow:
+0 20px 50px var(--shadow-color),
+0 0px 30px var(--shadow-glow);">
 
     <div class="empresas-header" style="padding-top: 8px; padding-bottom: 10px; margin-bottom: 10px;">
         <h1>Base de Empresas</h1>

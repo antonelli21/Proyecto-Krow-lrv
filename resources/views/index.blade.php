@@ -5,20 +5,20 @@
 @section('banner')
 <div id="banner-index" style="
     width:100%;
-    height:clamp(140px, 18vw, 280px);
+    height: 600px;
     position:relative;
     overflow:hidden;
+    background-image: url('{{ asset('img/banner.jpg') }}');
+    background-size: cover;
+    background-position: top;
+    background-repeat: no-repeat;
+    margin:0;
 ">
-
-    <img id="banner-img"
-     src="{{ asset('img/banner-estudiante.jpg') }}"
-     alt="Banner"
-     style="width:100%; height:100%; object-fit:cover; display:block;">
 
     <div  style="
         position:absolute;
         inset:0;
-        background:linear-gradient(to right, rgba(0,0,0,.4), rgba(0,0,0,.4));
+        background:linear-gradient(to right, rgba(0,0,0,.6), rgba(0,0,0,.4));
     "></div>
 
     <div id="pad" style="
@@ -32,7 +32,7 @@
         z-index:2;
         padding-top: 1.5rem;
     ">
-    <h1 id="banner-title" class="gradient-text">KROW</h1>
+     <h1 id="banner-title" class="gradient-text">KROW</h1>
 </div>
 </div>
 @endsection
@@ -43,7 +43,9 @@ $rol = auth()->check() ? (auth()->user()->rol ?? 'invitado') : 'invitado';
 $ofertas = $ofertas ?? collect();
 @endphp
 
-<div class="page-body" id="page-body" data-rol="{{ $rol }}" style="margin-top: clamp(-190px, -16vw, -140px);  position: relative; z-index: 5;       background-color:var(--bg); border-radius: 8px; border:1px solid var(--accent); justify-content:start;">
+<div class="page-body" id="page-body" data-rol="{{ $rol }}" style="position: relative; z-index: 5; margin-top: -510px !important; margin-bottom:80px;background-color:var(--bg) ;opacity: 0.95; border-radius: 8px; border:1px solid var(--accent); justify-content:start;box-shadow:
+0 20px 50px var(--shadow-color),
+0 0px 30px var(--shadow-glow);">
      
 
 
