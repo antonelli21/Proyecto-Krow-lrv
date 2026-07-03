@@ -424,6 +424,25 @@ function initFiltersSidebar() {
           coloresCategorias[categoriaRaw] || '#475569';
       }
     }
+
+    // Actualizar URL sin recargar
+    const newUrl = window.location.pathname + '?' + params.toString();
+    history.pushState(null, '', newUrl);
+
+    // Mostrar u ocultar botón "Limpiar todos los filtros"
+    const btnLimpiar = document.getElementById('btn-limpiar-todos');
+    if (btnLimpiar) {
+      const ignorar = ['orden']; // parámetros que NO cuentan como filtro
+      const hayFiltros = [...params.entries()].some(([key, val]) =>
+        !ignorar.includes(key) &&
+        val.trim() !== '' &&
+        !(key === 'fecha' && val === 'total')
+      );
+      btnLimpiar.style.display = hayFiltros ? 'flex' : 'none';
+
+      // Al hacer clic en limpiar, también limpiamos la URL
+      btnLimpiar.href = window.location.pathname;
+    }
   }
 
   // Búsqueda al escribir con debounce
@@ -1223,3 +1242,33 @@ document.addEventListener('DOMContentLoaded', () => {
 //   })();
 
 // })
+
+/* ════════════════════════════════════════
+   BOTÓN LIMPIAR FILTROS
+════════════════════════════════════════ */
+function actualizarBtnLimpiar() {
+  const btn = document.getElementById('btn-limpiar-todos');
+  const form = document.getElementById('filtros-form');
+  if (!btn || !form) return;
+
+  const params = new URLSearchParams(new FormData(form));
+  const ignorar = ['orden'];
+
+  const hayFiltros = [...params.entries()].some(([key, val]) =>
+    !ignorar.includes(key) &&
+    val.trim() !== '' &&
+    !(key === 'fecha' && val === 'total')
+  );
+
+  btn.style.display = hayFiltros ? 'flex' : 'none';
+  btn.href = window.location.pathname;
+}
+
+// Llamarlo cada vez que se aplican filtros o se escribe en el buscador
+document.getElementById('filtros-form')?.addEventListener('submit', function () {
+  setTimeout(actualizarBtnLimpiar, 600);
+});
+
+document.getElementById('buscar')?.addEventListener('input', function () {
+  setTimeout(actualizarBtnLimpiar, 600);
+});

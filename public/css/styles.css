@@ -1,13 +1,13 @@
 :root {
-  --bg: #b8b8b8;
+  --bg: #cdcdcd;
   --surface: #ffffff;
-  --primary: #979797;
+  --primary: #3b594d;
   --accent: #077552;
-  --text: #000000;
+  --text: #1f2937;
   --text_btn: #ffffff;
-  --title: #ecece68e;
-  --muted: #4A6B5E;
-  --border: #A8C4BA;
+  --title: #111827;
+  --muted: #6b7280;
+  --border: #e5e7eb;
   --destructive: #D4183D;
   --destructive-fg: #ffffff;
   --radius: 0px;
@@ -20,12 +20,12 @@
   --pausada: #FFC107;
   --eliminada: #d63737;
   --bgnoti: #ffffff;
-  --accent-dim: rgba(46, 204, 154, .12);
-  --border-accent: rgba(46, 204, 154, .4);
+  --accent-dim: rgba(7, 117, 82, 0.12);
+  --border-accent: rgba(7, 117, 82, 0.4);
   --bg-card: var(--surface);
-  --bg-input: var(--bg);
-  --bg-hover: rgba(0, 0, 0, .04);
-  --toolbar_bg: #cecece;
+  --bg-input: #ffffff;
+  --bg-hover: rgba(0, 0, 0, 0.04);
+  --toolbar_bg: #ffffff;
   --text-primary: var(--text);
   --text-secondary: var(--muted);
   --text-muted: #5A5A5A;
@@ -36,8 +36,8 @@
   --right-w: 290px;
   --shadow-card: 0 2px 14px rgba(0, 0, 0, .10);
   --shadow-accent: 0 4px 20px rgba(46, 204, 154, .22);
-  --font-display: Arial, system-ui, sans-serif;
-  --font-body: Arial, system-ui, sans-serif;
+  --font-display: 'Sora', system-ui, sans-serif;
+  --font-body: 'Inter', system-ui, sans-serif;
   --trans: .18s ease;
   --shadow-color: rgba(0, 0, 0, .45);
   --shadow-glow: rgba(20, 201, 144, 0.361);
@@ -130,7 +130,8 @@
 }
 
 html {
-  font-size: 16px;
+  /* Tamaño de fuente base fluido: escala entre 14px y 16px según el ancho de pantalla */
+  font-size: clamp(14px, 1vw + 10px, 16px);
   min-height: 100%;
 }
 
@@ -138,7 +139,7 @@ body {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  font-family: Arial, system-ui, -apple-system, sans-serif;
+  font-family: var(--font-body);
   background-color: var(--bg);
   color: var(--text);
   line-height: 1.5;
@@ -159,6 +160,44 @@ body.no-scroll {
 
 main {
   flex: 1;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-display);
+}
+
+h1 {
+  font-size: clamp(2rem, 4vw + 1rem, 3.5rem);
+}
+
+h2 {
+  font-size: clamp(1.75rem, 3vw + 1rem, 2.75rem);
+}
+
+h3 {
+  font-size: clamp(1.5rem, 2vw + 1rem, 2.25rem);
+}
+
+h4 {
+  font-size: clamp(1.25rem, 1.5vw + 1rem, 1.75rem);
+}
+
+h5 {
+  font-size: clamp(1.1rem, 1vw + 1rem, 1.5rem);
+}
+
+h6 {
+  font-size: clamp(1rem, 0.8vw + 1rem, 1.25rem);
+}
+
+p {
+  font-family: var(--font-body);
+  font-size: clamp(0.95rem, 1vw + 0.5rem, 1.1rem);
 }
 
 /* ════════════════════════════════════════
@@ -276,7 +315,7 @@ main {
 }
 
 .nav-link {
-  color: rgb(83, 78, 78);
+  color: var(--text);
   font-size: 1rem;
   font-weight: 500;
   text-decoration: none;
@@ -289,7 +328,7 @@ main {
 .nav-link:hover,
 .nav-link.active {
   color: var(--accent);
-  background-color: rgba(255, 255, 255, 0.07);
+  background-color: var(--bg-hover);
 }
 
 [data-theme="dark"] .nav-link {
@@ -314,7 +353,7 @@ main {
 .action-btn {
   background: transparent;
   border: none;
-  color: rgba(24, 26, 26, 0.65);
+  color: var(--text);
   width: 36px;
   height: 36px;
   border-radius: 0px;
@@ -327,7 +366,7 @@ main {
 
 .action-btn:hover {
   color: var(--accent);
-  background-color: rgba(255, 255, 255, 0.07);
+  background-color: var(--bg-hover);
 }
 
 [data-theme="dark"] .action-btn {
@@ -370,7 +409,7 @@ main {
 
 /* Efecto al pasar el mouse por encima (Hover) */
 .account-btn:hover {
-  background-color: rgba(255, 255, 255, 0.05);
+  background-color: var(--bg-hover);
   /* Brillo sutil de fondo */
   border-color: var(--accent);
   /* Tu color amarillo corporativo destaca en el borde */
@@ -378,8 +417,8 @@ main {
 
 /* Efecto cuando el menú dropdown esté desplegado/activo */
 .account-btn[aria-expanded="true"] {
-  background-color: rgba(255, 255, 255, 0.08);
-  border-color: var(--primary, #d4af37);
+  background-color: var(--bg-hover);
+  border-color: var(--accent);
 }
 
 /* Ajustes finos para el avatar redondo dentro de este botón */
@@ -414,13 +453,14 @@ main {
   opacity: 0.7;
   transition: transform 0.2s ease;
   margin-left: 2px;
+  color: var(--text);
 }
 
 /* Animación: la flecha gira 180 grados si el dropdown está abierto */
 .account-btn[aria-expanded="true"] .chevron {
   transform: rotate(180deg);
   opacity: 1;
-  color: var(--primary, #d4af37);
+  color: var(--accent);
 }
 
 .dropdown-menu {
@@ -475,8 +515,8 @@ main {
 }
 
 .dropdown-item:hover {
-  background-color: var(--accent);
-  color: var(--text_btn);
+  background-color: var(--bg-hover);
+  color: var(--accent);
 }
 
 [data-theme="dark"] .dropdown-item:hover {
@@ -1266,6 +1306,124 @@ main {
   .filter-accordion.open .accordion-content {
     max-height: 400px;
   }
+}
+
+/* ════════════════════════════════════════
+   FILTROS — botones de limpieza
+   Pegar al FINAL de styles.css
+════════════════════════════════════════ */
+
+/* ── Botón "Limpiar todos los filtros" (arriba del form) ── */
+.btn-limpiar-filtros {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  padding: 9px 14px;
+  margin-bottom: 4px;
+  background: transparent;
+  border: 1px solid var(--destructive);
+  border-radius: 6px;
+  color: var(--destructive);
+  font-family: var(--font-display);
+  font-size: 12.5px;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 0.18s ease, color 0.18s ease;
+  justify-content: center;
+  letter-spacing: 0.2px;
+}
+
+.btn-limpiar-filtros:hover {
+  background: rgba(212, 24, 61, 0.10);
+  color: var(--destructive);
+}
+
+/* Ocultar el botón si no hay filtros activos */
+.btn-limpiar-filtros.hidden {
+  display: none;
+}
+
+/* ── Botón "Quitar X" debajo de cada select con valor activo ── */
+.btn-clear-field {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 5px;
+  padding: 3px 10px;
+  background: transparent;
+  border: none;
+  color: var(--destructive);
+  font-size: 11.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.15s;
+  font-family: var(--font-body);
+}
+
+.btn-clear-field:hover {
+  opacity: 0.75;
+  text-decoration: underline;
+}
+
+/* ── Botón "Limpiar" al pie de cada grupo de checkboxes/radios ── */
+.btn-clear-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 8px;
+  padding: 4px 12px;
+  background: rgba(212, 24, 61, 0.08);
+  border: 1px solid rgba(212, 24, 61, 0.30);
+  border-radius: 4px;
+  color: var(--destructive);
+  font-size: 11.5px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: var(--font-display);
+  transition: background 0.15s ease;
+}
+
+.btn-clear-group:hover {
+  background: rgba(212, 24, 61, 0.16);
+}
+
+/* ── Botón "Aplicar filtros" (reescribe el inline style del blade) ── */
+.btn-aplicar-filtros {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  width: 100%;
+  padding: 10px;
+  background: var(--accent);
+  color: var(--text_btn, #111118);
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 13.5px;
+  border: none;
+  border-radius: var(--radius, 6px);
+  cursor: pointer;
+  transition: opacity 0.2s ease, transform 0.15s ease;
+  letter-spacing: 0.2px;
+}
+
+.btn-aplicar-filtros:hover {
+  opacity: 0.88;
+  transform: translateY(-1px);
+}
+
+.btn-aplicar-filtros:active {
+  transform: translateY(0);
+}
+
+.filters-actions {
+  margin-top: 20px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 /* =============================================

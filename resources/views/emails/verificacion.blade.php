@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Verificación de Email - KROW</title>
 </head>
-<body style="margin:0; padding:0; background-color:#0f0f1a; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
+<body style="margin:0; padding:0; background-color:#0f0f1a; font-family: 'Inter', system-ui, sans-serif;">
     {{-- ═══════════════════════════════════════════════════════════
          Template del email de verificación.
          Muestra el código de 6 dígitos con un diseño profesional.
@@ -46,7 +46,7 @@
                                 <p style="color:#b0b0b0; font-size:13px; margin:0 0 10px; text-transform:uppercase; letter-spacing:1px;">
                                     Tu código de verificación
                                 </p>
-                                <p style="color:#a29bfe; font-size:42px; font-weight:700; letter-spacing:12px; margin:0; font-family: 'Courier New', monospace;">
+                                <p style="color:#a29bfe; font-size:42px; font-weight:700; letter-spacing:12px; margin:0; font-family: 'Sora', system-ui, sans-serif;">
                                     {{ $codigo }}
                                 </p>
                             </div>
