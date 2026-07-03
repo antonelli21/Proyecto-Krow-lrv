@@ -119,6 +119,8 @@ main {
   background-color: var(--surface);
   border-bottom: 2px solid var(--border);
   transition: background-color 0.25s;
+      flex-shrink: 0;
+
 }
 
 [data-theme="dark"] .krow-header {
@@ -134,6 +136,8 @@ main {
   justify-content: space-between;
   position: relative;
   min-height: 80px;
+  min-height: 80px;
+  height: 80px;
 }
 
 /* El logo ocupa exactamente el ancho del sidebar para quedar alineado */
@@ -1943,8 +1947,8 @@ body {
 .avatar-modal-content {
   margin: auto;
   display: block;
-  width: min(85vw, 900px);
-  height: min(85vw, 900px);
+  width: min(60vw, 500px);
+  height: min(60vw, 500px);
   object-fit: cover;
   border-radius: 50%;
   border: 5px solid rgba(255, 255, 255, 0.15);

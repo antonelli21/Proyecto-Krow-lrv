@@ -303,9 +303,11 @@ class EmpresaController extends Controller
             }
 
             $oferta->modalidad = ucfirst(strtolower($data['modalidad']));
+
             $oferta->tipo_oferta = $data['tipo_trabajo'] === 'Practica Profesional'
                 ? 'Practica Profesional'
-                : ucwords(str_replace('-', ' ', $data['tipo_trabajo']));
+                : $data['tipo_trabajo'];
+
             $oferta->experiencia_requerida = $data['experiencia_requerida'] === 'sin-experiencia'
                 ? 'Sin Experiencia'
                 : ucwords(str_replace('-', ' ', $data['experiencia_requerida']));

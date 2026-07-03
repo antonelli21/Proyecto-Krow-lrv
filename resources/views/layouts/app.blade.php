@@ -180,7 +180,7 @@
   </div>
 </header>
 
-  <main style="flex:1; display:flex; flex-direction:column; overflow:auto;">
+  <main style="flex:1; display:flex; flex-direction:column;">
     @yield('banner')
     @yield('content')
   </main>
