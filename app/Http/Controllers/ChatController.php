@@ -11,6 +11,7 @@ class ChatController extends Controller
     public function index()
     {
         $userId = auth()->id();
+
         $chats = Chat::with([
                 'usuario1:id,name,rol',
                 'usuario1.estudiante:id_usuario,id_estudiante,foto_perfil',
@@ -20,18 +21,34 @@ class ChatController extends Controller
                 'usuario2.empresa:id_usuario,id_empresa,logo',
                 'ultimoMensaje'
             ])
-            ->where('id_usuario_1', $userId)
-            ->orWhere('id_usuario_2', $userId)
-            ->get();
+            ->withCount([
+                'mensajes as no_leidos' => function ($q) use ($userId) {
+                    $q->where('leido', false)
+                    ->where('id_remitente', '!=', $userId);
+                }
+            ])
+            ->where(function ($q) use ($userId) {
+                $q->where('id_usuario_1', $userId)
+                ->orWhere('id_usuario_2', $userId);
+            })
+            ->get()
+            ->sortByDesc(function ($chat) {
+                return optional($chat->ultimoMensaje)->fecha_envio;
+            })
+            ->values();
 
-        // Agregar avatar_ruta a cada usuario
-        $chats->each(function($chat) {
-            if ($chat->usuario1) $chat->usuario1->append(['avatar_ruta', 'perfil_id']);
-            if ($chat->usuario2) $chat->usuario2->append(['avatar_ruta', 'perfil_id']);
+        $chats->each(function ($chat) {
+            if ($chat->usuario1) {
+                $chat->usuario1->append(['avatar_ruta', 'perfil_id']);
+            }
+
+            if ($chat->usuario2) {
+                $chat->usuario2->append(['avatar_ruta', 'perfil_id']);
+            }
         });
 
         return response()->json($chats);
-    }
+}
 
     public function show(Chat $chat)
     {

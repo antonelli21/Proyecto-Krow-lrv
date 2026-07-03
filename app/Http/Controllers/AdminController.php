@@ -182,7 +182,7 @@ class AdminController extends Controller
     {
         $request->validate([
             'estado' => 'required|in:Activa,Pausada,Cerrada',
-            'motivo' => 'nullable|string|max:1000',
+            'motivo' => 'nullable|string|max:5000',
         ]);
 
         $oferta = Oferta::with('empresa')->findOrFail($id);
@@ -229,7 +229,7 @@ class AdminController extends Controller
                 \App\Models\Mensaje::create([
                     'id_chat'      => $chat->id_chat,
                     'id_remitente' => $adminId,
-                    'contenido'    => "Tu oferta \"{$oferta->titulo}\" fue pausada. Motivo: {$request->motivo}",
+                    'contenido'    => "Tu oferta \"{$oferta->titulo}\" fue pausada.\r\n\r Motivo: {$request->motivo}",
                     'leido'        => false,
                     'fecha_envio'  => now(),
                 ]);

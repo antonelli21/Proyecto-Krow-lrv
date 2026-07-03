@@ -234,13 +234,25 @@
                         @if($oferta->pausada_por_admin && $oferta->estado === 'Pausada')
                             <div style="margin-top:6px;">
                                 @if($oferta->motivo_pausa_admin)
-                                    <small style="color:var(--muted); display:block; margin-bottom:4px;">
-                                        Motivo: {{ $oferta->motivo_pausa_admin }}
+                                    <small style="color:var(--muted); display:block; margin-bottom:6px; line-height:1.4;">
+                                        <strong>Motivo:</strong>
+                                        {{ \Illuminate\Support\Str::limit($oferta->motivo_pausa_admin, 50) }}
+
+                                        @if(strlen($oferta->motivo_pausa_admin) > 50)
+                                        ...
+                                        @endif
+
+                                        <br>
+
+                                        <a href="{{ route('empresa.mensajes') }}" class="link-accion" style="font-size:.8rem;">
+                                            Ver mensaje completo →
+                                        </a>
                                     </small>
                                 @endif
+
                                 <a href="{{ route('ayuda') }}#contacto"
-                                   class="link-accion"
-                                   style="font-size:0.8rem;">
+                                class="link-accion"
+                                style="font-size:0.8rem;">
                                     <i class="bi bi-ticket"></i> Enviar ticket
                                 </a>
                             </div>

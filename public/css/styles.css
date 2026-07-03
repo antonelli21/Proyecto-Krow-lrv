@@ -4,10 +4,11 @@
   --primary: #3b594d;
   --accent: #077552;
   --text: #1f2937;
-  --text_btn: #ffffff;
+  --text_btn: #030303;
   --title: #111827;
   --muted: #6b7280;
   --border: #e5e7eb;
+  --borde-especifico: #898a8b ;
   --destructive: #D4183D;
   --destructive-fg: #ffffff;
   --radius: 0px;
@@ -20,12 +21,12 @@
   --pausada: #FFC107;
   --eliminada: #d63737;
   --bgnoti: #ffffff;
-  --accent-dim: rgba(7, 117, 82, 0.12);
+  --accent-dim: rgba(3, 121, 12, 0.603);
   --border-accent: rgba(7, 117, 82, 0.4);
   --bg-card: var(--surface);
   --bg-input: #ffffff;
   --bg-hover: rgba(0, 0, 0, 0.04);
-  --toolbar_bg: #ffffff;
+  --toolbar_bg: #acacac;
   --text-primary: var(--text);
   --text-secondary: var(--muted);
   --text-muted: #5A5A5A;
@@ -62,6 +63,21 @@
   --btn-suspender-fg: #ffffff;
   --btn-rechazar-bg: #D4183D;
   --btn-rechazar-fg: #ffffff;
+  --badge-success-bg: rgba(46, 204, 154, .12);
+  --badge-success-text: #0f8b63;
+  --badge-success-border: rgba(15, 139, 99, .28);
+
+  --badge-warning-bg: rgba(212, 168, 67, .14);
+  --badge-warning-text: #9b6b07;
+  --badge-warning-border: rgba(155, 107, 7, .28);
+
+  --badge-info-bg: rgba(59, 130, 246, .12);
+  --badge-info-text: #2563eb;
+  --badge-info-border: rgba(37, 99, 235, .28);
+
+  --badge-danger-bg: rgba(212, 24, 61, .12);
+  --badge-danger-text: #c81e4f;
+  --badge-danger-border: rgba(200, 30, 79, .28)
 
 }
 
@@ -80,6 +96,7 @@
   --title: #F5F3EE;
   --muted: #6B6B78;
   --border: #3A3A45;
+  --borde-especifico: #3A3A45 ;
   --bgnoti: #2C2C35;
   --toolbar_bg: #111118;
   --bg-card: #1e2030;
@@ -113,7 +130,22 @@
   --btn-suspender-fg: #D4A843;
   --btn-rechazar-bg: rgba(212, 24, 61, .10);
   --btn-rechazar-fg: #e05577;
-}
+  --badge-success-bg: rgba(46, 204, 154, .15);
+  --badge-success-text: #2ECC9A;
+  --badge-success-border: rgba(46, 204, 154, .30);
+
+  --badge-warning-bg: rgba(212, 168, 67, .15);
+  --badge-warning-text: #D4A843;
+  --badge-warning-border: rgba(212, 168, 67, .30);
+
+  --badge-info-bg: rgba(99, 179, 237, .15);
+  --badge-info-text: #63b3ed;
+  --badge-info-border: rgba(99, 179, 237, .30);
+
+  --badge-danger-bg: rgba(212, 24, 61, .15);
+  --badge-danger-text: #e05577;
+  --badge-danger-border: rgba(212, 24, 61, .30);
+  }
 
 
 /* ════════════════════════════════════════
@@ -4142,6 +4174,11 @@ body {
   font-weight: 700;
   padding: 1px 7px;
 }
+.admin-empty{
+  text-align: center;
+  padding: 48px 24px;
+  color: var(--muted);
+}
 
 /* ── Tab panels ── */
 .admin-tab-panel {
@@ -4397,65 +4434,41 @@ body {
   white-space: nowrap;
 }
 
-/* Activo / Activa */
+/* Activo / Activa / Aprobado / Publicada */
 .badge-activo,
-.badge-activa {
-  background: rgba(46, 204, 154, .12);
-  color: #2ECC9A;
-  border: 1px solid rgba(46, 204, 154, .3);
-}
-
-/* Suspendido / Suspendida */
-.badge-suspendido,
-.badge-suspendida {
-  background: rgba(212, 24, 61, .10);
-  color: #e05577;
-  border: 1px solid rgba(212, 24, 61, .3);
-}
-
-/* Pendiente */
-.badge-pendiente {
-  background: rgba(212, 168, 67, .12);
-  color: #D4A843;
-  border: 1px solid rgba(212, 168, 67, .3);
-}
-
-/* Aprobado / Aprobada */
+.badge-activa,
 .badge-aprobado,
-.badge-aprobada {
-  background: rgba(46, 204, 154, .12);
-  color: #2ECC9A;
-  border: 1px solid rgba(46, 204, 154, .3);
-}
-
-/* Rechazado / Rechazada */
-.badge-rechazado,
-.badge-rechazada {
-  background: rgba(212, 24, 61, .10);
-  color: #e05577;
-  border: 1px solid rgba(212, 24, 61, .3);
-}
-
-/* Publicada */
+.badge-aprobada,
 .badge-publicada {
-  background: rgba(46, 204, 154, .12);
-  color: #2ECC9A;
-  border: 1px solid rgba(46, 204, 154, .3);
+    background: var(--badge-success-bg);
+    color: var(--badge-success-text);
+    border: 1px solid var(--badge-success-border);
 }
 
-/* Pausado / Pausada */
+/* Suspendido / Pendiente */
+.badge-suspendido,
+.badge-suspendida,
+.badge-pendiente {
+    background: var(--badge-warning-bg);
+    color: var(--badge-warning-text);
+    border: 1px solid var(--badge-warning-border);
+}
+
+/* Pausado */
 .badge-pausado,
 .badge-pausada {
-  background: rgba(99, 179, 237, .12);
-  color: #63b3ed;
-  border: 1px solid rgba(99, 179, 237, .3);
+    background: var(--badge-info-bg);
+    color: var(--badge-info-text);
+    border: 1px solid var(--badge-info-border);
 }
 
-/* Cerrada */
+/* Rechazado / Cerrada */
+.badge-rechazado,
+.badge-rechazada,
 .badge-cerrada {
-  background: rgba(212, 24, 61, .10);
-  color: #e05577;
-  border: 1px solid rgba(212, 24, 61, .3);
+    background: var(--badge-danger-bg);
+    color: var(--badge-danger-text);
+    border: 1px solid var(--badge-danger-border);
 }
 
 /* Acciones */

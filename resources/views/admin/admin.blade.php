@@ -1039,6 +1039,11 @@
       </button>
     </div>
   </div>
+  @if($errors->any())
+  <div style="margin-bottom:16px;padding:13px 16px;border:1px solid rgba(212,24,61,.35);background:rgba(14,24,22,.96);color:#e05577;font-size:13px;font-weight:700;display:flex;align-items:center;gap:8px;">
+    <i class="bi bi-exclamation-circle"></i> {{ $errors->first() }}
+  </div>
+@endif
 </dialog>
 
 @endsection

@@ -2,13 +2,7 @@
 
 @section('title', 'Mensajes — KROW')
 
-{{-- Inyectamos el ID del usuario autenticado --}}
-@auth
-    <script>
-        window.App = window.App || {};
-        window.App.userId = {{ Auth::id() }};
-    </script>
-@endauth
+
 @section('content')
 <div id="mensajes-page" class="mensajes-page">
 
@@ -158,27 +152,26 @@
         font-size: 13px;
     }
 
-    /* ── Elementos de la lista ── */
-    .chat-item {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        padding: 14px 16px;
-        border-bottom: 0.5px solid var(--border);
-        cursor: pointer;
-        background: transparent;
-        transition: background 0.15s, border-right 0.15s;
-    }
+            /* ── Elementos de la lista ── */
+        .chat-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 16px;
+            border-bottom: 1px solid var(--border);   /* separador suave */
+            cursor: pointer;
+            background: var(--surface);
+            transition: background 0.15s, border-right 0.15s;
+        }
 
-    .chat-item:hover {
-        background: var(--bg-hover);
-    }
+        .chat-item:hover {
+            background: var(--bg-hover);
+        }
 
-    .chat-item.active {
-        background: var(--accent-dim);
-        border-right: 2px solid var(--accent);
-    }
-
+        .chat-item.active {
+            background: var(--accent-dim);
+            border-right: 2px solid var(--accent);    /* ← color sólido para mayor contraste */
+}   
     .chat-avatar {
         width: 40px;
         height: 40px;
@@ -258,7 +251,7 @@
     .panel-header {
         display: none;
         padding: 14px 20px;
-        border-bottom: 0.5px solid var(--border);
+        border-bottom: 1px solid var(--borde-especifico);
         background: var(--surface);
         align-items: center;
         gap: 12px;
@@ -336,6 +329,8 @@
         line-height: 1.5;
         word-wrap: break-word;
         max-width: 100%;
+        white-space: pre-line;
+
     }
 
     .mensaje-burbuja.propio .burbuja {
@@ -575,10 +570,7 @@
             overflow: hidden !important;
         }
 
-        .panel-header {
-            padding: 10px 14px !important;
-            gap: 10px !important;
-        }
+
 
         .panel-avatar {
             width: 30px !important;
@@ -650,6 +642,35 @@
         transition: all 0.3s ease;
         box-shadow: var(--shadow-card, none);   
     }
+        .chat-no-leido{
+            background:rgba(7,117,82,.08);
+            border-left:4px solid var(--accent);
+        }
+
+        .chat-no-leido:hover{
+            background:rgba(7,117,82,.13);
+        }
+
+        .chat-no-leido .chat-nombre{
+            font-weight:800;
+        }
+
+        .chat-no-leido .chat-preview{
+            color:var(--text);
+        }
+
+        .chat-badge{
+            min-width:20px;
+            height:20px;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            border-radius:50%;
+            background:#22c55e;
+            color:white;
+            font-weight:700;
+        }
+        
 
     .btn-recarga:hover {
         background: var(--bg-hover, #e0e0e0);
@@ -731,10 +752,7 @@
     'use strict';
 
     // ── Inicialización ──────────────────────────────────────────────────────────
-    const miId = window.App?.userId || null;
-    if (!miId) {
-        console.warn('[Mensajes] No se pudo obtener el ID del usuario autenticado.');
-    }
+    const miId = {{ auth()->id() }};
 
     const csrf = document.querySelector('meta[name="csrf-token"]')?.content || '';
 
@@ -776,6 +794,37 @@
         ayer.setDate(hoy.getDate() - 1);
         if (d.toDateString() === ayer.toDateString()) return 'Ayer';
         return d.toLocaleDateString('es-AR', { day: '2-digit', month: 'long' });
+    };
+
+    // ── Obtener rol del usuario actual ──────────────────────────────────────────
+    const obtenerMiRol = () => {
+        // Intentar desde meta tag (recomendado)
+        const metaRol = document.querySelector('meta[name="user-rol"]')?.content;
+        if (metaRol) return metaRol;
+        // Fallback: desde atributo data en html (si se configuró)
+        const htmlRol = document.documentElement.dataset.role;
+        if (htmlRol) return htmlRol;
+        // Último recurso: el valor inyectado por Blade (esto se evalúa en el servidor)
+        return '{{ auth()->user()->rol ?? "" }}';
+    };
+
+    // ── Función para construir URL de perfil ───────────────────────────────────
+    const obtenerUrlPerfil = (otro, miRol) => {
+        if (!otro.perfil_id) return '#';
+
+        if (otro.rol === 'estudiante') {
+            if (miRol === 'empresa') return `/empresa/estudiante/${otro.perfil_id}`;
+            if (miRol === 'admin')   return `/admin/estudiante/${otro.perfil_id}`;
+            // Si eres estudiante, quizás quieras ver el perfil de otro estudiante:
+            return `/estudiantes/${otro.perfil_id}`; // o mantenlo como '#'
+        }
+
+        if (otro.rol === 'empresa') {
+            return `/empresas/${otro.perfil_id}`;
+        }
+
+        // Para otros roles (ej. admin viendo admin) podrías agregar más casos
+        return '#';
     };
 
     // ── Notificaciones ──────────────────────────────────────────────────────────
@@ -838,9 +887,12 @@
 
                     if (query && !nombre.toLowerCase().includes(query)) return;
 
-                    const ultimo  = chat.ultimo_mensaje;
-                    const activo  = chat.id_chat === chatActivoId;
-                    const noLeidos = chat.no_leidos ?? 0;
+                    const ultimo = chat.ultimo_mensaje;
+                    const activo = chat.id_chat === chatActivoId;
+                    const noLeidos = Number(chat?.no_leidos ?? 0);
+                    const destacado = noLeidos > 0 ? 'chat-no-leido' : ''
+
+
 
                     let textoUltimo = ultimo ? escaparHTML(ultimo.contenido) : 'Sin mensajes aún';
                     if (ultimo?.ruta_archivo) {
@@ -852,10 +904,12 @@
                         : `<div class="chat-avatar">${inicial(nombre)}</div>`;
 
                     const hora  = ultimo ? formatHora(ultimo.fecha_envio) : '';
-                    const badge = noLeidos > 0 ? `<span class="chat-badge">${noLeidos}</span>` : '';
+                    const badge = noLeidos > 0
+                        ? `<span class="chat-badge">${noLeidos}</span>`
+                        : '';
 
                     html += `
-                        <div class="chat-item ${activo ? 'active' : ''}" data-chat-id="${chat.id_chat}">
+                        <div class="chat-item ${activo ? 'active' : ''} ${destacado}" data-chat-id="${chat.id_chat}">
                             ${avatarHtml}
                             <div class="chat-info">
                                 <div class="chat-nombre">${escaparHTML(nombre)}</div>
@@ -904,7 +958,8 @@
         if (!chat || !otro) return;
         chatActivoId = chat.id_chat;
         const nombre = otro.name || 'Usuario';
-        console.log('perfil_id:', otro.perfil_id, 'rol:', otro.rol, 'otro completo:', JSON.stringify(otro));    
+        console.log('perfil_id:', otro.perfil_id, 'rol:', otro.rol, 'otro completo:', JSON.stringify(otro));
+
         if (panelAvatar) {
             if (otro.avatar_ruta) {
                 panelAvatar.innerHTML = `<img src="/storage/${otro.avatar_ruta}" alt="Avatar">`;
@@ -913,23 +968,19 @@
                 panelAvatar.style.background = 'var(--accent)';
             }
         }
-        // Armar URL según el rol del otro usuario
-        const miRol = document.documentElement.dataset.role || '{{ auth()->user()->rol ?? "" }}';
-        let perfilUrl = '#';
 
-        if (otro.rol === 'estudiante' && otro.perfil_id) {
-    if (miRol === 'empresa') {
-        perfilUrl = `/empresa/estudiante/${otro.perfil_id}`;
-    } else if (miRol === 'admin') {
-        perfilUrl = `/admin/estudiante/${otro.perfil_id}`;
-    }
-} else if (otro.rol === 'empresa' && otro.perfil_id) {
-    perfilUrl = `/empresas/${otro.perfil_id}`;
-}
+        // Obtener rol del usuario actual
+        const miRol = obtenerMiRol();
+        // Construir URL de perfil usando la función auxiliar
+        const perfilUrl = obtenerUrlPerfil(otro, miRol);
 
-        if (panelNombre) {
+        // Establecer el nombre con enlace o sin él
+        if (perfilUrl !== '#') {
             panelNombre.innerHTML = `<a href="${perfilUrl}" style="color:inherit; text-decoration:none; cursor:pointer;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">${escaparHTML(nombre)}</a>`;
+        } else {
+            panelNombre.textContent = nombre;
         }
+
         if (panelRol)    panelRol.textContent    = otro.rol || '';
         if (panelHeader) panelHeader.style.display = 'flex';
         if (vacioEl)     vacioEl.style.display     = 'none';
@@ -940,16 +991,22 @@
         document.querySelectorAll('.chat-item').forEach(el => el.classList.remove('active'));
         document.querySelector(`[data-chat-id="${chat.id_chat}"]`)?.classList.add('active');
 
-        cargarMensajes();
+        // Cargar mensajes forzando scroll al final
+        cargarMensajes(true);
+        setTimeout(cargarChats, 150);
 
         if (intervalo) clearInterval(intervalo);
-        intervalo = setInterval(cargarMensajes, 5000);
+        // Intervalo sin forzar scroll (solo si el usuario ya estaba abajo)
+        intervalo = setInterval(() => cargarMensajes(false), 5000);
     };
 
     // ── Cargar historial de mensajes ────────────────────────────────────────────
 
-    const cargarMensajes = () => {
+    const cargarMensajes = (forceScroll = false) => {
         if (!chatActivoId || !historialEl) return;
+
+        // Guardar si el usuario estaba cerca del fondo (antes de actualizar)
+        const wasAtBottom = historialEl.scrollHeight - historialEl.scrollTop - historialEl.clientHeight < 50;
 
         fetch(`/api/chats/${chatActivoId}/mensajes`)
             .then(r => {
@@ -1001,7 +1058,11 @@
                 });
 
                 historialEl.innerHTML = html;
-                historialEl.scrollTop = historialEl.scrollHeight;
+
+                // Decidir si hacer scroll al fondo
+                if (forceScroll || wasAtBottom) {
+                    historialEl.scrollTop = historialEl.scrollHeight;
+                }
             })
             .catch(err => {
                 console.error('[Mensajes] Error cargando mensajes:', err);
@@ -1028,6 +1089,11 @@
 
         const formData = new FormData();
         formData.append('id_chat', chatActivoId);
+        
+        // Agregar token CSRF en el cuerpo para mayor compatibilidad
+        const tokenInput = formEl?.querySelector('input[name="_token"]')?.value || csrf;
+        if (tokenInput) formData.append('_token', tokenInput);
+
         if (contenido) formData.append('contenido', contenido);
 
         if (tieneArchivo) {
@@ -1044,21 +1110,46 @@
 
         fetch('/api/mensajes', {
             method: 'POST',
-            headers: { 'X-CSRF-TOKEN': csrf },
+            headers: { 
+                'X-CSRF-TOKEN': csrf,
+                'Accept': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
             body: formData,
         })
-            .then(r => {
-                if (!r.ok) throw new Error('Error HTTP: ' + r.status);
+            .then(async r => {
+                if (!r.ok) {
+                    let errMsg = `Error HTTP ${r.status}`;
+                    try {
+                        const errData = await r.json();
+                        if (errData.message) {
+                            errMsg += `: ${errData.message}`;
+                        } else if (errData.errors) {
+                            errMsg += `: ${Object.values(errData.errors).flat().join(', ')}`;
+                        }
+                    } catch (e) {
+                        try {
+                            const errText = await r.text();
+                            if (errText) {
+                                errMsg += `: ${errText.substring(0, 100)}`;
+                            }
+                        } catch (textErr) {}
+                    }
+                    throw new Error(errMsg);
+                }
                 return r.json();
             })
             .then(() => {
                 if (inputEl) inputEl.value = '';
                 limpiarPreviewPDF();
-                cargarMensajes();
+                // Forzar scroll al final tras enviar
+                cargarMensajes(true);
+                // Opcional: actualizar lista de chats para actualizar el badge y preview
+                setTimeout(cargarChats, 300);
             })
             .catch(err => {
                 console.error('[Mensajes] Error al enviar:', err);
-                notificar('No se pudo enviar el mensaje. Intentá de nuevo.', 'error');
+                notificar('No se pudo enviar el mensaje. ' + err.message, 'error');
             })
             .finally(() => {
                 if (submitBtn) submitBtn.disabled = false;
@@ -1093,19 +1184,20 @@
 
     searchEl?.addEventListener('input', cargarChats);
 
-    // ── Botón de actualizar (el que ya existe en el HTML) ──────────────────────
-        const btnRecarga = document.getElementById('btn-recarga');
-        if (btnRecarga) {
-            btnRecarga.addEventListener('click', function() {
-                const icono = this.querySelector('i');
-                icono.classList.add('girar');    // Inicia la animación de giro
+    // ── Botón de actualizar ─────────────────────────────────────────────────────
+    const btnRecarga = document.getElementById('btn-recarga');
+    if (btnRecarga) {
+        btnRecarga.addEventListener('click', function() {
+            const icono = this.querySelector('i');
+            icono.classList.add('girar');    // Inicia la animación de giro
 
-                // Espera a que termine el giro (600ms) y recarga la página
-                setTimeout(() => {
-                    window.location.reload();    // Refresca TODO (como F5)
-                }, 600);
-            });
-        }
+            // Espera a que termine el giro (600ms) y recarga la página
+            setTimeout(() => {
+                window.location.reload();    // Refresca TODO (como F5)
+            }, 600);
+        });
+    }
+
     // ── Inicialización ───────────────────────────────────────────────────────────
 
     document.addEventListener('DOMContentLoaded', () => {
