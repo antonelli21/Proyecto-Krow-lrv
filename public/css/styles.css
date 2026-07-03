@@ -243,7 +243,7 @@ p {
   background-color: var(--surface);
   border-bottom: 2px solid var(--border);
   transition: background-color 0.25s;
-      flex-shrink: 0;
+  flex-shrink: 0;
 
 }
 
@@ -5060,7 +5060,7 @@ body {
 .config-section-title {
   font-size: 1.25rem;
   font-weight: 700;
-  color: var(--text);
+  color: var(--primary);
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -5083,9 +5083,22 @@ body {
   padding: 0.875rem 1.25rem;
   font-size: 0.875rem;
   font-weight: 700;
-  color: var(--text);
+  color: var(--text_btn);
   border-bottom: 1px solid var(--border);
-  background-color: var(--bg);
+  background-color: var(--primary);
+}
+
+.config-field {
+  margin-bottom: 1.5rem;
+}
+
+.config-field:last-child {
+  margin-bottom: 0;
+}
+
+.config-actions .btn-apply-filters {
+  padding: 12px 24px;
+  font-size: 1rem;
 }
 
 .config-card-danger .config-card-header {
@@ -5398,7 +5411,7 @@ textarea.filter-input-text:focus {
 .config-section-title {
   font-size: 1.25rem;
   font-weight: 700;
-  color: var(--text);
+  color: var(--primary);
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -5421,9 +5434,22 @@ textarea.filter-input-text:focus {
   padding: 0.875rem 1.25rem;
   font-size: 0.875rem;
   font-weight: 700;
-  color: var(--text);
+  color: var(--text_btn);
   border-bottom: 1px solid var(--border);
-  background-color: var(--bg);
+  background-color: var(--primary);
+}
+
+.config-field {
+  margin-bottom: 1.5rem;
+}
+
+.config-field:last-child {
+  margin-bottom: 0;
+}
+
+.config-actions .btn-apply-filters {
+  padding: 12px 24px;
+  font-size: 1rem;
 }
 
 .config-card-danger .config-card-header {
