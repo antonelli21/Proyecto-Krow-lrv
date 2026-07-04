@@ -2,18 +2,31 @@
 
 @section('title', 'Mi Perfil — KROW')
 
+@section('banner')
+{{-- Banner: en flujo normal, NO fixed, NO sticky. Scrollea como el resto de la página. --}}
+<div style="width:100%; max-width:1600px; margin:0 auto;">
+    <div style="width:100%; height:260px; overflow:hidden;
+                background-image:url('{{ asset('img/banner.jpg') }}'); background-size:cover; background-position:top;">
+    </div>
+</div>
+@endsection
+
 @section('content')
 
 @php
     $habilidades_array = $estudiante->habilidades->pluck('nombre')->toArray();
 @endphp
 
+{{-- panel-page con margin-top negativo: sube el header de perfil para que solape el borde inferior del banner --}}
+<div class="panel-page" style="margin-top: -200px !important; margin-bottom:80px;background-color:var(--bg) ;opacity: 0.95; border-radius: 8px; border:1px solid var(--accent); justify-content:start;box-shadow:
+0 20px 50px var(--shadow-color),
+0 0px 30px var(--shadow-glow);">
 <div class="panel-page">
 
     {{-- Header de perfil --}}
-    <div class="perfil-header-card">
+    <div class="perfil-header-card" >
         <div class="perfil-header-inner">
-            <div class="perfil-avatar {{ $estudiante->foto_perfil ? 'avatar-expandible' : '' }}" 
+            <div class="perfil-avatar {{ $estudiante->foto_perfil ? 'avatar-expandible' : '' }}"
                 style="{{ $estudiante->foto_perfil ? 'background-image:url(\'' . \Illuminate\Support\Facades\Storage::url($estudiante->foto_perfil) . '\'); background-size:cover; background-position:center; cursor:pointer;' : '' }}"
                 @if($estudiante->foto_perfil) onclick="abrirModalAvatar('{{ \Illuminate\Support\Facades\Storage::url($estudiante->foto_perfil) }}')" @endif>
                 @if(!$estudiante->foto_perfil)
@@ -53,7 +66,7 @@
                             <div class="info-label">DNI</div>
                             <div class="info-value">{{ $estudiante->dni ?? 'No especificado' }}</div>
                         </div>
-                        
+
                         {{-- Correo Electrónico Activo como Link Plateado --}}
                         <div class="info-item {{ !empty($usuario->email) ? 'info-item-link' : '' }}">
                             <div class="info-label">Correo electrónico</div>
@@ -103,7 +116,7 @@
                             <div class="info-label">Legajo universitario</div>
                             <div class="info-value">{{ $estudiante->legajo ?? 'No especificado' }}</div>
                         </div>
-                        
+
                         <div class="info-item {{ !empty($estudiante->portfolio) ? 'info-item-link' : '' }}">
                             <div class="info-label">Portafolio</div>
                             <div class="info-value">
@@ -116,7 +129,7 @@
                                 @endif
                             </div>
                         </div>
-                        
+
                         <div class="info-item {{ !empty($estudiante->cv) ? 'info-item-link' : '' }}">
                             <div class="info-label">Currículum Vitae</div>
                             <div class="info-value">
@@ -179,7 +192,7 @@
                 </div>
                 <div class="perfil-card-body">
                     <div class="perfil-grid">
-                        
+
                         <div class="info-item {{ !empty($estudiante->linkedin) ? 'info-item-link' : '' }}">
                             <div class="info-label">LinkedIn</div>
                             <div class="info-value">
@@ -192,7 +205,7 @@
                                 @endif
                             </div>
                         </div>
-                        
+
                         <div class="info-item {{ !empty($estudiante->github) ? 'info-item-link' : '' }}">
                             <div class="info-label">GitHub</div>
                             <div class="info-value">
@@ -205,7 +218,7 @@
                                 @endif
                             </div>
                         </div>
-                        
+
                     </div>
                 </div>
             </div>
@@ -213,7 +226,5 @@
 
     </div>
 </div>
-
-
-
+</div>
 @endsection

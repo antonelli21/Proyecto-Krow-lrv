@@ -2,12 +2,10 @@
 
 @section('title', 'Editar Perfil Empresa — KROW')
 
-@section('content')
-
-<div class="panel-page">
-
-    {{-- ══ BANNER ══ --}}
-    <div id="banner-trigger" style="position:relative; left:50%; transform:translateX(-50%); width:100vw; margin-top:-1.5rem; height:320px; overflow:hidden; cursor:pointer;" title="Tocar para cambiar el banner">
+@section('banner')
+{{-- Banner: en flujo normal, NO fixed, NO sticky, clickeable para subir imagen --}}
+<div style="width:100%; max-width:1600px; margin:0 auto;">
+    <div id="banner-trigger" style="position:relative; width:100%; height:260px; overflow:hidden; cursor:pointer;" title="Tocar para cambiar el banner">
         <div id="bannerPreview" style="width:100%; height:100%; background:{{ $empresa->banner ? 'url(\'' . \Illuminate\Support\Facades\Storage::url($empresa->banner) . '\') center/cover no-repeat' : 'linear-gradient(135deg, var(--surface) 0%, var(--border) 100%)' }}; display:flex; align-items:center; justify-content:center;">
             @if(!$empresa->banner)
                 <span style="color:var(--muted); font-size:0.85rem;">
@@ -19,15 +17,25 @@
             <span style="color:#fff; font-size:0.9rem;"><i class="bi bi-camera-fill"></i> Cambiar banner</span>
         </div>
     </div>
-        <input type="file" id="banner" name="banner" accept="image/*"
-            form="formEditarEmpresa" style="display:none;"
-            onchange="previewBanner(this)">
-        <p style="text-align:center; color:var(--muted); font-size:0.8rem; margin-top:6px;">
-            Recomendado: 1200x400px o superior (JPG, PNG o WEBP)
-        </p>
+</div>
+@endsection
+
+@section('content')
+
+<input type="file" id="banner" name="banner" accept="image/*"
+    form="formEditarEmpresa" style="display:none;"
+    onchange="previewBanner(this)">
+<p style="text-align:center; color:var(--muted); font-size:0.8rem; margin:6px 0 0;">
+    Recomendado: 1200x400px o superior (JPG, PNG o WEBP)
+</p>
+
+{{-- panel-page con margin-top negativo: sube el header de perfil para que solape el borde inferior del banner --}}
+<div class="panel-page" style="margin-top: -70px !important; margin-bottom:80px;background-color:var(--bg) ;opacity: 0.95; border-radius: 8px; border:1px solid var(--accent); justify-content:start;box-shadow:
+0 20px 50px var(--shadow-color),
+0 0px 30px var(--shadow-glow);">
 
     {{-- ══ HEADER centrado ══ --}}
-    <div style="max-width: 720px; margin: 0 auto;">
+    <div style="width:1100px; max-width: 1400px; margin: 0 auto;">
         <div class="perfil-header-card">
             <div class="perfil-header-inner">
 
@@ -61,7 +69,7 @@
     </div>
 
     {{-- ══ FORMULARIO ══ --}}
-    <div style="max-width: 720px; margin: 0 auto; display: flex; flex-direction: column; gap: 1.5rem;">
+    <div style="width:1100px; max-width: 1400px; margin: 0 auto; display: flex; flex-direction: column; gap: 1.5rem;">
 
         <form id="formEditarEmpresa" action="{{ route('empresa.perfil.update') }}" method="POST" enctype="multipart/form-data">
             @csrf
@@ -309,7 +317,7 @@
     </div>
 
 </div>
-
+</div>
 <style>
 .avatar-overlay {
     position: absolute;

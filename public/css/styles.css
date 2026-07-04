@@ -42,7 +42,7 @@
   --trans: .18s ease;
   --shadow-color: rgba(0, 0, 0, .45);
   --shadow-glow: rgba(20, 201, 144, 0.361);
-    --icon-idle: rgba(0, 0, 0, .35);
+  --icon-idle: rgba(0, 0, 0, .35);
   --icon-idle-bg: rgba(0, 0, 0, .04);
   --icon-ver-bg: rgba(7, 117, 82, .12);
   --icon-ver-color: var(--accent);
@@ -96,6 +96,12 @@
   --badge-contacto-text: #000000;
   --badge-contacto-border: #2e9b28;
 
+  --link-card-border: var(--accent);
+  --link-card-border-hover: var(--accent);
+  --link-card-bg: rgba(91, 107, 122, 0.08);
+  --link-card-text: #3f4d5d;
+  --link-card-text-hover: #1f2937;
+  --link-card-icon: #5b6b7a;
 }
 
 [data-theme="dark"] {
@@ -113,7 +119,7 @@
   --title: #F5F3EE;
   --muted: #6B6B78;
   --border: #3A3A45;
-  --borde-especifico: #3A3A45 ;
+  --borde-especifico: #3A3A45;
   --bgnoti: #2C2C35;
   --toolbar_bg: #111118;
   --bg-card: #1e2030;
@@ -126,7 +132,7 @@
   --shadow-accent: 0 4px 20px rgba(212, 168, 67, .22);
   --shadow-color: rgba(255, 255, 255, .45);
   --shadow-glow: rgba(246, 186, 48, 0.315);
-    --icon-idle: rgba(255, 255, 255, .35);
+  --icon-idle: rgba(255, 255, 255, .35);
   --icon-idle-bg: rgba(255, 255, 255, .05);
   --icon-ver-bg: rgba(212, 168, 67, .15);
   --icon-ver-color: var(--accent);
@@ -140,7 +146,7 @@
   --icon-eliminar-color: var(--destructive);
   --icon-ver-border: var(--accent);
   --icon-idle-border: rgba(255, 255, 255, .10);
-  --detalle-bg: var(--bg-card); 
+  --detalle-bg: var(--bg-card);
   --btn-aprobar-bg: rgba(46, 204, 154, .15);
   --btn-aprobar-fg: #2ECC9A;
   --btn-suspender-bg: rgba(212, 168, 67, .15);
@@ -162,6 +168,13 @@
   --badge-danger-bg: rgba(212, 24, 61, .15);
   --badge-danger-text: #e05577;
   --badge-danger-border: rgba(212, 24, 61, .30);
+
+  --link-card-border: var(--accent);
+  --link-card-border-hover: #f0c96b;
+  --link-card-bg: rgba(212, 168, 67, .08);
+  --link-card-text: var(--accent);
+  --link-card-text-hover: #f8d87d;
+  --link-card-icon: var(--accent);
 
   --badge-postulado-bg: rgba(241, 196, 15, .15);
   --badge-postulado-text: var(--postulado);
@@ -1598,7 +1611,6 @@ body {
 /* botón aplicar filtros */
 .btn-apply-filters {
   width: 100%;
-  margin-top: 14px;
   padding: 8px 16px;
   color: var(--text_btn);
   background: var(--accent);
@@ -4226,7 +4238,8 @@ body {
   font-weight: 700;
   padding: 1px 7px;
 }
-.admin-empty{
+
+.admin-empty {
   text-align: center;
   padding: 48px 24px;
   color: var(--muted);
@@ -4492,35 +4505,35 @@ body {
 .badge-aprobado,
 .badge-aprobada,
 .badge-publicada {
-    background: var(--badge-success-bg);
-    color: var(--badge-success-text);
-    border: 1px solid var(--badge-success-border);
+  background: var(--badge-success-bg);
+  color: var(--badge-success-text);
+  border: 1px solid var(--badge-success-border);
 }
 
 /* Suspendido / Pendiente */
 .badge-suspendido,
 .badge-suspendida,
 .badge-pendiente {
-    background: var(--badge-warning-bg);
-    color: var(--badge-warning-text);
-    border: 1px solid var(--badge-warning-border);
+  background: var(--badge-warning-bg);
+  color: var(--badge-warning-text);
+  border: 1px solid var(--badge-warning-border);
 }
 
 /* Pausado */
 .badge-pausado,
 .badge-pausada {
-    background: var(--badge-info-bg);
-    color: var(--badge-info-text);
-    border: 1px solid var(--badge-info-border);
+  background: var(--badge-info-bg);
+  color: var(--badge-info-text);
+  border: 1px solid var(--badge-info-border);
 }
 
 /* Rechazado / Cerrada */
 .badge-rechazado,
 .badge-rechazada,
 .badge-cerrada {
-    background: var(--badge-danger-bg);
-    color: var(--badge-danger-text);
-    border: 1px solid var(--badge-danger-border);
+  background: var(--badge-danger-bg);
+  color: var(--badge-danger-text);
+  border: 1px solid var(--badge-danger-border);
 }
 
 /* Acciones */
@@ -4560,6 +4573,7 @@ body {
   color: var(--icon-ver-color);
   border: 1px solid var(--icon-ver-border);
 }
+
 .btn-icon.btn-ver:hover {
   background: var(--icon-ver-bg);
   filter: brightness(1.15);
@@ -4584,6 +4598,7 @@ body {
   background: var(--icon-eliminar-bg);
   color: var(--icon-eliminar-color);
 }
+
 /* ── Fila expandida (detalle) ── */
 .admin-detalle-row {
   display: none;
@@ -4621,6 +4636,7 @@ body {
   color: var(--text);
   line-height: 1.6;
 }
+
 .admin-detalle-actions {
   display: flex;
   gap: 8px;
@@ -4643,7 +4659,10 @@ body {
   cursor: pointer;
   transition: filter var(--trans);
 }
-.btn-admin-aprobar:hover { filter: brightness(1.08); }
+
+.btn-admin-aprobar:hover {
+  filter: brightness(1.08);
+}
 
 .btn-admin-rechazar {
   display: inline-flex;
@@ -4660,7 +4679,10 @@ body {
   cursor: pointer;
   transition: filter var(--trans);
 }
-.btn-admin-rechazar:hover { filter: brightness(1.08); }
+
+.btn-admin-rechazar:hover {
+  filter: brightness(1.08);
+}
 
 .btn-admin-suspender {
   display: inline-flex;
@@ -4677,7 +4699,10 @@ body {
   cursor: pointer;
   transition: filter var(--trans);
 }
-.btn-admin-suspender:hover { filter: brightness(1.08); }
+
+.btn-admin-suspender:hover {
+  filter: brightness(1.08);
+}
 
 
 .admin-action-notice {
@@ -5622,69 +5647,32 @@ textarea.filter-input-text:focus {
 
 
 
-/* --- Variante profesional en tono Plateado / Metalizado para Links --- */
 .info-item-link {
-  /* Borde izquierdo en gris plateado/cromado medio */
-  border-left: 4px solid #94a3b8 !important;
-  /* Degradado sutil simulando un reflejo metálico suave sobre el fondo */
-  background: linear-gradient(90deg, rgba(203, 213, 225, 0.09) 0%, var(--bg) 100%) !important;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  border-left: 4px solid var(--link-card-border);
+
+  background: linear-gradient(90deg,
+      var(--link-card-bg) 0%,
+      var(--bg) 100%);
+
+  box-shadow: var(--shadow-card);
   position: relative;
   overflow: hidden;
-  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
 }
 
-/* --- Variante Plateada Metalizada Universal (Adaptable a Modo Claro y Oscuro) --- */
-.info-item-link {
-  /* Borde izquierdo gris plateado/cromado intermedio */
-  border-left: 4px solid #64748b !important;
-  /* Fondo con un sutil reflejo metálico translúcido */
-  background: linear-gradient(90deg, rgba(100, 116, 139, 0.06) 0%, rgba(255, 255, 255, 0.01) 100%) !important;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
-  position: relative;
-  overflow: hidden;
-  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
-}
-
-/* Efecto Hover */
 .info-item-link:hover {
-  transform: translateY(-1px) translateX(2px) !important;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05) !important;
-  border-left-color: #475569 !important;
-  /* Plata más oscuro y definido al pasar el mouse */
+  border-left-color: var(--link-card-border-hover);
 }
 
-/* TEXTO DEL ENLACE: Gris acero oscuro para garantizar legibilidad en fondos blancos */
 .info-item-link .link-accion {
-  color: #475569 !important;
-  /* Color gris pizarra de alta visibilidad */
-  font-weight: 600;
-  text-decoration: none;
-  transition: color 0.15s ease-in-out;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
+  color: var(--link-card-text);
 }
 
-/* Hover del texto del enlace */
-.info-item-link .link-accion:hover,
-.info-item-link .link-accion:focus-visible {
-  color: #1e293b !important;
-  /* Casi negro/grafito para un contraste óptimo en modo claro */
-  text-decoration: underline;
+.info-item-link .link-accion:hover {
+  color: var(--link-card-text-hover);
 }
 
-/* Ícono decorativo en marca de agua */
 .info-item-link::after {
-  content: '\f15c';
-  font-family: 'Font Awesome 5 Free', 'bootstrap-icons';
-  position: absolute;
-  top: 8px;
-  right: 12px;
-  font-size: 0.75rem;
-  color: #64748b;
-  opacity: 0.15;
-  /* Muy sutil para que no ensucie el texto */
+  color: var(--link-card-icon);
 }
 
 /* ════════════════════════════════════════
