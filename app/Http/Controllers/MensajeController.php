@@ -77,27 +77,28 @@ class MensajeController extends Controller
         return response()->json(['success' => true, 'mensaje' => $mensaje], 201);
     }
 
-    public function getMensajesByChat($id_chat)
-    {
-        $userId = auth()->id();
+        public function getMensajesByChat($id_chat)
+        {
+            $userId = auth()->id();
 
-        $chat = Chat::where('id_chat', $id_chat)
-            ->where(function ($q) use ($userId) {
-                $q->where('id_usuario_1', $userId)
-                  ->orWhere('id_usuario_2', $userId);
-            })->firstOrFail();
+            $chat = Chat::where('id_chat', $id_chat)
+                ->where(function ($q) use ($userId) {
+                    $q->where('id_usuario_1', $userId)
+                    ->orWhere('id_usuario_2', $userId);
+                })->firstOrFail();
 
-        $chat->mensajes()
-            ->where('id_remitente', '!=', $userId)
-            ->where('leido', false)
-            ->update(['leido' => true]);
+            $chat->mensajes()
+                ->where('id_remitente', '!=', $userId)
+                ->where('leido', false)
+                ->update(['leido' => true]);
 
-        return response()->json([
-            'mensajes' => $chat->mensajes()
-                ->with('remitente:id,name')
-                ->orderBy('fecha_envio', 'asc')
-                ->get(['id_mensaje', 'id_remitente', 'contenido',
-                       'leido', 'fecha_envio', 'ruta_archivo', 'nombre_archivo']),
-        ]);
-    }
+            return response()->json([
+                'mensajes' => $chat->mensajes()
+                    ->with('remitente:id,name')
+                    ->orderBy('fecha_envio', 'asc')
+                    ->orderBy('id_mensaje', 'asc')
+                    ->get(['id_mensaje', 'id_remitente', 'contenido',
+                        'leido', 'fecha_envio', 'ruta_archivo', 'nombre_archivo']),
+            ]);
+        }
 }

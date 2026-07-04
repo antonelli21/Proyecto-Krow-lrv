@@ -60,6 +60,11 @@
       <i class="bi bi-exclamation-circle"></i> {{ session('error') }}
     </div>
   @endif
+  @if($errors->any())
+    <div style="margin-bottom:16px;padding:13px 16px;border:1px solid rgba(212,24,61,.35);background:rgba(14,24,22,.96);color:#e05577;font-size:13px;font-weight:700;display:flex;align-items:center;gap:8px;">
+      <i class="bi bi-exclamation-circle"></i> {{ $errors->first() }}
+    </div>
+  @endif
 
   {{-- ═══ TABS ═══ --}}
   <div class="admin-tabs">
@@ -1016,6 +1021,7 @@
     <p class="modal-confirmar-msg" id="dialogMotivoMsg">Se mostrará a la empresa (opcional).</p>
     <textarea id="dialogMotivoInput"
               rows="8"
+              oninput="actualizarContadorMotivo()"
               placeholder="Ej: la oferta no cumple con los requisitos de la plataforma..."
               style="
                 width:100%;
@@ -1029,8 +1035,10 @@
                 font-size:14px;
                 line-height:1.5;
                 resize:vertical;
-                margin-bottom:20px;
               "></textarea>
+    <div id="dialogMotivoContador" style="text-align:right; font-size:12px; color:var(--muted); margin-top:4px; margin-bottom:16px;">
+      0 / 5000
+    </div>
     <div class="modal-confirmar-btns">
       <button onclick="document.getElementById('dialogMotivo').close()"
               class="btn-cancelar-dialog">Cancelar</button>
@@ -1039,11 +1047,6 @@
       </button>
     </div>
   </div>
-  @if($errors->any())
-  <div style="margin-bottom:16px;padding:13px 16px;border:1px solid rgba(212,24,61,.35);background:rgba(14,24,22,.96);color:#e05577;font-size:13px;font-weight:700;display:flex;align-items:center;gap:8px;">
-    <i class="bi bi-exclamation-circle"></i> {{ $errors->first() }}
-  </div>
-@endif
 </dialog>
 
 @endsection
@@ -1084,6 +1087,34 @@ function modalConfirm(titulo, mensaje, labelBoton = 'Confirmar') {
 }
 
 /* ════════════════════════════════════════
+   CONTADOR DE CARACTERES — motivo de pausa
+════════════════════════════════════════ */
+const MOTIVO_MAX = 5000;
+
+function actualizarContadorMotivo() {
+  const input    = document.getElementById('dialogMotivoInput');
+  const contador = document.getElementById('dialogMotivoContador');
+  const btn      = document.getElementById('btnConfirmarMotivo');
+  const len      = input.value.length;
+
+  contador.textContent = `${len} / ${MOTIVO_MAX}`;
+
+  if (len > MOTIVO_MAX) {
+    contador.style.color = '#e05577';
+    contador.style.fontWeight = '700';
+    btn.disabled = true;
+    btn.style.opacity = '.5';
+    btn.style.cursor = 'not-allowed';
+  } else {
+    contador.style.color = 'var(--muted)';
+    contador.style.fontWeight = 'normal';
+    btn.disabled = false;
+    btn.style.opacity = '1';
+    btn.style.cursor = 'pointer';
+  }
+}
+
+/* ════════════════════════════════════════
    MODAL MOTIVO — reemplaza prompt() nativo
 ════════════════════════════════════════ */
 function modalMotivo(titulo = 'Motivo de la pausa', mensaje = 'Se mostrará a la empresa (opcional).') {
@@ -1093,6 +1124,7 @@ function modalMotivo(titulo = 'Motivo de la pausa', mensaje = 'Se mostrará a la
     document.getElementById('dialogMotivoMsg').textContent   = mensaje;
     const input = document.getElementById('dialogMotivoInput');
     input.value = '';
+    actualizarContadorMotivo();
 
     // Clonar botón para limpiar listeners anteriores
     const btnViejo = document.getElementById('btnConfirmarMotivo');
@@ -1102,6 +1134,7 @@ function modalMotivo(titulo = 'Motivo de la pausa', mensaje = 'Se mostrará a la
     let confirmado = false;
 
     btn.addEventListener('click', () => {
+      if (input.value.length > MOTIVO_MAX) return; // seguridad extra, el botón ya está disabled en este caso
       confirmado = true;
       dialog.close();
       resolve(input.value.trim());
