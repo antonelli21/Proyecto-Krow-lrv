@@ -231,7 +231,6 @@ class AdminController extends Controller
                     'id_remitente' => $adminId,
                     'contenido'    => "Tu oferta \"{$oferta->titulo}\" fue pausada.\r\n\r Motivo: {$request->motivo}",
                     'leido'        => false,
-                    'fecha_envio'  => now(),
                 ]);
             }
 

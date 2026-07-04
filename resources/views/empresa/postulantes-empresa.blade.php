@@ -146,7 +146,7 @@
     .btn-accept {
         display: inline-flex; align-items: center; gap: 6px;
         padding: 8px 14px;
-        background: #39a767; color: white;
+        background: #39a767; color: black;
         border: none; border-radius: 6px;
         font-size: 13px; font-weight: 500;
         cursor: pointer; transition: opacity 0.2s;

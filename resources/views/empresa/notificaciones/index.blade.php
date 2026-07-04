@@ -20,6 +20,9 @@
 
         @if($notificaciones->total() > 0)
             <div class="nhistorial-actions">
+                <button class="nhistorial-mark-all" onclick="marcarTodasLeidas()">
+                    Marcar todas como leídas
+                </button>
                 <button class="nhistorial-delete-all" onclick="confirmarEliminarTodas()">
                     Eliminar todas
                 </button>
@@ -38,7 +41,8 @@
                 </div>
 
                 {{-- Cuerpo --}}
-                <a href="{{ $n->url ?? '#' }}" class="nhistorial-body">
+                <a href="{{ $n->url ?? '#' }}" class="nhistorial-body"
+                   onclick="marcarComoLeida({{ $n->id }}, document.getElementById('notif-item-{{ $n->id }}'))">
                     <p class="nhistorial-titulo-item">{{ $n->titulo }}</p>
                     <p class="nhistorial-mensaje">{{ $n->mensaje }}</p>
                     <span class="notif-time">{{ $n->created_at->diffForHumans() }}</span>
@@ -86,6 +90,18 @@
     align-items: center;
     gap: 10px;
 }
+.nhistorial-mark-all {
+    border: 1px solid var(--border-accent, var(--border));
+    background: var(--accent-dim);
+    color: var(--accent);
+    padding: 8px 14px;
+    border-radius: 7px;
+    cursor: pointer;
+    font-size: .82rem;
+    font-weight: 600;
+    transition: .2s;
+}
+.nhistorial-mark-all:hover { opacity: .8; }
 .nhistorial-delete-all {
     border: none;
     background: #d4183d;
@@ -249,6 +265,60 @@
 }
 .modal-confirm-buttons .cancelar { background: #999; color: white; }
 .modal-confirm-buttons .aceptar  { background: #d4183d; color: white; }
+/* ════════════════════════════════════════
+   PAGINACIÓN LARAVEL
+════════════════════════════════════════ */
+.pagination {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    list-style: none;
+    padding: 12px 0;
+    margin: 0;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+.page-item .page-link,
+.page-item span {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 32px;
+    height: 32px;
+    padding: 0 8px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text);
+    font-size: 13px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: background var(--trans), border-color var(--trans), color var(--trans);
+}
+.page-item .page-link:hover {
+    background: var(--accent-dim);
+    border-color: var(--accent);
+    color: var(--accent);
+}
+.page-item.active .page-link,
+.page-item.active span {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+    font-weight: 700;
+}
+[data-theme="dark"] .page-item.active .page-link,
+[data-theme="dark"] .page-item.active span {
+    color: #111118;
+}
+.page-item.disabled .page-link,
+.page-item.disabled span {
+    opacity: 0.35;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+
 </style>
 
 <script>
@@ -307,6 +377,53 @@ function confirmarEliminarTodas() {
             });
         }
     });
+}
+
+/* ════════════════════════════════════════
+   MARCAR COMO LEÍDA (individual)
+════════════════════════════════════════ */
+async function marcarComoLeida(id, el) {
+    // Si ya estaba leída, no hacemos nada (evita pegarle al server sin necesidad)
+    if (!el || !el.classList.contains('unread')) return;
+
+    try {
+        await fetch('/notificaciones/api/marcar-leida', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+            },
+            body: JSON.stringify({ id }),
+        });
+
+        el.classList.remove('unread');
+        const dot = el.querySelector('.notif-dot');
+        if (dot) dot.remove();
+    } catch (e) {
+        console.error(e);
+    }
+    // No hacemos preventDefault: si la notificación tiene url, la navegación sigue su curso normal
+}
+
+/* ════════════════════════════════════════
+   MARCAR TODAS COMO LEÍDAS
+════════════════════════════════════════ */
+async function marcarTodasLeidas() {
+    try {
+        const res = await fetch('/notificaciones/api/marcar-todas', {
+            method: 'POST',
+            headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+        });
+        if (res.ok) {
+            document.querySelectorAll('.nhistorial-item.unread').forEach(el => {
+                el.classList.remove('unread');
+                const dot = el.querySelector('.notif-dot');
+                if (dot) dot.remove();
+            });
+        }
+    } catch (e) {
+        console.error(e);
+    }
 }
 </script>
 @endsection
