@@ -78,7 +78,7 @@
           </div>
           <div class="info-item" style="grid-column: 1 / -1;">
             <div class="info-label">Descripción de la organización</div>
-            <div class="info-value">{{ $empresa->descripcion ?? 'Sin descripción' }}</div>
+            <div class="info-value" style="word-break:break-word; overflow-wrap:break-word; overflow:hidden;">{{ $empresa->descripcion ?? 'Sin descripción' }}</div>
           </div>
         </div>
       </div>

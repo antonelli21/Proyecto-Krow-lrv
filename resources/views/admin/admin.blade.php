@@ -410,7 +410,7 @@
               <div class="admin-detalle-inner">
                 <div>
                   <p class="admin-detalle-block-title">Descripción</p>
-                  <p class="admin-detalle-value">{{ $e->descripcion ?? '—' }}</p>
+                  <p class="admin-detalle-value" style="word-break:break-word; overflow-wrap:break-word;">{{ $e->descripcion ?? '—' }}</p>
                   <p class="admin-detalle-value" style="margin-top:8px;">
                     Registro: {{ $e->fecha_creacion ? \Carbon\Carbon::parse($e->fecha_creacion)->format('d/m/Y') : '—' }}
                   </p>
@@ -626,7 +626,7 @@
               <div class="admin-detalle-inner">
                 <div>
                   <p class="admin-detalle-block-title">Descripción</p>
-                  <p class="admin-detalle-value">{{ Str::limit($o->descripcion ?? '—', 200) }}</p>
+                  <p class="admin-detalle-value" style="word-break:break-word; overflow-wrap:break-word;">{{ Str::limit($o->descripcion ?? '—', 200) }}</p>
                   @if($o->requisitos)
                     <p class="admin-detalle-block-title" style="margin-top:10px;">Requisitos</p>
                     <p class="admin-detalle-value">{{ Str::limit($o->requisitos, 150) }}</p>
@@ -811,9 +811,7 @@
 
               <div>
                 <p class="admin-detalle-block-title">{{ $asuntoReal }}</p>
-                <p class="admin-detalle-value" style="white-space:pre-line; line-height:1.7;">{{ $r->descripcion }}</p>
-              </div>
-
+                <p class="admin-detalle-value" style="white-space:pre-line; line-height:1.7; word-break:break-word; overflow-wrap:break-word;">{{ $r->descripcion }}</p>
               <div>
                 <p class="admin-detalle-block-title">Acciones</p>
                 <div class="admin-detalle-actions">

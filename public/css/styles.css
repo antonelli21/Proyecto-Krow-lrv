@@ -3174,11 +3174,13 @@ body {
   color: var(--muted);
   line-height: 1.55;
   display: -webkit-box;
-  -webkit-line-clamp: 2;
+  -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
   flex: 1 0 auto;
   min-height: 0;
+  word-break: break-word;      /* ← agregar */
+  overflow-wrap: break-word;
 }
 
 .empresa-toggle {
