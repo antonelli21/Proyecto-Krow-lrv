@@ -69,7 +69,7 @@
           @if(!empty($empresa->descripcion))
           <div class="info-item" style="grid-column: 1 / -1;">
             <div class="info-label">Descripción</div>
-            <div class="info-value">{{ $empresa->descripcion }}</div>
+            <div class="info-value" style="word-break:break-word; overflow-wrap:break-word; overflow:hidden; display:-webkit-box; -webkit-line-clamp:5; -webkit-box-orient:vertical;">{{ $empresa->descripcion }}</div>
           </div>
           @endif
         </div>
