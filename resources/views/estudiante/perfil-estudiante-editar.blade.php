@@ -2,6 +2,15 @@
 
 @section('title', 'Editar Perfil — KROW')
 
+@section('banner')
+{{-- Banner: en flujo normal, NO fixed, NO sticky. Scrollea como el resto de la página. --}}
+<div style="width:100%; max-width:1600px; margin:0 auto;">
+    <div style="width:100%; height:260px; overflow:hidden;
+                background-image:url('{{ asset('img/banner.jpg') }}'); background-size:cover; background-position:top;">
+    </div>
+</div>
+@endsection
+
 @section('content')
 
 @php
@@ -9,10 +18,14 @@
     $misHabilidades = old('habilidades', $estudiante->habilidades->pluck('id_habilidad')->toArray());
 @endphp
 
-<div class="panel-page">
+{{-- panel-page con margin-top negativo: sube el header de perfil para que solape el borde inferior del banner --}}
+<div class="panel-page" style="margin-top: -200px !important; margin-bottom:80px;background-color:var(--bg) ;opacity: 0.95; border-radius: 8px; border:1px solid var(--accent); justify-content:start;box-shadow:
+0 20px 50px var(--shadow-color),
+0 0px 30px var(--shadow-glow);">
+<div class="panel-page" >
 
     {{-- ══ HEADER ══ --}}
-    <div class="perfil-header-card">
+    <div class="perfil-header-card" style="width:1100px; max-width: 1400px;">
         <div class="perfil-header-inner">
             <div class="perfil-avatar" id="avatarPreview"
                  style="cursor:pointer; position:relative; {{ $estudiante->foto_perfil ? 'background-image:url(\'' . \Illuminate\Support\Facades\Storage::url($estudiante->foto_perfil) . '\'); background-size:cover; background-position:center;' : '' }}"
@@ -43,9 +56,8 @@
         </div>
     </div>
 
-
     {{-- ══ FORMULARIO ══ --}}
-        <div style="max-width: 720px; margin: 0 auto; display: flex; flex-direction: column; gap: 1.5rem;">
+    <div style="width:1100px; max-width: 1400px; margin: 0 auto; display: flex; flex-direction: column; gap: 1.5rem;">
 
         <form id="formEditarPerfil" action="{{ route('estudiante.perfil.update') }}" method="POST" enctype="multipart/form-data">
             @csrf
@@ -63,7 +75,7 @@
                     <i class="bi bi-person-circle"></i> Datos Personales
                 </div>
                 <div class="perfil-card-body" style="display: flex; flex-direction: column; gap: 16px;">
-                    
+
                     {{-- Fila 1 --}}
                     <div style="display: flex; gap: 16px; width: 100%;">
                         <div class="info-item" style="flex: 1;">
@@ -136,7 +148,7 @@
                     <i class="bi bi-book"></i> Datos Académicos
                 </div>
                 <div class="perfil-card-body" style="display: flex; flex-direction: column; gap: 16px;">
-                    
+
                     {{-- Fila 1 --}}
                     <div style="display: flex; gap: 16px; width: 100%;">
                         <div class="info-item" style="flex: 1;">
@@ -196,7 +208,7 @@
                     <i class="bi bi-briefcase"></i> Preferencias Laborales
                 </div>
                 <div class="perfil-card-body" style="display: flex; flex-direction: column; gap: 16px;">
-                    
+
                     {{-- Fila 1 (Ancho Completo) --}}
                     <div class="info-item" style="width: 100%;">
                         <label class="info-label" for="modalidad_deseada">Modalidad deseada</label>
@@ -252,7 +264,7 @@
                     <i class="bi bi-share"></i> Redes Profesionales
                 </div>
                 <div class="perfil-card-body" style="display: flex; flex-direction: column; gap: 16px;">
-                    
+
                     <div style="display: flex; gap: 16px; width: 100%;">
                         <div class="info-item" style="flex: 1;">
                             <label class="info-label" for="linkedin">LinkedIn</label>
@@ -291,7 +303,7 @@
     </div>
 
 </div>
-
+<div>
 <style>
 .avatar-overlay {
     position: absolute;

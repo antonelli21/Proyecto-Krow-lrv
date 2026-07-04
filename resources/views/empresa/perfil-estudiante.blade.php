@@ -2,12 +2,25 @@
 
 @section('title', ($estudiante->nombre ?? 'Estudiante') . ' — Perfil')
 
+@section('banner')
+{{-- Banner: en flujo normal, NO fixed, NO sticky. Scrollea como el resto de la página. --}}
+<div style="width:100%; max-width:1600px; margin:0 auto;">
+    <div style="width:100%; height:260px; overflow:hidden;
+                background-image:url('{{ asset('img/banner.jpg') }}'); background-size:cover; background-position:top; object-fit:cover;" >
+    </div>
+</div>
+@endsection
+
 @section('content')
 
 @php
     $habilidades_array = $estudiante->habilidades->pluck('nombre')->toArray();
 @endphp
 
+{{-- panel-page con margin-top negativo: sube el header de perfil para que solape el borde inferior del banner --}}
+<div class="panel-page" style="margin-top: -200px !important; margin-bottom:80px;background-color:var(--bg) ;opacity: 0.95; border-radius: 8px; border:1px solid var(--accent); justify-content:start;box-shadow:
+0 20px 50px var(--shadow-color),
+0 0px 30px var(--shadow-glow);">
 <div class="panel-page">
 
   {{-- Header de perfil --}}
@@ -207,5 +220,5 @@
 
   </div>
 </div>
-
+</div>
 @endsection
