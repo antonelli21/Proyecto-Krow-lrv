@@ -48,6 +48,7 @@ class AdminController extends Controller
         $empresasAprobadas  = Empresa::where('estado', 'aprobada')->count();
         $empresasPendientes = Empresa::where('estado', 'pendiente')->count();
         $empresasRechazadas = Empresa::where('estado', 'rechazada')->count();
+        $empresasSuspendidas = Empresa::where('estado', 'suspendida')->count();
 
         $empresas = Empresa::with('user')
             ->withCount(['ofertas as ofertas_activas_count' => fn($q) => $q->where('estado', 'activa')])
@@ -56,7 +57,7 @@ class AdminController extends Controller
 
         return view('admin.admin', compact(
             'seccion',
-            'totalEmpresas', 'empresasAprobadas', 'empresasPendientes', 'empresasRechazadas',
+            'totalEmpresas', 'empresasAprobadas', 'empresasPendientes', 'empresasRechazadas', 'empresasSuspendidas',
             'empresas'
         ));
     }
@@ -69,6 +70,8 @@ class AdminController extends Controller
         $ofertasPublicadas = Oferta::where('estado', 'activa')->count();
         $ofertasPendientes = Oferta::where('estado', 'pendiente')->count();
         $ofertasPausadas   = Oferta::where('estado', 'pausada')->count();
+        $ofertasCerradas = Oferta::where('estado', 'cerrada')->count();
+
 
         $ofertas = Oferta::with('empresa')
             ->withCount('postulaciones')
@@ -77,7 +80,7 @@ class AdminController extends Controller
 
         return view('admin.admin', compact(
             'seccion',
-            'totalOfertas', 'ofertasPublicadas', 'ofertasPendientes', 'ofertasPausadas',
+            'totalOfertas', 'ofertasPublicadas', 'ofertasPendientes', 'ofertasPausadas', 'ofertasCerradas',
             'ofertas'
         ));
     }
@@ -241,8 +244,15 @@ class AdminController extends Controller
 
     public function eliminarOferta($id)
     {
-        Oferta::findOrFail($id)->delete();
-        return redirect()->back()->with('success', 'Oferta eliminada.');
+        $oferta = Oferta::findOrFail($id);
+        
+        // Hacer soft delete de todas las postulaciones de esta oferta
+        $oferta->postulaciones()->delete();
+        
+        // Luego hacer soft delete de la oferta
+        $oferta->delete();
+
+        return redirect()->back()->with('success', 'Oferta y sus postulaciones movidas a papelera.');
     }
 
     public function bulkEstadoEstudiantes(Request $request)
@@ -322,15 +332,17 @@ class AdminController extends Controller
             $this->eliminarUserConDependencias($idUsuario);
         }
 
-        return redirect()->back()->with('success', 'Estudiante y usuario eliminados.');
+    // Para cada oferta, hacer soft delete de sus postulaciones primero
+        foreach ($request->ids as $id) {
+            $oferta = Oferta::find($id);
+            if ($oferta) {
+                $oferta->postulaciones()->delete();
+                $oferta->delete();
+            }
     }
 
-    public function bulkDestroyEstudiantes(Request $request)
-    {
-        $request->validate([
-            'ids'   => 'required|array',
-            'ids.*' => 'integer|exists:estudiante,id_estudiante',
-        ]);
+    return redirect()->back()->with('success', count($request->ids) . ' ofertas y sus postulaciones movidas a papelera.');
+
 
         foreach ($request->ids as $id) {
             $estudiante = Estudiante::find($id);
@@ -515,9 +527,14 @@ class AdminController extends Controller
         $oferta = \App\Models\Oferta::onlyTrashed()->findOrFail($id);
         $oferta->restore();
         $oferta->postulaciones()->onlyTrashed()->restore();
-
-        return redirect()->back()->with('success', 'Oferta y sus postulaciones restauradas.');
     }
+    
+
+/* 
+   PAPELERA
+*/
+    
+
 
     public function eliminarPostulacionDefinitivo($id)
     {
@@ -542,7 +559,5 @@ class AdminController extends Controller
         \DB::table('oferta_carrera')->where('id_oferta', $ofertaId)->delete();
 
         $oferta->forceDelete();
-
-        return redirect()->back()->with('success', 'Oferta eliminada definitivamente.');
     }
 }
