@@ -329,12 +329,13 @@ public function eliminarEstudiante($id)
     $idUsuario  = $estudiante->id_usuario;
 
     $estudiante->habilidades()->detach();
-    $estudiante->postulaciones()->delete();
+    // Borrado definitivo: al eliminar el estudiante, sus postulaciones desaparecen para siempre
+    $estudiante->postulaciones()->forceDelete();
     $estudiante->delete();
 
     if ($idUsuario) {
-    $this->eliminarUserConDependencias($idUsuario);
-}
+        $this->eliminarUserConDependencias($idUsuario);
+    }
 
     return redirect()->back()->with('success', 'Estudiante y usuario eliminados.');
 }
@@ -352,12 +353,13 @@ public function bulkDestroyEstudiantes(Request $request)
 
         $idUsuario = $estudiante->id_usuario;
         $estudiante->habilidades()->detach();
-        $estudiante->postulaciones()->delete();
+        // Borrado definitivo: al eliminar el estudiante, sus postulaciones desaparecen para siempre
+        $estudiante->postulaciones()->forceDelete();
         $estudiante->delete();
 
         if ($idUsuario) {
-    $this->eliminarUserConDependencias($idUsuario);
-}
+            $this->eliminarUserConDependencias($idUsuario);
+        }
     }
 
     return redirect()->back()->with('success', count($request->ids) . ' estudiantes eliminados.');
@@ -368,12 +370,21 @@ public function eliminarEmpresa($id)
     $empresa   = Empresa::findOrFail($id);
     $idUsuario = $empresa->id_usuario;
 
-    Oferta::where('id_empresa', $empresa->id_empresa)->delete();
+    // Incluir también ofertas ya en papelera, para no dejar ninguna huérfana
+    $ofertaIds = Oferta::withTrashed()
+        ->where('id_empresa', $empresa->id_empresa)
+        ->pluck('id_oferta');
+
+    // Borrado en cascada: postulaciones → pivote habilidades → ofertas → empresa
+    \App\Models\Postulacion::whereIn('id_oferta', $ofertaIds)->forceDelete();
+    \DB::table('oferta_habilidad')->whereIn('id_oferta', $ofertaIds)->delete();
+    Oferta::withTrashed()->whereIn('id_oferta', $ofertaIds)->forceDelete();
+
     $empresa->delete();
 
     if ($idUsuario) {
-    $this->eliminarUserConDependencias($idUsuario);
-}
+        $this->eliminarUserConDependencias($idUsuario);
+    }
 
     return redirect()->back()->with('success', 'Empresa, ofertas y usuario eliminados.');
 }
@@ -390,12 +401,20 @@ public function bulkDestroyEmpresas(Request $request)
         if (!$empresa) continue;
 
         $idUsuario = $empresa->id_usuario;
-        Oferta::where('id_empresa', $empresa->id_empresa)->delete();
+
+        $ofertaIds = Oferta::withTrashed()
+            ->where('id_empresa', $empresa->id_empresa)
+            ->pluck('id_oferta');
+
+        \App\Models\Postulacion::whereIn('id_oferta', $ofertaIds)->forceDelete();
+        \DB::table('oferta_habilidad')->whereIn('id_oferta', $ofertaIds)->delete();
+        Oferta::withTrashed()->whereIn('id_oferta', $ofertaIds)->forceDelete();
+
         $empresa->delete();
 
         if ($idUsuario) {
-    $this->eliminarUserConDependencias($idUsuario);
-}
+            $this->eliminarUserConDependencias($idUsuario);
+        }
     }
 
     return redirect()->back()->with('success', count($request->ids) . ' empresas eliminadas.');
