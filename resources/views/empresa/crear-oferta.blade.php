@@ -366,7 +366,7 @@
         border: none;
         border-radius: var(--radius);
         background: var(--accent);
-        color: var (--text_btn);
+        color: var(--text_btn);
         font-family: var(--font-display);
         font-weight: 700;
         font-size: 1rem;
@@ -587,32 +587,37 @@
             </div>
 
             {{-- Provincia y Localidad --}}
-            <div style="display: flex; gap: 20px; margin-bottom: 20px;">
-                <div style="flex: 1;">
-                    <label style="display: block; color: #fff; margin-bottom: 8px; font-weight: 600; font-size: 0.9rem;">PROVINCIA *</label>
-                    <select name="id_provincia" id="select-provincia" required 
-                            style="width: 100%; background: #2d3248; border: 1px solid rgba(255,255,255,0.1); padding: 12px; border-radius: 6px; color: #fff;">
-                        <option value="">Seleccionar...</option>
-                        @foreach($provincias as $provincia)
-                            <option value="{{ $provincia->id_provincia }}">{{ $provincia->nombre }}</option>
-                        @endforeach
-                    </select>
+            <div class="form-row-2">
+                <div class="form-group">
+                    <label for="select-provincia">Provincia <span class="required-mark">*</span></label>
+                    <div class="select-wrap">
+                        <select name="id_provincia" id="select-provincia" class="form-select" required>
+                            <option value="" disabled selected>Seleccionar...</option>
+                            @foreach($provincias as $provincia)
+                                <option value="{{ $provincia->id_provincia }}">{{ $provincia->nombre }}</option>
+                            @endforeach
+                        </select>
+                        <span class="select-chevron">▼</span>
+                    </div>
+                    <span class="field-error" id="error-select-provincia">Selecciona una provincia</span>
                 </div>
-                
-                <div style="flex: 1;">
-                    <label style="display: block; color: #fff; margin-bottom: 8px; font-weight: 600; font-size: 0.9rem;">LOCALIDAD *</label>
-                    <select name="id_localidad" id="select-localidad" required disabled
-                            style="width: 100%; background: #2d3248; border: 1px solid rgba(255,255,255,0.1); padding: 12px; border-radius: 6px; color: #fff;">
-                        <option value="">Seleccionar provincia primero...</option>
-                    </select>
+
+                <div class="form-group">
+                    <label for="select-localidad">Localidad <span class="required-mark">*</span></label>
+                    <div class="select-wrap">
+                        <select name="id_localidad" id="select-localidad" class="form-select" required disabled>
+                            <option value="" selected>Seleccioná una provincia primero</option>
+                        </select>
+                        <span class="select-chevron">▼</span>
+                    </div>
+                    <span class="field-error" id="error-select-localidad">Selecciona una localidad</span>
                 </div>
             </div>
 
             {{-- Dirección --}}
-            <div style="margin-bottom: 20px;">
-                <label style="display: block; color: #fff; margin-bottom: 8px; font-weight: 600; font-size: 0.9rem;">DIRECCIÓN</label>
-                <input type="text" name="direccion" placeholder="ej. Av. Corrientes 1234, Piso 2" 
-                    style="width: 100%; background: #2d3248; border: 1px solid rgba(255,255,255,0.1); padding: 12px; border-radius: 6px; color: #fff;">
+            <div class="form-group">
+                <label for="direccion">Dirección</label>
+                <input type="text" id="direccion" name="direccion" class="form-input" placeholder="ej. Av. Corrientes 1234, Piso 2">
             </div>
 
             {{-- NUEVA FILA: Categoría + Carrera Destinada (Alineados nativos) --}}

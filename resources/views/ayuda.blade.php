@@ -220,7 +220,7 @@ $faqs = [
     padding: 11px 14px;
     border: 1px solid var(--border);
     border-radius: 0px;
-    background: var(--bg);
+    background: var(--toolbar_bg);
     color: var(--text);
     font-size: 14px;
     font-family: inherit;
@@ -249,6 +249,15 @@ $faqs = [
   .form-textarea {
     min-height: 120px;
     line-height: 1.6;
+  }
+
+  /* Estado de error — el JS agrega .input-error a los campos inválidos
+     al enviar el formulario; faltaba el estilo correspondiente para
+     que se note tanto en inputs como en el textarea. */
+  .form-input.input-error,
+  .form-textarea.input-error {
+    border-color: var(--destructive);
+    box-shadow: 0 0 0 3px rgba(212, 24, 61, .12);
   }
 
   .form-hint {

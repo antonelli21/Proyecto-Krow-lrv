@@ -122,8 +122,12 @@ class EstudianteController extends Controller
             'linkedin' => 'nullable|url|max:255',
             'github' => 'nullable|url|max:255',
             'cv' => 'nullable|file|mimes:pdf|max:5120',
+            // Los tags de habilidades llegan como texto libre (mismo patrón
+            // que "tecnologias[]" en Crear Oferta), no como IDs — por eso
+            // acá solo validamos que sean strings, y más abajo hacemos
+            // firstOrCreate por nombre antes de sincronizar el pivot.
             'habilidades' => 'nullable|array',
-            'habilidades.*' => 'exists:habilidad,id_habilidad',
+            'habilidades.*' => 'string|max:100',
         ]);
 
         try {
@@ -167,8 +171,23 @@ class EstudianteController extends Controller
 
             $estudiante->save();
 
-            // 5) Habilidades
-            $estudiante->habilidades()->sync($data['habilidades'] ?? []);
+            // 5) Habilidades — mismo patrón que "Crear Oferta": el tag input
+            // manda nombres de tecnología en texto libre, no IDs. Buscamos
+            // (o creamos) el registro en `habilidad` por nombre, sin
+            // distinguir mayúsculas/minúsculas, y sincronizamos el pivot
+            // estudiante_habilidad con los IDs resultantes.
+            $idsHabilidades = [];
+            foreach ($data['habilidades'] ?? [] as $nombreHabilidad) {
+                $nombreHabilidad = trim($nombreHabilidad);
+                if ($nombreHabilidad === '') continue;
+
+                $habilidad = \App\Models\Habilidad::whereRaw('LOWER(nombre) = ?', [strtolower($nombreHabilidad)])->first();
+                if (!$habilidad) {
+                    $habilidad = \App\Models\Habilidad::create(['nombre' => ucfirst(strtolower($nombreHabilidad))]);
+                }
+                $idsHabilidades[] = $habilidad->id_habilidad;
+            }
+            $estudiante->habilidades()->sync($idsHabilidades);
 
             return redirect()->route('estudiante.perfil')
                 ->with('perfil_ok', '✅ Perfil actualizado correctamente');

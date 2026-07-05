@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
   ════════════════════════════════════════ */
 
 
-    function actualizarAlturaHeader() {
+  function actualizarAlturaHeader() {
     const header = document.querySelector('.krow-header');
     if (header) {
       document.documentElement.style.setProperty('--header-height', header.offsetHeight + 'px');
@@ -24,18 +24,18 @@ document.addEventListener('DOMContentLoaded', () => {
   const iconSun = themeBtn?.querySelector('.icon-sun');
   const iconMoon = themeBtn?.querySelector('.icon-moon');
 
-  // Aplicar tema guardado o dark por defecto
-  const savedTheme = localStorage.getItem('krow-theme') || 'dark';
-  applyTheme(savedTheme);
+  // El tema ya se aplicó antes de pintar la página (script inline en el <head>).
+  // Acá solo sincronizamos los íconos del botón con el estado actual.
+  syncIcons(root.getAttribute('data-theme') || 'dark');
 
   themeBtn?.addEventListener('click', () => {
     const next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
-    applyTheme(next);
+    root.setAttribute('data-theme', next);
+    syncIcons(next);
     localStorage.setItem('krow-theme', next);
   });
 
-  function applyTheme(theme) {
-    root.setAttribute('data-theme', theme);
+  function syncIcons(theme) {
     if (iconSun && iconMoon) {
       iconSun.style.display = theme === 'dark' ? 'block' : 'none';
       iconMoon.style.display = theme === 'light' ? 'block' : 'none';

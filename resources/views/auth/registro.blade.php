@@ -22,6 +22,9 @@ $tabEmpresaActivo = $errors->hasAny(['cuit', 'nombre_empresa', 'razon_social', '
 $localidadesPorProvincia = \App\Models\Localidad::orderBy('nombre')
 ->get()
 ->groupBy('id_provincia');
+
+// Fecha máxima permitida para nacer y ser mayor de 18 años.
+$fechaMaximaNacimiento = now()->subYears(18)->format('Y-m-d');
 @endphp
 
 <style>
@@ -227,6 +230,213 @@ $localidadesPorProvincia = \App\Models\Localidad::orderBy('nombre')
 
   .btn-eye:hover {
     color: var(--accent);
+  }
+
+  /* ── Fecha de nacimiento — datepicker propio ──
+     Reemplaza el input[type=date] nativo (imposible de estilar en su
+     popup de calendario) por un botón + panel desplegable armado a mano,
+     así el calendario respeta el diseño del sitio en cualquier tema. */
+  .date-wrap {
+    cursor: pointer;
+  }
+
+  .date-wrap>svg:first-child {
+    color: var(--muted);
+  }
+
+  .date-wrap input {
+    cursor: pointer;
+    caret-color: transparent;
+  }
+
+  .date-toggle-btn {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: none;
+    padding: 6px;
+    cursor: pointer;
+    color: var(--accent);
+    border-radius: 4px;
+    transition: background-color 0.2s, transform 0.2s;
+    z-index: 2;
+  }
+
+  .date-toggle-btn:hover {
+    background-color: rgba(43, 107, 232, 0.1);
+  }
+
+  [data-theme="dark"] .date-toggle-btn:hover {
+    background-color: rgba(212, 168, 67, 0.15);
+  }
+
+  .date-toggle-btn.open svg {
+    transform: rotate(180deg);
+  }
+
+  .date-toggle-btn svg {
+    transition: transform 0.2s;
+  }
+
+  .datepicker-panel {
+    position: absolute;
+    z-index: 30;
+    margin-top: 6px;
+    width: 280px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 0px;
+    box-shadow: var(--shadow-card, 0 10px 30px rgba(0, 0, 0, 0.25));
+    padding: 0.85rem;
+    animation: fadeInUp 0.15s ease;
+  }
+
+  .dp-header {
+    display: grid;
+    grid-template-columns: auto auto 1fr auto auto;
+    align-items: center;
+    gap: 2px;
+    margin-bottom: 0.6rem;
+  }
+
+  .dp-nav {
+    background: none;
+    border: none;
+    color: var(--muted);
+    cursor: pointer;
+    font-size: 0.95rem;
+    font-family: var(--font-body);
+    padding: 4px 7px;
+    border-radius: 4px;
+    transition: background-color 0.15s, color 0.15s;
+    line-height: 1;
+  }
+
+  .dp-nav:hover {
+    color: var(--accent);
+    background-color: rgba(43, 107, 232, 0.1);
+  }
+
+  [data-theme="dark"] .dp-nav:hover {
+    background-color: rgba(212, 168, 67, 0.15);
+  }
+
+  .dp-title {
+    text-align: center;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 0.85rem;
+    color: var(--text);
+    text-transform: capitalize;
+  }
+
+  .dp-weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    margin-bottom: 4px;
+  }
+
+  .dp-weekdays span {
+    text-align: center;
+    font-size: 0.68rem;
+    font-weight: 700;
+    color: var(--muted);
+    letter-spacing: 0.4px;
+  }
+
+  .dp-days {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    row-gap: 2px;
+  }
+
+  .dp-day {
+    position: relative;
+    background: none;
+    border: none;
+    color: var(--text);
+    font-size: 0.82rem;
+    font-family: var(--font-body);
+    padding: 6px 0;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background-color 0.15s, color 0.15s;
+  }
+
+  .dp-day:hover:not(:disabled) {
+    background-color: rgba(43, 107, 232, 0.12);
+  }
+
+  [data-theme="dark"] .dp-day:hover:not(:disabled) {
+    background-color: rgba(212, 168, 67, 0.15);
+  }
+
+  .dp-day.dp-outside {
+    color: var(--muted);
+    opacity: 0.45;
+  }
+
+  .dp-day.dp-today {
+    font-weight: 700;
+  }
+
+  .dp-day.dp-today::after {
+    content: '';
+    position: absolute;
+    bottom: 2px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: var(--accent);
+  }
+
+  .dp-day.dp-selected {
+    background: var(--accent);
+    color: var(--text_btn);
+    font-weight: 700;
+  }
+
+  [data-theme="dark"] .dp-day.dp-selected {
+    color: #111118;
+  }
+
+  .dp-day:disabled {
+    cursor: not-allowed;
+    opacity: 0.3;
+  }
+
+  .dp-day.dp-underage {
+    color: var(--destructive);
+    opacity: 0.55;
+  }
+
+  .dp-footer {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 0.7rem;
+    padding-top: 0.6rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .dp-link {
+    background: none;
+    border: none;
+    color: var(--accent);
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 2px 4px;
+  }
+
+  .dp-link:hover {
+    text-decoration: underline;
   }
 
   /* ── Error msg ── */
@@ -508,25 +718,61 @@ $localidadesPorProvincia = \App\Models\Localidad::orderBy('nombre')
           </span>
         </div>
 
-        {{-- Fecha de nacimiento --}}
-        <div class="form-group">
-          <label for="c-nacimiento">Fecha de nacimiento</label>
-          <div class="input-wrap">
+        {{-- Fecha de nacimiento — datepicker propio --}}
+        <div class="form-group" style="position:relative;">
+          <label for="c-nacimiento-input">Fecha de nacimiento</label>
+          <div class="input-wrap date-wrap" id="c-nacimiento-wrap">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
               <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
               <line x1="16" y1="2" x2="16" y2="6" />
               <line x1="8" y1="2" x2="8" y2="6" />
               <line x1="3" y1="10" x2="21" y2="10" />
             </svg>
-            <input type="date" id="c-nacimiento" name="nacimiento" autocomplete="bday" value="{{ old('nacimiento') }}">
+            <input type="text" id="c-nacimiento-input" placeholder="dd/mm/aaaa" autocomplete="off" readonly
+              value="{{ old('nacimiento') ? \Carbon\Carbon::parse(old('nacimiento'))->format('d/m/Y') : '' }}">
+            <input type="hidden" id="c-nacimiento" name="nacimiento" value="{{ old('nacimiento') }}">
+            <button type="button" class="date-toggle-btn" id="c-nacimiento-toggle" aria-label="Abrir calendario">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="6 9 12 15 18 9" />
+              </svg>
+            </button>
           </div>
+
+          <div class="datepicker-panel" id="c-nacimiento-panel" hidden data-hoy="{{ now()->format('Y-m-d') }}">
+            <div class="dp-header">
+              <button type="button" class="dp-nav" data-nav="prev-year" aria-label="Año anterior">«</button>
+              <button type="button" class="dp-nav" data-nav="prev-month" aria-label="Mes anterior">‹</button>
+              <div class="dp-title" id="c-nacimiento-title"></div>
+              <button type="button" class="dp-nav" data-nav="next-month" aria-label="Mes siguiente">›</button>
+              <button type="button" class="dp-nav" data-nav="next-year" aria-label="Año siguiente">»</button>
+            </div>
+            <div class="dp-weekdays">
+              <span>DO</span><span>LU</span><span>MA</span><span>MI</span><span>JU</span><span>VI</span><span>SA</span>
+            </div>
+            <div class="dp-days" id="c-nacimiento-days"></div>
+            <div class="dp-footer">
+              <button type="button" class="dp-link" data-action="clear">Borrar</button>
+              <button type="button" class="dp-link" data-action="today">Hoy</button>
+            </div>
+          </div>
+
+          @error('nacimiento')
+          <span class="error-msg show">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10" />
+              <line x1="12" y1="8" x2="12" y2="12" />
+              <line x1="12" y1="16" x2="12.01" y2="16" />
+            </svg>
+            {{ $message }}
+          </span>
+          @enderror
           <span class="error-msg" id="err-c-nacimiento">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <circle cx="12" cy="12" r="10" />
               <line x1="12" y1="8" x2="12" y2="12" />
               <line x1="12" y1="16" x2="12.01" y2="16" />
             </svg>
-            Seleccioná tu fecha de nacimiento.
+            Debés ser mayor de 18 años.
           </span>
         </div>
       </div>
@@ -958,6 +1204,172 @@ $localidadesPorProvincia = \App\Models\Localidad::orderBy('nombre')
     }
   }
 
+  /* ══════════════════════════════════════════════════
+     DATEPICKER PROPIO — Fecha de nacimiento
+     Reemplaza el <input type="date"> nativo. Guarda el valor real
+     en el input hidden #c-nacimiento (formato YYYY-MM-DD) y muestra
+     el texto formateado (dd/mm/aaaa) en el input de solo lectura.
+  ══════════════════════════════════════════════════ */
+  const MESES_ES = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
+
+  function initNacimientoDatepicker() {
+    const wrap = document.getElementById('c-nacimiento-wrap');
+    const toggleBtn = document.getElementById('c-nacimiento-toggle');
+    const panel = document.getElementById('c-nacimiento-panel');
+    const displayInput = document.getElementById('c-nacimiento-input');
+    const hiddenInput = document.getElementById('c-nacimiento');
+    const titleEl = document.getElementById('c-nacimiento-title');
+    const daysEl = document.getElementById('c-nacimiento-days');
+
+    if (!wrap || !panel || !hiddenInput) return;
+
+    const hoy = new Date(panel.dataset.hoy + 'T00:00:00');
+    let selected = hiddenInput.value ? new Date(hiddenInput.value + 'T00:00:00') : null;
+    let viewYear = selected ? selected.getFullYear() : hoy.getFullYear() - 18;
+    let viewMonth = selected ? selected.getMonth() : hoy.getMonth();
+
+    function pad(n) {
+      return String(n).padStart(2, '0');
+    }
+
+    function toISO(d) {
+      return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate());
+    }
+
+    function toDisplay(d) {
+      return pad(d.getDate()) + '/' + pad(d.getMonth() + 1) + '/' + d.getFullYear();
+    }
+
+    function edadDe(d) {
+      let edad = hoy.getFullYear() - d.getFullYear();
+      const mesDiff = hoy.getMonth() - d.getMonth();
+      if (mesDiff < 0 || (mesDiff === 0 && hoy.getDate() < d.getDate())) edad--;
+      return edad;
+    }
+
+    function validarSeleccion(d) {
+      if (!d) {
+        showError('err-c-nacimiento', false);
+        setInputError('c-nacimiento-input', false);
+        return;
+      }
+      const menorDeEdad = edadDe(d) < 18;
+      showError('err-c-nacimiento', menorDeEdad);
+      setInputError('c-nacimiento-input', menorDeEdad);
+    }
+
+    function render() {
+      titleEl.textContent = MESES_ES[viewMonth] + ' de ' + viewYear;
+      daysEl.innerHTML = '';
+
+      const primerDia = new Date(viewYear, viewMonth, 1);
+      const inicioGrilla = new Date(primerDia);
+      inicioGrilla.setDate(primerDia.getDate() - primerDia.getDay());
+
+      for (let i = 0; i < 42; i++) {
+        const fecha = new Date(inicioGrilla);
+        fecha.setDate(inicioGrilla.getDate() + i);
+
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'dp-day';
+        btn.textContent = fecha.getDate();
+
+        const esDeOtroMes = fecha.getMonth() !== viewMonth;
+        const esFutura = fecha > hoy;
+        const esHoy = toISO(fecha) === toISO(hoy);
+        const esSeleccionada = selected && toISO(fecha) === toISO(selected);
+        const seriaMenorDeEdad = edadDe(fecha) < 18;
+
+        if (esDeOtroMes) btn.classList.add('dp-outside');
+        if (esHoy) btn.classList.add('dp-today');
+        if (esSeleccionada) btn.classList.add('dp-selected');
+        if (seriaMenorDeEdad && !esFutura) btn.classList.add('dp-underage');
+
+        if (esFutura) {
+          btn.disabled = true;
+        } else {
+          btn.addEventListener('click', function() {
+            selected = fecha;
+            hiddenInput.value = toISO(fecha);
+            displayInput.value = toDisplay(fecha);
+            validarSeleccion(fecha);
+            render();
+            cerrarPanel();
+          });
+        }
+
+        daysEl.appendChild(btn);
+      }
+    }
+
+    function abrirPanel() {
+      panel.hidden = false;
+      toggleBtn.classList.add('open');
+      render();
+    }
+
+    function cerrarPanel() {
+      panel.hidden = true;
+      toggleBtn.classList.remove('open');
+    }
+
+    function togglePanel() {
+      if (panel.hidden) abrirPanel();
+      else cerrarPanel();
+    }
+
+    toggleBtn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      togglePanel();
+    });
+
+    displayInput.addEventListener('click', togglePanel);
+
+    panel.querySelectorAll('.dp-nav').forEach(function(btn) {
+      btn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        const nav = btn.dataset.nav;
+        if (nav === 'prev-month') viewMonth--;
+        if (nav === 'next-month') viewMonth++;
+        if (nav === 'prev-year') viewYear--;
+        if (nav === 'next-year') viewYear++;
+        if (viewMonth < 0) { viewMonth = 11; viewYear--; }
+        if (viewMonth > 11) { viewMonth = 0; viewYear++; }
+        render();
+      });
+    });
+
+    panel.querySelector('[data-action="clear"]').addEventListener('click', function(e) {
+      e.stopPropagation();
+      selected = null;
+      hiddenInput.value = '';
+      displayInput.value = '';
+      validarSeleccion(null);
+      render();
+    });
+
+    panel.querySelector('[data-action="today"]').addEventListener('click', function(e) {
+      e.stopPropagation();
+      viewYear = hoy.getFullYear();
+      viewMonth = hoy.getMonth();
+      render();
+    });
+
+    document.addEventListener('click', function(e) {
+      if (!panel.hidden && !wrap.contains(e.target) && !panel.contains(e.target)) {
+        cerrarPanel();
+      }
+    });
+
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape' && !panel.hidden) cerrarPanel();
+    });
+
+    /* Validar el valor inicial (por si vino de old() tras un error de validación) */
+    if (selected) validarSeleccion(selected);
+  }
+
   /* ── Carga dinámica de localidades ──
      NO usar .disabled: los campos disabled no se envían en el POST.
      Se usa style.opacity + style.pointerEvents para la apariencia. ── */
@@ -1000,6 +1412,8 @@ $localidadesPorProvincia = \App\Models\Localidad::orderBy('nombre')
   const formEmp = document.getElementById('formEmpresa');
 
   document.addEventListener('DOMContentLoaded', function() {
+
+    initNacimientoDatepicker();
 
     /* ── Tabs (Candidato / Empresa) ── */
     const tabs = document.querySelectorAll('.role-tab');
@@ -1070,6 +1484,22 @@ $localidadesPorProvincia = \App\Models\Localidad::orderBy('nombre')
     return cuit.replace(/\D/g, '').length === 11;
   }
 
+  /* Calcula la edad exacta (en años) a partir de una fecha 'YYYY-MM-DD'. */
+  function calcularEdad(fechaStr) {
+    const nacimiento = new Date(fechaStr + 'T00:00:00');
+    if (isNaN(nacimiento.getTime())) return null;
+
+    const hoy = new Date();
+    let edad = hoy.getFullYear() - nacimiento.getFullYear();
+    const mesDiff = hoy.getMonth() - nacimiento.getMonth();
+
+    if (mesDiff < 0 || (mesDiff === 0 && hoy.getDate() < nacimiento.getDate())) {
+      edad--;
+    }
+
+    return edad;
+  }
+
   /* Candidato */
   if (formCand) {
     formCand.addEventListener('submit', function(e) {
@@ -1105,9 +1535,10 @@ $localidadesPorProvincia = \App\Models\Localidad::orderBy('nombre')
       }
 
       const nacimiento = document.getElementById('c-nacimiento');
-      if (!nacimiento.value) {
+      const edad = nacimiento.value ? calcularEdad(nacimiento.value) : null;
+      if (!nacimiento.value || edad === null || edad < 18) {
         showError('err-c-nacimiento', true);
-        setInputError('c-nacimiento', true);
+        setInputError('c-nacimiento-input', true);
         valid = false;
       }
 

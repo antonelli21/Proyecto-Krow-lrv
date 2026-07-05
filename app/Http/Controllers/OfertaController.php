@@ -58,19 +58,33 @@ public function preview($id_oferta)
                 return back()->with('error', 'Necesitás cargar tu CV antes de postularte. <a style="color:var(--accent);" href="' . route('estudiante.perfil.editar') . '">Ir a mi perfil</a>');
             }
 
-            $yaPostulado = $oferta->postulaciones()
-                ->where('id_estudiante', $estudiante->id_estudiante)
-                ->exists();
+            $postulacion = \App\Models\Postulacion::withTrashed()
+    ->where('id_oferta', $oferta->id_oferta)
+    ->where('id_estudiante', $estudiante->id_estudiante)
+    ->first();
 
-            if ($yaPostulado) {
-                return back()->with('error', 'Ya te postulaste a esta oferta.');
-            }
+if ($postulacion) {
 
-            $oferta->postulaciones()->create([
-                'id_estudiante'     => $estudiante->id_estudiante,
-                'fecha_postulacion' => now(),
-                'estado'            => 'Postulado',
-            ]);
+    if ($postulacion->trashed()) {
+        $postulacion->restore();
+
+        $postulacion->update([
+            'estado' => 'Postulado',
+            'fecha_postulacion' => now(),
+        ]);
+    } else {
+        return back()->with('error', 'Ya te postulaste a esta oferta.');
+    }
+
+} else {
+
+    $oferta->postulaciones()->create([
+        'id_estudiante'     => $estudiante->id_estudiante,
+        'fecha_postulacion' => now(),
+        'estado'            => 'Postulado',
+    ]);
+
+}
 
             // ── Notificar a la empresa ─────────────────────────────
             \DB::table('notificaciones')->insert([
@@ -152,14 +166,33 @@ public function preview($id_oferta)
     }
 
     public function destroy(Oferta $oferta)
-    {
-        $oferta->carreras()->detach();
-        $oferta->habilidades()->detach();
-        $oferta->postulaciones()->delete();
-        $oferta->delete();
+{
+    $empresa = $oferta->id_empresa;
 
-        return response()->noContent();
-    }
+    $oferta->carreras()->detach();
+    $oferta->habilidades()->detach();
+    $oferta->postulaciones()->delete();
+    $oferta->delete();
+
+    $activas = Oferta::where('id_empresa', $empresa)
+        ->where('estado', 'Activa')
+        ->count();
+
+    $pausadas = Oferta::where('id_empresa', $empresa)
+        ->where('estado', 'Pausada')
+        ->count();
+
+    $totalPostulantes = \App\Models\Postulacion::whereHas('oferta', function ($q) use ($empresa) {
+        $q->where('id_empresa', $empresa);
+    })->count();
+
+    return response()->json([
+        'success' => true,
+        'activas' => $activas,
+        'pausadas' => $pausadas,
+        'totalPostulantes' => $totalPostulantes,
+    ]);
+}
 
     public function listar()
     {
