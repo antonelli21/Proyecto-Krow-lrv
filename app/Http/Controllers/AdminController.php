@@ -241,8 +241,15 @@ class AdminController extends Controller
 
     public function eliminarOferta($id)
     {
-        Oferta::findOrFail($id)->delete();
-        return redirect()->back()->with('success', 'Oferta eliminada.');
+        $oferta = Oferta::findOrFail($id);
+        
+        // Hacer soft delete de todas las postulaciones de esta oferta
+        $oferta->postulaciones()->delete();
+        
+        // Luego hacer soft delete de la oferta
+        $oferta->delete();
+
+        return redirect()->back()->with('success', 'Oferta y sus postulaciones movidas a papelera.');
     }
 
     public function bulkEstadoEstudiantes(Request $request)
@@ -322,15 +329,17 @@ class AdminController extends Controller
             $this->eliminarUserConDependencias($idUsuario);
         }
 
-        return redirect()->back()->with('success', 'Estudiante y usuario eliminados.');
+    // Para cada oferta, hacer soft delete de sus postulaciones primero
+    foreach ($request->ids as $id) {
+        $oferta = Oferta::find($id);
+        if ($oferta) {
+            $oferta->postulaciones()->delete();
+            $oferta->delete();
+        }
     }
 
-    public function bulkDestroyEstudiantes(Request $request)
-    {
-        $request->validate([
-            'ids'   => 'required|array',
-            'ids.*' => 'integer|exists:estudiante,id_estudiante',
-        ]);
+    return redirect()->back()->with('success', count($request->ids) . ' ofertas y sus postulaciones movidas a papelera.');
+}
 
         foreach ($request->ids as $id) {
             $estudiante = Estudiante::find($id);
@@ -516,8 +525,53 @@ class AdminController extends Controller
         $oferta->restore();
         $oferta->postulaciones()->onlyTrashed()->restore();
 
-        return redirect()->back()->with('success', 'Oferta y sus postulaciones restauradas.');
+public function eliminarReporte($id)
+{
+    \DB::table('ticket_soporte')->where('id_ticket', $id)->delete();
+    return redirect()->back()->with('success', 'Ticket eliminado.');
+}
+
+/* 
+   PAPELERA
+*/
+public function papelera()
+{
+    $seccion = 'papelera';
+
+    $postulacionesEliminadas = \App\Models\Postulacion::onlyTrashed()
+        ->with(['estudiante', 'oferta.empresa'])
+        ->orderBy('deleted_at', 'desc')
+        ->paginate(20, ['*'], 'page_post');
+
+    $ofertasEliminadas = \App\Models\Oferta::onlyTrashed()
+        ->with('empresa')
+        ->orderBy('deleted_at', 'desc')
+        ->paginate(20, ['*'], 'page_ofe');
+
+    return view('admin.admin', compact(
+        'seccion',
+        'postulacionesEliminadas',
+        'ofertasEliminadas'
+    ));
+}
+
+public function restaurarPostulacion($id)
+{
+    $postulacion = \App\Models\Postulacion::onlyTrashed()->findOrFail($id);
+    
+    // Cargar la oferta incluyendo las eliminadas (soft deleted)
+    $postulacion->load(['oferta' => function($query) {
+        $query->withTrashed();
+    }]);
+    
+    // Verificar si la oferta asociada está eliminada
+    if ($postulacion->oferta && $postulacion->oferta->trashed()) {
+        return redirect()->back()->with('error', 'No se puede restaurar la postulación porque su oferta está en papelera. Restaura la oferta primero.');
     }
+    
+    $postulacion->restore();
+    return redirect()->back()->with('success', 'Postulación restaurada.');
+}
 
     public function eliminarPostulacionDefinitivo($id)
     {
@@ -543,6 +597,18 @@ class AdminController extends Controller
 
         $oferta->forceDelete();
 
-        return redirect()->back()->with('success', 'Oferta eliminada definitivamente.');
-    }
+public function eliminarOfertaDefinitivo($id)
+{
+    $oferta = \App\Models\Oferta::onlyTrashed()->findOrFail($id);
+    
+    // Eliminar definitivamente todas sus postulaciones (incluso si están en papelera)
+    \App\Models\Postulacion::withTrashed()
+        ->where('id_oferta', $oferta->id_oferta)
+        ->forceDelete();
+    
+    // Luego eliminar definitivamente la oferta
+    $oferta->forceDelete();
+    
+    return redirect()->back()->with('success', 'Oferta y sus postulaciones eliminadas definitivamente.');
+}
 }
