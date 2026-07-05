@@ -794,7 +794,7 @@
         {{-- DETALLE EXPANDIBLE --}}
         <tr class="admin-detalle-row" id="admin-det-rep{{ $r->id_ticket }}">
           <td colspan="5">
-            <div class="admin-detalle-inner" style="grid-template-columns: 180px 1fr 200px;">
+            <div class="admin-detalle-inner" style="grid-template-columns: 180px minmax(0,1fr) 200px;">
 
               {{-- Columna 1: Información --}}
               <div>
