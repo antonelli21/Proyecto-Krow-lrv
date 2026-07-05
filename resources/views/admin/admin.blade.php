@@ -405,56 +405,100 @@
             </td>
           </tr>
           {{-- DETALLE EXPANDIBLE --}}
-          <tr class="admin-detalle-row" id="admin-det-e{{ $e->id_empresa }}">
-            <td colspan="8">
-              <div class="admin-detalle-inner">
-                <div>
-                  <p class="admin-detalle-block-title">Descripción</p>
-                    <p class="admin-detalle-value" style="word-break:break-word; overflow-wrap:break-word;">
-                        {{ \Illuminate\Support\Str::limit($e->descripcion ?? '—', 100) }}
-                    </p>
-                  <p class="admin-detalle-value" style="margin-top:8px;">
-                    Registro: {{ $e->fecha_creacion ? \Carbon\Carbon::parse($e->fecha_creacion)->format('d/m/Y') : '—' }}
-                  </p>
-                </div>
-                <div>
-                  <p class="admin-detalle-block-title">Actividad</p>
-                  <p class="admin-detalle-value">Rubro: {{ $e->rubro ?? '—' }}</p>
-                  <p class="admin-detalle-value">Ubicación: {{ $e->direccion ?? '—' }}</p>
-                  <p class="admin-detalle-value">CUIT: {{ $e->cuit ?? '—' }}</p>
-                  <p class="admin-detalle-value">Tamaño: {{ $e->tamano_empresa ?? '—' }}</p>
-                  <p class="admin-detalle-value">Ofertas activas: {{ $e->ofertas_activas_count }}</p>
-                </div>
-                <div>
-                  <p class="admin-detalle-block-title">Acciones</p>
-                  <div class="admin-detalle-actions">
-                    <button class="btn-admin-aprobar"
-                            onclick="submitEstado('{{ route('admin.empresas.estado', $e->id_empresa) }}', 'aprobada')">
-                      <i class="bi bi-check-circle"></i> Aprobar
-                    </button>
-                    <button class="btn-admin-rechazar"
-                            onclick="submitEstado('{{ route('admin.empresas.estado', $e->id_empresa) }}', 'rechazada')">
-                      <i class="bi bi-x-circle"></i> Rechazar
-                    </button>
-                    <button class="btn-admin-suspender"
-                            onclick="submitEstado('{{ route('admin.empresas.estado', $e->id_empresa) }}', 'suspendida')">
-                      <i class="bi bi-slash-circle"></i> Suspender
-                    </button>
-                    <button class="btn-admin-rechazar"
-                            data-delete-url="{{ route('admin.empresas.destroy', $e->id_empresa) }}"
-                            data-delete-name="{{ $e->nombre_empresa }}">
-                      <i class="bi bi-trash"></i> Eliminar
-                    </button>
-                    @if($e->id_usuario)
-                      <a href="{{ route('admin.mensajes', ['postulante_id' => $e->id_usuario]) }}"
-                         class="btn-admin-contactar">
-                        <i class="bi bi-chat-dots"></i> Contactar
-                      </a>
-                    @endif
+          <tr class="admin-detalle-row" id="admin-det-rep{{ $r->id_ticket }}">
+              <td colspan="5" style="padding: 10px 12px !important;">
+                  <div style="
+                      display: grid; 
+                      grid-template-columns: 1.2fr 2fr 0.8fr; 
+                      gap: 10px; 
+                      width: 100%;
+                      max-width: 100%;
+                      box-sizing: border-box;
+                      font-size: 13px;
+                  ">
+
+                      {{-- Columna 1: Información --}}
+                      <div style="min-width: 0; overflow: hidden;">
+                          <p style="font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: var(--accent); margin: 0 0 4px 0;">
+                              <i class="bi bi-person"></i> Información
+                          </p>
+                          <p style="font-weight: 600; margin: 0; font-size: 13px; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                              {{ $nombreMostrar }}
+                          </p>
+                          <p style="margin: 0; font-size: 11px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                              {{ $emailMostrar }}
+                          </p>
+                          <p style="margin: 4px 0 0 0;">
+                              <span class="badge-admin badge-{{ $badgeRep }}" style="font-size: 10px; padding: 2px 8px;">
+                                  {{ $r->estado }}
+                              </span>
+                          </p>
+                          <p style="margin: 2px 0 0 0; font-size: 10px; color: var(--muted);">
+                              <i class="bi bi-clock"></i> {{ \Carbon\Carbon::parse($r->fecha_creacion)->format('d/m/Y H:i') }}
+                          </p>
+                          @if($r->id_usuario)
+                              <p style="margin: 4px 0 0 0; font-size: 10px; color: var(--accent);">
+                                  <i class="bi bi-person-check"></i> Usuario registrado
+                              </p>
+                          @else
+                              <p style="margin: 4px 0 0 0; font-size: 10px; color: var(--muted);">
+                                  <i class="bi bi-person-x"></i> No registrado
+                              </p>
+                          @endif
+                      </div>
+
+                      {{-- Columna 2: Contenido --}}
+                      <div style="min-width: 0; overflow: hidden;">
+                          <p style="font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: var(--accent); margin: 0 0 4px 0;">
+                              <i class="bi bi-file-text"></i> Contenido
+                          </p>
+                          <p style="font-weight: 600; margin: 0; font-size: 13px; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                              {{ $asuntoReal }}
+                          </p>
+                          <p style="margin: 2px 0 0 0; font-size: 12px; color: var(--muted); line-height: 1.4; 
+                                display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; word-break: break-word;">
+                              {{ $r->descripcion }}
+                          </p>
+                      </div>
+
+                      {{-- Columna 3: Gestión --}}
+                      <div style="min-width: 0;">
+                          <p style="font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: var(--accent); margin: 0 0 4px 0;">
+                              <i class="bi bi-gear"></i> Gestión
+                          </p>
+                          <form method="POST" action="{{ route('admin.reportes.estado', $r->id_ticket) }}"
+                                style="display: flex; flex-direction: column; gap: 4px;">
+                              @csrf
+                              <select name="estado" class="admin-filter-select"
+                                      style="font-size: 11px; padding: 3px 22px 3px 8px; height: 26px; width: 100%; min-width: 0;"
+                                      onchange="this.form.submit()">
+                                  <option value="Abierto"    {{ $r->estado === 'Abierto'    ? 'selected' : '' }}>Abierto</option>
+                                  <option value="En Proceso" {{ $r->estado === 'En Proceso' ? 'selected' : '' }}>En Proceso</option>
+                                  <option value="Resuelto"   {{ $r->estado === 'Resuelto'   ? 'selected' : '' }}>Resuelto</option>
+                              </select>
+                          </form>
+                          <div style="display: flex; gap: 4px; flex-wrap: wrap;">
+                              @if($r->id_usuario)
+                                  <a href="{{ route('admin.mensajes', ['postulante_id' => $r->id_usuario]) }}"
+                                    class="btn-admin-contactar" style="font-size: 10px; padding: 2px 8px; white-space: nowrap;">
+                                      <i class="bi bi-chat-dots"></i> Contactar
+                                  </a>
+                              @else
+                                  <a href="mailto:{{ $emailMostrar }}"
+                                    class="btn-admin-contactar" style="font-size: 10px; padding: 2px 8px; background: #3b82f6; white-space: nowrap;">
+                                      <i class="bi bi-envelope"></i> Email
+                                  </a>
+                              @endif
+                              <button class="btn-admin-rechazar" style="font-size: 10px; padding: 2px 8px; white-space: nowrap;"
+                                      data-delete-url="{{ route('admin.reportes.destroy', $r->id_ticket) }}"
+                                      data-delete-name="el ticket \"{{ $asuntoReal }}\"">
+                                  <i class="bi bi-trash"></i>
+                              </button>
+                          </div>
+                      </div>
+
                   </div>
-                </div>
-              </div>
-            </td>
+              </td>
           </tr>
           @empty
           <tr>
@@ -793,8 +837,14 @@
 
         {{-- DETALLE EXPANDIBLE --}}
         <tr class="admin-detalle-row" id="admin-det-rep{{ $r->id_ticket }}">
-          <td colspan="5">
-            <div class="admin-detalle-inner" style="grid-template-columns: 180px minmax(0,1fr) 200px;">
+          <td colspan="5" style="padding: 12px 14px !important; overflow-x: hidden;">
+              <div class="admin-detalle-inner" style="
+                  display: grid; 
+                  grid-template-columns: 1fr 1.8fr 0.8fr; 
+                  gap: 12px; 
+                  max-width: 100%;
+                  overflow-x: hidden;
+              ">
 
               {{-- Columna 1: Información --}}
               <div>
