@@ -20,7 +20,6 @@ class Postulacion extends Model
         'id_estudiante',
         'id_oferta',
         'estado',
-        'observaciones',
         'fecha_postulacion',
 
     ];

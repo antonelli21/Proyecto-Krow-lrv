@@ -809,7 +809,7 @@ class UsuarioTestSeeder extends Seeder
             'direccion'           => 'Av. Corrientes 1234',
             'telefono'            => '1144445555',
             'email_contacto'      => 'contacto@techsolutions.com',
-            'sitio_web'           => 'https://techsolutions.com',
+            'sitio_web'           => 'https://www.mcdonalds.com.ar',
             'descripcion'         => 'Empresa de desarrollo de sistemas cloud y outsourcing.',
             'logo'                => 'logos/7dF0Gq1RIKSk4jWM85thQs5HY5KpcC5M59Ptrb3v.jpg',
             'banner'              => 'banners/fx5IFsYutoLOWndDcbYHMIJa1XolnBffvo3ozjTN.png',
@@ -817,8 +817,8 @@ class UsuarioTestSeeder extends Seeder
             'email_representante' => 'cgomez@techsolutions.com',
             'tamano_empresa'      => 'Mediana',
             'linkedin'            => 'https://linkedin.com/company/techsolutions',
-            'instagram'           => null,
-            'facebook'            => null,
+            'instagram'           => 'https://www.instagram.com/?hl=es',
+            'facebook'            => 'https://www.facebook.com/?locale=es_LA',
             'id_localidad'        => 313,
             'id_provincia'        => 3,
             'fecha_creacion'      => now(),
@@ -1551,13 +1551,12 @@ class UsuarioTestSeeder extends Seeder
         // Usamos id_estudiante=2, id_oferta=1 con UNIQUE KEY → la 24 se ignora automáticamente con insertOrIgnore.
         // La dejamos así para demostrar que el constraint funciona.
 
-        foreach ($postulaciones as [$id, $est, $of, $estado, $obs]) {
+        foreach ($postulaciones as [$id, $est, $of, $estado]) {
             DB::table('postulacion')->insertOrIgnore([
                 'id_postulacion'    => $id,
                 'id_estudiante'     => $est,
                 'id_oferta'         => $of,
                 'estado'            => $estado,
-                'observaciones'     => $obs,
                 'fecha_postulacion' => now(),
             ]);
         }

@@ -2535,7 +2535,7 @@ INSERT INTO `oferta_habilidad` (`id_oferta`, `id_habilidad`) VALUES
 -- Oferta 7: DevOps
 (7, 14), (7, 15), (7, 13);
 
-INSERT INTO `postulacion` (`id_postulacion`, `id_estudiante`, `id_oferta`, `estado`, `observaciones`) VALUES
+INSERT INTO `postulacion` (`id_postulacion`, `id_estudiante`, `id_oferta`, `estado`) VALUES
 (1, 1, 2, 'Preseleccionado',  'Perfil muy interesante para la pasantía React. Llamar esta semana.'),
 (2, 1, 3, 'En Revision',       NULL),
 (3, 2, 1, 'En Contacto',       'Buen conocimiento de Laravel. Entrevista coordinada para el viernes.'),

@@ -166,7 +166,6 @@ return new class extends Migration
             $table->unsignedInteger('id_oferta');
             $table->timestamp('fecha_postulacion')->useCurrent();
             $table->enum('estado', ['Postulado', 'En Revision', 'Preseleccionado', 'En Contacto', 'Rechazado'])->default('Postulado');
-            $table->text('observaciones')->nullable();
             $table->unique(['id_estudiante', 'id_oferta']);
             $table->foreign('id_estudiante')->references('id_estudiante')->on('estudiante');
             $table->foreign('id_oferta')->references('id_oferta')->on('oferta');

@@ -361,7 +361,7 @@
               default      => 'pendiente'
             };
           @endphp
-          <tr data-id="e{{ $e->id_empresa }}"
+          <tr data-id="{{ $e->id_empresa }}"
               data-search="{{ strtolower(($e->nombre_empresa ?? '').' '.($e->rubro ?? '').' '.($e->user->email ?? '')) }}"
               data-estado="{{ $e->estado ?? 'pendiente' }}">
             <td><input type="checkbox" class="check-row"></td>
@@ -573,7 +573,7 @@
             };
             $labelOfe = ucfirst($estado);
           @endphp
-          <tr data-id="o{{ $o->id_oferta }}"
+          <tr data-id="{{ $o->id_oferta }}"
               data-search="{{ strtolower(($o->titulo ?? '').' '.($o->empresa->nombre_empresa ?? '')) }}"
               data-estado="{{ $o->estado ?? '' }}"
               data-modalidad="{{ strtolower($o->modalidad ?? '') }}"

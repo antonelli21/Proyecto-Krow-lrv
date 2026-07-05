@@ -138,7 +138,7 @@ $ubicaciones = $empresas->map(function($emp) {
             </div>
 
             <div class="empresa-desc">
-                {{ \Illuminate\Support\Str::limit($emp->descripcion ?? 'Sin descripción', 120) }}
+                {{ \Illuminate\Support\Str::limit($emp->descripcion ?? 'Sin descripción', 100) }}
             </div>
 
             <div class="empresa-actions">
@@ -168,6 +168,13 @@ $ubicaciones = $empresas->map(function($emp) {
     display: flex;
     gap: 8px;
     margin-top: 12px;
+}
+
+.empresa-desc {
+    word-break: break-word;      
+    overflow-wrap: break-word;   
+    max-width: 100%;             
+    display: block;             
 }
 
 .empresa-btn {
