@@ -1551,13 +1551,12 @@ class UsuarioTestSeeder extends Seeder
         // Usamos id_estudiante=2, id_oferta=1 con UNIQUE KEY → la 24 se ignora automáticamente con insertOrIgnore.
         // La dejamos así para demostrar que el constraint funciona.
 
-        foreach ($postulaciones as [$id, $est, $of, $estado, $obs]) {
+        foreach ($postulaciones as [$id, $est, $of, $estado]) {
             DB::table('postulacion')->insertOrIgnore([
                 'id_postulacion'    => $id,
                 'id_estudiante'     => $est,
                 'id_oferta'         => $of,
                 'estado'            => $estado,
-                'observaciones'     => $obs,
                 'fecha_postulacion' => now(),
             ]);
         }
