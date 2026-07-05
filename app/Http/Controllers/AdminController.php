@@ -252,9 +252,15 @@ class AdminController extends Controller
 
     public function eliminarOferta($id)
     {
-        Oferta::findOrFail($id)->delete();
+        $oferta = Oferta::findOrFail($id);
+        
+        // Hacer soft delete de todas las postulaciones de esta oferta
+        $oferta->postulaciones()->delete();
+        
+        // Luego hacer soft delete de la oferta
+        $oferta->delete();
 
-        return redirect()->back()->with('success', 'Oferta eliminada.');
+        return redirect()->back()->with('success', 'Oferta y sus postulaciones movidas a papelera.');
     }
 
 
@@ -318,9 +324,16 @@ public function bulkDestroyOfertas(Request $request)
         'ids.*' => 'integer|exists:oferta,id_oferta',
     ]);
 
-    Oferta::whereIn('id_oferta', $request->ids)->delete();
+    // Para cada oferta, hacer soft delete de sus postulaciones primero
+    foreach ($request->ids as $id) {
+        $oferta = Oferta::find($id);
+        if ($oferta) {
+            $oferta->postulaciones()->delete();
+            $oferta->delete();
+        }
+    }
 
-    return redirect()->back()->with('success', count($request->ids) . ' ofertas eliminadas.');
+    return redirect()->back()->with('success', count($request->ids) . ' ofertas y sus postulaciones movidas a papelera.');
 }
 
 public function eliminarEstudiante($id)
@@ -508,7 +521,19 @@ public function papelera()
 
 public function restaurarPostulacion($id)
 {
-    \App\Models\Postulacion::onlyTrashed()->findOrFail($id)->restore();
+    $postulacion = \App\Models\Postulacion::onlyTrashed()->findOrFail($id);
+    
+    // Cargar la oferta incluyendo las eliminadas (soft deleted)
+    $postulacion->load(['oferta' => function($query) {
+        $query->withTrashed();
+    }]);
+    
+    // Verificar si la oferta asociada está eliminada
+    if ($postulacion->oferta && $postulacion->oferta->trashed()) {
+        return redirect()->back()->with('error', 'No se puede restaurar la postulación porque su oferta está en papelera. Restaura la oferta primero.');
+    }
+    
+    $postulacion->restore();
     return redirect()->back()->with('success', 'Postulación restaurada.');
 }
 
@@ -535,7 +560,16 @@ public function eliminarPostulacionDefinitivo($id)
 
 public function eliminarOfertaDefinitivo($id)
 {
-    \App\Models\Oferta::onlyTrashed()->findOrFail($id)->forceDelete();
-    return redirect()->back()->with('success', 'Oferta eliminada definitivamente.');
+    $oferta = \App\Models\Oferta::onlyTrashed()->findOrFail($id);
+    
+    // Eliminar definitivamente todas sus postulaciones (incluso si están en papelera)
+    \App\Models\Postulacion::withTrashed()
+        ->where('id_oferta', $oferta->id_oferta)
+        ->forceDelete();
+    
+    // Luego eliminar definitivamente la oferta
+    $oferta->forceDelete();
+    
+    return redirect()->back()->with('success', 'Oferta y sus postulaciones eliminadas definitivamente.');
 }
 }
