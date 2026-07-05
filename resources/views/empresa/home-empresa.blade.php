@@ -184,9 +184,10 @@
                         'Cerrada' => 'estado-cerrada',
                         default   => 'estado-activa',
                     };
+                    $bloqueadaPorAdmin = $oferta->pausada_por_admin && $oferta->estado === 'Pausada';
                 @endphp
                 <tr id="fila-oferta-{{ $oferta->id_oferta }}">
-                    <td><input type="checkbox" class="check-emp" data-id="{{ $oferta->id_oferta }}"></td>
+                    <td><input type="checkbox" class="check-emp" data-id="{{ $oferta->id_oferta }}" data-pausada-admin="{{ $bloqueadaPorAdmin ? '1' : '0' }}"></td>
                     <td class="td-puesto td-clickable"
                         onclick="abrirModalOferta({{ $oferta->id_oferta }})">
                         {{ $oferta->titulo }}
@@ -211,11 +212,11 @@
                     </td>
                     <td>
                         <div class="acciones-oferta">
-                        @if($oferta->pausada_por_admin && $oferta->estado === 'Pausada')
+                        @if($bloqueadaPorAdmin)
                             <button class="btn-toggle-estado"
                                     style="opacity:0.5; cursor:not-allowed;"
                                     disabled
-                                    title="Pausada por el administrador. Enviá un ticket para solicitar reactivación.">
+                                    title="Pausada por el administrador.">
                                 Pausada por Admin
                             </button>
                         @else
@@ -231,30 +232,18 @@
                                 <i class="bi bi-trash"></i>
                             </button>    
                         </div>
-                        @if($oferta->pausada_por_admin && $oferta->estado === 'Pausada')
+                        @if($bloqueadaPorAdmin)
                             <div style="margin-top:6px;">
                                 @if($oferta->motivo_pausa_admin)
                                     <small style="color:var(--muted); display:block; margin-bottom:6px; line-height:1.4;">
-                                        <strong>Motivo:</strong>
-                                        {{ \Illuminate\Support\Str::limit($oferta->motivo_pausa_admin, 50) }}
-
-                                        @if(strlen($oferta->motivo_pausa_admin) > 50)
-                                        ...
-                                        @endif
 
                                         <br>
 
                                         <a href="{{ route('empresa.mensajes') }}" class="link-accion" style="font-size:.8rem;">
-                                            Ver mensaje completo →
+                                            Ver motivo →
                                         </a>
                                     </small>
                                 @endif
-
-                                <a href="{{ route('ayuda') }}#contacto"
-                                class="link-accion"
-                                style="font-size:0.8rem;">
-                                    <i class="bi bi-ticket"></i> Enviar ticket
-                                </a>
                             </div>
                         @endif
                     </td>
@@ -280,6 +269,7 @@
                 'Cerrada' => 'estado-cerrada',
                 default   => 'estado-activa',
             };
+            $bloqueadaPorAdmin = $oferta->pausada_por_admin && $oferta->estado === 'Pausada';
         @endphp
         <div class="oferta-mobile-card" id="card-oferta-{{ $oferta->id_oferta }}">
             <div class="oferta-mobile-header">
@@ -313,7 +303,7 @@
             <div class="oferta-mobile-footer">
                 <a href="{{ route('empresa.ofertas.postulantes', $oferta->id_oferta) }}"
                    class="link-accion">Postulantes →</a>
-                @if($oferta->pausada_por_admin && $oferta->estado === 'Pausada')
+                @if($bloqueadaPorAdmin)
                     <button class="btn-toggle-estado"
                             style="opacity:0.5; cursor:not-allowed;"
                             disabled
@@ -740,6 +730,14 @@ document.addEventListener('change', e => {
 function getSelectedEmp() {
   return [...document.querySelectorAll('.check-emp:checked')].map(c => c.dataset.id);
 }
+
+// Ids seleccionados que están pausados por el admin (no se pueden reactivar desde acá)
+function getSelectedBloqueadasAdmin() {
+  return [...document.querySelectorAll('.check-emp:checked')]
+    .filter(c => c.dataset.pausadaAdmin === '1')
+    .map(c => c.dataset.id);
+}
+
 function updateBulkEmp() {
   const ids = getSelectedEmp();
   const bar = document.getElementById('bulk-bar-emp');
@@ -753,8 +751,23 @@ function clearBulkEmp() {
   updateBulkEmp();
 }
 function bulkEmpEstado(estado) {
-  const ids = getSelectedEmp();
+  let ids = getSelectedEmp();
   if (!ids.length) return;
+
+  // Si se quiere Activar, sacamos las que el admin pausó: esas no se pueden reactivar desde acá.
+  if (estado === 'Activa') {
+    const bloqueadas = getSelectedBloqueadasAdmin();
+    if (bloqueadas.length) {
+      ids = ids.filter(id => !bloqueadas.includes(id));
+      alert(
+        bloqueadas.length === 1
+          ? 'Una de las ofertas seleccionadas fue pausada por el administrador y no se puede reactivar desde acá.'
+          : `${bloqueadas.length} ofertas seleccionadas fueron pausadas por el administrador y no se pueden reactivar desde acá.`
+      );
+    }
+    if (!ids.length) return;
+  }
+
   Promise.all(ids.map(id =>
     fetch(`/empresa/oferta/${id}/estado`, {
       method: 'PATCH',
