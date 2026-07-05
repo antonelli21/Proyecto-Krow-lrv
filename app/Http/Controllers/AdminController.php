@@ -70,11 +70,10 @@ class AdminController extends Controller
         $ofertasPendientes = Oferta::where('estado', 'pendiente')->count();
         $ofertasPausadas   = Oferta::where('estado', 'pausada')->count();
 
-      
         $ofertas = Oferta::with('empresa')
-        ->withCount('postulaciones')
-        ->orderBy('fecha_publicacion', 'desc')
-        ->paginate(20);
+            ->withCount('postulaciones')
+            ->orderBy('fecha_publicacion', 'desc')
+            ->paginate(20);
 
         return view('admin.admin', compact(
             'seccion',
@@ -107,76 +106,71 @@ class AdminController extends Controller
         $empresa = Empresa::findOrFail($id);
         $estadoAnterior = $empresa->estado;
         $empresa->update(['estado' => $request->estado]);
+
         if ($estadoAnterior !== $request->estado && in_array($request->estado, ['aprobada', 'suspendida', 'rechazada'])) {
-
-        $notifs = [
-            'aprobada'   => [
-                'titulo'  => 'Tu cuenta fue aprobada',
-                'mensaje' => 'El administrador aprobó tu cuenta. Ya podés publicar ofertas laborales.',
-                'tipo'    => 'success',
-                'url'     => route('empresa.home'),
-            ],
-            'suspendida' => [
-                'titulo'  => 'Tu cuenta fue suspendida',
-                'mensaje' => 'El administrador suspendió tu cuenta. Contactate con soporte para más información.',
-                'tipo'    => 'danger',
-                'url'     => route('configuracion'),
-            ],
-            'rechazada'  => [
-                'titulo'  => 'Tu cuenta fue rechazada',
-                'mensaje' => 'El administrador rechazó el registro de tu empresa. Contactate con soporte.',
-                'tipo'    => 'danger',
-                'url'     => route('configuracion'),
-            ],
-        ];
-
-        if (isset($notifs[$request->estado])) {
-            $n = $notifs[$request->estado];
-            \DB::table('notificaciones')->insert([
-                'id_usuario'  => $empresa->id_usuario,
-                'titulo'      => $n['titulo'],
-                'mensaje'     => $n['mensaje'],
-                'url'         => $n['url'],
-                'tipo'        => $n['tipo'],
-                'leida'       => false,
-                'created_at'  => now(),
-                'updated_at'  => now(),
-            ]);
-        }
-    }
-    // 🔥 SINCRONIZACIÓN AUTOMÁTICA DE OFERTAS
-    if (in_array($request->estado, ['suspendida', 'rechazada'])) {
-
-        $empresa->ofertas()->update([
-            'estado' => 'pausada'
-        ]);
-    }
-
-    if ($request->estado === 'aprobada') {
-
-        $empresa->ofertas()->update(['estado' => 'activa']);
-    }
-
-    // ✉️ ENVIAR CORREO DE NOTIFICACIÓN SI EL ESTADO CAMBIA
-    if ($estadoAnterior !== $request->estado && in_array($request->estado, ['aprobada', 'rechazada', 'suspendida'])) {
-        if ($empresa->user && $empresa->user->email) {
-            // Parche SSL temporal para entorno local
-            config([
-                'mail.mailers.smtp.stream' => [
-                    'ssl' => [
-                        'allow_self_signed' => true,
-                        'verify_peer' => false,
-                        'verify_peer_name' => false,
-                    ],
+            $notifs = [
+                'aprobada'   => [
+                    'titulo'  => 'Tu cuenta fue aprobada',
+                    'mensaje' => 'El administrador aprobó tu cuenta. Ya podés publicar ofertas laborales.',
+                    'tipo'    => 'success',
+                    'url'     => route('empresa.home'),
                 ],
-            ]);
-            \Illuminate\Support\Facades\Mail::to($empresa->user->email)->send(new \App\Mail\EstadoEmpresaEmail($empresa, $request->estado));
-        }
-    }
+                'suspendida' => [
+                    'titulo'  => 'Tu cuenta fue suspendida',
+                    'mensaje' => 'El administrador suspendió tu cuenta. Contactate con soporte para más información.',
+                    'tipo'    => 'danger',
+                    'url'     => route('configuracion'),
+                ],
+                'rechazada'  => [
+                    'titulo'  => 'Tu cuenta fue rechazada',
+                    'mensaje' => 'El administrador rechazó el registro de tu empresa. Contactate con soporte.',
+                    'tipo'    => 'danger',
+                    'url'     => route('configuracion'),
+                ],
+            ];
 
-    return redirect()->back()
-        ->with('success', "Empresa actualizada a {$request->estado}.");
-}
+            if (isset($notifs[$request->estado])) {
+                $n = $notifs[$request->estado];
+                \DB::table('notificaciones')->insert([
+                    'id_usuario'  => $empresa->id_usuario,
+                    'titulo'      => $n['titulo'],
+                    'mensaje'     => $n['mensaje'],
+                    'url'         => $n['url'],
+                    'tipo'        => $n['tipo'],
+                    'leida'       => false,
+                    'created_at'  => now(),
+                    'updated_at'  => now(),
+                ]);
+            }
+        }
+
+        // 🔥 SINCRONIZACIÓN AUTOMÁTICA DE OFERTAS
+        if (in_array($request->estado, ['suspendida', 'rechazada'])) {
+            $empresa->ofertas()->update(['estado' => 'pausada']);
+        }
+
+        if ($request->estado === 'aprobada') {
+            $empresa->ofertas()->update(['estado' => 'activa']);
+        }
+
+        // ✉️ ENVIAR CORREO DE NOTIFICACIÓN SI EL ESTADO CAMBIA
+        if ($estadoAnterior !== $request->estado && in_array($request->estado, ['aprobada', 'rechazada', 'suspendida'])) {
+            if ($empresa->user && $empresa->user->email) {
+                config([
+                    'mail.mailers.smtp.stream' => [
+                        'ssl' => [
+                            'allow_self_signed' => true,
+                            'verify_peer' => false,
+                            'verify_peer_name' => false,
+                        ],
+                    ],
+                ]);
+                \Illuminate\Support\Facades\Mail::to($empresa->user->email)->send(new \App\Mail\EstadoEmpresaEmail($empresa, $request->estado));
+            }
+        }
+
+        return redirect()->back()->with('success', "Empresa actualizada a {$request->estado}.");
+    }
 
     public function cambiarEstadoOferta(Request $request, $id)
     {
@@ -187,7 +181,6 @@ class AdminController extends Controller
 
         $oferta = Oferta::with('empresa')->findOrFail($id);
 
-        // 🔒 Evitar pausar una oferta que ya está pausada (no se manda motivo dos veces)
         if ($request->estado === 'Pausada' && $oferta->estado === 'Pausada') {
             return redirect()->back()->with('error', 'Esta oferta ya está pausada. No se puede volver a pausar.');
         }
@@ -199,7 +192,6 @@ class AdminController extends Controller
                 'motivo_pausa_admin' => $request->motivo ?? null,
             ]);
 
-            // ── Notificar a la empresa (ya existente) ───────────────
             \DB::table('notificaciones')->insert([
                 'id_usuario'  => $oferta->empresa->id_usuario,
                 'titulo'      => 'Tu publicación fue pausada',
@@ -212,7 +204,6 @@ class AdminController extends Controller
                 'updated_at'  => now(),
             ]);
 
-            // ── Enviar el motivo como mensaje real al chat con la empresa ──
             if ($request->filled('motivo') && $oferta->empresa->id_usuario) {
                 $adminId       = auth()->id();
                 $empresaUserId = $oferta->empresa->id_usuario;
@@ -233,7 +224,6 @@ class AdminController extends Controller
                     'leido'        => false,
                 ]);
             }
-
         } else {
             $oferta->update([
                 'estado'             => $request->estado,
@@ -249,293 +239,310 @@ class AdminController extends Controller
        ELIMINACIONES
     ════════════════════════════════════════ */
 
-
     public function eliminarOferta($id)
     {
         Oferta::findOrFail($id)->delete();
-
         return redirect()->back()->with('success', 'Oferta eliminada.');
     }
 
+    public function bulkEstadoEstudiantes(Request $request)
+    {
+        $request->validate([
+            'ids'    => 'required|array',
+            'ids.*'  => 'integer|exists:estudiante,id_estudiante',
+            'estado' => 'required|in:activo,suspendido,pendiente',
+        ]);
 
-public function bulkEstadoEstudiantes(Request $request)
-{
-    $request->validate([
-        'ids'    => 'required|array',
-        'ids.*'  => 'integer|exists:estudiante,id_estudiante',
-        'estado' => 'required|in:activo,suspendido,pendiente',
-    ]);
+        Estudiante::whereIn('id_estudiante', $request->ids)
+            ->update(['estado' => $request->estado]);
 
-    Estudiante::whereIn('id_estudiante', $request->ids)
-        ->update(['estado' => $request->estado]);
+        return redirect()->back()->with('success', count($request->ids) . ' estudiantes actualizados a ' . $request->estado . '.');
+    }
 
-    return redirect()->back()->with('success', count($request->ids) . ' estudiantes actualizados a ' . $request->estado . '.');
-}
+    public function bulkEstadoEmpresas(Request $request)
+    {
+        $request->validate([
+            'ids'    => 'required|array',
+            'ids.*'  => 'integer|exists:empresa,id_empresa',
+            'estado' => 'required|in:aprobada,suspendida,pendiente,rechazada',
+        ]);
 
+        foreach ($request->ids as $id) {
+            $empresa = Empresa::find($id);
+            if (!$empresa) continue;
 
-public function bulkEstadoEmpresas(Request $request)
-{
-    $request->validate([
-        'ids'    => 'required|array',
-        'ids.*'  => 'integer|exists:empresa,id_empresa',
-        'estado' => 'required|in:aprobada,suspendida,pendiente,rechazada',
-    ]);
+            $empresa->update(['estado' => $request->estado]);
 
-    foreach ($request->ids as $id) {
-        $empresa = Empresa::find($id);
-        if (!$empresa) continue;
-
-        $empresa->update(['estado' => $request->estado]);
-
-        if (in_array($request->estado, ['suspendida', 'rechazada'])) {
-            $empresa->ofertas()->update(['estado' => 'pausada']);
-        } elseif ($request->estado === 'aprobada') {
-            $empresa->ofertas()->update(['estado' => 'activa']);
+            if (in_array($request->estado, ['suspendida', 'rechazada'])) {
+                $empresa->ofertas()->update(['estado' => 'pausada']);
+            } elseif ($request->estado === 'aprobada') {
+                $empresa->ofertas()->update(['estado' => 'activa']);
+            }
         }
+
+        return redirect()->back()->with('success', count($request->ids) . ' empresas actualizadas.');
     }
 
-    return redirect()->back()->with('success', count($request->ids) . ' empresas actualizadas.');
-}
+    public function bulkEstadoOfertas(Request $request)
+    {
+        $request->validate([
+            'ids'    => 'required|array',
+            'ids.*'  => 'integer|exists:oferta,id_oferta',
+            'estado' => 'required|in:Activa,Pausada,Cerrada',
+        ]);
 
-public function bulkEstadoOfertas(Request $request)
-{
-    $request->validate([
-        'ids'    => 'required|array',
-        'ids.*'  => 'integer|exists:oferta,id_oferta',
-        'estado' => 'required|in:Activa,Pausada,Cerrada',
-    ]);
+        Oferta::whereIn('id_oferta', $request->ids)
+            ->update(['estado' => $request->estado]);
 
-    Oferta::whereIn('id_oferta', $request->ids)
-        ->update(['estado' => $request->estado]);
-
-    return redirect()->back()->with('success', count($request->ids) . ' ofertas actualizadas.');
-}
-
-public function bulkDestroyOfertas(Request $request)
-{
-    $request->validate([
-        'ids'   => 'required|array',
-        'ids.*' => 'integer|exists:oferta,id_oferta',
-    ]);
-
-    Oferta::whereIn('id_oferta', $request->ids)->delete();
-
-    return redirect()->back()->with('success', count($request->ids) . ' ofertas eliminadas.');
-}
-
-public function eliminarEstudiante($id)
-{
-    $estudiante = Estudiante::findOrFail($id);
-    $idUsuario  = $estudiante->id_usuario;
-
-    $estudiante->habilidades()->detach();
-    // Borrado definitivo: al eliminar el estudiante, sus postulaciones desaparecen para siempre
-    $estudiante->postulaciones()->forceDelete();
-    $estudiante->delete();
-
-    if ($idUsuario) {
-        $this->eliminarUserConDependencias($idUsuario);
+        return redirect()->back()->with('success', count($request->ids) . ' ofertas actualizadas.');
     }
 
-    return redirect()->back()->with('success', 'Estudiante y usuario eliminados.');
-}
+    public function bulkDestroyOfertas(Request $request)
+    {
+        $request->validate([
+            'ids'   => 'required|array',
+            'ids.*' => 'integer|exists:oferta,id_oferta',
+        ]);
 
-public function bulkDestroyEstudiantes(Request $request)
-{
-    $request->validate([
-        'ids'   => 'required|array',
-        'ids.*' => 'integer|exists:estudiante,id_estudiante',
-    ]);
+        Oferta::whereIn('id_oferta', $request->ids)->delete();
 
-    foreach ($request->ids as $id) {
-        $estudiante = Estudiante::find($id);
-        if (!$estudiante) continue;
+        return redirect()->back()->with('success', count($request->ids) . ' ofertas eliminadas.');
+    }
 
-        $idUsuario = $estudiante->id_usuario;
+    public function eliminarEstudiante($id)
+    {
+        $estudiante = Estudiante::findOrFail($id);
+        $idUsuario  = $estudiante->id_usuario;
+
         $estudiante->habilidades()->detach();
-        // Borrado definitivo: al eliminar el estudiante, sus postulaciones desaparecen para siempre
-        $estudiante->postulaciones()->forceDelete();
+        $estudiante->postulaciones()->withTrashed()->forceDelete();
         $estudiante->delete();
 
         if ($idUsuario) {
             $this->eliminarUserConDependencias($idUsuario);
         }
+
+        return redirect()->back()->with('success', 'Estudiante y usuario eliminados.');
     }
 
-    return redirect()->back()->with('success', count($request->ids) . ' estudiantes eliminados.');
-}
+    public function bulkDestroyEstudiantes(Request $request)
+    {
+        $request->validate([
+            'ids'   => 'required|array',
+            'ids.*' => 'integer|exists:estudiante,id_estudiante',
+        ]);
 
-public function eliminarEmpresa($id)
-{
-    $empresa   = Empresa::findOrFail($id);
-    $idUsuario = $empresa->id_usuario;
+        foreach ($request->ids as $id) {
+            $estudiante = Estudiante::find($id);
+            if (!$estudiante) continue;
 
-    // Incluir también ofertas ya en papelera, para no dejar ninguna huérfana
-    $ofertaIds = Oferta::withTrashed()
-        ->where('id_empresa', $empresa->id_empresa)
-        ->pluck('id_oferta');
+            $idUsuario = $estudiante->id_usuario;
+            $estudiante->habilidades()->detach();
+            $estudiante->postulaciones()->withTrashed()->forceDelete();
+            $estudiante->delete();
 
-    // Borrado en cascada: postulaciones → pivote habilidades → ofertas → empresa
-    \App\Models\Postulacion::whereIn('id_oferta', $ofertaIds)->forceDelete();
-    \DB::table('oferta_habilidad')->whereIn('id_oferta', $ofertaIds)->delete();
-    Oferta::withTrashed()->whereIn('id_oferta', $ofertaIds)->forceDelete();
+            if ($idUsuario) {
+                $this->eliminarUserConDependencias($idUsuario);
+            }
+        }
 
-    $empresa->delete();
-
-    if ($idUsuario) {
-        $this->eliminarUserConDependencias($idUsuario);
+        return redirect()->back()->with('success', count($request->ids) . ' estudiantes eliminados.');
     }
 
-    return redirect()->back()->with('success', 'Empresa, ofertas y usuario eliminados.');
-}
-
-public function bulkDestroyEmpresas(Request $request)
-{
-    $request->validate([
-        'ids'   => 'required|array',
-        'ids.*' => 'integer|exists:empresa,id_empresa',
-    ]);
-
-    foreach ($request->ids as $id) {
-        $empresa = Empresa::find($id);
-        if (!$empresa) continue;
-
+    /**
+     * Elimina una empresa y todas sus dependencias (ofertas, postulaciones, habilidades, carreras, usuario).
+     * Ahora también elimina la tabla pivote oferta_carrera.
+     */
+    public function eliminarEmpresa($id)
+    {
+        $empresa   = Empresa::findOrFail($id);
         $idUsuario = $empresa->id_usuario;
 
         $ofertaIds = Oferta::withTrashed()
             ->where('id_empresa', $empresa->id_empresa)
             ->pluck('id_oferta');
 
-        \App\Models\Postulacion::whereIn('id_oferta', $ofertaIds)->forceDelete();
-        \DB::table('oferta_habilidad')->whereIn('id_oferta', $ofertaIds)->delete();
-        Oferta::withTrashed()->whereIn('id_oferta', $ofertaIds)->forceDelete();
+        if ($ofertaIds->isNotEmpty()) {
+            // Eliminar postulaciones (incluidas las eliminadas)
+            \App\Models\Postulacion::withTrashed()->whereIn('id_oferta', $ofertaIds)->forceDelete();
+
+            // Eliminar tablas pivote
+            \DB::table('oferta_habilidad')->whereIn('id_oferta', $ofertaIds)->delete();
+            \DB::table('oferta_carrera')->whereIn('id_oferta', $ofertaIds)->delete();
+
+            // Eliminar ofertas (incluidas las eliminadas)
+            Oferta::withTrashed()->whereIn('id_oferta', $ofertaIds)->forceDelete();
+        }
 
         $empresa->delete();
 
         if ($idUsuario) {
             $this->eliminarUserConDependencias($idUsuario);
         }
+
+        return redirect()->back()->with('success', 'Empresa, ofertas y postulantes eliminados.');
     }
 
-    return redirect()->back()->with('success', count($request->ids) . ' empresas eliminadas.');
-}
+    /**
+     * Elimina múltiples empresas en lote (bulk).
+     * Ahora también elimina la tabla pivote oferta_carrera.
+     */
+    public function bulkDestroyEmpresas(Request $request)
+    {
+        $request->validate([
+            'ids'   => 'required|array',
+            'ids.*' => 'integer|exists:empresa,id_empresa',
+        ]);
 
-/**
- * Borra todas las tablas hijas de un user antes de eliminar el registro users.
- * Orden respeta las FKs: chats y mensajes primero, luego tickets, notificaciones, etc.
- */
-private function eliminarUserConDependencias(int $idUsuario): void
-{
-    // Chats donde el user es participante (id_usuario_1 o id_usuario_2)
-    $chatIds = \DB::table('chat')
-        ->where('id_usuario_1', $idUsuario)
-        ->orWhere('id_usuario_2', $idUsuario)
-        ->pluck('id_chat');
+        foreach ($request->ids as $id) {
+            $empresa = Empresa::find($id);
+            if (!$empresa) continue;
 
-    if ($chatIds->isNotEmpty()) {
-        \DB::table('mensaje')->whereIn('id_chat', $chatIds)->delete();
-        \DB::table('chat')->whereIn('id_chat', $chatIds)->delete();
+            $idUsuario = $empresa->id_usuario;
+
+            $ofertaIds = Oferta::withTrashed()
+                ->where('id_empresa', $empresa->id_empresa)
+                ->pluck('id_oferta');
+
+            if ($ofertaIds->isNotEmpty()) {
+                \App\Models\Postulacion::withTrashed()->whereIn('id_oferta', $ofertaIds)->forceDelete();
+                \DB::table('oferta_habilidad')->whereIn('id_oferta', $ofertaIds)->delete();
+                \DB::table('oferta_carrera')->whereIn('id_oferta', $ofertaIds)->delete();
+                Oferta::withTrashed()->whereIn('id_oferta', $ofertaIds)->forceDelete();
+            }
+
+            $empresa->delete();
+
+            if ($idUsuario) {
+                $this->eliminarUserConDependencias($idUsuario);
+            }
+        }
+
+        return redirect()->back()->with('success', count($request->ids) . ' empresas eliminadas.');
     }
 
-    // Tickets de soporte
-    \DB::table('ticket_soporte')->where('id_usuario', $idUsuario)->delete();
+    /**
+     * Borra todas las tablas hijas de un user antes de eliminar el registro users.
+     */
+    private function eliminarUserConDependencias(int $idUsuario): void
+    {
+        $chatIds = \DB::table('chat')
+            ->where('id_usuario_1', $idUsuario)
+            ->orWhere('id_usuario_2', $idUsuario)
+            ->pluck('id_chat');
 
-    // Finalmente el user
-    User::where('id', $idUsuario)->delete();
-}
-public function listarReportes()
-{
-    $seccion = 'reportes';
+        if ($chatIds->isNotEmpty()) {
+            \DB::table('mensaje')->whereIn('id_chat', $chatIds)->delete();
+            \DB::table('chat')->whereIn('id_chat', $chatIds)->delete();
+        }
 
-    $totalReportes   = \DB::table('ticket_soporte')->count();
-    $reportesAbiertos = \DB::table('ticket_soporte')->where('estado', 'Abierto')->count();
-    $reportesEnProceso = \DB::table('ticket_soporte')->where('estado', 'En Proceso')->count();
-    $reportesResueltos = \DB::table('ticket_soporte')->where('estado', 'Resuelto')->count();
+        \DB::table('ticket_soporte')->where('id_usuario', $idUsuario)->delete();
+        User::where('id', $idUsuario)->delete();
+    }
 
-    $reportes = \DB::table('ticket_soporte')
-        ->leftJoin('users', 'ticket_soporte.id_usuario', '=', 'users.id')
-        ->select(
-            'ticket_soporte.*',
-            'users.email as user_email',
-            'users.name as user_name'
-        )
-        ->orderBy('ticket_soporte.fecha_creacion', 'desc')
-        ->paginate(20);
+    /* ════════════════════════════════════════
+       REPORTES
+    ════════════════════════════════════════ */
 
-    return view('admin.admin', compact(
-        'seccion',
-        'totalReportes', 'reportesAbiertos', 'reportesEnProceso', 'reportesResueltos',
-        'reportes'
-    ));
-}
+    public function listarReportes()
+    {
+        $seccion = 'reportes';
 
-public function cambiarEstadoReporte(Request $request, $id)
-{
-    $request->validate(['estado' => 'required|in:Abierto,En Proceso,Resuelto']);
-    \DB::table('ticket_soporte')->where('id_ticket', $id)->update(['estado' => $request->estado]);
-    return redirect()->back()->with('success', 'Ticket actualizado.');
-}
+        $totalReportes    = \DB::table('ticket_soporte')->count();
+        $reportesAbiertos = \DB::table('ticket_soporte')->where('estado', 'Abierto')->count();
+        $reportesEnProceso = \DB::table('ticket_soporte')->where('estado', 'En Proceso')->count();
+        $reportesResueltos = \DB::table('ticket_soporte')->where('estado', 'Resuelto')->count();
 
-public function eliminarReporte($id)
-{
-    \DB::table('ticket_soporte')->where('id_ticket', $id)->delete();
-    return redirect()->back()->with('success', 'Ticket eliminado.');
-}
+        $reportes = \DB::table('ticket_soporte')
+            ->leftJoin('users', 'ticket_soporte.id_usuario', '=', 'users.id')
+            ->select('ticket_soporte.*', 'users.email as user_email', 'users.name as user_name')
+            ->orderBy('ticket_soporte.fecha_creacion', 'desc')
+            ->paginate(20);
 
-/* 
-   PAPELERA
-*/
-public function papelera()
-{
-    $seccion = 'papelera';
+        return view('admin.admin', compact(
+            'seccion',
+            'totalReportes', 'reportesAbiertos', 'reportesEnProceso', 'reportesResueltos',
+            'reportes'
+        ));
+    }
 
-    $postulacionesEliminadas = \App\Models\Postulacion::onlyTrashed()
-        ->with(['estudiante', 'oferta.empresa'])
-        ->orderBy('deleted_at', 'desc')
-        ->paginate(20, ['*'], 'page_post');
+    public function cambiarEstadoReporte(Request $request, $id)
+    {
+        $request->validate(['estado' => 'required|in:Abierto,En Proceso,Resuelto']);
+        \DB::table('ticket_soporte')->where('id_ticket', $id)->update(['estado' => $request->estado]);
+        return redirect()->back()->with('success', 'Ticket actualizado.');
+    }
 
-    $ofertasEliminadas = \App\Models\Oferta::onlyTrashed()
-        ->with('empresa')
-        ->orderBy('deleted_at', 'desc')
-        ->paginate(20, ['*'], 'page_ofe');
+    public function eliminarReporte($id)
+    {
+        \DB::table('ticket_soporte')->where('id_ticket', $id)->delete();
+        return redirect()->back()->with('success', 'Ticket eliminado.');
+    }
 
-    return view('admin.admin', compact(
-        'seccion',
-        'postulacionesEliminadas',
-        'ofertasEliminadas'
-    ));
-}
+    /* ════════════════════════════════════════
+       PAPELERA
+    ════════════════════════════════════════ */
 
-public function restaurarPostulacion($id)
-{
-    \App\Models\Postulacion::onlyTrashed()->findOrFail($id)->restore();
-    return redirect()->back()->with('success', 'Postulación restaurada.');
-}
+    public function papelera()
+    {
+        $seccion = 'papelera';
 
-public function restaurarOferta($id)
-{
-    $oferta = \App\Models\Oferta::onlyTrashed()->findOrFail($id);
+        $postulacionesEliminadas = \App\Models\Postulacion::onlyTrashed()
+            ->with(['estudiante', 'oferta.empresa'])
+            ->orderBy('deleted_at', 'desc')
+            ->paginate(20, ['*'], 'page_post');
 
-    // Restaura la oferta
-    $oferta->restore();
+        $ofertasEliminadas = \App\Models\Oferta::onlyTrashed()
+            ->with('empresa')
+            ->orderBy('deleted_at', 'desc')
+            ->paginate(20, ['*'], 'page_ofe');
 
-    // Restaura todas las postulaciones eliminadas de esa oferta
-    $oferta->postulaciones()
-        ->onlyTrashed()
-        ->restore();
+        return view('admin.admin', compact(
+            'seccion',
+            'postulacionesEliminadas',
+            'ofertasEliminadas'
+        ));
+    }
 
-    return redirect()->back()->with('success', 'Oferta y sus postulaciones restauradas.');
-}
+    public function restaurarPostulacion($id)
+    {
+        \App\Models\Postulacion::onlyTrashed()->findOrFail($id)->restore();
+        return redirect()->back()->with('success', 'Postulación restaurada.');
+    }
 
-public function eliminarPostulacionDefinitivo($id)
-{
-    \App\Models\Postulacion::onlyTrashed()->findOrFail($id)->forceDelete();
-    return redirect()->back()->with('success', 'Postulación eliminada definitivamente.');
-}
+    public function restaurarOferta($id)
+    {
+        $oferta = \App\Models\Oferta::onlyTrashed()->findOrFail($id);
+        $oferta->restore();
+        $oferta->postulaciones()->onlyTrashed()->restore();
 
-public function eliminarOfertaDefinitivo($id)
-{
-    \App\Models\Oferta::onlyTrashed()->findOrFail($id)->forceDelete();
-    return redirect()->back()->with('success', 'Oferta eliminada definitivamente.');
-}
+        return redirect()->back()->with('success', 'Oferta y sus postulaciones restauradas.');
+    }
+
+    public function eliminarPostulacionDefinitivo($id)
+    {
+        \App\Models\Postulacion::onlyTrashed()->findOrFail($id)->forceDelete();
+        return redirect()->back()->with('success', 'Postulación eliminada definitivamente.');
+    }
+
+    /**
+     * Elimina una oferta de forma definitiva (desde la papelera).
+     * Ahora también elimina sus dependencias: postulaciones, oferta_habilidad y oferta_carrera.
+     */
+    public function eliminarOfertaDefinitivo($id)
+    {
+        $oferta = \App\Models\Oferta::onlyTrashed()->findOrFail($id);
+        $ofertaId = $oferta->id_oferta;
+
+        // Eliminar postulaciones (incluidas las eliminadas)
+        \App\Models\Postulacion::withTrashed()->where('id_oferta', $ofertaId)->forceDelete();
+
+        // Eliminar tablas pivote
+        \DB::table('oferta_habilidad')->where('id_oferta', $ofertaId)->delete();
+        \DB::table('oferta_carrera')->where('id_oferta', $ofertaId)->delete();
+
+        $oferta->forceDelete();
+
+        return redirect()->back()->with('success', 'Oferta eliminada definitivamente.');
+    }
 }
