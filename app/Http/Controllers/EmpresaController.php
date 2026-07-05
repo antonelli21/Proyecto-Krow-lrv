@@ -290,7 +290,6 @@ class EmpresaController extends Controller
             $oferta->id_localidad = $data['id_localidad'] ?? null;
             $oferta->id_provincia = $data['id_provincia'] ?? null;
             $oferta->area         = $data['area'];
-            $oferta->id_carrera   = $data['id_carrera'];
 
             if (!empty($data['rango_salarial'])) {
                 preg_match_all('/\d+/', str_replace('.', '', $data['rango_salarial']), $matches);
@@ -316,6 +315,8 @@ class EmpresaController extends Controller
             $oferta->fecha_publicacion = now();
             $oferta->estado            = 'Activa';
             $oferta->save();
+
+            $oferta->carreras()->sync([$data['id_carrera']]);
 
             // Guardar habilidades
             if ($request->has('tecnologias') && is_array($request->tecnologias) && count($request->tecnologias) > 0) {
