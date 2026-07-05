@@ -14,7 +14,7 @@ class IndexController extends Controller
 {
     public function inicio(Request $request)
     {
-        $query = Oferta::with(['empresa', 'provincia', 'localidad', 'carrera', 'habilidades'])->where('estado', 'activa');
+        $query = Oferta::with(['empresa', 'provincia', 'localidad', 'carreras', 'habilidades'])->where('estado', 'activa');
 
         // Filtro de búsqueda
         if ($request->filled('buscar')) {
@@ -56,6 +56,12 @@ if ($request->filled('empresa_id')) {
         if ($request->filled('contrato')) {
             $query->whereIn('tipo_oferta', $request->contrato);
         }
+
+        if ($request->filled('carrera')) {
+    $query->whereHas('carreras', function ($q) use ($request) {
+        $q->whereIn('carrera.id_carrera', $request->carrera);
+    });
+}
 
         // Modalidad
         if ($request->filled('modalidad')) {
@@ -119,8 +125,14 @@ if ($request->filled('tecnologias')) {
     $panelData['sin_cv'] = empty($estudiante->cv);
                 $estudiante = $user->estudiante;
                 $panelData['postulaciones'] = Postulacion::where('id_estudiante', $estudiante->id_estudiante)->count();
-                $panelData['en_revision'] = Postulacion::where('id_estudiante', $estudiante->id_estudiante)->where('estado', 'preseleccionado')->count();
-                $panelData['contactado'] = Postulacion::where('id_estudiante', $estudiante->id_estudiante)->where('estado', 'en contacto')->count();
+
+$panelData['en_revision'] = Postulacion::where('id_estudiante', $estudiante->id_estudiante)
+    ->whereIn('estado', ['Preseleccionado', 'En Contacto'])
+    ->count();
+
+$panelData['contactado'] = Postulacion::where('id_estudiante', $estudiante->id_estudiante)
+    ->where('estado', 'En Contacto')
+    ->count();
                 $panelData['ultimas_ofertas'] = Oferta::with('empresa')->where('estado', 'activa')->orderBy('fecha_publicacion', 'desc')->take(3)->get();
                 
             } elseif ($user->rol === 'empresa' && $user->empresa) {
@@ -142,6 +154,7 @@ if ($request->filled('tecnologias')) {
         $categoriasFiltro = Oferta::select('area')->distinct()->pluck('area')->filter();
         $modalidadesFiltro = Oferta::select('modalidad')->distinct()->pluck('modalidad')->filter();
         $contratosFiltro = Oferta::select('tipo_oferta')->distinct()->pluck('tipo_oferta')->filter();
+        $carrerasFiltro = \App\Models\Carrera::orderBy('nombre')->get();
 
         $localidadesMap = [];
         foreach ($provinciasFiltro as $prov) {
@@ -155,7 +168,7 @@ if ($request->filled('tecnologias')) {
             ]);
         }
 
-        return view('index', compact('ofertas', 'panelData', 'provinciasFiltro', 'categoriasFiltro', 'localidadesMap', 'modalidadesFiltro', 'contratosFiltro'));
+        return view('index', compact('ofertas', 'panelData', 'provinciasFiltro', 'categoriasFiltro', 'localidadesMap', 'modalidadesFiltro', 'contratosFiltro', 'carrerasFiltro'));
     }
 
     public function empresas(Request $request)

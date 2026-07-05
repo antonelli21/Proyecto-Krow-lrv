@@ -31,6 +31,17 @@
     $fechaTxt     = $oferta->fecha_texto     ?? ($oferta->created_at ? \Carbon\Carbon::parse($oferta->created_at)->diffForHumans() : '');
     $yaPostulado  = $oferta->ya_postulado    ?? false;
 @endphp
+<script>
+    (function () {
+        try {
+            var theme = localStorage.getItem('krow-theme') || 'dark';
+            document.documentElement.setAttribute('data-theme', theme);
+        } catch (e) {
+            document.documentElement.setAttribute('data-theme', 'dark');
+        }
+    })();
+</script>
+<link rel="stylesheet" href="{{ asset('css/styles.css') }}">
 <link rel="stylesheet" href="{{ asset('css/styles.css') }}">
 <div class="ver-oferta-page">
 
@@ -233,15 +244,15 @@
                 </div>
             @endif
 
-            {{-- Nueva Fila: Carrera Destinada --}}
-            @if ($oferta->id_carrera)
-                <div class="sidebar-dato" style="display: flex; justify-content: space-between; align-items: flex-start; gap: 10px;">
-                    <span class="sidebar-dato-label" style="flex-shrink: 0;">Carrera</span>
-                    <span class="sidebar-dato-value" style="word-break: break-word; text-align: right;">
-                        {{ $oferta->carrera?->nombre ?? 'No especificada' }}
-                    </span>
-                </div>
-            @endif
+            {{-- Nueva Fila: Carrera(s) Destinada(s) --}}
+@if ($oferta->carreras->count() > 0)
+    <div class="sidebar-dato" style="display: flex; justify-content: space-between; align-items: flex-start; gap: 10px;">
+        <span class="sidebar-dato-label" style="flex-shrink: 0;">Carrera{{ $oferta->carreras->count() > 1 ? 's' : '' }}</span>
+        <span class="sidebar-dato-value" style="word-break: break-word; text-align: right;">
+            {{ $oferta->carreras->pluck('nombre')->implode(', ') }}
+        </span>
+    </div>
+@endif
 
             {{-- Procesamos la ubicación --}}
             @php

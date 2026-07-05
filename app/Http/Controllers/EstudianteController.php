@@ -31,19 +31,57 @@ class EstudianteController extends Controller
     }
 
     public function homeEstudiante()
-    {
-        $userId = auth()->id();
+{
+    $userId = auth()->id();
+    $usuario = auth()->user();
+    $estudiante = $usuario->estudiante->load('habilidades');
 
-        $mensajesSinLeer = \App\Models\Mensaje::whereHas('chat', function($q) use ($userId) {
-                $q->where('id_usuario_1', $userId)
-                ->orWhere('id_usuario_2', $userId);
-            })
-            ->where('id_remitente', '!=', $userId)
-            ->where('leido', false)
-            ->count();
+    $mensajesSinLeer = \App\Models\Mensaje::whereHas('chat', function($q) use ($userId) {
+            $q->where('id_usuario_1', $userId)
+            ->orWhere('id_usuario_2', $userId);
+        })
+        ->where('id_remitente', '!=', $userId)
+        ->where('leido', false)
+        ->count();
 
-        return view('estudiante.home-estudiante', compact('mensajesSinLeer'));
+    // Completitud del perfil
+    $campos = [
+        'foto_perfil'        => 10,
+        'cv'                 => 20,
+        'telefono'           => 10,
+        'descripcion'        => 15,
+        'linkedin'           => 10,
+        'modalidad_deseada'  => 10,
+        'portfolio'          => 10,
+    ];
+    $completitud = 0;
+    foreach ($campos as $campo => $peso) {
+        if (!empty($estudiante->$campo)) $completitud += $peso;
     }
+    if ($estudiante->habilidades->count() > 0) $completitud += 15;
+
+    $panelData = [];
+    $panelData['completitud'] = $completitud;
+    $panelData['sin_cv'] = empty($estudiante->cv);
+
+    $panelData['postulaciones'] = \App\Models\Postulacion::where('id_estudiante', $estudiante->id_estudiante)->count();
+
+    $panelData['en_revision'] = \App\Models\Postulacion::where('id_estudiante', $estudiante->id_estudiante)
+        ->whereIn('estado', ['Preseleccionado', 'En Contacto'])
+        ->count();
+
+    $panelData['contactado'] = \App\Models\Postulacion::where('id_estudiante', $estudiante->id_estudiante)
+        ->where('estado', 'En Contacto')
+        ->count();
+
+    $panelData['ultimas_ofertas'] = Oferta::with('empresa')
+        ->where('estado', 'activa')
+        ->orderBy('fecha_publicacion', 'desc')
+        ->take(3)
+        ->get();
+
+    return view('estudiante.home-estudiante', compact('mensajesSinLeer', 'panelData'));
+}
 
     public function store(Request $request)
     {

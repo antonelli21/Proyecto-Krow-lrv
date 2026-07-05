@@ -142,28 +142,14 @@
       <span class="accordion-chevron">−</span>
     </div>
     <div class="accordion-content">
-      @foreach([
-        'aeronautica-aeroespacial' => 'Ingeniería Aeronáutica/Aeroespacial',
-        'electronica'              => 'Ingeniería Electrónica',
-        'ferroviaria'              => 'Ingeniería Ferroviaria',
-        'industrial'               => 'Ingeniería Industrial',
-        'mecanica'                 => 'Ingeniería Mecánica',
-        'bio'                      => 'Bioingeniería',
-        'tec-tup'                  => 'Tecnicatura en Programación',
-        'tec-tuoa'                 => 'Tecnicatura en Operación de Aeronaves',
-        'tec-tumrf'                => 'Tecnicatura en Material Rodante Ferroviario',
-        'tec-tudpv'                => 'Tecnicatura en Desarrollo y Producción de Videojuegos',
-        'tec-tuhst'                => 'Tecnicatura en Higiene y Seguridad en el Trabajo',
-        'tec-tucem'                => 'Tecnicatura en Comercio Electrónico y Marketing Digital',
-        'tec-tul'                  => 'Tecnicatura en Logística',
-      ] as $val => $label)
-        <label class="filter-checkbox-label">
-          <input type="checkbox" name="carrera[]" value="{{ $val }}"
-            {{ in_array($val, request('carrera', [])) ? 'checked' : '' }}>
-          <span class="custom-checkbox"></span>
-          {{ $label }}
-        </label>
-      @endforeach
+      @foreach($carrerasFiltro as $carrera)
+  <label class="filter-checkbox-label">
+    <input type="checkbox" name="carrera[]" value="{{ $carrera->id_carrera }}"
+      {{ in_array($carrera->id_carrera, request('carrera', [])) ? 'checked' : '' }}>
+    <span class="custom-checkbox"></span>
+    {{ $carrera->nombre }}
+  </label>
+@endforeach
       @if(count(request('carrera', [])) > 0)
         <button type="button" class="btn-clear-group"
                 onclick="document.querySelectorAll('[name=\'carrera[]\']').forEach(c=>c.checked=false); document.getElementById('filtros-form').submit();">
