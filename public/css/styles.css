@@ -4,10 +4,10 @@
   --primary: #3b594d;
   --accent: #077552;
   --text: #1f2937;
-  --text_btn: #030303;
+  --text_btn: #ffffff;
   --title: #111827;
   --muted: #6b7280;
-  --border: #e5e7eb;
+  --border: #c4c4c4;
   --borde-especifico: #787879;
   --destructive: #D4183D;
   --destructive-fg: #ffffff;
@@ -22,6 +22,7 @@
   --eliminada: #d63737;
   --bgnoti: #ffffff;
   --accent-dim: rgba(3, 121, 12, 0.603);
+  --noti-unread:rgba(36, 129, 44, 0.288);;
   --border-accent: rgba(7, 117, 82, 0.4);
   --bg-card: var(--surface);
   --bg-input: #ffffff;
@@ -57,27 +58,48 @@
   --icon-ver-border: var(--accent);
   --icon-idle-border: rgba(0, 0, 0, .38);
   --detalle-bg: #fafafa;
+  
   --btn-aprobar-bg: #2ECC9A;
   --btn-aprobar-fg: #ffffff;
   --btn-suspender-bg: #D4A843;
   --btn-suspender-fg: #ffffff;
   --btn-rechazar-bg: #D4183D;
   --btn-rechazar-fg: #ffffff;
-  --badge-success-bg: rgba(46, 204, 154, .12);
-  --badge-success-text: #0f8b63;
-  --badge-success-border: rgba(15, 139, 99, .28);
+  --badge-success-bg: #2ECC9A;
+  --badge-success-text: #ffffff;
+  --badge-success-border: #0f8b63;
 
-  --badge-warning-bg: rgba(212, 168, 67, .14);
-  --badge-warning-text: #9b6b07;
-  --badge-warning-border: rgba(155, 107, 7, .28);
 
-  --badge-info-bg: rgba(59, 130, 246, .12);
-  --badge-info-text: #2563eb;
+  --badge-warning-bg: #D4A843;
+  --badge-warning-text: #ffffff;
+  --badge-warning-border: #9b6b07;
+
+
+  --badge-info-bg: rgba(75, 139, 241, 0.541);
+  --badge-info-text: #f7f7f7;
   --badge-info-border: rgba(37, 99, 235, .28);
+
 
   --badge-danger-bg: rgba(212, 24, 61, .12);
   --badge-danger-text: #c81e4f;
   --badge-danger-border: rgba(200, 30, 79, .28) --link-card-border: var(--accent);
+
+  --badge-postulado-bg: #f1c40f;
+  --badge-postulado-text: #4a3b02;
+  --badge-postulado-border: #b89206;
+
+  --badge-preseleccionado-bg: #c8925a;
+  --badge-preseleccionado-text: #ffffff;
+  --badge-preseleccionado-border: #9c6c3a;
+
+  --badge-rechazado-post-bg: #f52929;
+  --badge-rechazado-post-text: #ffffff;
+  --badge-rechazado-post-border: #a32626;
+
+  --badge-contacto-bg: #44cc3f;
+  --badge-contacto-text: #000000;
+  --badge-contacto-border: #2e9b28;
+  
   --link-card-border-hover: var(--accent);
   --link-card-bg: rgba(91, 107, 122, 0.08);
   --link-card-text: #3f4d5d;
@@ -109,6 +131,7 @@
   --text-muted: #6B6B78;
   --shadow-card: 0 2px 14px rgba(0, 0, 0, .35);
   --accent-dim: rgba(212, 168, 67, .10);
+  --noti-unread:rgba(212, 168, 67, .10);
   --border-accent: rgba(212, 168, 67, .35);
   --shadow-accent: 0 4px 20px rgba(212, 168, 67, .22);
   --shadow-color: rgba(255, 255, 255, .45);
@@ -149,6 +172,22 @@
   --badge-danger-bg: rgba(212, 24, 61, .15);
   --badge-danger-text: #e05577;
   --badge-danger-border: rgba(212, 24, 61, .30);
+
+  --badge-postulado-bg: rgba(241, 196, 15, .15);
+  --badge-postulado-text: var(--postulado);
+  --badge-postulado-border: rgba(241, 196, 15, .30);
+
+  --badge-preseleccionado-bg: rgba(200, 146, 90, .15);
+  --badge-preseleccionado-text: var(--preseleccionado);
+  --badge-preseleccionado-border: rgba(200, 146, 90, .30);
+
+  --badge-rechazado-post-bg: rgba(212, 24, 61, .15);
+  --badge-rechazado-post-text: #e05577;
+  --badge-rechazado-post-border: rgba(212, 24, 61, .30);
+
+  --badge-contacto-bg: rgba(68, 204, 63, .15);
+  --badge-contacto-text: var(--en_contacto);
+  --badge-contacto-border: rgba(68, 204, 63, .30);
 
   --link-card-border: var(--accent);
   --link-card-border-hover: #f0c96b;
@@ -2722,39 +2761,38 @@ body {
 }
 
 /* Estados de postulación */
-.badge-estado {
-  display: inline-block;
-  padding: 6px 16px;
-  border-radius: 11.5px;
-  font-size: 11.5px;
-  font-weight: 600;
-  white-space: nowrap;
-}
+    .badge-estado {
+      display: inline-block;
+      padding: 6px 16px;
+      border-radius: 11.5px;
+      font-size: 11.5px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
 
-.estado-postulado {
-  background: #f5cc272d;
-  color: var(--postulado);
-  border: 1px solid rgba(150, 150, 150, .3);
-}
+    .estado-postulado {
+      background: var(--badge-postulado-bg);
+      color: var(--badge-postulado-text);
+      border: 1px solid var(--badge-postulado-border);
+    }
 
+    .estado-preseleccionado {
+      background: var(--badge-preseleccionado-bg);
+      color: var(--badge-preseleccionado-text);
+      border: 1px solid var(--badge-preseleccionado-border);
+    }
 
-.estado-preseleccionado {
-  background: rgba(180, 120, 60, .15);
-  color: var(--preseleccionado);
-  border: 1px solid rgba(180, 120, 60, .3);
-}
+    .estado-rechazado {
+      background: var(--badge-rechazado-post-bg);
+      color: var(--badge-rechazado-post-text);
+      border: 1px solid var(--badge-rechazado-post-border);
+    }
 
-.estado-rechazado {
-  background: rgba(212, 24, 61, .12);
-  color: var(--rechazado);
-  border: 1px solid rgba(212, 24, 61, .3);
-}
-
-.estado-contacto {
-  background: rgba(46, 204, 154, .12);
-  color: var(--en_contacto);
-  border: 1px solid rgba(46, 204, 154, .3);
-}
+    .estado-contacto {
+      background: var(--badge-contacto-bg);
+      color: var(--badge-contacto-text);
+      border: 1px solid var(--badge-contacto-border);
+    }
 
 
 
@@ -4478,12 +4516,12 @@ body {
 .badge-rechazado,
 .badge-rechazada,
 .badge-cerrada {
-  background: var(--badge-danger-bg);
-  color: var(--badge-danger-text);
-  border: 1px solid var(--badge-danger-border);
+  background: var( --badge-rechazado-post-bg);
+  color: var( --badge-rechazado-post-text);
+  border: 1px solid var(--badge-rechazado-post-border);
 }
 
-/* Acciones */
+
 .td-acciones {
   display: flex;
   align-items: center;
@@ -5730,7 +5768,7 @@ textarea.filter-input-text:focus {
 }
 
 .notif-item.unread {
-  background: var(--accent-dim);
+  background: var(--noti-unread);
 }
 
 /* ── Iconos ── */

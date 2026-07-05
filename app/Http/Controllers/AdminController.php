@@ -476,6 +476,12 @@ public function cambiarEstadoReporte(Request $request, $id)
     return redirect()->back()->with('success', 'Ticket actualizado.');
 }
 
+public function eliminarReporte($id)
+{
+    \DB::table('ticket_soporte')->where('id_ticket', $id)->delete();
+    return redirect()->back()->with('success', 'Ticket eliminado.');
+}
+
 /* 
    PAPELERA
 */

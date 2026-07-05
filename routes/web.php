@@ -166,7 +166,8 @@ Route::prefix('admin')
         Route::post('/ofertas/bulk-destroy',      [AdminController::class, 'bulkDestroyOfertas'])->name('ofertas.bulk-destroy');
 
         Route::get('/reportes',                    [AdminController::class, 'listarReportes'])->name('reportes');
-Route::post('/reportes/{id}/estado',       [AdminController::class, 'cambiarEstadoReporte'])->name('reportes.estado');
+        Route::delete('/reportes/{id}', [AdminController::class, 'eliminarReporte'])->name('reportes.destroy');
+        Route::post('/reportes/{id}/estado',       [AdminController::class, 'cambiarEstadoReporte'])->name('reportes.estado');
 
 
 Route::get('/papelera',                                    [AdminController::class, 'papelera'])->name('papelera');

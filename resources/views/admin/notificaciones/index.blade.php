@@ -83,7 +83,7 @@
 .nhistorial-actions { display:flex; align-items:center; gap:10px; }
 .nhistorial-mark-all {
     border: 1px solid var(--border-accent, var(--border));
-    background: var(--accent-dim);
+    background: var(--noti-unread);
     color: var(--accent);
     padding: 8px 14px;
     border-radius: 7px;
@@ -98,7 +98,7 @@
 .nhistorial-page { max-width:680px; margin:32px auto; padding:0 16px 40px; }
 .nhistorial-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:20px; gap:12px; }
 .nhistorial-header-left { display:flex; align-items:center; gap:14px; }
-.nhistorial-back { display:inline-flex; align-items:center; gap:6px; font-size:0.82rem; font-weight:500; color:var(--accent); text-decoration:none; padding:6px 10px; border:1px solid var(--border-accent,var(--border)); border-radius:6px; background:var(--accent-dim); transition:opacity var(--trans); white-space:nowrap; }
+.nhistorial-back { display:inline-flex; align-items:center; gap:6px; font-size:0.82rem; font-weight:500; color:var(--accent); text-decoration:none; padding:6px 10px; border:1px solid var(--border-accent,var(--border)); border-radius:6px; background:var(--noti-unread); transition:opacity var(--trans); white-space:nowrap; }
 .nhistorial-back:hover { opacity:0.75; }
 .nhistorial-titulo { font-size:1.1rem; font-weight:700; color:var(--text); margin:0; }
 .nhistorial-total { font-size:0.78rem; color:var(--muted); white-space:nowrap; }
@@ -106,7 +106,7 @@
 .nhistorial-item { display:flex; align-items:flex-start; gap:12px; padding:14px 16px; border-bottom:1px solid var(--border); background:var(--bgnoti); transition:background var(--trans); position:relative; }
 .nhistorial-item:last-child { border-bottom:none; }
 .nhistorial-item:hover { background:var(--bg-hover); }
-.nhistorial-item.unread { background:var(--accent-dim); }
+.nhistorial-item.unread { background:var(--noti-unread); }
 .nhistorial-item.unread:hover { filter:brightness(0.97); }
 .nhistorial-body { flex:1; min-width:0; text-decoration:none; }
 .nhistorial-titulo-item { font-size:0.85rem; font-weight:600; color:var(--text); margin:0 0 3px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }

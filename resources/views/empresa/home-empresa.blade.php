@@ -378,33 +378,32 @@
 
     /* ── Badges estado oferta ── */
     .badge-estado-oferta {
-        display: inline-block;
-        padding: 3px 10px;
-        border-radius: 20px;
-        font-size: 12px;
-        font-weight: 500;
-        border: 1px solid; 
-        white-space: nowrap;
+      display: inline-block;
+      padding: 6px 16px;
+      border-radius: 11.5px;
+      font-size: 11.5px;
+      font-weight: 600;
+      white-space: nowrap;
     }
     .estado-activa { 
     /* Mezcla tu variable con transparente al 50% */
-        background-color: color-mix(in srgb, var(--activa) 60%, transparent); 
-        color: var(--text); 
-        border-color: var(--activa); 
+      background: var(--badge-contacto-bg);
+      color: var(--badge-contacto-text);
+      border: 1px solid var(--badge-contacto-border);
     }
 
     /* Estado: Pausada */
     .estado-pausada { 
-        background-color: color-mix(in srgb, var(--pausada) 60%, transparent); 
-        color: var(--text); 
-        border-color: var(--pausada); 
+      background: var(--badge-postulado-bg);
+      color: var(--badge-postulado-text);
+      border: 1px solid var(--badge-postulado-border);
     }
 
     /* Estado: Cerrada */
     .estado-cerrada { 
-        background-color: color-mix(in srgb, var(--cerrada) 60%, transparent); 
-        color: var(--text); 
-        border-color: var(--cerrada); 
+      background: var(--badge-rechazado-post-bg);
+      color: var(--badge-rechazado-post-text);
+      border: 1px solid var(--badge-rechazado-post-border); 
     }
 
 

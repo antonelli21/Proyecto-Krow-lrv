@@ -410,7 +410,9 @@
               <div class="admin-detalle-inner">
                 <div>
                   <p class="admin-detalle-block-title">Descripción</p>
-                  <p class="admin-detalle-value" style="word-break:break-word; overflow-wrap:break-word;">{{ $e->descripcion ?? '—' }}</p>
+                    <p class="admin-detalle-value" style="word-break:break-word; overflow-wrap:break-word;">
+                        {{ \Illuminate\Support\Str::limit($e->descripcion ?? '—', 100) }}
+                    </p>
                   <p class="admin-detalle-value" style="margin-top:8px;">
                     Registro: {{ $e->fecha_creacion ? \Carbon\Carbon::parse($e->fecha_creacion)->format('d/m/Y') : '—' }}
                   </p>
@@ -626,11 +628,11 @@
               <div class="admin-detalle-inner">
                 <div>
                   <p class="admin-detalle-block-title">Descripción</p>
-                  <p class="admin-detalle-value" style="word-break:break-word; overflow-wrap:break-word;">{{ Str::limit($o->descripcion ?? '—', 200) }}</p>
-                  @if($o->requisitos)
-                    <p class="admin-detalle-block-title" style="margin-top:10px;">Requisitos</p>
-                    <p class="admin-detalle-value">{{ Str::limit($o->requisitos, 150) }}</p>
-                  @endif
+                    <p class="admin-detalle-value" style="word-break:break-word; overflow-wrap:break-word;">{{ Str::limit($o->descripcion ?? '—', 100) }}</p>
+                    @if($o->requisitos)
+                      <p class="admin-detalle-block-title" style="margin-top:10px;">Requisitos</p>
+                      <p class="admin-detalle-value" style="word-break:break-word; overflow-wrap:break-word;">{{ Str::limit($o->requisitos, 100) }}</p>
+                    @endif
                 </div>
                 <div>
                   <p class="admin-detalle-block-title">Detalles</p>
@@ -744,18 +746,16 @@
       <tbody>
         @forelse($reportes as $r)
         @php
-  $badgeRep = match($r->estado) {
-    'Abierto'    => 'pendiente',
-    'En Proceso' => 'suspendido',
-    'Resuelto'   => 'activo',
-    default      => 'pendiente'
-  };
-  // user_name/user_email vienen del JOIN (usuario registrado)
-  // nombre_remitente/email_remitente vienen del formulario (siempre presentes)
-  $nombreMostrar = $r->user_name      ?? $r->nombre_remitente ?? '—';
-  $emailMostrar  = $r->user_email     ?? $r->email_remitente  ?? '—';
-  $asuntoReal    = $r->asunto;
-@endphp
+          $badgeRep = match($r->estado) {
+            'Abierto'    => 'pendiente',
+            'En Proceso' => 'suspendido',
+            'Resuelto'   => 'activo',
+            default      => 'pendiente'
+          };
+          $nombreMostrar = $r->user_name      ?? $r->nombre_remitente ?? '—';
+          $emailMostrar  = $r->user_email     ?? $r->email_remitente  ?? '—';
+          $asuntoReal    = $r->asunto;
+        @endphp
         <tr data-id="rep{{ $r->id_ticket }}"
             data-search="{{ strtolower($nombreMostrar . ' ' . $emailMostrar . ' ' . $asuntoReal) }}"
             data-estado="{{ strtolower($r->estado) }}"
@@ -782,6 +782,11 @@
                       onclick="toggleAdminDetalle('rep{{ $r->id_ticket }}', this)">
                 <i class="bi bi-eye"></i>
               </button>
+              <button class="btn-icon btn-eliminar" title="Eliminar ticket"
+                      data-delete-url="{{ route('admin.reportes.destroy', $r->id_ticket) }}"
+                      data-delete-name="el ticket \"{{ $asuntoReal }}\"">
+                <i class="bi bi-trash"></i>
+              </button>
             </div>
           </td>
         </tr>
@@ -791,10 +796,14 @@
           <td colspan="5">
             <div class="admin-detalle-inner" style="grid-template-columns: 180px 1fr 200px;">
 
+              {{-- Columna 1: Información --}}
               <div>
-                <p class="admin-detalle-block-title">Remitente</p>
+                <p class="admin-detalle-block-title">Información</p>
                 <p class="admin-detalle-value" style="font-weight:600;">{{ $nombreMostrar }}</p>
                 <p class="admin-detalle-value">{{ $emailMostrar }}</p>
+                <p class="admin-detalle-value">
+                  <span class="badge-admin badge-{{ $badgeRep }}">{{ $r->estado }}</span>
+                </p>
                 <p class="admin-detalle-value" style="margin-top:8px; font-size:11.5px; color:var(--muted);">
                   {{ \Carbon\Carbon::parse($r->fecha_creacion)->format('d/m/Y H:i') }}
                 </p>
@@ -809,11 +818,16 @@
                 @endif
               </div>
 
+              {{-- Columna 2: Contenido --}}
               <div>
-                <p class="admin-detalle-block-title">{{ $asuntoReal }}</p>
+                <p class="admin-detalle-block-title">Contenido</p>
+                <p class="admin-detalle-value" style="font-weight:600; margin-bottom:4px;">{{ $asuntoReal }}</p>
                 <p class="admin-detalle-value" style="white-space:pre-line; line-height:1.7; word-break:break-word; overflow-wrap:break-word;">{{ $r->descripcion }}</p>
+              </div>
+
+              {{-- Columna 3: Gestión --}}
               <div>
-                <p class="admin-detalle-block-title">Acciones</p>
+                <p class="admin-detalle-block-title">Gestión</p>
                 <div class="admin-detalle-actions">
 
                   {{-- Cambiar estado --}}
@@ -842,6 +856,12 @@
                     </a>
                   @endif
 
+                  <button class="btn-admin-rechazar" style="margin-top:6px;"
+                          data-delete-url="{{ route('admin.reportes.destroy', $r->id_ticket) }}"
+                          data-delete-name="el ticket \"{{ $asuntoReal }}\"">
+                    <i class="bi bi-trash"></i> Eliminar
+                  </button>
+
                 </div>
               </div>
 
@@ -850,22 +870,14 @@
         </tr>
         @empty
         <tr>
-          <td colspan="5" style="text-align:center;padding:2rem;color:var(--muted);">
-            No hay tickets de contacto aún.
+          <td colspan="5" style="text-align:center; padding:30px; color:var(--muted);">
+            <i class="bi bi-inbox" style="font-size:24px; display:block; margin-bottom:8px;"></i>
+            No hay reportes
           </td>
         </tr>
         @endforelse
       </tbody>
     </table>
-
-    @if($reportes->hasPages())
-      <div style="padding:16px;">{{ $reportes->links() }}</div>
-    @endif
-
-    <div class="admin-empty" style="display:none">
-      <i class="bi bi-search"></i>
-      <p>No se encontraron tickets con esos filtros.</p>
-    </div>
   </div>
 </div>
 @endif

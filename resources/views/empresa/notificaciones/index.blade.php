@@ -92,7 +92,7 @@
 }
 .nhistorial-mark-all {
     border: 1px solid var(--border-accent, var(--border));
-    background: var(--accent-dim);
+    background: var(--noti-unread);
     color: var(--accent);
     padding: 8px 14px;
     border-radius: 7px;
@@ -141,7 +141,7 @@
     padding: 6px 10px;
     border: 1px solid var(--border-accent, var(--border));
     border-radius: 6px;
-    background: var(--accent-dim);
+    background: var(--noti-unread);
     transition: opacity var(--trans);
     white-space: nowrap;
 }
@@ -176,7 +176,7 @@
 }
 .nhistorial-item:last-child { border-bottom: none; }
 .nhistorial-item:hover { background: var(--bg-hover); }
-.nhistorial-item.unread { background: var(--accent-dim); }
+.nhistorial-item.unread { background: var(--noti-unread); }
 .nhistorial-item.unread:hover { filter: brightness(0.97); }
 .nhistorial-body {
     flex: 1;
