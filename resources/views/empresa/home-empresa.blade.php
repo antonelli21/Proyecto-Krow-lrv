@@ -364,6 +364,19 @@
     </div>
 </dialog>
 
+<!-- Dialog aviso — solo informativo -->
+<dialog id="dialogAviso" class="modal-confirmar">
+    <div class="modal-confirmar-content">
+        <h3 class="modal-confirmar-title" id="dialogAvisoTitle">Atención</h3>
+        <p class="modal-confirmar-msg" id="dialogAvisoMsg"></p>
+        <div class="modal-confirmar-btns">
+            <button id="btnCerrarAviso" class="btn-confirmar-eliminar" style="background:var(--primary, #3d7cf0);">
+                Entendido
+            </button>
+        </div>
+    </div>
+</dialog>
+
 <style>
     /* fix crítico: dialog cerrado no ocupa espacio */
     dialog:not([open]) { display: none !important; }
@@ -749,16 +762,15 @@ function clearBulkEmp() {
   document.querySelectorAll('.check-emp, #check-all-emp').forEach(c => c.checked = false);
   updateBulkEmp();
 }
-function bulkEmpEstado(estado) {
+async function bulkEmpEstado(estado) {
   let ids = getSelectedEmp();
   if (!ids.length) return;
 
-  // Si se quiere Activar, sacamos las que el admin pausó: esas no se pueden reactivar desde acá.
   if (estado === 'Activa') {
     const bloqueadas = getSelectedBloqueadasAdmin();
     if (bloqueadas.length) {
       ids = ids.filter(id => !bloqueadas.includes(id));
-      alert(
+      await modalAviso(
         bloqueadas.length === 1
           ? 'Una de las ofertas seleccionadas fue pausada por el administrador y no se puede reactivar desde acá.'
           : `${bloqueadas.length} ofertas seleccionadas fueron pausadas por el administrador y no se pueden reactivar desde acá.`
@@ -775,6 +787,7 @@ function bulkEmpEstado(estado) {
     }).then(r => r.json())
   )).then(() => location.reload());
 }
+
 async function bulkEmpEliminar() {
     const ids = getSelectedEmp();
     if (!ids.length) return;
@@ -815,6 +828,33 @@ function modalConfirm(titulo, mensaje, labelBoton = 'Confirmar') {
         dialog.addEventListener('close', () => resolve(false), { once: true });
 
         // Cerrar clickeando backdrop
+        dialog.addEventListener('click', function handler(e) {
+            const rect = dialog.getBoundingClientRect();
+            if (e.clientX < rect.left || e.clientX > rect.right ||
+                e.clientY < rect.top  || e.clientY > rect.bottom) {
+                dialog.close();
+                dialog.removeEventListener('click', handler);
+            }
+        });
+
+        dialog.showModal();
+    });
+}
+function modalAviso(mensaje, titulo = 'Atención') {
+    return new Promise(resolve => {
+        const dialog = document.getElementById('dialogAviso');
+        document.getElementById('dialogAvisoTitle').textContent = titulo;
+        document.getElementById('dialogAvisoMsg').textContent = mensaje;
+
+        const btn = document.getElementById('btnCerrarAviso');
+        // Limpiar listener anterior para evitar doble-disparo
+        const nuevoBtn = btn.cloneNode(true);
+        btn.parentNode.replaceChild(nuevoBtn, btn);
+
+        nuevoBtn.addEventListener('click', () => dialog.close());
+
+        dialog.addEventListener('close', () => resolve(), { once: true });
+
         dialog.addEventListener('click', function handler(e) {
             const rect = dialog.getBoundingClientRect();
             if (e.clientX < rect.left || e.clientX > rect.right ||
