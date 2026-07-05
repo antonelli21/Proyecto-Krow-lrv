@@ -335,6 +335,88 @@
 .perfil-avatar:hover .avatar-overlay {
     opacity: 1;
 }
+
+
+textarea.filter-input-text,.filter-input-text,
+.filter-select {
+    width: 100%;
+    padding: 0.65rem 0.875rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius, 6px);
+    background: var(--toolbar_bg);
+    color: var(--text);
+    font-size: 0.9rem;
+    font-family: var(--font-body);
+    transition: border-color 0.2s, box-shadow 0.2s;
+    outline: none;
+}
+
+textarea.filter-input-text {
+    resize: vertical;
+    line-height: 1.6;
+    min-height: 100px;
+}
+
+.filter-input-text::placeholder {
+    color: var(--muted);
+    opacity: 0.7;
+}
+
+.filter-input-text:focus,
+.filter-select:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(46, 204, 154, 0.10);
+}
+
+[data-theme="dark"] .filter-input-text:focus,
+[data-theme="dark"] .filter-select:focus {
+    box-shadow: 0 0 0 3px rgba(212, 168, 67, 0.12);
+}
+
+.filter-input-text.input-error,
+.filter-select.input-error {
+    border-color: var(--destructive);
+    box-shadow: 0 0 0 3px rgba(212, 24, 61, 0.12);
+}
+
+.config-error {
+    display: block;
+    font-size: 0.8rem;
+    color: var(--destructive);
+    margin-top: 4px;
+}
+
+/* Select con flecha propia — reemplaza la flecha nativa del navegador,
+   que no toma los colores del sitio y suele romper el tema oscuro. */
+.select-wrapper {
+    position: relative;
+}
+
+.select-wrapper .filter-select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    padding-right: 2.5rem;
+    cursor: pointer;
+}
+
+.select-wrapper::after {
+    content: '▼';
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--muted);
+    font-size: 0.7rem;
+    pointer-events: none;
+}
+
+.filter-select:disabled,
+.filter-input-text:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background: var(--bg-hover, var(--toolbar_bg));
+}
 </style>
 
 <script>

@@ -618,50 +618,60 @@
 
     // ── Pausar / Activar ──────────────────────────
     function toggleEstadoOferta(idOferta, estadoActual) {
-        const nuevoEstado = estadoActual === 'Activa' ? 'Pausada' : 'Activa';
+    const nuevoEstado = estadoActual === 'Activa' ? 'Pausada' : 'Activa';
 
-        fetch(`/empresa/oferta/${idOferta}/estado`, {
-            method: 'PATCH',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': '{{ csrf_token() }}'
-            },
-            body: JSON.stringify({ estado: nuevoEstado })
-        })
-        .then(r => r.json())
-        .then(data => {
-            if (!data.success) { alert('Error al cambiar estado.'); return; }
+    fetch(`/empresa/oferta/${idOferta}/estado`, {
+        method: 'PATCH',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+        },
+        body: JSON.stringify({ estado: nuevoEstado })
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (!data.success) {
+            alert('Error al cambiar estado.');
+            return;
+        }
 
-            const claseMap = {
-                'Activa':  'estado-activa',
-                'Pausada': 'estado-pausada',
-                'Cerrada': 'estado-cerrada'
-            };
+        const claseMap = {
+            Activa: 'estado-activa',
+            Pausada: 'estado-pausada',
+            Cerrada: 'estado-cerrada'
+        };
 
-            // Actualizar badges desktop y mobile
-            [`badge-estado-${idOferta}`, `badge-estado-mob-${idOferta}`].forEach(id => {
-                const badge = document.getElementById(id);
-                if (!badge) return;
-                badge.className   = `badge-estado-oferta ${claseMap[nuevoEstado]}`;
-                badge.textContent = nuevoEstado;
+        [`badge-estado-${idOferta}`, `badge-estado-mob-${idOferta}`].forEach(id => {
+            const badge = document.getElementById(id);
+            if (!badge) return;
+
+            badge.className = `badge-estado-oferta ${claseMap[nuevoEstado]}`;
+            badge.textContent = nuevoEstado;
+        });
+
+        document.querySelectorAll(`.btn-toggle-estado[data-id="${idOferta}"]`)
+            .forEach(btn => {
+                btn.dataset.estado = nuevoEstado;
+                btn.setAttribute(
+                    'onclick',
+                    `toggleEstadoOferta(${idOferta}, '${nuevoEstado}')`
+                );
+                btn.textContent = nuevoEstado === 'Activa'
+                    ? 'Pausar'
+                    : 'Activar';
             });
 
-            // Después de actualizar badges, agregar esto:
-const statActivas = document.querySelectorAll('.stat-card')[0]?.querySelector('.stat-card-value');
-if (statActivas) {
-    // Dividir por 2 porque hay badge desktop y mobile por cada oferta
-    statActivas.textContent = document.querySelectorAll('.badge-estado-oferta.estado-activa').length / 2;
+        // Actualizar estadísticas
+        document.querySelectorAll('.stat-card')[0]
+            .querySelector('.stat-card-value').textContent =
+            document.querySelectorAll('.badge-estado-oferta.estado-activa').length / 2;
+
+        document.querySelectorAll('.stat-card')[2]
+            .querySelector('.stat-card-value').textContent =
+            document.querySelectorAll('.badge-estado-oferta.estado-pausada').length / 2;
+    })
+    .catch(() => alert('Error de red.'));
 }
-
-            // Actualizar botones toggle
-            document.querySelectorAll(`.btn-toggle-estado[data-id="${idOferta}"]`).forEach(btn => {
-                btn.setAttribute('data-estado', nuevoEstado);
-                btn.setAttribute('onclick', `toggleEstadoOferta(${idOferta}, '${nuevoEstado}')`);
-                btn.textContent = nuevoEstado === 'Activa' ? 'Pausar' : 'Activar';
-            });
-        })
-        .catch(() => alert('Error de red.'));
-    }
 
     // ── Eliminar ──────────────────────────────────
     let ofertaAEliminar = null;
@@ -672,52 +682,40 @@ if (statActivas) {
         `¿Confirmás eliminar "${titulo}"? Se borrarán todas las postulaciones asociadas y no se puede deshacer.`,
         'Sí, eliminar'
     );
+
     if (!ok) return;
 
     fetch(`/empresa/oferta/${idOferta}`, {
         method: 'DELETE',
-        headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' }
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+        }
     })
     .then(r => r.json())
     .then(data => {
-        if (!data.success) { alert('Error al eliminar.'); return; }
+
+        if (!data.success) {
+            alert('Error al eliminar.');
+            return;
+        }
+
         document.getElementById(`fila-oferta-${idOferta}`)?.remove();
         document.getElementById(`card-oferta-${idOferta}`)?.remove();
-        // Actualizar contador
-        const stat = document.querySelectorAll('.stat-card')[0]?.querySelector('.stat-card-value');
-        if (stat) stat.textContent = document.querySelectorAll('.badge-estado-oferta.estado-activa').length / 2;
+
+        document.querySelectorAll('.stat-card')[0]
+            .querySelector('.stat-card-value').textContent = data.activas;
+
+        document.querySelectorAll('.stat-card')[1]
+            .querySelector('.stat-card-value').textContent = data.totalPostulantes;
+
+        document.querySelectorAll('.stat-card')[2]
+            .querySelector('.stat-card-value').textContent = data.pausadas;
     })
     .catch(() => alert('Error de red.'));
 }
 
-    document.getElementById('btnConfirmarEliminar').addEventListener('click', function () {
-        if (!ofertaAEliminar) return;
-        const id = ofertaAEliminar;
-        document.getElementById('dialogEliminar').close();
-        ofertaAEliminar = null;
-
-        fetch(`/empresa/oferta/${id}`, {
-            method: 'DELETE',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': '{{ csrf_token() }}'
-            }
-        })
-        .then(r => r.json())
-        .then(data => {
-            if (!data.success) { alert('Error al eliminar.'); return; }
-            document.getElementById(`fila-oferta-${id}`)?.remove();
-            document.getElementById(`card-oferta-${id}`)?.remove();
-
-            // Actualizar contador activas tras eliminar
-const statActivas = document.querySelectorAll('.stat-card')[0]?.querySelector('.stat-card-value');
-if (statActivas) {
-    // Dividir por 2 porque hay badge desktop y mobile por cada oferta
-    statActivas.textContent = document.querySelectorAll('.badge-estado-oferta.estado-activa').length / 2;
-}
-        })
-        .catch(() => alert('Error de red.'));
-    });
+    
 
     document.getElementById('dialogEliminar').addEventListener('click', function (e) {
         const rect = this.getBoundingClientRect();

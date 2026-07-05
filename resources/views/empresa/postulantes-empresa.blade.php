@@ -96,7 +96,10 @@
     .applicant-career { font-size: 13px; color: var(--muted); margin-bottom: 4px; }
     .applicant-date { font-size: 11px; color: var(--muted); }
 
-    /* Badge */
+    /* Badge de estado — reutiliza las variables de badge del design system
+       (--badge-postulado-*, --badge-preseleccionado-*, --badge-contacto-*,
+       --badge-rechazado-post-*), que ya tienen su propia versión para modo
+       oscuro, en vez de colores fijos que no cambian entre temas. */
     .status-badge {
         display: inline-block;
         padding: 6px 16px;
@@ -104,28 +107,6 @@
         font-size: 11.5px;
         font-weight: 600;
         white-space: nowrap;
-    }
-
-    .status-pending {
-        background: #f5cc272d;
-        color: var(--postulado);
-        border: 1px solid rgba(150, 150, 150, .3);
-    }
-    .estado-preseleccionado {
-        background: rgba(180, 120, 60, .15);
-        color: var(--preseleccionado);
-        border: 1px solid rgba(180, 120, 60, .3);
-    }
-    
-    .status-accepted {
-        background: rgba(180, 120, 60, .15);
-        color: var(--preseleccionado);
-        border: 1px solid rgba(180, 120, 60, .3);
-    }
-    .status-rejected {
-        background: rgba(212, 24, 61, .12);
-        color: var(--rechazado);
-        border: 1px solid rgba(212, 24, 61, .3);
     }
 
     /* Layout dos columnas */
@@ -289,10 +270,10 @@
         @forelse($postulantes as $postulante)
         @php
             $badgeConfig = [
-                'Postulado'       => ['class' => 'status-pending',  'text' => 'Postulado'],
-                'Preseleccionado' => ['class' => 'status-accepted', 'text' => 'Preseleccionado'],
-                'En Contacto'     => ['class' => 'status-accepted', 'text' => 'En Contacto'],
-                'Rechazado'       => ['class' => 'status-rejected', 'text' => 'Rechazado'],
+                'Postulado'       => ['class' => 'estado-postulado',       'text' => 'Postulado'],
+                'Preseleccionado' => ['class' => 'estado-preseleccionado', 'text' => 'Preseleccionado'],
+                'En Contacto'     => ['class' => 'estado-contacto',        'text' => 'En Contacto'],
+                'Rechazado'       => ['class' => 'estado-rechazado',        'text' => 'Rechazado'],
             ];
             $config = $badgeConfig[$postulante->estado] ?? $badgeConfig['Postulado'];
         @endphp
@@ -424,7 +405,7 @@
         </div>
         @empty
         <div class="sin-resultados">
-            <p>📭 No hay postulantes para esta oferta.</p>
+            <p>No hay postulantes para esta oferta.</p>
         </div>
         @endforelse
     </div>
@@ -452,17 +433,19 @@ const siguienteEstado = {
 };
 
 const badgeTexts = {
-    'Postulado':       '📋 Postulado',
-    'Preseleccionado': '⭐ Preseleccionado',
-    'En Contacto':     '💬 En Contacto',
-    'Rechazado':       '❌ Rechazado',
+    'Postulado':       'Postulado',
+    'Preseleccionado': 'Preseleccionado',
+    'En Contacto':     'En Contacto',
+    'Rechazado':       'Rechazado',
 };
 
+/* Mismas clases que usa el resto del sitio (tabla de ofertas, etc.),
+   ya themeadas con las variables --badge-*-bg / --badge-*-text / --badge-*-border. */
 const badgeClasses = {
-    'Postulado':       'status-pending',
-    'Preseleccionado': 'status-accepted',
-    'En Contacto':     'status-accepted',
-    'Rechazado':       'status-rejected',
+    'Postulado':       'estado-postulado',
+    'Preseleccionado': 'estado-preseleccionado',
+    'En Contacto':     'estado-contacto',
+    'Rechazado':       'estado-rechazado',
 };
 
 function openConfirmDialog(applicantId, action, estadoActual) {
@@ -648,7 +631,7 @@ function filtrarPostulantes(estado) {
             const list = document.getElementById('applicantsList');
             const msg  = document.createElement('div');
             msg.className = 'sin-resultados';
-            msg.innerHTML = '<p>📭 No hay postulantes con este estado.</p>';
+            msg.innerHTML = '<p>No hay postulantes con este estado.</p>';
             list.appendChild(msg);
         }
     } else {

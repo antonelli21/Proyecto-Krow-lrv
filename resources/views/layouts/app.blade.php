@@ -2,6 +2,16 @@
 <html lang="es" data-theme="dark" data-role="{{ auth()->check() ? auth()->user()->rol : 'invitado' }}">
 
 <head>
+  <script>
+      (function () {
+        try {
+          var theme = localStorage.getItem('krow-theme') || 'dark';
+          document.documentElement.setAttribute('data-theme', theme);
+        } catch (e) {
+          document.documentElement.setAttribute('data-theme', 'dark');
+        }
+      })();
+  </script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="csrf-token" content="{{ csrf_token() }}">

@@ -156,13 +156,13 @@ class EmpresaController extends Controller
             // Debug: verificar si se guardó
             \Log::info('Banner guardado:', ['banner' => $empresa->banner]);
 
-            return redirect()->route('empresa.perfil')->with('perfil_ok', '✅ Perfil actualizado correctamente');
+            return redirect()->route('empresa.perfil')->with('perfil_ok', 'Perfil actualizado correctamente');
 
         } catch (\Exception $e) {
             \Log::error('Error al actualizar perfil:', ['error' => $e->getMessage()]);
             return redirect()->back()
                 ->withInput()
-                ->withErrors(['error' => '❌ Error al actualizar el perfil: ' . $e->getMessage()]);
+                ->withErrors(['error' => 'Error al actualizar el perfil: ' . $e->getMessage()]);
         }
     }
 
@@ -238,7 +238,7 @@ class EmpresaController extends Controller
 
                 return (object)[
                     'id'                => $postulacion->id_postulacion,
-                    'id_usuario'        => $estudiante->id_usuario,       // ✅ para el botón contactar
+                    'id_usuario'        => $estudiante->id_usuario,       
                     'id_estudiante'     => $estudiante->id_estudiante,
                     'nombre'            => trim($estudiante->nombre . ' ' . $estudiante->apellido),
                     'carrera'           => $estudiante->carrera->nombre ?? 'No especificada',
