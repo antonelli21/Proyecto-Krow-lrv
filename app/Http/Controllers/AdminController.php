@@ -48,6 +48,7 @@ class AdminController extends Controller
         $empresasAprobadas  = Empresa::where('estado', 'aprobada')->count();
         $empresasPendientes = Empresa::where('estado', 'pendiente')->count();
         $empresasRechazadas = Empresa::where('estado', 'rechazada')->count();
+        $empresasSuspendidas = Empresa::where('estado', 'suspendida')->count();
 
         $empresas = Empresa::with('user')
             ->withCount(['ofertas as ofertas_activas_count' => fn($q) => $q->where('estado', 'activa')])
@@ -56,7 +57,7 @@ class AdminController extends Controller
 
         return view('admin.admin', compact(
             'seccion',
-            'totalEmpresas', 'empresasAprobadas', 'empresasPendientes', 'empresasRechazadas',
+            'totalEmpresas', 'empresasAprobadas', 'empresasPendientes', 'empresasRechazadas', 'empresasSuspendidas',
             'empresas'
         ));
     }
@@ -69,6 +70,8 @@ class AdminController extends Controller
         $ofertasPublicadas = Oferta::where('estado', 'activa')->count();
         $ofertasPendientes = Oferta::where('estado', 'pendiente')->count();
         $ofertasPausadas   = Oferta::where('estado', 'pausada')->count();
+        $ofertasCerradas = Oferta::where('estado', 'cerrada')->count();
+
 
         $ofertas = Oferta::with('empresa')
             ->withCount('postulaciones')
@@ -77,7 +80,7 @@ class AdminController extends Controller
 
         return view('admin.admin', compact(
             'seccion',
-            'totalOfertas', 'ofertasPublicadas', 'ofertasPendientes', 'ofertasPausadas',
+            'totalOfertas', 'ofertasPublicadas', 'ofertasPendientes', 'ofertasPausadas', 'ofertasCerradas',
             'ofertas'
         ));
     }

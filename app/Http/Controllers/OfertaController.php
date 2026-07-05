@@ -13,8 +13,7 @@ class OfertaController extends Controller
 
     public function detalle($id_oferta)
     {
-        $oferta = Oferta::with(['empresa', 'habilidades', 'carrera', 'localidad', 'provincia'])
-            ->findOrFail($id_oferta);
+        $oferta = Oferta::with(['empresa', 'localidad.provincia', 'habilidades', 'carreras'])->findOrFail($id_oferta);
 
         $oferta->ya_postulado = auth()->check()
             ? $oferta->postulaciones()
@@ -30,11 +29,10 @@ public function preview($id_oferta)
     $oferta = Oferta::with([
         'empresa',
         'habilidades',
-        'carrera',
+        'carreras',
         'localidad',
         'provincia'
     ])->findOrFail($id_oferta);
-
     $oferta->ya_postulado = auth()->check()
             ? $oferta->postulaciones()
                 ->whereHas('estudiante', fn($q) => $q->where('id_usuario', auth()->id()))
@@ -113,27 +111,36 @@ if ($postulacion) {
     }
 
     public function store(Request $request)
-    {
-        $data = $request->validate([
-            'id_empresa' => 'required|exists:empresa,id_empresa',
-            'titulo' => 'required|string|max:100',
-            'descripcion' => 'required|string',
-            'requisitos' => 'nullable|string',
-            'area' => 'nullable|string|max:50',
-            'experiencia_requerida' => 'required|in:Sin Experiencia,Junior,Semi Senior,Senior',
-            'tipo_oferta' => 'required|in:Pasantia,Practica Profesional,Part-Time,Full-Time',
-            'modalidad' => 'required|in:Presencial,Remoto,Hibrido',
-            'salario_min' => 'nullable|integer|min:0',
-            'salario_max' => 'nullable|integer|min:0',
-            'id_localidad' => 'nullable|exists:localidad,id_localidad',
-            'id_provincia' => 'nullable|exists:provincia,id_provincia',
-            'fecha_cierre' => 'nullable|date',
-            'estado' => 'nullable|in:Activa,Pausada,Cerrada',
-        ]);
-        $oferta = Oferta::create($data);
-        return response()->json($oferta, 201);
-        
-        }
+{
+    $data = $request->validate([
+        'id_empresa' => 'required|exists:empresa,id_empresa',
+        'titulo' => 'required|string|max:100',
+        'descripcion' => 'required|string',
+        'requisitos' => 'nullable|string',
+        'area' => 'nullable|string|max:50',
+        'experiencia_requerida' => 'required|in:Sin Experiencia,Junior,Semi Senior,Senior',
+        'tipo_oferta' => 'required|in:Pasantia,Practica Profesional,Part-Time,Full-Time',
+        'modalidad' => 'required|in:Presencial,Remoto,Hibrido',
+        'salario_min' => 'nullable|integer|min:0',
+        'salario_max' => 'nullable|integer|min:0',
+        'id_localidad' => 'nullable|exists:localidad,id_localidad',
+        'id_provincia' => 'nullable|exists:provincia,id_provincia',
+        'fecha_cierre' => 'nullable|date',
+        'estado' => 'nullable|in:Activa,Pausada,Cerrada',
+        'id_carrera' => 'nullable', // puede venir como array o escalar, ajustá según tu form
+    ]);
+
+    $idCarreras = (array) ($data['id_carrera'] ?? []);
+    unset($data['id_carrera']);
+
+    $oferta = Oferta::create($data);
+
+    if (!empty($idCarreras)) {
+        $oferta->carreras()->attach($idCarreras);
+    }
+
+    return response()->json($oferta, 201);
+}
 
 
     public function update(Request $request, Oferta $oferta)
@@ -195,14 +202,14 @@ if ($postulacion) {
 }
 
     public function listar()
-    {
-        $ofertas = Oferta::with(['empresa', 'localidad', 'provincia'])
-            ->where('estado', 'activa')
-            ->orderBy('fecha_publicacion', 'desc')
-            ->paginate(6); // ← era 10
-        
-        return view('estudiante.oferta-detalle', compact('oferta'));
-    }
+{
+    $ofertas = Oferta::with(['empresa', 'localidad', 'provincia'])
+        ->where('estado', 'activa')
+        ->orderBy('fecha_publicacion', 'desc')
+        ->paginate(6);
+    
+    return view('estudiante.oferta-detalle', compact('oferta')); // ← $oferta no existe, y la vista no pega con el propósito
+}
 }
 
 
