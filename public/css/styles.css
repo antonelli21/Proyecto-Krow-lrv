@@ -8,7 +8,7 @@
   --title: #111827;
   --muted: #6b7280;
   --border: #e5e7eb;
-  --borde-especifico: #898a8b;
+  --borde-especifico: #787879;
   --destructive: #D4183D;
   --destructive-fg: #ffffff;
   --radius: 0px;
@@ -26,7 +26,7 @@
   --bg-card: var(--surface);
   --bg-input: #ffffff;
   --bg-hover: rgba(0, 0, 0, 0.04);
-  --toolbar_bg: #acacac;
+  --toolbar_bg: #e4dddd;
   --text-primary: var(--text);
   --text-secondary: var(--muted);
   --text-muted: #5A5A5A;
