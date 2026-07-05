@@ -397,6 +397,7 @@ function initFiltersSidebar() {
     if (tituloBanner) {
 
       const categoriaRaw = params.get('categoria');
+      const overlay = document.getElementById('banner-overlay');
 
       const sinCategoria =
         !categoriaRaw ||
@@ -404,24 +405,20 @@ function initFiltersSidebar() {
         categoriaRaw.toLowerCase() === 'todas';
 
       tituloBanner.textContent = sinCategoria
-        ? 'Krow'
+        ? 'KROW'
         : categoriaRaw;
 
-      if (sinCategoria) {
-        indexBanner.style.background = '';
-      } else {
-        indexBanner.style.background =
-          coloresCategorias[categoriaRaw] || '#475569';
-      }
+      if (overlay) {
+        if (sinCategoria) {
+          overlay.style.background =
+            'linear-gradient(to right, rgba(0,0,0,.6), rgba(0,0,0,.4))';
+        } else {
 
-      const imgBanner = document.getElementById('banner-img');
+          const color = coloresCategorias[categoriaRaw] || '#475569';
 
-      if (sinCategoria) {
-        imgBanner.style.display = 'block';
-      } else {
-        imgBanner.style.display = 'none';
-        indexBanner.style.background =
-          coloresCategorias[categoriaRaw] || '#475569';
+          overlay.style.background =
+            color;
+        }
       }
     }
 

@@ -15,7 +15,7 @@
     margin:0;
 ">
 
-    <div  style="
+    <div id="banner-overlay" style="
         position:absolute;
         inset:0;
         background:linear-gradient(to right, rgba(0,0,0,.6), rgba(0,0,0,.4));
