@@ -245,10 +245,10 @@ class AdminController extends Controller
     public function eliminarOferta($id)
     {
         $oferta = Oferta::findOrFail($id);
-        
+
         // Hacer soft delete de todas las postulaciones de esta oferta
         $oferta->postulaciones()->delete();
-        
+
         // Luego hacer soft delete de la oferta
         $oferta->delete();
 
@@ -314,9 +314,16 @@ class AdminController extends Controller
             'ids.*' => 'integer|exists:oferta,id_oferta',
         ]);
 
-        Oferta::whereIn('id_oferta', $request->ids)->delete();
+       
+        foreach ($request->ids as $id) {
+            $oferta = Oferta::find($id);
+            if ($oferta) {
+                $oferta->postulaciones()->delete();
+                $oferta->delete();
+            }
+        }
 
-        return redirect()->back()->with('success', count($request->ids) . ' ofertas eliminadas.');
+        return redirect()->back()->with('success', count($request->ids) . ' ofertas y sus postulaciones movidas a papelera.');
     }
 
     public function eliminarEstudiante($id)
@@ -332,17 +339,15 @@ class AdminController extends Controller
             $this->eliminarUserConDependencias($idUsuario);
         }
 
-    // Para cada oferta, hacer soft delete de sus postulaciones primero
-        foreach ($request->ids as $id) {
-            $oferta = Oferta::find($id);
-            if ($oferta) {
-                $oferta->postulaciones()->delete();
-                $oferta->delete();
-            }
+        return redirect()->back()->with('success', 'Estudiante eliminado.');
     }
 
-    return redirect()->back()->with('success', count($request->ids) . ' ofertas y sus postulaciones movidas a papelera.');
-
+    public function bulkDestroyEstudiantes(Request $request)
+    {
+        $request->validate([
+            'ids'   => 'required|array',
+            'ids.*' => 'integer|exists:estudiante,id_estudiante',
+        ]);
 
         foreach ($request->ids as $id) {
             $estudiante = Estudiante::find($id);
@@ -361,10 +366,7 @@ class AdminController extends Controller
         return redirect()->back()->with('success', count($request->ids) . ' estudiantes eliminados.');
     }
 
-    /**
-     * Elimina una empresa y todas sus dependencias (ofertas, postulaciones, habilidades, carreras, usuario).
-     * Ahora también elimina la tabla pivote oferta_carrera.
-     */
+
     public function eliminarEmpresa($id)
     {
         $empresa   = Empresa::findOrFail($id);
@@ -395,10 +397,7 @@ class AdminController extends Controller
         return redirect()->back()->with('success', 'Empresa, ofertas y postulantes eliminados.');
     }
 
-    /**
-     * Elimina múltiples empresas en lote (bulk).
-     * Ahora también elimina la tabla pivote oferta_carrera.
-     */
+
     public function bulkDestroyEmpresas(Request $request)
     {
         $request->validate([
@@ -433,9 +432,7 @@ class AdminController extends Controller
         return redirect()->back()->with('success', count($request->ids) . ' empresas eliminadas.');
     }
 
-    /**
-     * Borra todas las tablas hijas de un user antes de eliminar el registro users.
-     */
+
     private function eliminarUserConDependencias(int $idUsuario): void
     {
         $chatIds = \DB::table('chat')
@@ -527,14 +524,9 @@ class AdminController extends Controller
         $oferta = \App\Models\Oferta::onlyTrashed()->findOrFail($id);
         $oferta->restore();
         $oferta->postulaciones()->onlyTrashed()->restore();
+
+        return redirect()->back()->with('success', 'Oferta restaurada.');
     }
-    
-
-/* 
-   PAPELERA
-*/
-    
-
 
     public function eliminarPostulacionDefinitivo($id)
     {
@@ -542,10 +534,7 @@ class AdminController extends Controller
         return redirect()->back()->with('success', 'Postulación eliminada definitivamente.');
     }
 
-    /**
-     * Elimina una oferta de forma definitiva (desde la papelera).
-     * Ahora también elimina sus dependencias: postulaciones, oferta_habilidad y oferta_carrera.
-     */
+
     public function eliminarOfertaDefinitivo($id)
     {
         $oferta = \App\Models\Oferta::onlyTrashed()->findOrFail($id);
@@ -559,5 +548,7 @@ class AdminController extends Controller
         \DB::table('oferta_carrera')->where('id_oferta', $ofertaId)->delete();
 
         $oferta->forceDelete();
+
+        return redirect()->back()->with('success', 'Oferta eliminada definitivamente.');
     }
 }

@@ -16,18 +16,14 @@ class EstadoEmpresaEmail extends Mailable
     public Empresa $empresa;
     public string $estado;
 
-    /**
-     * Create a new message instance.
-     */
+
     public function __construct(Empresa $empresa, string $estado)
     {
         $this->empresa = $empresa;
         $this->estado = $estado;
     }
 
-    /**
-     * Get the message envelope.
-     */
+
     public function envelope(): Envelope
     {
         $asunto = $this->estado === 'aprobada' 
@@ -39,9 +35,7 @@ class EstadoEmpresaEmail extends Mailable
         );
     }
 
-    /**
-     * Get the message content definition.
-     */
+
     public function content(): Content
     {
         return new Content(

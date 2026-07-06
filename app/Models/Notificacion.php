@@ -12,10 +12,7 @@ class Notificacion extends Model
  
     protected $table = 'notificaciones';
  
-    /**
-     * Tipos válidos de notificación.
-     * Usados para icono y color en el frontend.
-     */
+ 
     const TIPO_INFO    = 'info';
     const TIPO_SUCCESS = 'success';
     const TIPO_WARNING = 'warning';
@@ -45,45 +42,34 @@ class Notificacion extends Model
         'updated_at' => 'datetime',
     ];
  
-    // ─── Relaciones ───────────────────────────────────────────
+
  
     public function usuario()
     {
         return $this->belongsTo(User::class, 'id_usuario');
     }
  
-    // ─── Scopes ───────────────────────────────────────────────
+
  
-    /**
-     * Solo notificaciones no leídas.
-     */
+
     public function scopeNoLeidas(Builder $query): Builder
     {
         return $query->where('leida', false);
     }
  
-    /**
-     * Solo notificaciones de un usuario específico.
-     */
+
     public function scopeDelUsuario(Builder $query, int $usuarioId): Builder
     {
         return $query->where('id_usuario', $usuarioId);
     }
  
-    /**
-     * Solo notificaciones de un tipo específico.
-     */
+
     public function scopeDelTipo(Builder $query, string $tipo): Builder
     {
         return $query->where('tipo', $tipo);
     }
  
-    // ─── Accesors ─────────────────────────────────────────────
- 
-    /**
-     * Devuelve el ícono SVG path correspondiente al tipo.
-     * Útil para renderizar en Blade sin lógica en la vista.
-     */
+
     public function getIconoAttribute(): string
     {
         return match($this->tipo) {

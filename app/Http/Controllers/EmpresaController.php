@@ -58,7 +58,7 @@ class EmpresaController extends Controller
         $usuario = auth()->user();
         $empresa = $usuario->empresa;
 
-        // Mapeo de campos para compatibilidad
+        
         if ($request->has('nombre') && !$request->has('nombre_empresa')) {
             $request->merge(['nombre_empresa' => $request->input('nombre')]);
         }
@@ -99,9 +99,9 @@ class EmpresaController extends Controller
         ]);
 
         try {
-            // Guardar logo
+            
             if ($request->hasFile('logo')) {
-                // Eliminar logo anterior si existe
+                
                 if ($empresa->logo && Storage::disk('public')->exists($empresa->logo)) {
                     Storage::disk('public')->delete($empresa->logo);
                 }
@@ -109,22 +109,22 @@ class EmpresaController extends Controller
                 $empresa->logo = $path;
             }
 
-            // Guardar banner - La clave está aquí
+            
             if ($request->hasFile('banner')) {
-                // Eliminar banner anterior si existe
+                
                 if ($empresa->banner && Storage::disk('public')->exists($empresa->banner)) {
                     Storage::disk('public')->delete($empresa->banner);
                 }
                 $path = $request->file('banner')->store('banners', 'public');
-                $empresa->banner = $path; // Asegurar que se guarda
+                $empresa->banner = $path; 
             }
 
-            // Actualizar datos del usuario
+            
             $usuario->name  = $data['nombre_empresa'];
             $usuario->email = $data['email_contacto'];
             $usuario->save();
 
-            // Actualizar datos de la empresa
+            
             $empresa->fill([
                 'nombre_empresa'      => $data['nombre_empresa'],
                 'razon_social'        => $data['razon_social'],
@@ -145,15 +145,14 @@ class EmpresaController extends Controller
                 'id_provincia'        => $data['id_provincia'] ?? null,
             ]);
 
-            // Asegurar que el banner se guarde en el modelo
-            // (ya se asignó arriba, pero por si acaso)
+            
             if (isset($path) && $request->hasFile('banner')) {
                 $empresa->banner = $path;
             }
 
             $empresa->save();
 
-            // Debug: verificar si se guardó
+            
             \Log::info('Banner guardado:', ['banner' => $empresa->banner]);
 
             return redirect()->route('empresa.perfil')->with('perfil_ok', 'Perfil actualizado correctamente');
@@ -213,7 +212,7 @@ class EmpresaController extends Controller
         $totalPostulantes = $ofertas->sum('postulaciones_count');
         $totalVistas = $ofertas->sum('vistas') ?? 0;
 
-        // Mensajes no leídos de la empresa
+        
         $mensajesSinLeer = \App\Models\Mensaje::whereHas('chat', function($q) use ($userId) {
                 $q->where('id_usuario_1', $userId)->orWhere('id_usuario_2', $userId);
             })
@@ -318,7 +317,7 @@ class EmpresaController extends Controller
 
             $oferta->carreras()->sync([$data['id_carrera']]);
 
-            // Guardar habilidades
+            
             if ($request->has('tecnologias') && is_array($request->tecnologias) && count($request->tecnologias) > 0) {
                 $ids = [];
                 foreach ($request->tecnologias as $nombre) {
@@ -333,7 +332,7 @@ class EmpresaController extends Controller
                 $oferta->habilidades()->sync($ids);
             }
 
-            // ── Notificar a todos los estudiantes ─────────────────────
+            
             $ahora      = now();
             $estudiantes = \App\Models\User::where('rol', 'estudiante')->pluck('id');
 

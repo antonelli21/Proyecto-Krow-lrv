@@ -44,7 +44,7 @@ class EstudianteController extends Controller
         ->where('leido', false)
         ->count();
 
-    // Completitud del perfil
+    
     $campos = [
         'foto_perfil'        => 10,
         'cv'                 => 20,

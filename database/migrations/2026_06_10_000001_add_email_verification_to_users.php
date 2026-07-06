@@ -4,18 +4,10 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-/**
- * Migración que agrega los campos necesarios para la verificación
- * de email a la tabla 'users':
- * - email_verification_code: código de 6 dígitos enviado por email
- * - email_verification_expires: fecha/hora en que el código expira
- */
+
 return new class extends Migration
 {
-    /**
-     * Ejecutar la migración.
-     * Agrega columnas de verificación de email a la tabla users.
-     */
+
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
@@ -27,10 +19,7 @@ return new class extends Migration
         });
     }
 
-    /**
-     * Revertir la migración.
-     * Elimina las columnas de verificación de la tabla users.
-     */
+
     public function down(): void
     {
         Schema::table('users', function (Blueprint $table) {

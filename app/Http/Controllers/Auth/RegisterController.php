@@ -15,18 +15,10 @@ use Illuminate\Support\Facades\Mail;
 use App\Mail\VerificacionEmail;
 use App\Helpers\CuitValidator;
 
-/**
- * RegisterController — Maneja el registro de usuarios nuevos.
- * Soporta dos tipos de registro: Estudiante y Empresa.
- * Envía un código de verificación por email después del registro.
- * Para empresas, valida el CUIT antes de crear la cuenta.
- */
+
 class RegisterController extends Controller
 {
-    /**
-     * Muestra el formulario de registro (con tabs candidato/empresa).
-     * Carga carreras y provincias desde la base de datos.
-     */
+
     public function showRegistrationForm()
     {
         $carreras   = Carrera::orderBy('nombre')->get();
@@ -35,11 +27,7 @@ class RegisterController extends Controller
         return view('auth.registro', compact('carreras', 'provincias'));
     }
 
-    /**
-     * Procesa el registro de un ESTUDIANTE (candidato).
-     * Valida los datos, crea el usuario y el perfil de estudiante,
-     * genera un código de verificación y lo envía por email.
-     */
+
     public function registerEstudiante(Request $request)
     {
         $rules = [
@@ -108,11 +96,7 @@ class RegisterController extends Controller
             ->with('success', 'Cuenta creada. Revisá tu email para obtener el código de verificación.');
     }
 
-    /**
-     * Procesa el registro de una EMPRESA.
-     * Valida los datos incluyendo la verificación del CUIT argentino,
-     * crea el usuario y el perfil de empresa, y envía código de verificación.
-     */
+
     public function registerEmpresa(Request $request)
     {
         $validated = $request->validate([

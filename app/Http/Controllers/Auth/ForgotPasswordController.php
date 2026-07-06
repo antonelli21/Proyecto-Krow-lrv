@@ -8,22 +8,18 @@ use Illuminate\Support\Facades\Password;
 
 class ForgotPasswordController extends Controller
 {
-    /**
-     * Muestra el formulario para pedir el link de reseteo.
-     */
+
     public function showLinkRequestForm()
     {
         return view('auth.passwords.email');
     }
 
-    /**
-     * Enviar el correo con el link para reiniciar la contraseña.
-     */
+
     public function sendResetLinkEmail(Request $request)
     {
         $request->validate(['email' => 'required|email']);
 
-        // Enviamos el link de reseteo (Laravel maneja el email y el token por defecto)
+
         $status = Password::broker()->sendResetLink(
             $request->only('email')
         );

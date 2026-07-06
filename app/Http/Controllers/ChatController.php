@@ -72,7 +72,6 @@ class ChatController extends Controller
             return redirect()->back()->with('error', 'No podés iniciar un chat con vos mismo.');
         }
 
-        // ✅ Usando el scope del modelo
         $chat = Chat::betweenUsers($usuarioLogueado, $usuarioDestino)->first()
             ?? Chat::create([
                 'id_usuario_1' => $usuarioLogueado,
@@ -97,7 +96,7 @@ class ChatController extends Controller
         $miId   = auth()->id();
         $otroId = $request->query('usuario_id');
 
-        // ✅ Validar primero, buscar después
+        
         if (!$otroId) {
             return response()->json(['error' => 'Falta el ID del usuario objetivo.'], 400);
         }
@@ -108,7 +107,7 @@ class ChatController extends Controller
             return response()->json(['error' => 'No podés chatear con vos mismo.'], 422);
         }
 
-        // ✅ Scope reutilizado, sin duplicar lógica
+        
         $chat = Chat::betweenUsers($miId, $otroId)->first()
             ?? Chat::create([
                 'id_usuario_1' => $miId,
@@ -128,6 +127,6 @@ class ChatController extends Controller
         if ($chat->usuario1) $chat->usuario1->append(['avatar_ruta', 'perfil_id']);
         if ($chat->usuario2) $chat->usuario2->append(['avatar_ruta', 'perfil_id']);
 
-        return response()->json($chat); // ✅ Devuelve el chat, no un error
+        return response()->json($chat); 
     }
 }
