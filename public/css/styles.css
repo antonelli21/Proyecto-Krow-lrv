@@ -3,6 +3,7 @@
   --surface: #ffffff;
   --primary: #3b594d;
   --accent: #077552;
+  --filtro-limpiar: #0e3823;
   --text: #1f2937;
   --text_btn: #ffffff;
   --title: #111827;
@@ -82,7 +83,8 @@
 
   --badge-danger-bg: rgba(212, 24, 61, .12);
   --badge-danger-text: #c81e4f;
-  --badge-danger-border: rgba(200, 30, 79, .28) --link-card-border: var(--accent);
+  --badge-danger-border: rgba(200, 30, 79, .28);
+  --link-card-border: var(--accent);
 
   --badge-postulado-bg: #f1c40f;
   --badge-postulado-text: #4a3b02;
@@ -105,6 +107,34 @@
   --link-card-text: #3f4d5d;
   --link-card-text-hover: #1f2937;
   --link-card-icon: #5b6b7a;
+
+    --badge-activo-bg: #2ECC9A;
+  --badge-activo-text: #ffffff;
+  --badge-activo-border: #0f8b63;
+
+  --badge-suspendido-bg: #D4A843;
+  --badge-suspendido-text: #ffffff;
+  --badge-suspendido-border: #9b6b07;
+
+  --badge-pendiente-bg: rgba(75, 139, 241, 0.541);
+  --badge-pendiente-text: #f7f7f7;
+  --badge-pendiente-border: rgba(37, 99, 235, .28);
+
+  --badge-aprobado-bg: #2ECC9A;
+  --badge-aprobado-text: #ffffff;
+  --badge-aprobado-border: #0f8b63;
+
+  --badge-rechazado-bg: #D4183D;
+  --badge-rechazado-text: #ffffff;
+  --badge-rechazado-border: #a3122f;
+
+  --badge-publicada-bg: #077552;
+  --badge-publicada-text: #ffffff;
+  --badge-publicada-border: #05593d;
+
+  --badge-pausada-bg: #D4A843;
+  --badge-pausada-text: #ffffff;
+  --badge-pausada-border: #9b6b07;
 }
 
 [data-theme="dark"] {
@@ -112,6 +142,7 @@
   --surface: #2C2C35;
   --primary: #D4A843;
   --accent: #D4A843;
+  --filtro-limpiar: #D4A843;
   --gradient-start: #c2c2c2;
   --gradient-end: #D4A843;
   --text: #F5F3EE;
@@ -195,6 +226,34 @@
   --link-card-text: var(--accent);
   --link-card-text-hover: #f8d87d;
   --link-card-icon: var(--accent);
+
+    --badge-activo-bg: var(--badge-success-bg);
+  --badge-activo-text: var(--badge-success-text);
+  --badge-activo-border: var(--badge-success-border);
+
+  --badge-suspendido-bg: var(--badge-warning-bg);
+  --badge-suspendido-text: var(--badge-warning-text);
+  --badge-suspendido-border: var(--badge-warning-border);
+
+  --badge-pendiente-bg: var(--badge-info-bg);
+  --badge-pendiente-text: var(--badge-info-text);
+  --badge-pendiente-border: var(--badge-info-border);
+
+  --badge-aprobado-bg: var(--badge-success-bg);
+  --badge-aprobado-text: var(--badge-success-text);
+  --badge-aprobado-border: var(--badge-success-border);
+
+  --badge-rechazado-bg: var(--badge-danger-bg);
+  --badge-rechazado-text: var(--badge-danger-text);
+  --badge-rechazado-border: var(--badge-danger-border);
+
+  --badge-publicada-bg: var(--badge-success-bg);
+  --badge-publicada-text: var(--badge-success-text);
+  --badge-publicada-border: var(--badge-success-border);
+
+  --badge-pausada-bg: var(--badge-warning-bg);
+  --badge-pausada-text: var(--badge-warning-text);
+  --badge-pausada-border: var(--badge-warning-border);
 }
 
 
@@ -6993,7 +7052,7 @@ textarea.filter-input-text:focus {
 
 .empresa-filtro-limpiar {
   margin-left: auto;
-  color: var(--accent);
+  color: var(--filtro-limpiar);
   font-weight: 600;
   text-decoration: none;
   font-size: 13px;

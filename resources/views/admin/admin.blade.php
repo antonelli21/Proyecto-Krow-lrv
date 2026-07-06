@@ -2,8 +2,6 @@
 
 @section('title', 'Administración — KROW')
 
-
-
 @section('banner')
 <div id="banner-index" style="
     width:100%;
@@ -16,33 +14,40 @@
     background-repeat: no-repeat;
     margin:0;
 ">
+  <div style="
+      position:absolute;
+      inset:0;
+      background:linear-gradient(to right, rgba(0,0,0,.6), rgba(0,0,0,.4));
+  "></div>
 
-    <div  style="
-        position:absolute;
-        inset:0;
-        background:linear-gradient(to right, rgba(0,0,0,.6), rgba(0,0,0,.4));
-    "></div>
-
-    <div id="pad" style="
-        position:absolute;
-        inset:0;
-        display:flex;
-        flex-direction:column;
-        justify-content:start;
-        align-items:center;
-        text-align:center;
-        z-index:2;
-        padding-top: 1.5rem;
-    ">
-</div>
+  <div id="pad" style="
+      position:absolute;
+      inset:0;
+      display:flex;
+      flex-direction:column;
+      justify-content:start;
+      align-items:center;
+      text-align:center;
+      z-index:2;
+      padding-top: 1.5rem;
+  "></div>
 </div>
 @endsection
 
 @section('content')
 
-<div class="admin-page" style="position: relative; z-index: 5; margin-top: -510px !important; margin-bottom:80px;background-color:var(--bg) ;opacity: 0.95; border-radius: 8px; border:1px solid var(--accent); justify-content:start;box-shadow:
-0 20px 50px var(--shadow-color),
-0 0px 30px var(--shadow-glow);">
+<div class="admin-page" style="
+    position: relative;
+    z-index: 5;
+    margin-top: -510px !important;
+    margin-bottom: 80px;
+    background-color: var(--bg);
+    opacity: 0.95;
+    border-radius: 8px;
+    border: 1px solid var(--accent);
+    justify-content: start;
+    box-shadow: 0 20px 50px var(--shadow-color), 0 0px 30px var(--shadow-glow);
+">
 
   <h1 class="admin-page-title">
     <i class="bi bi-shield-check"></i> Administración
@@ -78,11 +83,11 @@
       <i class="bi bi-briefcase"></i> Ofertas
     </a>
     <a href="{{ route('admin.reportes') }}" class="admin-tab {{ $seccion === 'reportes' ? 'active' : '' }}">
-  <i class="bi bi-ticket-perforated"></i> Reportes
-</a>
-<a href="{{ route('admin.papelera') }}" class="admin-tab {{ $seccion === 'papelera' ? 'active' : '' }}">
-  <i class="bi bi-trash2"></i> Papelera
-</a>
+      <i class="bi bi-ticket-perforated"></i> Reportes
+    </a>
+    <a href="{{ route('admin.papelera') }}" class="admin-tab {{ $seccion === 'papelera' ? 'active' : '' }}">
+      <i class="bi bi-trash2"></i> Papelera
+    </a>
   </div>
 
   {{-- ════════════════════════════════════════
@@ -103,10 +108,6 @@
       <div class="admin-stat">
         <div class="admin-stat-label label-suspendido"><i class="bi bi-person-x"></i> Suspendidos</div>
         <div class="admin-stat-value">{{ $alumnosSuspendidos }}</div>
-      </div>
-      <div class="admin-stat">
-        <div class="admin-stat-label label-pendiente"><i class="bi bi-funnel"></i> Pendientes</div>
-        <div class="admin-stat-value">{{ $alumnosPendientes }}</div>
       </div>
     </div>
 
@@ -161,112 +162,112 @@
         </thead>
         <tbody>
           @forelse($estudiantes as $a)
-          @php
-            $badgeEst = match($a->estado ?? 'pendiente') {
-              'activo'     => 'activo',
-              'suspendido' => 'suspendido',
-              'pendiente'  => 'pendiente',
-              default      => 'pendiente'
-            };
-          @endphp
-          <tr data-id="{{ $a->id_estudiante }}"
-              data-search="{{ strtolower(($a->nombre ?? '').' '.($a->apellido ?? '').' '.($a->legajo ?? '').' '.($a->user->email ?? '')) }}"
-              data-estado="{{ $a->estado ?? 'pendiente' }}"
-              data-carrera="{{ $a->carrera ? Str::slug($a->carrera->nombre) : '' }}">
-            <td><input type="checkbox" class="check-row"></td>
-            <td>{{ $a->legajo ?? '—' }}</td>
-            <td class="td-nombre">
-              <a href="{{ route('admin.estudiante.perfil', $a->id_estudiante) }}" class="admin-name-link">
-                {{ $a->apellido }}, {{ $a->nombre }}
-              </a>
-              <br><span class="td-id">{{ $a->user->email ?? '—' }}</span>
-            </td>
-            <td class="td-carrera">{{ $a->carrera->nombre ?? '—' }}</td>
-            <td>
-              <span class="badge-admin badge-{{ $badgeEst }}">
-                {{ ucfirst($a->estado ?? 'pendiente') }}
-              </span>
-            </td>
-            <td>{{ $a->postulaciones_count }}</td>
-            <td class="td-fecha">
-              {{ $a->fecha_creacion ? \Carbon\Carbon::parse($a->fecha_creacion)->format('d/m/Y') : '—' }}
-            </td>
-            <td>
-              <div class="td-acciones">
-                <button class="btn-icon btn-ver" title="Ver perfil"
-                        onclick="toggleAdminDetalle('{{ $a->id_estudiante }}', this)">
-                  <i class="bi bi-eye"></i>
-                </button>
-                <button class="btn-icon btn-aprobar" title="Activar"
-                        onclick="submitEstado('{{ route('admin.estudiantes.estado', $a->id_estudiante) }}', 'activo')">
-                  <i class="bi bi-check-circle"></i>
-                </button>
-                <button class="btn-icon btn-suspender" title="Suspender"
-                        onclick="submitEstado('{{ route('admin.estudiantes.estado', $a->id_estudiante) }}', 'suspendido')">
-                  <i class="bi bi-slash-circle"></i>
-                </button>
-                <button class="btn-icon btn-eliminar" title="Eliminar"
-                        data-delete-url="{{ route('admin.estudiantes.destroy', $a->id_estudiante) }}"
-                        data-delete-name="{{ $a->nombre }} {{ $a->apellido }}">
-                  <i class="bi bi-trash"></i>
-                </button>
-              </div>
-            </td>
-          </tr>
-          {{-- DETALLE EXPANDIBLE --}}
-          <tr class="admin-detalle-row" id="admin-det-{{ $a->id_estudiante }}">
-            <td colspan="8">
-              <div class="admin-detalle-inner">
-                <div>
-                  <p class="admin-detalle-block-title">Datos personales</p>
-                  <p class="admin-detalle-value">Legajo: {{ $a->legajo ?? '—' }}</p>
-                  <p class="admin-detalle-value">Email: {{ $a->user->email ?? '—' }}</p>
-                  <p class="admin-detalle-value">Teléfono: {{ $a->telefono ?? '—' }}</p>
-                  <p class="admin-detalle-value">DNI: {{ $a->dni ?? '—' }}</p>
-                  <p class="admin-detalle-value">
-                    Registro: {{ $a->fecha_creacion ? \Carbon\Carbon::parse($a->fecha_creacion)->format('d/m/Y') : '—' }}
-                  </p>
+            @php
+              $badgeEst = match($a->estado ?? 'pendiente') {
+                'activo'     => 'activo',
+                'suspendido' => 'suspendido',
+                'pendiente'  => 'pendiente',
+                default      => 'pendiente'
+              };
+            @endphp
+            <tr data-id="{{ $a->id_estudiante }}"
+                data-search="{{ strtolower(($a->nombre ?? '').' '.($a->apellido ?? '').' '.($a->legajo ?? '').' '.($a->user->email ?? '')) }}"
+                data-estado="{{ $a->estado ?? 'pendiente' }}"
+                data-carrera="{{ $a->carrera ? Str::slug($a->carrera->nombre) : '' }}">
+              <td><input type="checkbox" class="check-row"></td>
+              <td>{{ $a->legajo ?? '—' }}</td>
+              <td class="td-nombre">
+                <a href="{{ route('admin.estudiante.perfil', $a->id_estudiante) }}" class="admin-name-link">
+                  {{ $a->apellido }}, {{ $a->nombre }}
+                </a>
+                <br><span class="td-id">{{ $a->user->email ?? '—' }}</span>
+              </td>
+              <td class="td-carrera">{{ $a->carrera->nombre ?? '—' }}</td>
+              <td>
+                <span class="badge-admin badge-{{ $badgeEst }}">
+                  {{ ucfirst($a->estado ?? 'pendiente') }}
+                </span>
+              </td>
+              <td>{{ $a->postulaciones_count }}</td>
+              <td class="td-fecha">
+                {{ $a->fecha_creacion ? \Carbon\Carbon::parse($a->fecha_creacion)->format('d/m/Y') : '—' }}
+              </td>
+              <td>
+                <div class="td-acciones">
+                  <button class="btn-icon btn-ver" title="Ver perfil"
+                          onclick="toggleAdminDetalle('{{ $a->id_estudiante }}', this)">
+                    <i class="bi bi-eye"></i>
+                  </button>
+                  <button class="btn-icon btn-aprobar" title="Activar"
+                          onclick="submitEstado('{{ route('admin.estudiantes.estado', $a->id_estudiante) }}', 'activo')">
+                    <i class="bi bi-check-circle"></i>
+                  </button>
+                  <button class="btn-icon btn-suspender" title="Suspender"
+                          onclick="submitEstado('{{ route('admin.estudiantes.estado', $a->id_estudiante) }}', 'suspendido')">
+                    <i class="bi bi-slash-circle"></i>
+                  </button>
+                  <button class="btn-icon btn-eliminar" title="Eliminar"
+                          data-delete-url="{{ route('admin.estudiantes.destroy', $a->id_estudiante) }}"
+                          data-delete-name="{{ $a->nombre }} {{ $a->apellido }}">
+                    <i class="bi bi-trash"></i>
+                  </button>
                 </div>
-                <div>
-                  <p class="admin-detalle-block-title">Académico</p>
-                  <p class="admin-detalle-value">Carrera: {{ $a->carrera->nombre ?? '—' }}</p>
-                  <p class="admin-detalle-value">Postulaciones: {{ $a->postulaciones_count }}</p>
-                  <p class="admin-detalle-value">Modalidad: {{ $a->modalidad_deseada ?? '—' }}</p>
-                  <p class="admin-detalle-value">Disponibilidad: {{ $a->disponibilidad_horaria ?? '—' }}</p>
-                </div>
-                <div>
-                  <p class="admin-detalle-block-title">Acciones</p>
-                  <div class="admin-detalle-actions">
-                    <button class="btn-admin-aprobar"
-                            onclick="submitEstado('{{ route('admin.estudiantes.estado', $a->id_estudiante) }}', 'activo')">
-                      <i class="bi bi-check-circle"></i> Activar
-                    </button>
-                    <button class="btn-admin-suspender"
-                            onclick="submitEstado('{{ route('admin.estudiantes.estado', $a->id_estudiante) }}', 'suspendido')">
-                      <i class="bi bi-slash-circle"></i> Suspender
-                    </button>
-                    <button class="btn-admin-rechazar"
-                            data-delete-url="{{ route('admin.estudiantes.destroy', $a->id_estudiante) }}"
-                            data-delete-name="{{ $a->nombre }} {{ $a->apellido }}">
-                      <i class="bi bi-trash"></i> Eliminar
-                    </button>
-                    @if($a->id_usuario)
-                      <a href="{{ route('admin.mensajes', ['postulante_id' => $a->id_usuario]) }}"
-                         class="btn-admin-contactar">
-                        <i class="bi bi-chat-dots"></i> Contactar
-                      </a>
-                    @endif
+              </td>
+            </tr>
+            {{-- DETALLE EXPANDIBLE --}}
+            <tr class="admin-detalle-row" id="admin-det-{{ $a->id_estudiante }}">
+              <td colspan="8">
+                <div class="admin-detalle-inner">
+                  <div>
+                    <p class="admin-detalle-block-title">Datos personales</p>
+                    <p class="admin-detalle-value">Legajo: {{ $a->legajo ?? '—' }}</p>
+                    <p class="admin-detalle-value">Email: {{ $a->user->email ?? '—' }}</p>
+                    <p class="admin-detalle-value">Teléfono: {{ $a->telefono ?? '—' }}</p>
+                    <p class="admin-detalle-value">DNI: {{ $a->dni ?? '—' }}</p>
+                    <p class="admin-detalle-value">
+                      Registro: {{ $a->fecha_creacion ? \Carbon\Carbon::parse($a->fecha_creacion)->format('d/m/Y') : '—' }}
+                    </p>
+                  </div>
+                  <div>
+                    <p class="admin-detalle-block-title">Académico</p>
+                    <p class="admin-detalle-value">Carrera: {{ $a->carrera->nombre ?? '—' }}</p>
+                    <p class="admin-detalle-value">Postulaciones: {{ $a->postulaciones_count }}</p>
+                    <p class="admin-detalle-value">Modalidad: {{ $a->modalidad_deseada ?? '—' }}</p>
+                    <p class="admin-detalle-value">Disponibilidad: {{ $a->disponibilidad_horaria ?? '—' }}</p>
+                  </div>
+                  <div>
+                    <p class="admin-detalle-block-title">Acciones</p>
+                    <div class="admin-detalle-actions">
+                      <button class="btn-admin-aprobar"
+                              onclick="submitEstado('{{ route('admin.estudiantes.estado', $a->id_estudiante) }}', 'activo')">
+                        <i class="bi bi-check-circle"></i> Activar
+                      </button>
+                      <button class="btn-admin-suspender"
+                              onclick="submitEstado('{{ route('admin.estudiantes.estado', $a->id_estudiante) }}', 'suspendido')">
+                        <i class="bi bi-slash-circle"></i> Suspender
+                      </button>
+                      <button class="btn-admin-rechazar"
+                              data-delete-url="{{ route('admin.estudiantes.destroy', $a->id_estudiante) }}"
+                              data-delete-name="{{ $a->nombre }} {{ $a->apellido }}">
+                        <i class="bi bi-trash"></i> Eliminar
+                      </button>
+                      @if($a->id_usuario)
+                        <a href="{{ route('admin.mensajes', ['postulante_id' => $a->id_usuario]) }}"
+                           class="btn-admin-contactar">
+                          <i class="bi bi-chat-dots"></i> Contactar
+                        </a>
+                      @endif
+                    </div>
                   </div>
                 </div>
-              </div>
-            </td>
-          </tr>
+              </td>
+            </tr>
           @empty
-          <tr>
-            <td colspan="8" style="text-align:center;padding:2rem;color:var(--muted);">
-              No hay estudiantes registrados.
-            </td>
-          </tr>
+            <tr>
+              <td colspan="8" style="text-align:center;padding:2rem;color:var(--muted);">
+                No hay estudiantes registrados.
+              </td>
+            </tr>
           @endforelse
         </tbody>
       </table>
@@ -286,203 +287,202 @@
   {{-- ════════════════════════════════════════
        TAB — EMPRESAS
   ════════════════════════════════════════ --}}
- @if($seccion === 'empresas')
-<div class="admin-tab-panel active" id="panel-empresas">
+  @if($seccion === 'empresas')
+  <div class="admin-tab-panel active" id="panel-empresas">
 
-  <div class="admin-stats">
-    <div class="admin-stat">
-      <div class="admin-stat-label label-total"><i class="bi bi-building"></i> Total</div>
-      <div class="admin-stat-value">{{ $totalEmpresas }}</div>
+    <div class="admin-stats">
+      <div class="admin-stat">
+        <div class="admin-stat-label label-total"><i class="bi bi-building"></i> Total</div>
+        <div class="admin-stat-value">{{ $totalEmpresas }}</div>
+      </div>
+      <div class="admin-stat">
+        <div class="admin-stat-label label-aprobado"><i class="bi bi-check-circle"></i> Aprobadas</div>
+        <div class="admin-stat-value">{{ $empresasAprobadas }}</div>
+      </div>
+      <div class="admin-stat">
+        <div class="admin-stat-label label-suspendido"><i class="bi bi-slash-circle"></i> Suspendidas</div>
+        <div class="admin-stat-value">{{ $empresasSuspendidas }}</div>
+      </div>
+      <div class="admin-stat">
+        <div class="admin-stat-label label-pendiente"><i class="bi bi-hourglass-split"></i> Pendientes</div>
+        <div class="admin-stat-value">{{ $empresasPendientes }}</div>
+      </div>
+      <div class="admin-stat">
+        <div class="admin-stat-label label-rechazado"><i class="bi bi-x-circle"></i> Rechazadas</div>
+        <div class="admin-stat-value">{{ $empresasRechazadas }}</div>
+      </div>
     </div>
-    <div class="admin-stat">
-      <div class="admin-stat-label label-aprobado"><i class="bi bi-check-circle"></i> Aprobadas</div>
-      <div class="admin-stat-value">{{ $empresasAprobadas }}</div>
-    </div>
-    <div class="admin-stat">
-      <div class="admin-stat-label label-suspendido"><i class="bi bi-slash-circle"></i> Suspendidas</div>
-      <div class="admin-stat-value">{{ $empresasSuspendidas }}</div>
-    </div>
-    <div class="admin-stat">
-      <div class="admin-stat-label label-pendiente"><i class="bi bi-hourglass-split"></i> Pendientes</div>
-      <div class="admin-stat-value">{{ $empresasPendientes }}</div>
-    </div>
-    <div class="admin-stat">
-      <div class="admin-stat-label label-rechazado"><i class="bi bi-x-circle"></i> Rechazadas</div>
-      <div class="admin-stat-value">{{ $empresasRechazadas }}</div>
-    </div>
-  </div>
 
-  <div class="admin-toolbar">
-    <div class="admin-search">
-      <i class="bi bi-search"></i>
-      <input type="text" placeholder="Buscar por nombre, rubro o ubicación...">
+    <div class="admin-toolbar">
+      <div class="admin-search">
+        <i class="bi bi-search"></i>
+        <input type="text" placeholder="Buscar por nombre, rubro o ubicación...">
+      </div>
+      <select class="admin-filter-select" data-filter="estado">
+        <option value="">Todos los estados</option>
+        <option value="aprobada">Aprobada</option>
+        <option value="suspendida">Suspendida</option>
+        <option value="pendiente">Pendiente</option>
+        <option value="rechazada">Rechazada</option>
+      </select>
     </div>
-    <select class="admin-filter-select" data-filter="estado">
-      <option value="">Todos los estados</option>
-      <option value="aprobada">Aprobada</option>
-      <option value="suspendida">Suspendida</option>
-      <option value="pendiente">Pendiente</option>
-      <option value="rechazada">Rechazada</option>
-    </select>
-  </div>
 
-  <div class="bulk-bar" id="bulk-bar-empresas" style="display:none;">
-    <span class="bulk-count"></span>
-    <button onclick="bulkAccion('panel-empresas','estado','aprobada')">
-      <i class="bi bi-check-circle"></i> Aprobar
-    </button>
-    <button onclick="bulkAccion('panel-empresas','estado','suspendida')">
-      <i class="bi bi-slash-circle"></i> Suspender
-    </button>
-    <button class="bulk-btn-danger" onclick="bulkAccion('panel-empresas','delete')">
-      <i class="bi bi-trash"></i> Eliminar
-    </button>
-    <button class="bulk-btn-cancel" onclick="clearBulk('panel-empresas')">Cancelar</button>
-  </div>
+    <div class="bulk-bar" id="bulk-bar-empresas" style="display:none;">
+      <span class="bulk-count"></span>
+      <button onclick="bulkAccion('panel-empresas','estado','aprobada')">
+        <i class="bi bi-check-circle"></i> Aprobar
+      </button>
+      <button onclick="bulkAccion('panel-empresas','estado','suspendida')">
+        <i class="bi bi-slash-circle"></i> Suspender
+      </button>
+      <button class="bulk-btn-danger" onclick="bulkAccion('panel-empresas','delete')">
+        <i class="bi bi-trash"></i> Eliminar
+      </button>
+      <button class="bulk-btn-cancel" onclick="clearBulk('panel-empresas')">Cancelar</button>
+    </div>
 
-  <div class="admin-table-wrap">
+    <div class="admin-table-wrap">
       <table class="admin-table">
-          <thead>
-              <tr>
-                  <th class="th-check"><input type="checkbox" class="check-all"></th>
-                  <th>Empresa</th>
-                  <th>Rubro</th>
-                  <th>Ubicación</th>
-                  <th>Ofertas activas</th>
-                  <th>Estado</th>
-                  <th>Registro</th>
-                  <th>Acciones</th>
-              </tr>
-          </thead>
-          <tbody>
-              @forelse($empresas as $e)
-              @php
-                  $badgeEmp = match($e->estado ?? 'pendiente') {
-                      'aprobada'   => 'aprobado',
-                      'rechazada'  => 'rechazado',
-                      'suspendida' => 'suspendido',
-                      'pendiente'  => 'pendiente',
-                      default      => 'pendiente'
-                  };
-              @endphp
-              <tr data-id="{{ $e->id_empresa }}"
-                  data-search="{{ strtolower(($e->nombre_empresa ?? '').' '.($e->rubro ?? '').' '.($e->user->email ?? '')) }}"
-                  data-estado="{{ $e->estado ?? 'pendiente' }}">
-                  <td><input type="checkbox" class="check-row"></td>
-                  <td class="td-nombre">
-                      <a href="{{ route('empresas.perfil', $e->id_empresa) }}" class="admin-name-link">
-                          {{ $e->nombre_empresa }}
-                      </a>
-                      <br><span class="td-id">{{ $e->user->email ?? '—' }}</span>
-                  </td>
-                  <td class="td-carrera">{{ $e->rubro ?? '—' }}</td>
-                  <td class="td-ubicacion">{{ $e->direccion ?? '—' }}</td>
-                  <td>{{ $e->ofertas_activas_count }}</td>
-                  <td>
-                      <span class="badge-admin badge-{{ $badgeEmp }}">
-                          {{ ucfirst($e->estado ?? 'pendiente') }}
-                      </span>
-                  </td>
-                  <td class="td-fecha">
-                      {{ $e->fecha_creacion ? \Carbon\Carbon::parse($e->fecha_creacion)->format('d/m/Y') : '—' }}
-                  </td>
-                  <td>
-                      <div class="td-acciones">
-                          <button class="btn-icon btn-ver" title="Ver detalle"
-                                  onclick="toggleAdminDetalle('e{{ $e->id_empresa }}', this)">
-                              <i class="bi bi-eye"></i>
-                          </button>
-                          <button class="btn-icon btn-aprobar" title="Aprobar"
-                                  onclick="submitEstado('{{ route('admin.empresas.estado', $e->id_empresa) }}', 'aprobada')">
-                              <i class="bi bi-check-circle"></i>
-                          </button>
-                          <button class="btn-icon btn-suspender" title="Suspender"
-                                  onclick="submitEstado('{{ route('admin.empresas.estado', $e->id_empresa) }}', 'suspendida')">
-                              <i class="bi bi-slash-circle"></i>
-                          </button>
-                          <button class="btn-icon btn-eliminar" title="Eliminar"
-                                  data-delete-url="{{ route('admin.empresas.destroy', $e->id_empresa) }}"
-                                  data-delete-name="{{ $e->nombre_empresa }}">
-                              <i class="bi bi-trash"></i>
-                          </button>
-                      </div>
-                  </td>
-              </tr>
+        <thead>
+          <tr>
+            <th class="th-check"><input type="checkbox" class="check-all"></th>
+            <th>Empresa</th>
+            <th>Rubro</th>
+            <th>Ubicación</th>
+            <th>Ofertas activas</th>
+            <th>Estado</th>
+            <th>Registro</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          @forelse($empresas as $e)
+            @php
+              $badgeEmp = match($e->estado ?? 'pendiente') {
+                'aprobada'   => 'aprobado',
+                'rechazada'  => 'rechazado',
+                'suspendida' => 'suspendido',
+                'pendiente'  => 'pendiente',
+                default      => 'pendiente'
+              };
+            @endphp
+            <tr data-id="{{ $e->id_empresa }}"
+                data-search="{{ strtolower(($e->nombre_empresa ?? '').' '.($e->rubro ?? '').' '.($e->user->email ?? '')) }}"
+                data-estado="{{ $e->estado ?? 'pendiente' }}">
+              <td><input type="checkbox" class="check-row"></td>
+              <td class="td-nombre">
+                <a href="{{ route('empresas.perfil', $e->id_empresa) }}" class="admin-name-link">
+                  {{ $e->nombre_empresa }}
+                </a>
+                <br><span class="td-id">{{ $e->user->email ?? '—' }}</span>
+              </td>
+              <td class="td-carrera">{{ $e->rubro ?? '—' }}</td>
+              <td class="td-ubicacion">{{ $e->direccion ?? '—' }}</td>
+              <td>{{ $e->ofertas_activas_count }}</td>
+              <td>
+                <span class="badge-admin badge-{{ $badgeEmp }}">
+                  {{ ucfirst($e->estado ?? 'pendiente') }}
+                </span>
+              </td>
+              <td class="td-fecha">
+                {{ $e->fecha_creacion ? \Carbon\Carbon::parse($e->fecha_creacion)->format('d/m/Y') : '—' }}
+              </td>
+              <td>
+                <div class="td-acciones">
+                  <button class="btn-icon btn-ver" title="Ver detalle"
+                          onclick="toggleAdminDetalle('e{{ $e->id_empresa }}', this)">
+                    <i class="bi bi-eye"></i>
+                  </button>
+                  <button class="btn-icon btn-aprobar" title="Aprobar"
+                          onclick="submitEstado('{{ route('admin.empresas.estado', $e->id_empresa) }}', 'aprobada')">
+                    <i class="bi bi-check-circle"></i>
+                  </button>
+                  <button class="btn-icon btn-suspender" title="Suspender"
+                          onclick="submitEstado('{{ route('admin.empresas.estado', $e->id_empresa) }}', 'suspendida')">
+                    <i class="bi bi-slash-circle"></i>
+                  </button>
+                  <button class="btn-icon btn-eliminar" title="Eliminar"
+                          data-delete-url="{{ route('admin.empresas.destroy', $e->id_empresa) }}"
+                          data-delete-name="{{ $e->nombre_empresa }}">
+                    <i class="bi bi-trash"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
 
-              {{-- ✅ DETALLE EXPANDIBLE CORRECTO --}}
-              <tr class="admin-detalle-row" id="admin-det-e{{ $e->id_empresa }}">
-                  <td colspan="8">
-                      <div class="admin-detalle-inner">
-                          <div>
-                              <p class="admin-detalle-block-title">Descripción</p>
-                            <p class="admin-detalle-value" style="word-break:break-word; overflow-wrap:break-word;">
-                              {{ \Illuminate\Support\Str::limit($e->descripcion ?? '—', 100) }}
-                            </p>
-                              <p class="admin-detalle-value" style="margin-top:8px;">
-                                  Registro: {{ $e->fecha_creacion ? \Carbon\Carbon::parse($e->fecha_creacion)->format('d/m/Y') : '—' }}
-                              </p>
-                          </div>
-                          <div>
-                              <p class="admin-detalle-block-title">Actividad</p>
-                              <p class="admin-detalle-value">Rubro: {{ $e->rubro ?? '—' }}</p>
-                              <p class="admin-detalle-value">Ubicación: {{ $e->direccion ?? '—' }}</p>
-                              <p class="admin-detalle-value">CUIT: {{ $e->cuit ?? '—' }}</p>
-                              <p class="admin-detalle-value">Tamaño: {{ $e->tamano_empresa ?? '—' }}</p>
-                              <p class="admin-detalle-value">Ofertas activas: {{ $e->ofertas_activas_count }}</p>
-                          </div>
-                          <div>
-                              <p class="admin-detalle-block-title">Acciones</p>
-                              <div class="admin-detalle-actions">
-                                  <button class="btn-admin-aprobar"
-                                          onclick="submitEstado('{{ route('admin.empresas.estado', $e->id_empresa) }}', 'aprobada')">
-                                      <i class="bi bi-check-circle"></i> Aprobar
-                                  </button>
-                                  <button class="btn-admin-rechazar"
-                                          onclick="submitEstado('{{ route('admin.empresas.estado', $e->id_empresa) }}', 'rechazada')">
-                                      <i class="bi bi-x-circle"></i> Rechazar
-                                  </button>
-                                  <button class="btn-admin-suspender"
-                                          onclick="submitEstado('{{ route('admin.empresas.estado', $e->id_empresa) }}', 'suspendida')">
-                                      <i class="bi bi-slash-circle"></i> Suspender
-                                  </button>
-                                  <button class="btn-admin-rechazar"
-                                          data-delete-url="{{ route('admin.empresas.destroy', $e->id_empresa) }}"
-                                          data-delete-name="{{ $e->nombre_empresa }}">
-                                      <i class="bi bi-trash"></i> Eliminar
-                                  </button>
-                                  @if($e->id_usuario)
-                                      <a href="{{ route('admin.mensajes', ['postulante_id' => $e->id_usuario]) }}"
-                                         class="btn-admin-contactar">
-                                          <i class="bi bi-chat-dots"></i> Contactar
-                                      </a>
-                                  @endif
-                              </div>
-                          </div>
-                      </div>
-                  </td>
-              </tr>
-
-              @empty
-              <tr>
-                  <td colspan="8" style="text-align:center;padding:2rem;color:var(--muted);">
-                      No hay empresas registradas.
-                  </td>
-              </tr>
-              @endforelse
-          </tbody>
+            {{-- DETALLE EXPANDIBLE --}}
+            <tr class="admin-detalle-row" id="admin-det-e{{ $e->id_empresa }}">
+              <td colspan="8">
+                <div class="admin-detalle-inner">
+                  <div>
+                    <p class="admin-detalle-block-title">Descripción</p>
+                    <p class="admin-detalle-value" style="word-break:break-word; overflow-wrap:break-word;">
+                      {{ \Illuminate\Support\Str::limit($e->descripcion ?? '—', 100) }}
+                    </p>
+                    <p class="admin-detalle-value" style="margin-top:8px;">
+                      Registro: {{ $e->fecha_creacion ? \Carbon\Carbon::parse($e->fecha_creacion)->format('d/m/Y') : '—' }}
+                    </p>
+                  </div>
+                  <div>
+                    <p class="admin-detalle-block-title">Actividad</p>
+                    <p class="admin-detalle-value">Rubro: {{ $e->rubro ?? '—' }}</p>
+                    <p class="admin-detalle-value">Ubicación: {{ $e->direccion ?? '—' }}</p>
+                    <p class="admin-detalle-value">CUIT: {{ $e->cuit ?? '—' }}</p>
+                    <p class="admin-detalle-value">Tamaño: {{ $e->tamano_empresa ?? '—' }}</p>
+                    <p class="admin-detalle-value">Ofertas activas: {{ $e->ofertas_activas_count }}</p>
+                  </div>
+                  <div>
+                    <p class="admin-detalle-block-title">Acciones</p>
+                    <div class="admin-detalle-actions">
+                      <button class="btn-admin-aprobar"
+                              onclick="submitEstado('{{ route('admin.empresas.estado', $e->id_empresa) }}', 'aprobada')">
+                        <i class="bi bi-check-circle"></i> Aprobar
+                      </button>
+                      <button class="btn-admin-rechazar"
+                              onclick="submitEstado('{{ route('admin.empresas.estado', $e->id_empresa) }}', 'rechazada')">
+                        <i class="bi bi-x-circle"></i> Rechazar
+                      </button>
+                      <button class="btn-admin-suspender"
+                              onclick="submitEstado('{{ route('admin.empresas.estado', $e->id_empresa) }}', 'suspendida')">
+                        <i class="bi bi-slash-circle"></i> Suspender
+                      </button>
+                      <button class="btn-admin-rechazar"
+                              data-delete-url="{{ route('admin.empresas.destroy', $e->id_empresa) }}"
+                              data-delete-name="{{ $e->nombre_empresa }}">
+                        <i class="bi bi-trash"></i> Eliminar
+                      </button>
+                      @if($e->id_usuario)
+                        <a href="{{ route('admin.mensajes', ['postulante_id' => $e->id_usuario]) }}"
+                           class="btn-admin-contactar">
+                          <i class="bi bi-chat-dots"></i> Contactar
+                        </a>
+                      @endif
+                    </div>
+                  </div>
+                </div>
+              </td>
+            </tr>
+          @empty
+            <tr>
+              <td colspan="8" style="text-align:center;padding:2rem;color:var(--muted);">
+                No hay empresas registradas.
+              </td>
+            </tr>
+          @endforelse
+        </tbody>
       </table>
 
       @if($empresas->hasPages())
-          <div style="padding:16px;">{{ $empresas->links() }}</div>
+        <div style="padding:16px;">{{ $empresas->links() }}</div>
       @endif
 
-    <div class="admin-empty" style="display:none">
-      <i class="bi bi-search"></i>
-      <p>No se encontraron empresas con esos filtros.</p>
+      <div class="admin-empty" style="display:none">
+        <i class="bi bi-search"></i>
+        <p>No se encontraron empresas con esos filtros.</p>
+      </div>
     </div>
   </div>
-</div>
-@endif
+  @endif
 
   {{-- ════════════════════════════════════════
        TAB — OFERTAS
@@ -491,27 +491,23 @@
   <div class="admin-tab-panel active" id="panel-ofertas">
 
     <div class="admin-stats">
-    <div class="admin-stat">
-      <div class="admin-stat-label label-total"><i class="bi bi-briefcase"></i> Total</div>
-      <div class="admin-stat-value">{{ $totalOfertas }}</div>
+      <div class="admin-stat">
+        <div class="admin-stat-label label-total"><i class="bi bi-briefcase"></i> Total</div>
+        <div class="admin-stat-value">{{ $totalOfertas }}</div>
+      </div>
+      <div class="admin-stat">
+        <div class="admin-stat-label label-publicada"><i class="bi bi-megaphone"></i> Publicadas</div>
+        <div class="admin-stat-value">{{ $ofertasPublicadas }}</div>
+      </div>
+      <div class="admin-stat">
+        <div class="admin-stat-label label-pendiente"><i class="bi bi-hourglass-split"></i> Pendientes</div>
+        <div class="admin-stat-value">{{ $ofertasPendientes }}</div>
+      </div>
+      <div class="admin-stat">
+        <div class="admin-stat-label label-pausada"><i class="bi bi-pause-circle"></i> Pausadas</div>
+        <div class="admin-stat-value">{{ $ofertasPausadas }}</div>
+      </div>
     </div>
-    <div class="admin-stat">
-      <div class="admin-stat-label label-publicada"><i class="bi bi-megaphone"></i> Publicadas</div>
-      <div class="admin-stat-value">{{ $ofertasPublicadas }}</div>
-    </div>
-    <div class="admin-stat">
-      <div class="admin-stat-label label-pendiente"><i class="bi bi-hourglass-split"></i> Pendientes</div>
-      <div class="admin-stat-value">{{ $ofertasPendientes }}</div>
-    </div>
-    <div class="admin-stat">
-      <div class="admin-stat-label label-pausada"><i class="bi bi-pause-circle"></i> Pausadas</div>
-      <div class="admin-stat-value">{{ $ofertasPausadas }}</div>
-    </div>
-    <div class="admin-stat">
-      <div class="admin-stat-label label-cerrada"><i class="bi bi-x-circle"></i> Cerradas</div>
-      <div class="admin-stat-value">{{ $ofertasCerradas }}</div>
-    </div>
-  </div>
 
     <div class="admin-toolbar">
       <div class="admin-search">
@@ -523,7 +519,6 @@
         <option value="activa">Activa</option>
         <option value="pendiente">Pendiente</option>
         <option value="pausada">Pausada</option>
-        <option value="cerrada">Cerrada</option>
       </select>
       <select class="admin-filter-select" data-filter="modalidad">
         <option value="">Todas las modalidades</option>
@@ -546,9 +541,6 @@
       </button>
       <button onclick="bulkAccion('panel-ofertas','estado','Pausada')">
         <i class="bi bi-pause-circle"></i> Pausar
-      </button>
-      <button onclick="bulkAccion('panel-ofertas','estado','Cerrada')">
-        <i class="bi bi-x-circle"></i> Cerrar
       </button>
       <button class="bulk-btn-danger" onclick="bulkAccion('panel-ofertas','delete')">
         <i class="bi bi-trash"></i> Eliminar
@@ -573,125 +565,120 @@
         </thead>
         <tbody>
           @forelse($ofertas as $o)
-          @php
-            $estado = strtolower($o->estado ?? '');
-            $badgeOfe = match($estado) {
-              'activa'  => 'publicada',
-              'pausada' => 'pausada',
-              'cerrada' => 'cerrada',
-              default   => 'pendiente'
-            };
-            $labelOfe = ucfirst($estado);
-          @endphp
-          <tr data-id="{{ $o->id_oferta }}"
-              data-search="{{ strtolower(($o->titulo ?? '').' '.($o->empresa->nombre_empresa ?? '')) }}"
-              data-estado="{{ $o->estado ?? '' }}"
-              data-modalidad="{{ strtolower($o->modalidad ?? '') }}"
-              data-tipo="{{ strtolower(str_replace(' ', '-', $o->tipo_oferta ?? '')) }}">
-            <td><input type="checkbox" class="check-row"></td>
-            <td class="td-nombre">
-              <a href="{{ route('ofertas.detalle', $o->id_oferta) }}" class="admin-name-link">
-                {{ $o->titulo }}
-              </a>
-            </td>
-            <td class="td-carrera">{{ $o->empresa->nombre_empresa ?? '—' }}</td>
-            <td>{{ ucfirst($o->modalidad ?? '—') }}</td>
-            <td><span class="badge-tipo">{{ ucfirst($o->tipo_oferta ?? '—') }}</span></td>
-            <td>{{ $o->postulaciones_count }}</td>
-            <td>
-              <span class="badge-admin badge-{{ $badgeOfe }}">{{ $labelOfe }}</span>
-            </td>
-            <td class="td-fecha">
-              {{ $o->fecha_publicacion ? \Carbon\Carbon::parse($o->fecha_publicacion)->format('d/m/Y') : '—' }}
-            </td>
-            <td>
-              <div class="td-acciones">
-                <button class="btn-icon btn-ver" title="Ver detalle"
-                        onclick="toggleAdminDetalle('o{{ $o->id_oferta }}', this)">
-                  <i class="bi bi-eye"></i>
-                </button>
-                <button class="btn-icon btn-aprobar" title="Activar"
-                        onclick="submitEstado('{{ route('admin.ofertas.estado', $o->id_oferta) }}', 'Activa')">
-                  <i class="bi bi-check-circle"></i>
-                </button>
-                @if($estado !== 'pausada')
-                  <button class="btn-icon btn-suspender" title="Pausar"
-                          onclick="submitEstadoConMotivo('{{ route('admin.ofertas.estado', $o->id_oferta) }}', 'Pausada')">
-                    <i class="bi bi-pause-circle"></i>
+            @php
+              $estado = strtolower($o->estado ?? '');
+              $badgeOfe = match($estado) {
+                'activa'  => 'publicada',
+                'pausada' => 'pausada',
+                default   => 'pendiente'
+              };
+              $labelOfe = ucfirst($estado);
+            @endphp
+            <tr data-id="{{ $o->id_oferta }}"
+                data-search="{{ strtolower(($o->titulo ?? '').' '.($o->empresa->nombre_empresa ?? '')) }}"
+                data-estado="{{ $o->estado ?? '' }}"
+                data-modalidad="{{ strtolower($o->modalidad ?? '') }}"
+                data-tipo="{{ strtolower(str_replace(' ', '-', $o->tipo_oferta ?? '')) }}">
+              <td><input type="checkbox" class="check-row"></td>
+              <td class="td-nombre">
+                <a href="{{ route('ofertas.detalle', $o->id_oferta) }}" class="admin-name-link">
+                  {{ $o->titulo }}
+                </a>
+              </td>
+              <td class="td-carrera">{{ $o->empresa->nombre_empresa ?? '—' }}</td>
+              <td>{{ ucfirst($o->modalidad ?? '—') }}</td>
+              <td><span class="badge-tipo">{{ ucfirst($o->tipo_oferta ?? '—') }}</span></td>
+              <td>{{ $o->postulaciones_count }}</td>
+              <td>
+                <span class="badge-admin badge-{{ $badgeOfe }}">{{ $labelOfe }}</span>
+              </td>
+              <td class="td-fecha">
+                {{ $o->fecha_publicacion ? \Carbon\Carbon::parse($o->fecha_publicacion)->format('d/m/Y') : '—' }}
+              </td>
+              <td>
+                <div class="td-acciones">
+                  <button class="btn-icon btn-ver" title="Ver detalle"
+                          onclick="toggleAdminDetalle('o{{ $o->id_oferta }}', this)">
+                    <i class="bi bi-eye"></i>
                   </button>
-                @else
-                  <button class="btn-icon" style="opacity:.3; cursor:not-allowed;" disabled title="Ya está pausada">
-                    <i class="bi bi-pause-circle"></i>
+                  <button class="btn-icon btn-aprobar" title="Activar"
+                          onclick="submitEstado('{{ route('admin.ofertas.estado', $o->id_oferta) }}', 'Activa')">
+                    <i class="bi bi-check-circle"></i>
                   </button>
-                @endif
-                <button class="btn-icon btn-eliminar" title="Eliminar"
-                        data-delete-url="{{ route('admin.ofertas.destroy', $o->id_oferta) }}"
-                        data-delete-name="{{ $o->titulo }}">
-                  <i class="bi bi-trash"></i>
-                </button>
-              </div>
-            </td>
-          </tr>
-          {{-- DETALLE EXPANDIBLE --}}
-          <tr class="admin-detalle-row" id="admin-det-o{{ $o->id_oferta }}">
-            <td colspan="9">
-              <div class="admin-detalle-inner">
-                <div>
-                  <p class="admin-detalle-block-title">Descripción</p>
+                  @if($estado !== 'pausada')
+                    <button class="btn-icon btn-suspender" title="Pausar"
+                            onclick="submitEstadoConMotivo('{{ route('admin.ofertas.estado', $o->id_oferta) }}', 'Pausada')">
+                      <i class="bi bi-pause-circle"></i>
+                    </button>
+                  @else
+                    <button class="btn-icon" style="opacity:.3; cursor:not-allowed;" disabled title="Ya está pausada">
+                      <i class="bi bi-pause-circle"></i>
+                    </button>
+                  @endif
+                  <button class="btn-icon btn-eliminar" title="Eliminar"
+                          data-delete-url="{{ route('admin.ofertas.destroy', $o->id_oferta) }}"
+                          data-delete-name="{{ $o->titulo }}">
+                    <i class="bi bi-trash"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+            {{-- DETALLE EXPANDIBLE --}}
+            <tr class="admin-detalle-row" id="admin-det-o{{ $o->id_oferta }}">
+              <td colspan="9">
+                <div class="admin-detalle-inner">
+                  <div>
+                    <p class="admin-detalle-block-title">Descripción</p>
                     <p class="admin-detalle-value" style="word-break:break-word; overflow-wrap:break-word;">{{ Str::limit($o->descripcion ?? '—', 100) }}</p>
                     @if($o->requisitos)
                       <p class="admin-detalle-block-title" style="margin-top:10px;">Requisitos</p>
                       <p class="admin-detalle-value" style="word-break:break-word; overflow-wrap:break-word;">{{ Str::limit($o->requisitos, 100) }}</p>
                     @endif
-                </div>
-                <div>
-                  <p class="admin-detalle-block-title">Detalles</p>
-                  <p class="admin-detalle-value">Empresa: {{ $o->empresa->nombre_empresa ?? '—' }}</p>
-                  <p class="admin-detalle-value">Modalidad: {{ ucfirst($o->modalidad ?? '—') }}</p>
-                  <p class="admin-detalle-value">Tipo: {{ ucfirst($o->tipo_oferta ?? '—') }}</p>
-                  <p class="admin-detalle-value">Experiencia: {{ $o->experiencia_requerida ?? '—' }}</p>
-                  <p class="admin-detalle-value">Postulantes: {{ $o->postulaciones_count }}</p>
-                  @if($o->salario_min)
-                    <p class="admin-detalle-value">Salario: ${{ number_format($o->salario_min) }} – ${{ number_format($o->salario_max) }}</p>
-                  @endif
-                </div>
-                <div>
-                  <p class="admin-detalle-block-title">Acciones</p>
-                  <div class="admin-detalle-actions">
-                    <button class="btn-admin-aprobar"
-                            onclick="submitEstado('{{ route('admin.ofertas.estado', $o->id_oferta) }}', 'Activa')">
-                      <i class="bi bi-check-circle"></i> Activar
-                    </button>
-                    @if($estado !== 'pausada')
-                      <button class="btn-admin-suspender"
-                              onclick="submitEstadoConMotivo('{{ route('admin.ofertas.estado', $o->id_oferta) }}', 'Pausada')">
-                        <i class="bi bi-pause-circle"></i> Pausar
-                      </button>
-                    @else
-                      <span class="btn-admin-suspender" style="opacity:.4; cursor:not-allowed;">
-                        <i class="bi bi-pause-circle"></i> Ya pausada
-                      </span>
+                  </div>
+                  <div>
+                    <p class="admin-detalle-block-title">Detalles</p>
+                    <p class="admin-detalle-value">Empresa: {{ $o->empresa->nombre_empresa ?? '—' }}</p>
+                    <p class="admin-detalle-value">Modalidad: {{ ucfirst($o->modalidad ?? '—') }}</p>
+                    <p class="admin-detalle-value">Tipo: {{ ucfirst($o->tipo_oferta ?? '—') }}</p>
+                    <p class="admin-detalle-value">Experiencia: {{ $o->experiencia_requerida ?? '—' }}</p>
+                    <p class="admin-detalle-value">Postulantes: {{ $o->postulaciones_count }}</p>
+                    @if($o->salario_min)
+                      <p class="admin-detalle-value">Salario: ${{ number_format($o->salario_min) }} – ${{ number_format($o->salario_max) }}</p>
                     @endif
-                    <button class="btn-admin-rechazar"
-                            onclick="submitEstado('{{ route('admin.ofertas.estado', $o->id_oferta) }}', 'Cerrada')">
-                      <i class="bi bi-x-circle"></i> Cerrar
-                    </button>
-                    <button class="btn-admin-rechazar"
-                            data-delete-url="{{ route('admin.ofertas.destroy', $o->id_oferta) }}"
-                            data-delete-name="{{ $o->titulo }}">
-                      <i class="bi bi-trash"></i> Eliminar
-                    </button>
+                  </div>
+                  <div>
+                    <p class="admin-detalle-block-title">Acciones</p>
+                    <div class="admin-detalle-actions">
+                      <button class="btn-admin-aprobar"
+                              onclick="submitEstado('{{ route('admin.ofertas.estado', $o->id_oferta) }}', 'Activa')">
+                        <i class="bi bi-check-circle"></i> Activar
+                      </button>
+                      @if($estado !== 'pausada')
+                        <button class="btn-admin-suspender"
+                                onclick="submitEstadoConMotivo('{{ route('admin.ofertas.estado', $o->id_oferta) }}', 'Pausada')">
+                          <i class="bi bi-pause-circle"></i> Pausar
+                        </button>
+                      @else
+                        <span class="btn-admin-suspender" style="opacity:.4; cursor:not-allowed;">
+                          <i class="bi bi-pause-circle"></i> Ya pausada
+                        </span>
+                      @endif
+                      <button class="btn-admin-rechazar"
+                              data-delete-url="{{ route('admin.ofertas.destroy', $o->id_oferta) }}"
+                              data-delete-name="{{ $o->titulo }}">
+                        <i class="bi bi-trash"></i> Eliminar
+                      </button>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </td>
-          </tr>
+              </td>
+            </tr>
           @empty
-          <tr>
-            <td colspan="9" style="text-align:center;padding:2rem;color:var(--muted);">
-              No hay ofertas registradas.
-            </td>
-          </tr>
+            <tr>
+              <td colspan="9" style="text-align:center;padding:2rem;color:var(--muted);">
+                No hay ofertas registradas.
+              </td>
+            </tr>
           @endforelse
         </tbody>
       </table>
@@ -707,6 +694,10 @@
     </div>
   </div>
   @endif
+
+  {{-- ════════════════════════════════════════
+       TAB — REPORTES
+  ════════════════════════════════════════ --}}
   @if($seccion === 'reportes')
   <div class="admin-tab-panel active" id="panel-reportes">
 
@@ -755,261 +746,266 @@
         </thead>
         <tbody>
           @forelse($reportes as $r)
-          @php
-            $badgeRep = match($r->estado) {
-              'Abierto'    => 'pendiente',
-              'En Proceso' => 'suspendido',
-              'Resuelto'   => 'activo',
-              default      => 'pendiente'
-            };
-            $nombreMostrar = $r->user_name      ?? $r->nombre_remitente ?? '—';
-            $emailMostrar  = $r->user_email     ?? $r->email_remitente  ?? '—';
-            $asuntoReal    = $r->asunto;
-          @endphp
-          <tr data-id="rep{{ $r->id_ticket }}"
-              data-search="{{ strtolower($nombreMostrar . ' ' . $emailMostrar . ' ' . $asuntoReal) }}"
-              data-estado="{{ strtolower($r->estado) }}"
-              id="fila-reporte-{{ $r->id_ticket }}"
-              style="{{ $r->estado === 'Abierto' ? 'font-weight:600;' : '' }}">
-            <td class="td-nombre">
-              {{ $nombreMostrar }}
-              <br><span class="td-id">{{ $emailMostrar }}</span>
-            </td>
-            <td style="max-width:260px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
-              {{ $asuntoReal }}
-            </td>
-            <td class="td-fecha">
-              {{ \Carbon\Carbon::parse($r->fecha_creacion)->format('d/m/Y H:i') }}
-            </td>
-            <td>
-              <span class="badge-admin badge-{{ $badgeRep }}" id="badge-rep-{{ $r->id_ticket }}">
-                {{ $r->estado }}
-              </span>
-            </td>
-            <td>
-              <div class="td-acciones">
-                <button class="btn-icon btn-ver" title="Ver ticket"
-                        onclick="toggleAdminDetalle('rep{{ $r->id_ticket }}', this)">
-                  <i class="bi bi-eye"></i>
-                </button>
-                <button class="btn-icon btn-eliminar" title="Eliminar ticket"
-                        data-delete-url="{{ route('admin.reportes.destroy', $r->id_ticket) }}"
-                        data-delete-name="el ticket \"{{ $asuntoReal }}\"">
-                  <i class="bi bi-trash"></i>
-                </button>
-              </div>
-            </td>
-          </tr>
+            @php
+              $badgeRep = match($r->estado) {
+                'Abierto'    => 'pendiente',
+                'En Proceso' => 'suspendido',
+                'Resuelto'   => 'activo',
+                default      => 'pendiente'
+              };
+              $nombreMostrar = $r->user_name  ?? $r->nombre_remitente ?? '—';
+              $emailMostrar  = $r->user_email ?? $r->email_remitente  ?? '—';
+              $asuntoReal    = $r->asunto;
+            @endphp
+            <tr data-id="rep{{ $r->id_ticket }}"
+                data-search="{{ strtolower($nombreMostrar . ' ' . $emailMostrar . ' ' . $asuntoReal) }}"
+                data-estado="{{ strtolower($r->estado) }}"
+                id="fila-reporte-{{ $r->id_ticket }}"
+                style="{{ $r->estado === 'Abierto' ? 'font-weight:600;' : '' }}">
+              <td class="td-nombre">
+                {{ $nombreMostrar }}
+                <br><span class="td-id">{{ $emailMostrar }}</span>
+              </td>
+              <td style="max-width:260px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+                {{ $asuntoReal }}
+              </td>
+              <td class="td-fecha">
+                {{ \Carbon\Carbon::parse($r->fecha_creacion)->format('d/m/Y H:i') }}
+              </td>
+              <td>
+                <span class="badge-admin badge-{{ $badgeRep }}" id="badge-rep-{{ $r->id_ticket }}">
+                  {{ $r->estado }}
+                </span>
+              </td>
+              <td>
+                <div class="td-acciones">
+                  <button class="btn-icon btn-ver" title="Ver ticket"
+                          onclick="toggleAdminDetalle('rep{{ $r->id_ticket }}', this)">
+                    <i class="bi bi-eye"></i>
+                  </button>
+                  <button class="btn-icon btn-eliminar" title="Eliminar ticket"
+                          data-delete-url="{{ route('admin.reportes.destroy', $r->id_ticket) }}"
+                          data-delete-name="el ticket &quot;{{ $asuntoReal }}&quot;">
+                    <i class="bi bi-trash"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
 
-          {{-- DETALLE EXPANDIBLE --}}
-          <tr class="admin-detalle-row" id="admin-det-rep{{ $r->id_ticket }}">
-            <td colspan="5" style="padding: 12px 14px !important; overflow-x: hidden;">
+            {{-- DETALLE EXPANDIBLE --}}
+            <tr class="admin-detalle-row" id="admin-det-rep{{ $r->id_ticket }}">
+              <td colspan="5" style="padding: 12px 14px !important; overflow-x: hidden;">
                 <div class="admin-detalle-inner" style="
-                    display: grid; 
-                    grid-template-columns: 1fr 1.8fr 0.8fr; 
-                    gap: 12px; 
+                    display: grid;
+                    grid-template-columns: 1fr 1.8fr 0.8fr;
+                    gap: 12px;
                     max-width: 100%;
                     overflow-x: hidden;
                 ">
-
-                {{-- Columna 1: Información --}}
-                <div>
-                  <p class="admin-detalle-block-title">Información</p>
-                  <p class="admin-detalle-value" style="font-weight:600;">{{ $nombreMostrar }}</p>
-                  <p class="admin-detalle-value">{{ $emailMostrar }}</p>
-                  <p class="admin-detalle-value" style="margin-top:8px; font-size:11.5px; color:var(--muted);">
-                    {{ \Carbon\Carbon::parse($r->fecha_creacion)->format('d/m/Y H:i') }}
-                  </p>
-                  @if($r->id_usuario)
-                    <p class="admin-detalle-value" style="margin-top:4px; font-size:11.5px; color:var(--accent);">
-                      <i class="bi bi-person-check"></i> Usuario registrado
+                  {{-- Columna 1: Información --}}
+                  <div>
+                    <p class="admin-detalle-block-title">Información</p>
+                    <p class="admin-detalle-value" style="font-weight:600;">{{ $nombreMostrar }}</p>
+                    <p class="admin-detalle-value">{{ $emailMostrar }}</p>
+                    <p class="admin-detalle-value" style="margin-top:8px; font-size:11.5px; color:var(--muted);">
+                      {{ \Carbon\Carbon::parse($r->fecha_creacion)->format('d/m/Y H:i') }}
                     </p>
-                  @else
-                    <p class="admin-detalle-value" style="margin-top:4px; font-size:11.5px; color:var(--muted);">
-                      <i class="bi bi-person-x"></i> No registrado
-                    </p>
-                  @endif
-                </div>
-
-                {{-- Columna 2: Contenido --}}
-                <div>
-                  <p class="admin-detalle-block-title">Contenido</p>
-                  <p class="admin-detalle-value" style="font-weight:600; margin-bottom:4px;">{{ $asuntoReal }}</p>
-                  <p class="admin-detalle-value" style="white-space:pre-line; line-height:1.7; word-break:break-word; overflow-wrap:break-word;">{{ $r->descripcion }}</p>
-                </div>
-
-                {{-- Columna 3: Gestión --}}
-                <div>
-                  <p class="admin-detalle-block-title">Gestión</p>
-                  <div class="admin-detalle-actions" style="display:flex; flex-direction:column; gap:8px; align-items:flex-start;">
-
-                    {{-- Cambiar estado --}}
-                    <form method="POST" action="{{ route('admin.reportes.estado', $r->id_ticket) }}"
-                          style="display:flex; flex-direction:column; gap:6px;">
-                      @csrf
-                      <select name="estado" class="admin-filter-select"
-                              style="font-size:12px; padding:6px 10px;"
-                              onchange="this.form.submit()">
-                        <option value="Abierto"    {{ $r->estado === 'Abierto'    ? 'selected' : '' }}>Abierto</option>
-                        <option value="En Proceso" {{ $r->estado === 'En Proceso' ? 'selected' : '' }}>En Proceso</option>
-                        <option value="Resuelto"   {{ $r->estado === 'Resuelto'   ? 'selected' : '' }}>Resuelto</option>
-                      </select>
-                    </form>
-
-                    {{-- Contactar / Email --}}
                     @if($r->id_usuario)
-                        <a href="{{ route('admin.mensajes', ['postulante_id' => $r->id_usuario]) }}"
-                          class="btn-admin-contactar">
-                            <i class="bi bi-chat-dots"></i> Contactar
-                        </a>
+                      <p class="admin-detalle-value" style="margin-top:4px; font-size:11.5px; color:var(--accent);">
+                        <i class="bi bi-person-check"></i> Usuario registrado
+                      </p>
                     @else
-                        <a href="mailto:{{ $emailMostrar }}"
-                          class="btn-admin-contactar">
-                            <i class="bi bi-envelope"></i> Enviar email
-                        </a>
+                      <p class="admin-detalle-value" style="margin-top:4px; font-size:11.5px; color:var(--muted);">
+                        <i class="bi bi-person-x"></i> No registrado
+                      </p>
                     @endif
+                  </div>
 
-                    {{-- Eliminar --}}
-                    <button class="btn-admin-rechazar" ...>
+                  {{-- Columna 2: Contenido --}}
+                  <div>
+                    <p class="admin-detalle-block-title">Contenido</p>
+                    <p class="admin-detalle-value" style="font-weight:600; margin-bottom:4px;">{{ $asuntoReal }}</p>
+                    <p class="admin-detalle-value" style="white-space:pre-line; line-height:1.7; word-break:break-word; overflow-wrap:break-word;">{{ $r->descripcion }}</p>
+                  </div>
+
+                  {{-- Columna 3: Gestión --}}
+                  <div>
+                    <p class="admin-detalle-block-title">Gestión</p>
+                    <div class="admin-detalle-actions" style="display:flex; flex-direction:column; gap:8px; align-items:flex-start;">
+
+                      {{-- Cambiar estado --}}
+                      <form method="POST" action="{{ route('admin.reportes.estado', $r->id_ticket) }}"
+                            style="display:flex; flex-direction:column; gap:6px;">
+                        @csrf
+                        <select name="estado" class="admin-filter-select"
+                                style="font-size:12px; padding:6px 10px;"
+                                onchange="this.form.submit()">
+                          <option value="Abierto"    {{ $r->estado === 'Abierto'    ? 'selected' : '' }}>Abierto</option>
+                          <option value="En Proceso" {{ $r->estado === 'En Proceso' ? 'selected' : '' }}>En Proceso</option>
+                          <option value="Resuelto"   {{ $r->estado === 'Resuelto'   ? 'selected' : '' }}>Resuelto</option>
+                        </select>
+                      </form>
+
+                      {{-- Contactar / Email --}}
+                      @if($r->id_usuario)
+                        <a href="{{ route('admin.mensajes', ['postulante_id' => $r->id_usuario]) }}"
+                           class="btn-admin-contactar">
+                          <i class="bi bi-chat-dots"></i> Contactar
+                        </a>
+                      @else
+                        <a href="mailto:{{ $emailMostrar }}" class="btn-admin-contactar">
+                          <i class="bi bi-envelope"></i> Enviar email
+                        </a>
+                      @endif
+
+                      {{-- Eliminar --}}
+                      <button class="btn-admin-rechazar"
+                              data-delete-url="{{ route('admin.reportes.destroy', $r->id_ticket) }}"
+                              data-delete-name="el ticket &quot;{{ $asuntoReal }}&quot;">
                         <i class="bi bi-trash"></i> Eliminar
-                    </button>
+                      </button>
 
+                    </div>
                   </div>
                 </div>
-
-              </div>
-            </td>
-          </tr>
+              </td>
+            </tr>
           @empty
-          <tr>
-            <td colspan="5" style="text-align:center; padding:30px; color:var(--muted);">
-              <i class="bi bi-inbox" style="font-size:24px; display:block; margin-bottom:8px;"></i>
-              No hay reportes
-            </td>
-          </tr>
+            <tr>
+              <td colspan="5" style="text-align:center; padding:30px; color:var(--muted);">
+                <i class="bi bi-inbox" style="font-size:24px; display:block; margin-bottom:8px;"></i>
+                No hay reportes
+              </td>
+            </tr>
           @endforelse
         </tbody>
       </table>
     </div>
   </div>
   @endif
+
+  {{-- ════════════════════════════════════════
+       TAB — PAPELERA
+  ════════════════════════════════════════ --}}
   @if($seccion === 'papelera')
   <div class="admin-tab-panel active" id="panel-papelera">
 
-  {{-- ── OFERTAS ELIMINADAS ── --}}
-  <h3 style="font-size:15px; font-weight:700; color:var(--text); margin-bottom:12px;">
-    <i class="bi bi-briefcase"></i> Ofertas eliminadas
-  </h3>
+    {{-- ── OFERTAS ELIMINADAS ── --}}
+    <h3 style="font-size:15px; font-weight:700; color:var(--text); margin-bottom:12px;">
+      <i class="bi bi-briefcase"></i> Ofertas eliminadas
+    </h3>
 
-  <div class="admin-table-wrap" style="margin-bottom:32px;">
-    <table class="admin-table">
-      <thead>
-        <tr>
-          <th>Título</th>
-          <th>Empresa</th>
-          <th>Eliminada</th>
-          <th>Acciones</th>
-        </tr>
-      </thead>
-      <tbody>
-        @forelse($ofertasEliminadas as $o)
-        <tr>
-          <td class="td-nombre">{{ $o->titulo }}</td>
-          <td class="td-carrera">{{ $o->empresa->nombre_empresa ?? '—' }}</td>
-          <td class="td-fecha">{{ \Carbon\Carbon::parse($o->deleted_at)->format('d/m/Y H:i') }}</td>
-          <td>
-            <div class="td-acciones">
-              {{-- Restaurar --}}
-              <form method="POST" action="{{ route('admin.papelera.oferta.restaurar', $o->id_oferta) }}" style="display:inline;">
-                @csrf
-                <button class="btn-icon btn-aprobar" title="Restaurar">
-                  <i class="bi bi-arrow-counterclockwise"></i>
-                </button>
-              </form>
-              {{-- Eliminar definitivo --}}
-              <button class="btn-icon btn-eliminar" title="Eliminar definitivamente"
-                      data-delete-url="{{ route('admin.papelera.oferta.destroy', $o->id_oferta) }}"
-                      data-delete-name="{{ $o->titulo }} (permanente)">
-                <i class="bi bi-trash"></i>
-              </button>
-            </div>
-          </td>
-        </tr>
-        @empty
-        <tr>
-          <td colspan="4" style="text-align:center;padding:2rem;color:var(--muted);">
-            No hay ofertas eliminadas.
-          </td>
-        </tr>
-        @endforelse
-      </tbody>
-    </table>
-    @if($ofertasEliminadas->hasPages())
-      <div style="padding:16px;">{{ $ofertasEliminadas->links() }}</div>
-    @endif
+    <div class="admin-table-wrap" style="margin-bottom:32px;">
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>Título</th>
+            <th>Empresa</th>
+            <th>Eliminada</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          @forelse($ofertasEliminadas as $o)
+            <tr>
+              <td class="td-nombre">{{ $o->titulo }}</td>
+              <td class="td-carrera">{{ $o->empresa->nombre_empresa ?? '—' }}</td>
+              <td class="td-fecha">{{ \Carbon\Carbon::parse($o->deleted_at)->format('d/m/Y H:i') }}</td>
+              <td>
+                <div class="td-acciones">
+                  {{-- Restaurar --}}
+                  <form method="POST" action="{{ route('admin.papelera.oferta.restaurar', $o->id_oferta) }}" style="display:inline;">
+                    @csrf
+                    <button class="btn-icon btn-aprobar" title="Restaurar">
+                      <i class="bi bi-arrow-counterclockwise"></i>
+                    </button>
+                  </form>
+                  {{-- Eliminar definitivo --}}
+                  <button class="btn-icon btn-eliminar" title="Eliminar definitivamente"
+                          data-delete-url="{{ route('admin.papelera.oferta.destroy', $o->id_oferta) }}"
+                          data-delete-name="{{ $o->titulo }} (permanente)">
+                    <i class="bi bi-trash"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          @empty
+            <tr>
+              <td colspan="4" style="text-align:center;padding:2rem;color:var(--muted);">
+                No hay ofertas eliminadas.
+              </td>
+            </tr>
+          @endforelse
+        </tbody>
+      </table>
+      @if($ofertasEliminadas->hasPages())
+        <div style="padding:16px;">{{ $ofertasEliminadas->links() }}</div>
+      @endif
+    </div>
+
+    {{-- ── POSTULACIONES ELIMINADAS ── --}}
+    <h3 style="font-size:15px; font-weight:700; color:var(--text); margin-bottom:12px;">
+      <i class="bi bi-send"></i> Postulaciones eliminadas
+    </h3>
+
+    <div class="admin-table-wrap">
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>Estudiante</th>
+            <th>Oferta</th>
+            <th>Empresa</th>
+            <th>Eliminada</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          @forelse($postulacionesEliminadas as $p)
+            <tr>
+              <td class="td-nombre">
+                {{ $p->estudiante->nombre ?? '—' }} {{ $p->estudiante->apellido ?? '' }}
+                <br><span class="td-id">{{ $p->estudiante->user->email ?? '—' }}</span>
+              </td>
+              <td class="td-carrera">{{ $p->oferta->titulo ?? '—' }}</td>
+              <td class="td-carrera">{{ $p->oferta->empresa->nombre_empresa ?? '—' }}</td>
+              <td class="td-fecha">{{ \Carbon\Carbon::parse($p->deleted_at)->format('d/m/Y H:i') }}</td>
+              <td>
+                <div class="td-acciones">
+                  {{-- Restaurar --}}
+                  <form method="POST" action="{{ route('admin.papelera.postulacion.restaurar', $p->id_postulacion) }}" style="display:inline;">
+                    @csrf
+                    <button class="btn-icon btn-aprobar" title="Restaurar">
+                      <i class="bi bi-arrow-counterclockwise"></i>
+                    </button>
+                  </form>
+                  {{-- Eliminar definitivo --}}
+                  <button class="btn-icon btn-eliminar" title="Eliminar definitivamente"
+                          data-delete-url="{{ route('admin.papelera.postulacion.destroy', $p->id_postulacion) }}"
+                          data-delete-name="postulación de {{ $p->estudiante->nombre ?? '' }} (permanente)">
+                    <i class="bi bi-trash"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          @empty
+            <tr>
+              <td colspan="5" style="text-align:center;padding:2rem;color:var(--muted);">
+                No hay postulaciones eliminadas.
+              </td>
+            </tr>
+          @endforelse
+        </tbody>
+      </table>
+      @if($postulacionesEliminadas->hasPages())
+        <div style="padding:16px;">{{ $postulacionesEliminadas->links() }}</div>
+      @endif
+    </div>
+
   </div>
-
-  {{-- ── POSTULACIONES ELIMINADAS ── --}}
-  <h3 style="font-size:15px; font-weight:700; color:var(--text); margin-bottom:12px;">
-    <i class="bi bi-send"></i> Postulaciones eliminadas
-  </h3>
-
-  <div class="admin-table-wrap">
-    <table class="admin-table">
-      <thead>
-        <tr>
-          <th>Estudiante</th>
-          <th>Oferta</th>
-          <th>Empresa</th>
-          <th>Eliminada</th>
-          <th>Acciones</th>
-        </tr>
-      </thead>
-      <tbody>
-        @forelse($postulacionesEliminadas as $p)
-        <tr>
-          <td class="td-nombre">
-            {{ $p->estudiante->nombre ?? '—' }} {{ $p->estudiante->apellido ?? '' }}
-            <br><span class="td-id">{{ $p->estudiante->user->email ?? '—' }}</span>
-          </td>
-          <td class="td-carrera">{{ $p->oferta->titulo ?? '—' }}</td>
-          <td class="td-carrera">{{ $p->oferta->empresa->nombre_empresa ?? '—' }}</td>
-          <td class="td-fecha">{{ \Carbon\Carbon::parse($p->deleted_at)->format('d/m/Y H:i') }}</td>
-          <td>
-            <div class="td-acciones">
-              {{-- Restaurar --}}
-              <form method="POST" action="{{ route('admin.papelera.postulacion.restaurar', $p->id_postulacion) }}" style="display:inline;">
-                @csrf
-                <button class="btn-icon btn-aprobar" title="Restaurar">
-                  <i class="bi bi-arrow-counterclockwise"></i>
-                </button>
-              </form>
-              {{-- Eliminar definitivo --}}
-              <button class="btn-icon btn-eliminar" title="Eliminar definitivamente"
-                      data-delete-url="{{ route('admin.papelera.postulacion.destroy', $p->id_postulacion) }}"
-                      data-delete-name="postulación de {{ $p->estudiante->nombre ?? '' }} (permanente)">
-                <i class="bi bi-trash"></i>
-              </button>
-            </div>
-          </td>
-        </tr>
-        @empty
-        <tr>
-          <td colspan="5" style="text-align:center;padding:2rem;color:var(--muted);">
-            No hay postulaciones eliminadas.
-          </td>
-        </tr>
-        @endforelse
-      </tbody>
-    </table>
-    @if($postulacionesEliminadas->hasPages())
-      <div style="padding:16px;">{{ $postulacionesEliminadas->links() }}</div>
-    @endif
-  </div>
+  @endif
 
 </div>
-@endif
-</div>
+
 {{-- Formulario oculto para cambios de estado --}}
 <form id="form-estado" method="POST" style="display:none;">
   @csrf
@@ -1029,8 +1025,7 @@
     <h3 class="modal-confirmar-title" id="dialogConfirmarTitle">Confirmar acción</h3>
     <p class="modal-confirmar-msg" id="dialogConfirmarMsg"></p>
     <div class="modal-confirmar-btns">
-      <button onclick="document.getElementById('dialogConfirmar').close()"
-              class="btn-cancelar-dialog">Cancelar</button>
+      <button onclick="document.getElementById('dialogConfirmar').close()" class="btn-cancelar-dialog">Cancelar</button>
       <button id="btnConfirmarAccion" class="btn-confirmar-eliminar">Confirmar</button>
     </div>
   </div>
@@ -1062,8 +1057,7 @@
       0 / 5000
     </div>
     <div class="modal-confirmar-btns">
-      <button onclick="document.getElementById('dialogMotivo').close()"
-              class="btn-cancelar-dialog">Cancelar</button>
+      <button onclick="document.getElementById('dialogMotivo').close()" class="btn-cancelar-dialog">Cancelar</button>
       <button id="btnConfirmarMotivo" class="btn-confirmar-eliminar" style="background:var(--pausada);">
         Confirmar pausa
       </button>
@@ -1206,7 +1200,7 @@ async function submitEstadoConMotivo(url, estado) {
 /* ════════════════════════════════════════
    DETALLE EXPANDIBLE
 ════════════════════════════════════════ */
-window.toggleAdminDetalle = function(id) {
+window.toggleAdminDetalle = function (id) {
   document.getElementById('admin-det-' + id)?.classList.toggle('open');
 };
 
@@ -1289,14 +1283,14 @@ function clearBulk(panelId) {
    RUTAS BULK — mapa correcto panel → segmento URL
 ════════════════════════════════════════ */
 const bulkUrlMap = {
-  'panel-alumnos':   'estudiantes',
-  'panel-empresas':  'empresas',
-  'panel-ofertas':   'ofertas',
+  'panel-alumnos':  'estudiantes',
+  'panel-empresas': 'empresas',
+  'panel-ofertas':  'ofertas',
 };
 
 async function bulkAccion(panelId, accion, estado) {
-  const panel    = document.getElementById(panelId);
-  const ids      = getSelectedIds(panel);
+  const panel = document.getElementById(panelId);
+  const ids   = getSelectedIds(panel);
   if (!ids.length) return;
 
   const segmento = bulkUrlMap[panelId];
@@ -1342,6 +1336,42 @@ function submitBulkForm(url, ids, extras = {}) {
 </script>
 
 <style>
+/* ── Espaciado de celdas: evita que el texto en varias líneas choque ── */
+.admin-table td {
+  vertical-align: top;
+  line-height: 1.45;
+  padding-top: 16px;
+  padding-bottom: 16px;
+}
+.admin-table td.td-carrera,
+.admin-table td.td-ubicacion {
+  white-space: normal;
+  word-break: break-word;
+  padding-right: 16px;
+}
+.admin-table td.td-nombre {
+  line-height: 1.4;
+  white-space: normal;
+  word-break: break-word;
+  padding-right: 16px;
+}
+.admin-table td.td-nombre .td-id {
+  display: inline-block;
+  margin-top: 2px;
+}
+.admin-table tbody tr:not(.admin-detalle-row) {
+  border-bottom: 1px solid var(--border);
+}
+
+/* ── Solo el contador (número) se centra; el label queda como estaba ── */
+.admin-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+}
+.admin-stat-value {
+  text-align: center;
+}
+
 /* ── Modal confirmar ── */
 dialog:not([open]) { display: none !important; }
 
@@ -1420,10 +1450,10 @@ dialog:not([open]) { display: none !important; }
   color: var(--text);
   transition: border-color 0.15s, color 0.15s, background 0.15s;
 }
-.bulk-bar button:hover        { border-color: var(--accent); color: var(--accent); }
-.bulk-bar .bulk-btn-danger    { border-color: rgba(212,24,61,.4); color: #e05577; background: transparent; }
+.bulk-bar button:hover           { border-color: var(--accent); color: var(--accent); }
+.bulk-bar .bulk-btn-danger       { border-color: rgba(212,24,61,.4); color: #e05577; background: transparent; }
 .bulk-bar .bulk-btn-danger:hover { background: rgba(212,24,61,.08); border-color: #e05577; }
-.bulk-bar .bulk-btn-cancel    { color: var(--muted); margin-left: auto; }
+.bulk-bar .bulk-btn-cancel       { color: var(--muted); margin-left: auto; }
 .bulk-bar .bulk-btn-cancel:hover { color: var(--text); border-color: var(--border); }
 
 /* ── Botón contactar ── */
@@ -1449,53 +1479,53 @@ dialog:not([open]) { display: none !important; }
    PAGINACIÓN LARAVEL
 ════════════════════════════════════════ */
 .pagination {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    list-style: none;
-    padding: 12px 0;
-    margin: 0;
-    justify-content: center;
-    flex-wrap: wrap;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  list-style: none;
+  padding: 12px 0;
+  margin: 0;
+  justify-content: center;
+  flex-wrap: wrap;
 }
 .page-item .page-link,
 .page-item span {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-width: 32px;
-    height: 32px;
-    padding: 0 8px;
-    border-radius: 6px;
-    border: 1px solid var(--border);
-    background: var(--surface);
-    color: var(--text);
-    font-size: 13px;
-    font-weight: 500;
-    text-decoration: none;
-    transition: background var(--trans), border-color var(--trans), color var(--trans);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 32px;
+  height: 32px;
+  padding: 0 8px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: background var(--trans), border-color var(--trans), color var(--trans);
 }
 .page-item .page-link:hover {
-    background: var(--accent-dim);
-    border-color: var(--accent);
-    color: var(--accent);
+  background: var(--accent-dim);
+  border-color: var(--accent);
+  color: var(--accent);
 }
 .page-item.active .page-link,
 .page-item.active span {
-    background: var(--accent);
-    border-color: var(--accent);
-    color: #fff;
-    font-weight: 700;
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+  font-weight: 700;
 }
 [data-theme="dark"] .page-item.active .page-link,
 [data-theme="dark"] .page-item.active span {
-    color: #111118;
+  color: #111118;
 }
 .page-item.disabled .page-link,
 .page-item.disabled span {
-    opacity: 0.35;
-    cursor: not-allowed;
-    pointer-events: none;
+  opacity: 0.35;
+  cursor: not-allowed;
+  pointer-events: none;
 }
 
 /* ── Tablet ancho (900–1200px) ── */
@@ -1578,11 +1608,10 @@ dialog:not([open]) { display: none !important; }
   .btn-admin-contactar { width: 100%; justify-content: center; padding: 10px 16px; font-size: 13px; }
 }
 
-
 .admin-table-wrap .pagination {
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
 }
 </style>
 

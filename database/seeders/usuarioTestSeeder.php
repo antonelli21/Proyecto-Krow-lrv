@@ -1389,7 +1389,7 @@ class UsuarioTestSeeder extends Seeder
                 'estado'                => 'Activa',
             ],
             [
-                // Oferta cerrada para testear filtros de estado
+
                 'id_oferta'             => 17,
                 'id_empresa'            => 3,
                 'titulo'                => 'Desarrollador Angular — Pasantía (CERRADA)',
@@ -1404,7 +1404,7 @@ class UsuarioTestSeeder extends Seeder
                 'id_localidad'          => 408,
                 'id_provincia'          => 7,
                 'fecha_cierre'          => '2026-05-01',
-                'estado'                => 'Cerrada',
+                'estado'                => 'Activa',
             ],
         ];
 
@@ -1436,7 +1436,7 @@ class UsuarioTestSeeder extends Seeder
             [14, 12],   // Community Manager → Marketing Digital
             [15, 12],   // Diseño UX → Marketing Digital
             [16, 7],    // Node.js Backend → Tec. Programación
-            [17, 7],    // Angular (cerrada) → Tec. Programación
+            [17, 7],    // Angular (Activa) → Tec. Programación
         ];
         foreach ($ofertaCarreras as [$o, $c]) {
             DB::table('oferta_carrera')->insertOrIgnore(['id_oferta' => $o, 'id_carrera' => $c]);
@@ -1488,28 +1488,28 @@ class UsuarioTestSeeder extends Seeder
             // Nuevas
             [11, 28],
             [11, 35],
-            [11, 20],           // Logística
+            [11, 20],          
             [12, 29],
             [12, 35],
-            [12, 20],           // SAP
+            [12, 20],           
             [13, 31],
             [13, 4],
             [13, 12],
-            [13, 32], // Next.js
+            [13, 32], 
             [14, 25],
             [14, 26],
-            [14, 27],           // Community Manager
+            [14, 27],
             [15, 33],
             [15, 24],
-            [15, 17],           // Diseño UX
+            [15, 17],           
             [16, 7],
             [16, 4],
             [16, 14],
             [16, 32],
-            [16, 16], // Node.js Backend
+            [16, 16], 
             [17, 34],
             [17, 4],
-            [17, 13],           // Angular (cerrada)
+            [17, 13],           
         ];
         foreach ($ofertaHabilidades as [$o, $h]) {
             DB::table('oferta_habilidad')->insertOrIgnore(['id_oferta' => $o, 'id_habilidad' => $h]);

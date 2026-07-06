@@ -181,7 +181,6 @@
                     $estadoClase = match($oferta->estado) {
                         'Activa'  => 'estado-activa',
                         'Pausada' => 'estado-pausada',
-                        'Cerrada' => 'estado-cerrada',
                         default   => 'estado-activa',
                     };
                     $bloqueadaPorAdmin = $oferta->pausada_por_admin && $oferta->estado === 'Pausada';
@@ -266,7 +265,6 @@
             $estadoClase = match($oferta->estado) {
                 'Activa'  => 'estado-activa',
                 'Pausada' => 'estado-pausada',
-                'Cerrada' => 'estado-cerrada',
                 default   => 'estado-activa',
             };
             $bloqueadaPorAdmin = $oferta->pausada_por_admin && $oferta->estado === 'Pausada';
@@ -410,13 +408,6 @@
       background: var(--badge-postulado-bg);
       color: var(--badge-postulado-text);
       border: 1px solid var(--badge-postulado-border);
-    }
-
-    /* Estado: Cerrada */
-    .estado-cerrada { 
-      background: var(--badge-rechazado-post-bg);
-      color: var(--badge-rechazado-post-text);
-      border: 1px solid var(--badge-rechazado-post-border); 
     }
 
 
@@ -640,7 +631,6 @@
         const claseMap = {
             Activa: 'estado-activa',
             Pausada: 'estado-pausada',
-            Cerrada: 'estado-cerrada'
         };
 
         [`badge-estado-${idOferta}`, `badge-estado-mob-${idOferta}`].forEach(id => {
@@ -679,44 +669,50 @@
     let ofertaAEliminar = null;
 
     async function confirmarEliminar(idOferta, titulo) {
-    const ok = await modalConfirm(
-        'Eliminar oferta',
-        `¿Confirmás eliminar "${titulo}"? Se borrarán todas las postulaciones asociadas y no se puede deshacer.`,
-        'Sí, eliminar'
-    );
+        const ok = await modalConfirm(
+            'Eliminar oferta',
+            `¿Confirmás eliminar "${titulo}"? Se borrarán todas las postulaciones asociadas y no se puede deshacer.`,
+            'Sí, eliminar'
+        );
 
-    if (!ok) return;
+        if (!ok) return;
 
-    fetch(`/empresa/oferta/${idOferta}`, {
-        method: 'DELETE',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': '{{ csrf_token() }}'
-        }
-    })
-    .then(r => r.json())
-    .then(data => {
+        fetch(`/empresa/oferta/${idOferta}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            }
+        })
+        .then(r => r.json())
+        .then(data => {
 
-        if (!data.success) {
-            alert('Error al eliminar.');
-            return;
-        }
+            if (!data.success) {
+                alert('Error al eliminar.');
+                return;
+            }
 
-        document.getElementById(`fila-oferta-${idOferta}`)?.remove();
-        document.getElementById(`card-oferta-${idOferta}`)?.remove();
+            document.getElementById(`fila-oferta-${idOferta}`)?.remove();
+            document.getElementById(`card-oferta-${idOferta}`)?.remove();
 
-        document.querySelectorAll('.stat-card')[0]
-            .querySelector('.stat-card-value').textContent = data.activas;
+            // Recalculamos activas/pausadas contando el DOM (desktop + mobile duplican el badge, por eso /2)
+            const activas  = document.querySelectorAll('.badge-estado-oferta.estado-activa').length / 2;
+            const pausadas = document.querySelectorAll('.badge-estado-oferta.estado-pausada').length / 2;
 
-        document.querySelectorAll('.stat-card')[1]
-            .querySelector('.stat-card-value').textContent = data.totalPostulantes;
+            document.querySelectorAll('.stat-card')[0]
+                .querySelector('.stat-card-value').textContent = activas;
 
-        document.querySelectorAll('.stat-card')[2]
-            .querySelector('.stat-card-value').textContent = data.pausadas;
-    })
-    .catch(() => alert('Error de red.'));
-}
+            document.querySelectorAll('.stat-card')[2]
+                .querySelector('.stat-card-value').textContent = pausadas;
 
+            // Total postulantes: solo lo pisamos si el backend efectivamente lo mandó
+            if (typeof data.totalPostulantes !== 'undefined') {
+                document.querySelectorAll('.stat-card')[1]
+                    .querySelector('.stat-card-value').textContent = data.totalPostulantes;
+            }
+        })
+        .catch(() => alert('Error de red.'));
+    }
     
 
     document.getElementById('dialogEliminar').addEventListener('click', function (e) {

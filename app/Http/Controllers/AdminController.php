@@ -70,7 +70,6 @@ class AdminController extends Controller
         $ofertasPublicadas = Oferta::where('estado', 'activa')->count();
         $ofertasPendientes = Oferta::where('estado', 'pendiente')->count();
         $ofertasPausadas   = Oferta::where('estado', 'pausada')->count();
-        $ofertasCerradas = Oferta::where('estado', 'cerrada')->count();
 
 
         $ofertas = Oferta::with('empresa')
@@ -80,7 +79,7 @@ class AdminController extends Controller
 
         return view('admin.admin', compact(
             'seccion',
-            'totalOfertas', 'ofertasPublicadas', 'ofertasPendientes', 'ofertasPausadas', 'ofertasCerradas',
+            'totalOfertas', 'ofertasPublicadas', 'ofertasPendientes', 'ofertasPausadas',
             'ofertas'
         ));
     }
