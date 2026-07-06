@@ -817,9 +817,6 @@
                   <p class="admin-detalle-block-title">Información</p>
                   <p class="admin-detalle-value" style="font-weight:600;">{{ $nombreMostrar }}</p>
                   <p class="admin-detalle-value">{{ $emailMostrar }}</p>
-                  <p class="admin-detalle-value">
-                    <span class="badge-admin badge-{{ $badgeRep }}">{{ $r->estado }}</span>
-                  </p>
                   <p class="admin-detalle-value" style="margin-top:8px; font-size:11.5px; color:var(--muted);">
                     {{ \Carbon\Carbon::parse($r->fecha_creacion)->format('d/m/Y H:i') }}
                   </p>
@@ -844,7 +841,7 @@
                 {{-- Columna 3: Gestión --}}
                 <div>
                   <p class="admin-detalle-block-title">Gestión</p>
-                  <div class="admin-detalle-actions">
+                  <div class="admin-detalle-actions" style="display:flex; flex-direction:column; gap:8px; align-items:flex-start;">
 
                     {{-- Cambiar estado --}}
                     <form method="POST" action="{{ route('admin.reportes.estado', $r->id_ticket) }}"
@@ -859,23 +856,22 @@
                       </select>
                     </form>
 
-                    {{-- Contactar --}}
+                    {{-- Contactar / Email --}}
                     @if($r->id_usuario)
-                      <a href="{{ route('admin.mensajes', ['postulante_id' => $r->id_usuario]) }}"
-                        class="btn-admin-contactar" style="margin-top:6px;">
-                        <i class="bi bi-chat-dots"></i> Contactar
-                      </a>
+                        <a href="{{ route('admin.mensajes', ['postulante_id' => $r->id_usuario]) }}"
+                          class="btn-admin-contactar">
+                            <i class="bi bi-chat-dots"></i> Contactar
+                        </a>
                     @else
-                      <a href="mailto:{{ $emailMostrar }}"
-                        class="btn-admin-contactar" style="margin-top:6px;">
-                        <i class="bi bi-envelope"></i> Enviar email
-                      </a>
+                        <a href="mailto:{{ $emailMostrar }}"
+                          class="btn-admin-contactar">
+                            <i class="bi bi-envelope"></i> Enviar email
+                        </a>
                     @endif
 
-                    <button class="btn-admin-rechazar" style="margin-top:6px;"
-                            data-delete-url="{{ route('admin.reportes.destroy', $r->id_ticket) }}"
-                            data-delete-name="el ticket \"{{ $asuntoReal }}\"">
-                      <i class="bi bi-trash"></i> Eliminar
+                    {{-- Eliminar --}}
+                    <button class="btn-admin-rechazar" ...>
+                        <i class="bi bi-trash"></i> Eliminar
                     </button>
 
                   </div>
