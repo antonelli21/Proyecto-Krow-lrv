@@ -23,27 +23,29 @@
 0 0px 30px var(--shadow-glow);">
 <div class="panel-page">
 
-    {{-- Header de perfil --}}
-    <div class="perfil-header-card" >
-        <div class="perfil-header-inner">
-            <div class="perfil-avatar {{ $estudiante->foto_perfil ? 'avatar-{ \Illuminate\Support\Facades\Storage::url($estudiante->foto_perfil) }}')" @endif>
-                @if(!$estudiante->foto_perfil)
-                    {{ strtoupper(substr($usuario->name ?? 'E', 0, 1)) }}expandible' : '' }}"
-                style="{{ $estudiante->foto_perfil ? 'background-image:url(\'' . \Illuminate\Support\Facades\Storage::url($estudiante->foto_perfil) . '\'); background-size:cover; background-position:center; cursor:pointer;' : '' }}"
-                @if($estudiante->foto_perfil) onclick="abrirModalAvatar('{
-                @endif
-            </div>
-            <div class="perfil-header-info">
-                <h1 class="panel-page-title" style="margin-bottom:2px;">{{ $usuario->name }}</h1>
-                <p class="panel-page-sub" style="margin-bottom:2px;">{{ $estudiante->carrera->nombre ?? 'Sin carrera' }}</p>
-                <p class="panel-page-sub">Legajo: {{ $estudiante->legajo }}</p>
-            </div>
-            <a href="{{ route('estudiante.perfil.editar') }}" class="btn-accent">
-                <i class="bi bi-pencil"></i> Editar perfil
-            </a>
+{{-- Header de perfil --}}
+<div class="perfil-header-card">
+    <div class="perfil-header-inner">
+        
+        {{-- Avatar con o sin foto --}}
+        <div class="perfil-avatar {{ $estudiante->foto_perfil ? 'avatar-expandible' : '' }}"
+             style="{{ $estudiante->foto_perfil ? 'background-image:url(\'' . \Illuminate\Support\Facades\Storage::url($estudiante->foto_perfil) . '\'); background-size:cover; background-position:center; cursor:pointer;' : '' }}"
+             @if($estudiante->foto_perfil) onclick="abrirModalAvatar('{{ \Illuminate\Support\Facades\Storage::url($estudiante->foto_perfil) }}')" @endif>
         </div>
-    </div>
 
+        {{-- Información del estudiante --}}
+        <div class="perfil-header-info">
+            <h1 class="panel-page-title" style="margin-bottom:2px;">{{ $usuario->name }}</h1>
+            <p class="panel-page-sub" style="margin-bottom:2px;">{{ $estudiante->carrera->nombre ?? 'Sin carrera' }}</p>
+            <p class="panel-page-sub">Legajo: {{ $estudiante->legajo }}</p>
+        </div>
+
+        {{-- Botón de edición --}}
+        <a href="{{ route('estudiante.perfil.editar') }}" class="btn-accent">
+            <i class="bi bi-pencil"></i> Editar perfil
+        </a>
+    </div>
+</div>
     <div class="perfil-sections">
         <div class="perfil-column-main">
 

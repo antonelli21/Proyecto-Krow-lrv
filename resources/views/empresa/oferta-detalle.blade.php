@@ -31,8 +31,8 @@
     $tecnologias  = $oferta->habilidades     ?? [];   
     $estado       = $oferta->estado          ?? 'activa';
     
-    // Corregido: Ahora apunta a ->direccion de la empresa
-    $ubicacion    = $oferta->ubicacion       ?? ($oferta->empresa->direccion ?? '');
+    // Corregido: Ahora apunta a ->dirccion de la empresa
+    $ubicacion    = $oferta->ubicacione       ?? ($oferta->empresa->direccion ?? '');
     
     $fechaTxt     = $oferta->fecha_texto     ?? ($oferta->created_at ? \Carbon\Carbon::parse($oferta->created_at)->diffForHumans() : '');
     $yaPostulado  = $oferta->ya_postulado    ?? false;
@@ -328,5 +328,4 @@
 
     </div>
 </div>
-
 @endsection
