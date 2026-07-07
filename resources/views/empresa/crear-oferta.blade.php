@@ -2,6 +2,39 @@
 
 @section('title', 'Crear Nueva Oferta')
 
+@section('banner')
+<div id="banner-index" style="
+    width:100%;
+    height: 600px;
+    position:relative;
+    overflow:hidden;
+    background-image: url('{{ asset('img/banner.jpg') }}');
+    background-size: cover;
+    background-position: top;
+    background-repeat: no-repeat;
+    margin:0;
+">
+
+    <div  style="
+        position:absolute;
+        inset:0;
+        background:linear-gradient(to right, rgba(0,0,0,.6), rgba(0,0,0,.4));
+    "></div>
+
+    <div id="pad" style="
+        position:absolute;
+        inset:0;
+        display:flex;
+        flex-direction:column;
+        justify-content:start;
+        align-items:center;
+        text-align:center;
+        z-index:2;
+        padding-top: 1.5rem;
+    ">
+</div>
+</div>
+@endsection
 @section('content')
 
 {{-- ════════════════════════════════════════
@@ -492,6 +525,9 @@
    HTML DEL FORMULARIO CONSOLIDADO
 ════════════════════════════════════════ --}}
 
+<div class="panel-page" style="position: relative; z-index: 5; margin-top: -510px !important; margin-bottom:80px;background-color:var(--bg) ;opacity: 0.95; border-radius: 8px; border:1px solid var(--accent); justify-content:start;box-shadow:
+0 20px 50px var(--shadow-color),
+0 0px 30px var(--shadow-glow);">
 <div class="oferta-page">
 
     {{-- Header --}}
@@ -709,7 +745,7 @@
         </form>
     </div>
 </div>
-
+</div>
 {{-- ════════════════════════════════════════
    JAVASCRIPT — Compatible con tu JS existente
 ════════════════════════════════════════ --}}
