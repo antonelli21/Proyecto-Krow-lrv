@@ -32,12 +32,6 @@
       </select>
       <i class="bi bi-chevron-down select-chevron"></i>
     </div>
-    @if(request('provincia'))
-      <button type="button" class="btn-clear-field" data-clear="provincia"
-              onclick="document.getElementById('provincia').value=''; document.getElementById('filtros-form').submit();">
-        <i class="bi bi-x"></i> Quitar provincia
-      </button>
-    @endif
   </div>
 
   {{-- LOCALIDAD --}}
@@ -53,12 +47,6 @@
       </select>
       <i class="bi bi-chevron-down select-chevron"></i>
     </div>
-    @if(request('localidad'))
-      <button type="button" class="btn-clear-field" data-clear="localidad"
-              onclick="document.getElementById('localidad').value=''; document.getElementById('filtros-form').submit();">
-        <i class="bi bi-x"></i> Quitar localidad
-      </button>
-    @endif
   </div>
 
   {{-- CATEGORÍA --}}
@@ -75,12 +63,6 @@
       </select>
       <i class="bi bi-chevron-down select-chevron"></i>
     </div>
-    @if(request('categoria'))
-      <button type="button" class="btn-clear-field"
-              onclick="document.getElementById('categoria').value=''; document.getElementById('filtros-form').submit();">
-        <i class="bi bi-x"></i> Quitar categoría
-      </button>
-    @endif
   </div>
 
   {{-- TIPO DE CONTRATO --}}
@@ -99,12 +81,6 @@
             {{ ucfirst(str_replace('_', ' ', $val)) }}
           </label>
         @endforeach
-      @endif
-      @if(count(request('contrato', [])) > 0)
-        <button type="button" class="btn-clear-group"
-                onclick="document.querySelectorAll('[name=\'contrato[]\']').forEach(c=>c.checked=false); document.getElementById('filtros-form').submit();">
-          <i class="bi bi-x"></i> Limpiar
-        </button>
       @endif
     </div>
   </div>
@@ -126,12 +102,6 @@
           </label>
         @endforeach
       @endif
-      @if(count(request('modalidad', [])) > 0)
-        <button type="button" class="btn-clear-group"
-                onclick="document.querySelectorAll('[name=\'modalidad[]\']').forEach(c=>c.checked=false); document.getElementById('filtros-form').submit();">
-          <i class="bi bi-x"></i> Limpiar
-        </button>
-      @endif
     </div>
   </div>
 
@@ -143,19 +113,13 @@
     </div>
     <div class="accordion-content">
       @foreach($carrerasFiltro as $carrera)
-  <label class="filter-checkbox-label">
-    <input type="checkbox" name="carrera[]" value="{{ $carrera->id_carrera }}"
-      {{ in_array($carrera->id_carrera, request('carrera', [])) ? 'checked' : '' }}>
-    <span class="custom-checkbox"></span>
-    {{ $carrera->nombre }}
-  </label>
-@endforeach
-      @if(count(request('carrera', [])) > 0)
-        <button type="button" class="btn-clear-group"
-                onclick="document.querySelectorAll('[name=\'carrera[]\']').forEach(c=>c.checked=false); document.getElementById('filtros-form').submit();">
-          <i class="bi bi-x"></i> Limpiar
-        </button>
-      @endif
+        <label class="filter-checkbox-label">
+          <input type="checkbox" name="carrera[]" value="{{ $carrera->id_carrera }}"
+            {{ in_array($carrera->id_carrera, request('carrera', [])) ? 'checked' : '' }}>
+          <span class="custom-checkbox"></span>
+          {{ $carrera->nombre }}
+        </label>
+      @endforeach
     </div>
   </div>
 
@@ -181,12 +145,6 @@
           </div>
         @endforeach
       </div>
-      @if(count(request('tecnologias', [])) > 0)
-        <button type="button" class="btn-clear-group" style="margin-top:6px;"
-                onclick="document.getElementById('tags-container').innerHTML=''; document.getElementById('filtros-form').submit();">
-          <i class="bi bi-x"></i> Limpiar tecnologías
-        </button>
-      @endif
     </div>
   </div>
 
@@ -205,12 +163,6 @@
           {{ $label }}
         </label>
       @endforeach
-      @if(request('fecha') && request('fecha') !== 'total')
-        <button type="button" class="btn-clear-group"
-                onclick="document.querySelector('[name=fecha][value=total]').checked=true; document.getElementById('filtros-form').submit();">
-          <i class="bi bi-x"></i> Limpiar
-        </button>
-      @endif
     </div>
   </div>
 

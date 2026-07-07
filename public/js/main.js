@@ -382,45 +382,37 @@ function initFiltersSidebar() {
     const tituloBanner = document.getElementById('banner-title');
     const indexBanner = document.getElementById('banner-index');
 
-    const coloresCategorias = {
-      'Ingeniería': '#2563EB',             // Azul
-      'Tecnología': '#4F46E5',             // Índigo
-      'Industria y producción': '#EA580C', // Naranja oscuro
-      'Marketing': '#C026D3',              // Magenta
-      'Ventas': '#16A34A',                 // Verde
-      'Recursos Humanos': '#0891B2',       // Cian
-      'Diseño': '#CA8A04',                 // Dorado oscuro
-      'Administración': '#475569',         // Gris azulado
-      'Finanzas': '#0F766E'                // Verde petróleo
-    };
-
     if (tituloBanner) {
 
-      const categoriaRaw = params.get('categoria');
-      const overlay = document.getElementById('banner-overlay');
+    const categoriaRaw = params.get('categoria');
+    const overlay = document.getElementById('banner-overlay');
 
-      const sinCategoria =
+    const sinCategoria =
         !categoriaRaw ||
         categoriaRaw.trim() === '' ||
         categoriaRaw.toLowerCase() === 'todas';
 
-      tituloBanner.textContent = sinCategoria
+    tituloBanner.textContent = sinCategoria
         ? 'KROW'
         : categoriaRaw;
 
-      if (overlay) {
+    if (overlay) {
         if (sinCategoria) {
-          overlay.style.background =
-            'linear-gradient(to right, rgba(0,0,0,.6), rgba(0,0,0,.4))';
+
+            overlay.style.backgroundImage = "url('/img/banner.jpg')";
+
         } else {
 
-          const color = coloresCategorias[categoriaRaw] || '#475569';
+            const nombreArchivo = categoriaRaw.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, "-");
 
-          overlay.style.background =
-            color;
+            overlay.style.backgroundImage = `url('/img/cat/${nombreArchivo}.jpg')`;
         }
-      }
+
+        overlay.style.backgroundSize = 'cover';
+        overlay.style.backgroundPosition = 'center';
+        overlay.style.backgroundRepeat = 'no-repeat';
     }
+}
 
     // Actualizar URL sin recargar
     const newUrl = window.location.pathname + '?' + params.toString();
@@ -1268,4 +1260,10 @@ document.getElementById('filtros-form')?.addEventListener('submit', function () 
 
 document.getElementById('buscar')?.addEventListener('input', function () {
   setTimeout(actualizarBtnLimpiar, 600);
+
+document.getElementById('buscar')?.addEventListener('input', function () {
+  setTimeout(actualizarBtnLimpiar, 600);
+});
+
+actualizarBtnLimpiar();
 });

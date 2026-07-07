@@ -143,8 +143,8 @@
   --primary: #D4A843;
   --accent: #D4A843;
   --filtro-limpiar: #D4A843;
-  --gradient-start: #c2c2c2;
-  --gradient-end: #D4A843;
+  --gradient-start: rgb(208, 208, 208);
+  --gradient-end: #ddad3d;
   --text: #F5F3EE;
   --text_btn: #ffffff;
   --text-secundary: #000000;

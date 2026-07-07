@@ -6,7 +6,7 @@
     </div>
     <div class="stat-row">
         <span class="stat-label">En revisión</span>
-        <span class="stat-value">{{ $panelData['preseleccionado'] ?? 0 }}</span>
+        <span class="stat-value">{{ $panelData['en_revision'] ?? 0 }}</span>
     </div>
     <div class="stat-row">
         <span class="stat-label">Empresas que te contactaron</span>

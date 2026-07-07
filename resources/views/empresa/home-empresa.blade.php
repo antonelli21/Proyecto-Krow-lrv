@@ -52,7 +52,7 @@
     </div>
 </dialog>
 
-<div class="panel-page" style="position: relative; z-index: 5; margin-top: -510px !important; margin-bottom:80px;background-color:var(--bg) ;opacity: 0.95; border-radius: 8px; border:1px solid var(--accent); justify-content:start;box-shadow:
+<div class="panel-page" style="position: relative; z-index: 5; margin-top: -560px !important; margin-bottom:80px;background-color:var(--bg) ;opacity: 0.95; border-radius: 8px; border:1px solid var(--accent); justify-content:start;box-shadow:
 0 20px 50px var(--shadow-color),
 0 0px 30px var(--shadow-glow);">
 

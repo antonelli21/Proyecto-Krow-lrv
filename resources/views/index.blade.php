@@ -2,50 +2,52 @@
 
 @section('title', 'KROW — Portal de Empleos')
 
-@section('banner')
-<div id="banner-index" style="
-    width:100%;
-    height: 600px;
-    position:relative;
-    overflow:hidden;
-    background-image: url('{{ asset('img/banner.jpg') }}');
-    background-size: cover;
-    background-position: top;
-    background-repeat: no-repeat;
-    margin:0;
-">
-
-    <div id="banner-overlay" style="
-        position:absolute;
-        inset:0;
-        background:linear-gradient(to right, rgba(0,0,0,.6), rgba(0,0,0,.4));
-    "></div>
-
-    <div id="pad" style="
-        position:absolute;
-        inset:0;
-        display:flex;
-        flex-direction:column;
-        justify-content:start;
-        align-items:center;
-        text-align:center;
-        z-index:2;
-        padding-top: 1.5rem;
-    ">
-     <h1 id="banner-title" class="gradient-text">KROW</h1>
-</div>
-</div>
-@endsection
-
 @section('content')
 @php
 $rol = auth()->check() ? (auth()->user()->rol ?? 'invitado') : 'invitado';
 $ofertas = $ofertas ?? collect();
 @endphp
 
-<div class="page-body" id="page-body" data-rol="{{ $rol }}" style="position: relative; z-index: 5; margin-top: -510px !important; margin-bottom:80px;background-color:var(--bg) ;opacity: 0.95; border-radius: 8px; border:1px solid var(--accent); justify-content:start;box-shadow:
-0 20px 50px var(--shadow-color),
-0 0px 30px var(--shadow-glow);">
+<div id="banner-overlay" style="
+    position: relative;
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    background-image: url('{{ asset('img/banner.jpg') }}');
+    background-size: cover;
+    background-position: top;
+    background-repeat: no-repeat;
+">
+
+    <h1 id="banner-title" class="gradient-text" style="
+    margin-top: 20px;
+    margin-bottom: 20px;
+    width: 100%;
+  max-width: 1320px;
+    text-align: center;
+    padding: 12px 28px;
+    border-radius: 18px;
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    box-shadow: 0 8px 24px rgba(0,0,0,.35);
+">
+    KROW
+</h1>
+
+    <div class="page-body" id="page-body" data-rol="{{ $rol }}" style="
+        margin-bottom:80px;
+        background-color:var(--bg);
+        opacity:0.95;
+        border-radius:8px;
+        border:1px solid var(--accent);
+        justify-content:start;
+        box-shadow:
+            0 20px 50px var(--shadow-color),
+            0 0px 30px var(--shadow-glow);
+    ">
      
 
 
@@ -142,5 +144,5 @@ $ofertas = $ofertas ?? collect();
 
 
 </div>{{-- /page-body --}}
-
+</div>
 @endsection
