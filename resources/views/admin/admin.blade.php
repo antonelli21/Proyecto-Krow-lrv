@@ -39,7 +39,7 @@
 <div class="admin-page" style="
     position: relative;
     z-index: 5;
-    margin-top: -510px !important;
+    margin-top: -560px !important;
     margin-bottom: 80px;
     background-color: var(--bg);
     opacity: 0.95;
