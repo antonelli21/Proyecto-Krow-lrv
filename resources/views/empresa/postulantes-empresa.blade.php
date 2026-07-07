@@ -85,6 +85,45 @@
         flex-wrap: wrap;
         gap: 12px;
     }
+
+    /* Avatar de perfil — foto o placeholder circular */
+    .applicant-avatar-wrap {
+        display: flex;
+        align-items: flex-start;
+        gap: 14px;
+    }
+
+    .applicant-avatar {
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 1px solid var(--border);
+        flex-shrink: 0;
+        background: var(--bg);
+    }
+
+    .applicant-avatar-placeholder {
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        border: 1px solid var(--border);
+        background: var(--bg);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--muted);
+        flex-shrink: 0;
+    }
+
+    @media (max-width: 768px) {
+        .applicant-avatar,
+        .applicant-avatar-placeholder {
+            width: 48px;
+            height: 48px;
+        }
+    }
+
     .applicant-name {
         font-size: 18px;
         font-weight: 600;
@@ -279,14 +318,28 @@
         @endphp
         <div class="applicant-card" data-estado="{{ $postulante->estado }}" data-id="{{ $postulante->id }}">
             <div class="card-header">
-                <div>
-                    <h3 class="applicant-name">
-                        <a href="{{ route('empresa.estudiante.perfil', $postulante->id_estudiante) }}">
-                            {{ $postulante->nombre ?? 'Nombre no disponible' }}
-                        </a>
-                    </h3>
-                    <div class="applicant-career">{{ $postulante->carrera }}</div>
-                    <div class="applicant-date">Postulado: {{ \Carbon\Carbon::parse($postulante->fecha_postulacion)->format('d/m/Y') }}</div>
+                <div class="applicant-avatar-wrap">
+                    @if(!empty($postulante->foto_perfil))
+                <img src="{{ Storage::url($postulante->foto_perfil) }}"
+                    alt="Foto de {{ $postulante->nombre ?? 'perfil' }}"
+                    class="applicant-avatar">
+                    @else
+                        <div class="applicant-avatar-placeholder">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                                <circle cx="12" cy="7" r="4" />
+                            </svg>
+                        </div>
+                    @endif
+                    <div>
+                        <h3 class="applicant-name">
+                            <a href="{{ route('empresa.estudiante.perfil', $postulante->id_estudiante) }}">
+                                {{ $postulante->nombre ?? 'Nombre no disponible' }}
+                            </a>
+                        </h3>
+                        <div class="applicant-career">{{ $postulante->carrera }}</div>
+                        <div class="applicant-date">Postulado: {{ \Carbon\Carbon::parse($postulante->fecha_postulacion)->format('d/m/Y') }}</div>
+                    </div>
                 </div>
                 <span class="status-badge {{ $config['class'] }}">{{ $config['text'] }}</span>
             </div>

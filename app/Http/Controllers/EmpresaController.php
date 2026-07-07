@@ -248,6 +248,7 @@ class EmpresaController extends Controller
                     'linkedin'          => $estudiante->linkedin ?? null,
                     'github'            => $estudiante->github ?? null,
                     'cv'                => $estudiante->cv ?? null,
+                    'foto_perfil'       => $estudiante->foto_perfil,
                 ];
             });
 

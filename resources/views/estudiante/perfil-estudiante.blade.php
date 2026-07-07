@@ -26,11 +26,11 @@
     {{-- Header de perfil --}}
     <div class="perfil-header-card" >
         <div class="perfil-header-inner">
-            <div class="perfil-avatar {{ $estudiante->foto_perfil ? 'avatar-expandible' : '' }}"
-                style="{{ $estudiante->foto_perfil ? 'background-image:url(\'' . \Illuminate\Support\Facades\Storage::url($estudiante->foto_perfil) . '\'); background-size:cover; background-position:center; cursor:pointer;' : '' }}"
-                @if($estudiante->foto_perfil) onclick="abrirModalAvatar('{{ \Illuminate\Support\Facades\Storage::url($estudiante->foto_perfil) }}')" @endif>
+            <div class="perfil-avatar {{ $estudiante->foto_perfil ? 'avatar-{ \Illuminate\Support\Facades\Storage::url($estudiante->foto_perfil) }}')" @endif>
                 @if(!$estudiante->foto_perfil)
-                    {{ strtoupper(substr($usuario->name ?? 'E', 0, 1)) }}
+                    {{ strtoupper(substr($usuario->name ?? 'E', 0, 1)) }}expandible' : '' }}"
+                style="{{ $estudiante->foto_perfil ? 'background-image:url(\'' . \Illuminate\Support\Facades\Storage::url($estudiante->foto_perfil) . '\'); background-size:cover; background-position:center; cursor:pointer;' : '' }}"
+                @if($estudiante->foto_perfil) onclick="abrirModalAvatar('{
                 @endif
             </div>
             <div class="perfil-header-info">
