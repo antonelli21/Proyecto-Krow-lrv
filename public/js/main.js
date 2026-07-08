@@ -399,18 +399,14 @@ function initFiltersSidebar() {
     if (overlay) {
         if (sinCategoria) {
 
-            overlay.style.backgroundImage = "url('/img/banner.jpg')";
+            overlay.style.setProperty('--banner-image', "url('/img/banner.jpg')");
 
         } else {
 
             const nombreArchivo = categoriaRaw.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, "-");
 
-            overlay.style.backgroundImage = `url('/img/cat/${nombreArchivo}.jpg')`;
+            overlay.style.setProperty('--banner-image', `url('/img/cat/${nombreArchivo}.jpg')`);
         }
-
-        overlay.style.backgroundSize = 'cover';
-        overlay.style.backgroundPosition = 'center';
-        overlay.style.backgroundRepeat = 'no-repeat';
     }
 }
 

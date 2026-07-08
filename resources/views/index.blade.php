@@ -8,18 +8,38 @@ $rol = auth()->check() ? (auth()->user()->rol ?? 'invitado') : 'invitado';
 $ofertas = $ofertas ?? collect();
 @endphp
 
+<style>
+#banner-overlay{
+    position: relative;
+    overflow: hidden;
+    --banner-image: url('/img/banner.jpg');
+}
+
+#banner-overlay::before{
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: var(--banner-image) center center / cover no-repeat;
+    filter: blur(8px);
+    transform: scale(1.05);
+    z-index: 0;
+}
+
+#banner-overlay > *{
+    position: relative;
+    z-index: 1;
+}
+
+</style>
 <div id="banner-overlay" style="
     position: relative;
-    width: 100%;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: center;
-    background-image: url('{{ asset('img/banner.jpg') }}');
-    background-size: cover;
-    background-position: top;
-    background-repeat: no-repeat;
+    width:100%;
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    justify-content:flex-start;
+    align-items:center;
+    overflow:hidden;
 ">
 
     <h1 id="banner-title" class="gradient-text" style="
@@ -143,4 +163,5 @@ $ofertas = $ofertas ?? collect();
 
 </div>{{-- /page-body --}}
 </div>
+
 @endsection
