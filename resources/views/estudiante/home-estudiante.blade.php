@@ -386,6 +386,11 @@
     padding: 0;
     margin:0;
   }
+  .btn-ver-oferta:disabled {
+    color: var(--muted);
+    cursor: not-allowed;
+    text-decoration: none;
+  }
   .btn-eliminar-post {
     background: none;
     border: none;
@@ -401,6 +406,48 @@
   }
   .btn-eliminar-post:hover { background: rgba(212,24,61,0.1); }
 
+  /* ── OVERLAY Y BLUR PARA FILAS PAUSADAS ── */
+  .fila-pausada {
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Las celdas de contenido (excepto checkbox y acciones) se ven borrosas y opacas */
+  .fila-pausada td:not(:first-child):not(.td-acciones-cell) {
+    filter: blur(4px);
+    opacity: 0.4;
+    transition: filter 0.2s, opacity 0.2s;
+  }
+
+  /* Overlay mediante pseudo-elemento ::after */
+  .fila-pausada::after {
+    content: "⏸ Oferta pausada por la empresa";
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.85);
+    color: #fff;
+    font-weight: 700;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 5;
+    border-radius: inherit;
+    padding: 0 16px;
+    text-align: center;
+    pointer-events: none; /* para que los clics pasen a los elementos superiores */
+  }
+
+  /* Las celdas de checkbox y acciones quedan por encima del overlay para ser clickeables */
+  .fila-pausada td:first-child,
+  .fila-pausada .td-acciones-cell {
+    position: relative;
+    z-index: 6;
+  }
+
+  /* ── Responsive ── */
   @media (max-width: 768px) {
     .panel-page { padding: 20px 14px 48px; width: calc(100% - 16px); }
     .panel-page-title { font-size: 22px; margin-bottom: 2px; }
@@ -479,12 +526,22 @@
     .empresa-logo-mini-placeholder { width: 28px; height: 28px; }
     .toast-msg { bottom: 16px; font-size: 13px; padding: 10px 16px; width: calc(100% - 32px); justify-content: center; }
 
-    /* Skeleton en mobile: cards en vez de filas de tabla */
+    /* Skeleton en mobile */
     .skeleton-row { border: 1px solid var(--border); border-radius: 8px; margin-bottom: 12px; padding: 12px 16px; background: var(--surface); }
     .skeleton-row td { display: none; padding: 0; }
     .skeleton-row td:first-child { display: block; }
     .skeleton-row td:first-child .skeleton-box { display: none; }
     .skeleton-row td:nth-child(2) { display: block; }
+
+    /* En móvil, el blur y overlay se aplican igual */
+    .fila-pausada td:not(:first-child):not(.td-acciones-cell) {
+      filter: blur(4px);
+      opacity: 0.4;
+    }
+    .fila-pausada::after {
+      border-radius: 8px;
+      content: "⏸ Oferta pausada por la empresa";
+    }
   }
 
   @media (min-width: 769px) and (max-width: 1024px) {
@@ -568,12 +625,12 @@
   }
 
   function revisarPostulacionesVacias() {
-  const tbody = document.getElementById('tabla-postulaciones');
-  const quedan = tbody.querySelectorAll('tr[data-postulacion-id]').length;
-  if (quedan === 0) {
-    tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 2rem;">No tenés postulaciones activas.</td></tr>';
+    const tbody = document.getElementById('tabla-postulaciones');
+    const quedan = tbody.querySelectorAll('tr[data-postulacion-id]').length;
+    if (quedan === 0) {
+      tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 2rem;">No tenés postulaciones activas.</td></tr>';
+    }
   }
-}
 
   function renderTable(postulaciones) {
     const tbody = document.getElementById('tabla-postulaciones');
@@ -603,9 +660,8 @@
       const empresa = oferta.empresa ? oferta.empresa.nombre_empresa : 'Confidencial';
       const tituloEscapado = oferta.titulo.replace(/'/g, "\\'");
 
-      // Logo de la empresa — se guarda vía Storage (store('logos', 'public')),
-      // así que la URL pública es /storage/{path}, equivalente a Storage::url()
-      // pero armado a mano porque este bloque corre en JS del lado del cliente.
+      const ofertaPausada = oferta.estado === 'Pausada';
+
       const logoEmpresa = (oferta.empresa && oferta.empresa.logo)
         ? `/storage/${oferta.empresa.logo}`
         : null;
@@ -618,41 +674,43 @@
              </svg>
            </div>`;
 
+      const filaPausadaClass = ofertaPausada ? 'fila-pausada' : '';
+
       html += `
-  <tr data-postulacion-id="${p.id_postulacion}">
-    <td data-label=""><input type="checkbox" class="check-est" data-id="${p.id_postulacion}"></td>
-    <td class="td-left" data-label="Puesto">
-      <div class="td-puesto-wrap">
-        ${logoHtml}
-        <div>
-          <div class="td-puesto">${oferta.titulo}</div>
-          <div class="td-empresa">${empresa}</div>
-        </div>
-      </div>
-    </td>
-    <td data-label="Tipo">
-      <span class="badge-tipo" style="border:0.5px solid var(--border);color:var(--muted);padding:3px 10px;border-radius:20px;font-size:11.5px;">
-        ${oferta.tipo_oferta}
-      </span>
-    </td>
-    <td data-label="Salario">${salario}</td>
-    <td data-label="Estado">
-      <span class="badge-estado estado-${cfg.clase}">${cfg.texto}</span>
-    </td>
-    <td data-label="Fecha" class="td-fecha">${fecha}</td>
-    <td data-label="Acciones" class="td-acciones-cell">
-      <div class="td-acciones">
-        <button class="btn-ver-oferta" onclick="abrirModalOferta(${oferta.id_oferta})">
-          Ver oferta
-        </button>
-        <button class="btn-eliminar-post"
-                onclick="eliminarPostulacion(${p.id_postulacion}, '${tituloEscapado}')"
-                title="Eliminar postulación">
-          <i class="bi bi-trash"></i>
-        </button>
-      </div>
-    </td>
-  </tr>`;
+        <tr data-postulacion-id="${p.id_postulacion}" class="${filaPausadaClass}">
+          <td data-label=""><input type="checkbox" class="check-est" data-id="${p.id_postulacion}"></td>
+          <td class="td-left" data-label="Puesto">
+            <div class="td-puesto-wrap">
+              ${logoHtml}
+              <div>
+                <div class="td-puesto">${oferta.titulo}</div>
+                <div class="td-empresa">${empresa}</div>
+              </div>
+            </div>
+          </td>
+          <td data-label="Tipo">
+            <span class="badge-tipo" style="border:0.5px solid var(--border);color:var(--muted);padding:3px 10px;border-radius:20px;font-size:11.5px;">
+              ${oferta.tipo_oferta}
+            </span>
+          </td>
+          <td data-label="Salario">${salario}</td>
+          <td data-label="Estado">
+            <span class="badge-estado estado-${cfg.clase}">${cfg.texto}</span>
+          </td>
+          <td data-label="Fecha" class="td-fecha">${fecha}</td>
+          <td data-label="Acciones" class="td-acciones-cell">
+            <div class="td-acciones">
+              <button class="btn-ver-oferta" onclick="abrirModalOferta(${oferta.id_oferta})">
+                Ver oferta
+              </button>
+              <button class="btn-eliminar-post"
+                      onclick="eliminarPostulacion(${p.id_postulacion}, '${tituloEscapado}')"
+                      title="Eliminar postulación">
+                <i class="bi bi-trash"></i>
+              </button>
+            </div>
+          </td>
+        </tr>`;
     });
 
     tbody.innerHTML = html;
@@ -736,7 +794,6 @@
     });
 
     clearBulkEst();
-    // Actualizar stats contando filas restantes
     const total = document.querySelectorAll('#tabla-postulaciones tr[data-postulacion-id]').length;
     document.getElementById('stat-totales').textContent = total;
     document.getElementById('stat-activas').textContent =
@@ -753,7 +810,6 @@
     }
   });
 
-  // Devuelve una Promise<boolean>, igual que el adminConfirm del admin
   function modalConfirm(titulo, mensaje, labelBoton = 'Confirmar') {
     return new Promise(resolve => {
       const dialog = document.getElementById('dialogConfirmar');
@@ -763,7 +819,6 @@
       const btn = document.getElementById('btnConfirmarAccion');
       btn.textContent = labelBoton;
 
-      // Limpiar listener anterior para evitar doble-disparo
       const nuevo = btn.cloneNode(true);
       btn.parentNode.replaceChild(nuevo, btn);
 
@@ -774,7 +829,6 @@
 
       dialog.addEventListener('close', () => resolve(false), { once: true });
 
-      // Cerrar clickeando backdrop
       dialog.addEventListener('click', function handler(e) {
         const rect = dialog.getBoundingClientRect();
         if (e.clientX < rect.left || e.clientX > rect.right ||
@@ -807,10 +861,8 @@
     .then(data => {
       if (!data.success) { mostrarToast('Error al eliminar.', 'error'); return; }
 
-      // Quitar la fila del DOM
       document.querySelector(`tr[data-postulacion-id="${idPostulacion}"]`)?.remove();
 
-      // Actualizar stats
       const filas = document.querySelectorAll('#tabla-postulaciones tr[data-postulacion-id]');
       document.getElementById('stat-totales').textContent = filas.length;
       document.getElementById('stat-activas').textContent =
@@ -818,7 +870,6 @@
       document.getElementById('stat-rechazo').textContent =
         [...filas].filter(f => f.querySelector('.badge-estado.estado-rechazado')).length;
 
-      // Limpiar selección bulk si la fila estaba seleccionada
       clearBulkEst();
       revisarPostulacionesVacias();
 

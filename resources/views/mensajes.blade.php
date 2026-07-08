@@ -341,7 +341,7 @@
 
     .mensaje-burbuja.ajeno .burbuja {
         border-bottom-left-radius: 4px;
-        background: var(--surface);
+        background: var(--surface-mensaje);
         color: var(--text);
         border: 0.5px solid var(--border);
     }

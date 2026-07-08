@@ -60,6 +60,8 @@
   --icon-idle-border: rgba(0, 0, 0, .38);
   --detalle-bg: #fafafa;
   --mensaje: #148527;
+  --surface-mensaje: rgb(187, 187, 187);
+   --filtro-pausa: #03690ce1;
   
   --btn-aprobar-bg: #2ECC9A;
   --btn-aprobar-fg: #ffffff;
@@ -256,6 +258,8 @@
   --badge-pausada-text: var(--badge-warning-text);
   --badge-pausada-border: var(--badge-warning-border);
   --mensaje: #585109;
+  --surface-mensaje:#2C2C35;
+  --filtro-pausa: #ddc019f6;
 }
 
 
