@@ -4,10 +4,10 @@
   --primary: #3b594d;
   --accent: #077552;
   --filtro-limpiar: #0e3823;
-  --text: #1f2937;
+  --text: #000000;
   --text_btn: #ffffff;
   --title: #111827;
-  --muted: #6b7280;
+  --muted: #000000;
   --border: #c4c4c4;
   --borde-especifico: #787879;
   --destructive: #D4183D;
@@ -59,6 +59,7 @@
   --icon-ver-border: var(--accent);
   --icon-idle-border: rgba(0, 0, 0, .38);
   --detalle-bg: #fafafa;
+  --mensaje: #148527;
   
   --btn-aprobar-bg: #2ECC9A;
   --btn-aprobar-fg: #ffffff;
@@ -145,7 +146,7 @@
   --filtro-limpiar: #D4A843;
   --gradient-start: rgb(208, 208, 208);
   --gradient-end: #ddad3d;
-  --text: #F5F3EE;
+  --text: #ffffff;
   --text_btn: #ffffff;
   --text-secundary: #000000;
   --pausar: #c29d0a;
@@ -254,6 +255,7 @@
   --badge-pausada-bg: var(--badge-warning-bg);
   --badge-pausada-text: var(--badge-warning-text);
   --badge-pausada-border: var(--badge-warning-border);
+  --mensaje: #585109;
 }
 
 

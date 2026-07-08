@@ -335,8 +335,8 @@
 
     .mensaje-burbuja.propio .burbuja {
         border-bottom-right-radius: 4px;
-        background: var(--accent);
-        color: var(--text_btn);
+        background: var(--mensaje);
+        color: var(--text);
     }
 
     .mensaje-burbuja.ajeno .burbuja {
