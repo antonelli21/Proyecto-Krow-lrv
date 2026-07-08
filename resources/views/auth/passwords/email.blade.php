@@ -44,4 +44,71 @@
     </div>
   </div>
 </main>
+ <style>
+.auth-page {
+    position: relative;
+    width: 100%;
+    min-height: calc(100vh - 80px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 1rem;
+    background: var(--bg) url('{{ asset("img/img_registro.png") }}') center top/cover no-repeat;
+    overflow: hidden;
+}
+
+  /* ── Viñeta: oscurece hacia los bordes, deja el centro más visible ── */
+  .auth-page::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(
+      ellipse at center,
+      rgba(0, 0, 0, 0) 0%,
+      rgba(0, 0, 0, 0.35) 55%,
+      rgba(0, 0, 0, 0.75) 100%
+    );
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  .auth-card {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    max-width: 520px;
+    background: rgba(20, 16, 12, 0.65);
+    backdrop-filter: blur(8px);
+    border: 1px solid var(--border);
+    border-radius: 0px;
+    padding: 2.25rem 2rem;
+    box-shadow: var(--shadow-card);
+    animation: fadeInUp 0.35s ease;
+  }
+
+  .auth-head {
+    margin-bottom: 1.25rem;
+  }
+
+  .auth-head h1 {
+    font-family: var(--font-display);
+    font-size: 1.75rem;
+    font-weight: 800;
+    color: white; 
+    margin-bottom: 0.35rem;
+    line-height: 1.2;
+  }
+
+  .auth-head p {
+    font-size: 0.9rem;
+    color: var(--muted);
+  }
+
+    .auth-card .form-group label{
+      color:#fff;
+      font-weight:500;
+  }
+
+
+</style>
 @endsection
