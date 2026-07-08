@@ -283,18 +283,21 @@
         </div> {{-- Cierre limpio del Resumen --}}
 
             {{-- Empresa ── --}}
+
             @if ($empresa)
                 <div class="sidebar-card">
                     <div class="sidebar-card-title">Empresa</div>
                     <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
-                        <div class="oferta-empresa-logo" style="width:38px;height:38px;font-size:0.85rem; flex-shrink: 0;">
+                        <div class="oferta-empresa-logo" style="width:38px;height:38px;font-size:0.85rem; flex-shrink: 0; overflow:hidden;">
                             @if ($empresaLogoUrl)
                                 <img src="{{ $empresaLogoUrl }}" alt="{{ $empresa }}" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;">
                             @else
                                 {{ $logoLetras }}
                             @endif
                         </div>
-                        <span style="font-weight:600; color:var(--text); font-size:0.95rem; overflow-wrap: break-word; word-break: break-word;">{{ $empresa }}</span>
+                    <a href="{{ route('empresas.perfil', $oferta->empresa->id_empresa) }}" class="empresa-nombre-link" target="_top">
+                        {{ $empresa }}
+                    </a>
                     </div>
                 </div>
             @endif

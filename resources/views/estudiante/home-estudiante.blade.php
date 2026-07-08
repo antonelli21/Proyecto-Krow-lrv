@@ -50,7 +50,7 @@
         </div>
     </div>
 </dialog>
-<div class="panel-page" style="position: relative; z-index: 5; margin-top: -560px !important; margin-bottom:80px;background-color:var(--bg) ;opacity: 0.95; border-radius: 8px; border:1px solid var(--accent); justify-content:start;box-shadow:
+<div class="panel-page" style="position: relative; z-index: 5; margin-top: -510px !important; margin-bottom:80px;background-color:var(--bg) ;opacity: 0.95; border-radius: 8px; border:1px solid var(--accent); justify-content:start;box-shadow:
 0 20px 50px var(--shadow-color),
 0 0px 30px var(--shadow-glow);">
 
@@ -206,6 +206,34 @@
     to   { opacity: 1; transform: translate(-50%, -50%) scale(1); }
   }
 
+  /* ── Logo de empresa junto al puesto ── */
+  .td-puesto-wrap {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .empresa-logo-mini {
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    object-fit: cover;
+    border: 1px solid var(--border);
+    flex-shrink: 0;
+    background: var(--bg);
+  }
+  .empresa-logo-mini-placeholder {
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: var(--bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--muted);
+    flex-shrink: 0;
+  }
+
   @media (max-width: 768px) {
     .panel-page { padding: 20px 14px 48px; }
     .panel-page-title { font-size: 22px; margin-bottom: 2px; }
@@ -280,6 +308,8 @@
     .detalle-row td { padding: 16px 14px; }
     .detalle-inner  { grid-template-columns: 1fr; gap: 16px; }
     .modal-oferta-dialog { width: calc(100vw - 16px); height: 92vh; }
+    .empresa-logo-mini,
+    .empresa-logo-mini-placeholder { width: 28px; height: 28px; }
   }
 
   @media (min-width: 769px) and (max-width: 1024px) {
@@ -372,12 +402,32 @@
         : 'No especificado';
       const empresa = oferta.empresa ? oferta.empresa.nombre_empresa : 'Confidencial';
 
+      // Logo de la empresa — se guarda vía Storage (store('logos', 'public')),
+      // así que la URL pública es /storage/{path}, equivalente a Storage::url()
+      // pero armado a mano porque este bloque corre en JS del lado del cliente.
+      const logoEmpresa = (oferta.empresa && oferta.empresa.logo)
+        ? `/storage/${oferta.empresa.logo}`
+        : null;
+
+      const logoHtml = logoEmpresa
+        ? `<img src="${logoEmpresa}" alt="${empresa}" class="empresa-logo-mini">`
+        : `<div class="empresa-logo-mini-placeholder">
+             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+               <path d="M3 21h18M5 21V7l8-4 8 4v14M9 21v-6h6v6" />
+             </svg>
+           </div>`;
+
       html += `
   <tr data-postulacion-id="${p.id_postulacion}">
     <td><input type="checkbox" class="check-est" data-id="${p.id_postulacion}"></td>
     <td>
-      <div class="td-puesto">${oferta.titulo}</div>
-      <div class="td-empresa">${empresa}</div>
+      <div class="td-puesto-wrap">
+        ${logoHtml}
+        <div>
+          <div class="td-puesto">${oferta.titulo}</div>
+          <div class="td-empresa">${empresa}</div>
+        </div>
+      </div>
     </td>
     <td data-label="Tipo">
       <span class="badge-tipo" style="border:0.5px solid var(--border);color:var(--muted);padding:3px 10px;border-radius:20px;font-size:11.5px;">
