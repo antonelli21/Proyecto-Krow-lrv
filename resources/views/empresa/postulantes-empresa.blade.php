@@ -599,6 +599,24 @@ document.getElementById('dialogConfirmBtn').addEventListener('click', function (
     actualizarEstado(applicantId, nuevoEstado, estadoActual);
 });
 
+
+function botonEliminar(applicantId, estado) {
+    return `
+        <button class="btn-delete"
+                title="Eliminar postulación"
+                onclick="openConfirmDialog(${applicantId}, 'delete', '${estado}')">
+            <svg width="16" height="16" viewBox="0 0 24 24"
+                fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="3 6 5 6 21 6"/>
+                <path d="M19 6l-1 14H6L5 6"/>
+                <path d="M10 11v6"/>
+                <path d="M14 11v6"/>
+                <path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/>
+            </svg>
+        </button>
+    `;
+}
+
 function actualizarEstado(applicantId, nuevoEstado, estadoAnterior) {
     const card = document.querySelector(`.applicant-card[data-id="${applicantId}"]`);
     if (!card) return;
@@ -630,58 +648,74 @@ function actualizarEstado(applicantId, nuevoEstado, estadoAnterior) {
         const actionButtons = card.querySelector('.action-buttons');
         actionButtons.innerHTML = '';
 
-        if (nuevoEstado === 'Rechazado') {
-            // Solo botón para desrechazar
-            actionButtons.innerHTML = `
-                <button class="btn-unreject" onclick="openConfirmDialog(${applicantId}, 'unreject', 'Rechazado')">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
-                        <path d="M3 3v5h5"/>
-                    </svg>
-                    Volver a Postulado
-                </button>`;
-        } else if (nuevoEstado === 'En Contacto') {
-            // Solo rechazar, ya no puede avanzar
-            actionButtons.innerHTML = `
-                <button class="btn-reject" onclick="openConfirmDialog(${applicantId}, 'reject', 'En Contacto')">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <line x1="18" y1="6" x2="6" y2="18"/>
-                        <line x1="6" y1="6" x2="18" y2="18"/>
-                    </svg>
-                    Rechazar
-                </button>`;
-        } else if (nuevoEstado === 'Preseleccionado') {
-            actionButtons.innerHTML = `
-                <button class="btn-accept" onclick="openConfirmDialog(${applicantId}, 'accept', 'Preseleccionado')">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <polyline points="20 6 9 17 4 12"/>
-                    </svg>
-                    Marcar En Contacto
-                </button>
-                <button class="btn-reject" onclick="openConfirmDialog(${applicantId}, 'reject', 'Preseleccionado')">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <line x1="18" y1="6" x2="6" y2="18"/>
-                        <line x1="6" y1="6" x2="18" y2="18"/>
-                    </svg>
-                    Rechazar
-                </button>`;
-        } else if (nuevoEstado === 'Postulado') {
-            actionButtons.innerHTML = `
-                <button class="btn-accept" onclick="openConfirmDialog(${applicantId}, 'accept', 'Postulado')">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <polyline points="20 6 9 17 4 12"/>
-                    </svg>
-                    Preseleccionar
-                </button>
-                <button class="btn-reject" onclick="openConfirmDialog(${applicantId}, 'reject', 'Postulado')">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <line x1="18" y1="6" x2="6" y2="18"/>
-                        <line x1="6" y1="6" x2="18" y2="18"/>
-                    </svg>
-                    Rechazar
-                </button>`;
-        }
+            if (nuevoEstado === 'Rechazado') {
+                actionButtons.innerHTML = `
+                    <button class="btn-unreject" onclick="openConfirmDialog(${applicantId}, 'unreject', 'Rechazado')">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
+                            <path d="M3 3v5h5"/>
+                        </svg>
+                        Volver a Postulado
+                    </button>
 
+                    ${botonEliminar(applicantId, 'Rechazado')}
+                `;
+            } else if (nuevoEstado === 'En Contacto') {
+
+                actionButtons.innerHTML = `
+                    <button class="btn-reject" onclick="openConfirmDialog(${applicantId}, 'reject', 'En Contacto')">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="18" y1="6" x2="6" y2="18"/>
+                            <line x1="6" y1="6" x2="18" y2="18"/>
+                        </svg>
+                        Rechazar
+                    </button>
+
+                    ${botonEliminar(applicantId, 'En Contacto')}
+                `;
+
+            } else if (nuevoEstado === 'Preseleccionado') {
+
+                actionButtons.innerHTML = `
+                    <button class="btn-accept" onclick="openConfirmDialog(${applicantId}, 'accept', 'Preseleccionado')">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="20 6 9 17 4 12"/>
+                        </svg>
+                        Marcar En Contacto
+                    </button>
+
+                    <button class="btn-reject" onclick="openConfirmDialog(${applicantId}, 'reject', 'Preseleccionado')">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="18" y1="6" x2="6" y2="18"/>
+                            <line x1="6" y1="6" x2="18" y2="18"/>
+                        </svg>
+                        Rechazar
+                    </button>
+
+                    ${botonEliminar(applicantId, 'Preseleccionado')}
+                `;
+
+            } else if (nuevoEstado === 'Postulado') {
+
+                actionButtons.innerHTML = `
+                    <button class="btn-accept" onclick="openConfirmDialog(${applicantId}, 'accept', 'Postulado')">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="20 6 9 17 4 12"/>
+                        </svg>
+                        Preseleccionar
+                    </button>
+
+                    <button class="btn-reject" onclick="openConfirmDialog(${applicantId}, 'reject', 'Postulado')">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="18" y1="6" x2="6" y2="18"/>
+                            <line x1="6" y1="6" x2="18" y2="18"/>
+                        </svg>
+                        Rechazar
+                    </button>
+
+                    ${botonEliminar(applicantId, 'Postulado')}
+                `;
+            }
         // Actualizar contadores
         actualizarContadores(estadoAnterior, nuevoEstado);
 
@@ -763,18 +797,28 @@ filtros.forEach(btn => {
                 return;
             }
 
-            document.querySelector(`.applicant-card[data-id="${applicantId}"]`)?.remove();
+            const card = document.querySelector(`.applicant-card[data-id="${applicantId}"]`);
 
+            const estado = card?.getAttribute('data-estado');
+
+            card?.remove();
             const total = document.querySelector('.counter[data-estado="todos"]');
-            total.textContent = parseInt(total.textContent) - 1;
 
-            const estado = data.estado;
-            const contador = document.querySelector(`.counter[data-estado="${estado}"]`);
-            if (contador) {
-                contador.textContent = parseInt(contador.textContent) - 1;
+            if (total) {
+                total.textContent = Math.max(0, parseInt(total.textContent) - 1);
             }
 
-            filtrarPostulantes(document.querySelector('.filter-btn.active').dataset.estado);
+            if (estado) {
+                const contador = document.querySelector(`.counter[data-estado="${estado}"]`);
+
+                if (contador) {
+                    contador.textContent = Math.max(0, parseInt(contador.textContent) - 1);
+                }
+            }
+            filtrarPostulantes(
+                document.querySelector('.filter-btn.active').dataset.estado
+            );
+
         })
         .catch(() => alert('Error al eliminar.'));
     }
