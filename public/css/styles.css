@@ -1,5 +1,5 @@
 :root {
-  --bg: #cdcdcd;
+  --bg: #e1e1e1;
   --surface: #ffffff;
   --primary: #3b594d;
   --accent: #077552;
@@ -351,7 +351,7 @@ p {
   top: 0;
   z-index: 100;
   width: 100%;
-  background-color: var(--surface);
+  background-color: var(--bg);
   border-bottom: 2px solid var(--border);
   transition: background-color 0.25s;
   flex-shrink: 0;
@@ -359,13 +359,15 @@ p {
 }
 
 [data-theme="dark"] .krow-header {
-  background-color: var(--surface);
+  background-color: var(--bg);
   border-bottom: 2px solid var(--border);
 }
 
 .header-inner {
   width: 100%;
-  padding: 0.75rem 16px 0.75rem 0;
+  padding: 0 16px;
+  margin:0 auto;
+  max-width:1450px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -688,7 +690,7 @@ p {
   padding: 8px 16px;
   border-radius: 0px;
   border: 1px solid var(--border);
-  background: var(--bg);
+  background: var(--surface);
   color: var(--text);
   text-decoration: none;
   transition: all 0.15s;
@@ -697,7 +699,7 @@ p {
 
 .btn-ghost-sm:hover {
   border-color: var(--primary);
-  color: var(--text_btn);
+  color: var(--text);
 }
 
 .btn-primary-sm {
@@ -1597,6 +1599,7 @@ body {
   padding: 20px 16px 0;
   gap: 20px;
   min-height: 100%;
+  padding-bottom: 20px;
 }
 
 /* ════════════════════════════════════════

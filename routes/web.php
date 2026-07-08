@@ -15,10 +15,6 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\IndexController;
 use App\Http\Controllers\ConfiguracionController;
 use App\Http\Controllers\NotificacionController;
-/* ════════════════════════════════════════
-   RUTAS PÚBLICAS
-   Accesibles por cualquier visitante sin necesidad de autenticación.
-════════════════════════════════════════ */
 
 
 Route::get('/', [IndexController::class, 'inicio'])->name('inicio');
@@ -33,11 +29,7 @@ Route::get('/empresas/{id}', [IndexController::class, 'perfilEmpresa'])->name('e
 // Detalle de oferta — accesible por todos (invitado, estudiante, empresa, admin)
 Route::get('/ofertas/{id_oferta}', [OfertaController::class, 'detalle'])->name('ofertas.detalle');
 
-/* ════════════════════════════════════════
-   AUTH — RUTAS DE INVITADOS (GUEST)
-   Solo accesibles si el usuario NO está logueado.
-   El middleware 'guest' redirige a usuarios autenticados a su panel.
-════════════════════════════════════════ */
+
 Route::middleware('guest')->group(function () {
 
     // Mostrar el formulario de login
@@ -62,34 +54,22 @@ Route::middleware('guest')->group(function () {
     // Procesar el registro de una empresa (POST)
     Route::post('/registro/empresa', [RegisterController::class, 'registerEmpresa'])->name('register.empresa');
 
-    // ════ RECUPERAR CONTRASEÑA ════
+    // RECUPERAR CONTRASEÑA 
     Route::get('/password/reset', [\App\Http\Controllers\Auth\ForgotPasswordController::class, 'showLinkRequestForm'])->name('password.request');
     Route::post('/password/email', [\App\Http\Controllers\Auth\ForgotPasswordController::class, 'sendResetLinkEmail'])->name('password.email');
     Route::get('/password/reset/{token}', [\App\Http\Controllers\Auth\ResetPasswordController::class, 'showResetForm'])->name('password.reset');
     Route::post('/password/reset', [\App\Http\Controllers\Auth\ResetPasswordController::class, 'reset'])->name('password.update');
 });
 
-/* ════════════════════════════════════════
-   VERIFICACIÓN DE EMAIL
-   Rutas para el flujo de verificación de email con código de 6 dígitos.
-   Accesibles sin estar logueado (el usuario aún no verificó su email).
-════════════════════════════════════════ */
-
 Route::get('/verificar-email', [VerificacionController::class, 'mostrar'])->name('verificacion.mostrar');
 Route::post('/verificar-email', [VerificacionController::class, 'verificar'])->name('verificacion.verificar');
 Route::post('/verificar-email/reenviar', [VerificacionController::class, 'reenviar'])->name('verificacion.reenviar');
 
-/* ════════════════════════════════════════
-   LOGOUT
-════════════════════════════════════════ */
 Route::post('/logout', [LoginController::class, 'logout'])
     ->middleware('auth')
     ->name('logout');
 
-/* ════════════════════════════════════════
-   ESTUDIANTE
-   Rutas protegidas para usuarios con rol 'estudiante'.
-════════════════════════════════════════ */
+
 Route::prefix('estudiante')
     ->name('estudiante.')
     ->middleware(['auth', 'verified', 'role:estudiante', 'alumno.activo']) // <-- ¡OJO! Acordate de meter acá tu middleware de bloqueo
@@ -128,10 +108,7 @@ Route::prefix('empresa')
         Route::get('/oferta/{id_oferta}/preview',    [OfertaController::class, 'preview'])->name('ofertas.preview');
        
     });
-/* ════════════════════════════════════════
-   ADMIN
-   Rutas protegidas para usuarios con rol 'admin'.
-════════════════════════════════════════ */
+
 Route::prefix('admin')
     ->name('admin.')
     ->middleware(['auth', 'verified', 'role:admin'])
@@ -169,23 +146,23 @@ Route::prefix('admin')
         Route::delete('/reportes/{id}', [AdminController::class, 'eliminarReporte'])->name('reportes.destroy');
         Route::post('/reportes/{id}/estado',       [AdminController::class, 'cambiarEstadoReporte'])->name('reportes.estado');
 
+        // Bulk reportes 
+        Route::post('/reportes/bulk-estado',       [AdminController::class, 'bulkEstadoReportes'])->name('reportes.bulk-estado');
+        Route::post('/reportes/bulk-destroy',      [AdminController::class, 'bulkDestroyReportes'])->name('reportes.bulk-destroy');
 
-Route::get('/papelera',                                    [AdminController::class, 'papelera'])->name('papelera');
-Route::post('/papelera/postulacion/{id}/restaurar',        [AdminController::class, 'restaurarPostulacion'])->name('papelera.postulacion.restaurar');
-Route::post('/papelera/oferta/{id}/restaurar',             [AdminController::class, 'restaurarOferta'])->name('papelera.oferta.restaurar');
-Route::delete('/papelera/postulacion/{id}',                [AdminController::class, 'eliminarPostulacionDefinitivo'])->name('papelera.postulacion.destroy');
-Route::delete('/papelera/oferta/{id}',                     [AdminController::class, 'eliminarOfertaDefinitivo'])->name('papelera.oferta.destroy');
+
+        Route::get('/papelera',                                    [AdminController::class, 'papelera'])->name('papelera');
+        Route::post('/papelera/postulacion/{id}/restaurar',        [AdminController::class, 'restaurarPostulacion'])->name('papelera.postulacion.restaurar');
+        Route::post('/papelera/oferta/{id}/restaurar',             [AdminController::class, 'restaurarOferta'])->name('papelera.oferta.restaurar');
+        Route::delete('/papelera/postulacion/{id}',                [AdminController::class, 'eliminarPostulacionDefinitivo'])->name('papelera.postulacion.destroy');
+        Route::delete('/papelera/oferta/{id}',                     [AdminController::class, 'eliminarOfertaDefinitivo'])->name('papelera.oferta.destroy');
+
+        // Bulk papelera 
+        Route::post('/papelera/ofertas/bulk-restaurar',            [AdminController::class, 'bulkRestaurarOfertasPapelera'])->name('papelera.ofertas.bulk-restaurar');
+        Route::post('/papelera/ofertas/bulk-destroy',              [AdminController::class, 'bulkDestroyOfertasPapelera'])->name('papelera.ofertas.bulk-destroy');
+        Route::post('/papelera/postulaciones/bulk-restaurar',      [AdminController::class, 'bulkRestaurarPostulacionesPapelera'])->name('papelera.postulaciones.bulk-restaurar');
+        Route::post('/papelera/postulaciones/bulk-destroy',        [AdminController::class, 'bulkDestroyPostulacionesPapelera'])->name('papelera.postulaciones.bulk-destroy');
     });
-
-/* ════════════════════════════════════════
-   COMPARTIDAS (LOGUEADOS)
-   Accesibles por cualquier usuario autenticado con email verificado.
-════════════════════════════════════════ */
-
-
-
-
-
 
 
 Route::middleware(['auth', 'verified'])->group(function () {
@@ -197,7 +174,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 Route::get('/notificaciones', [NotificacionController::class, 'historial'])
     ->name('notificaciones.historial');
  
-// API endpoints (consumidos por el dropdown vía fetch)
+// API endpoints 
 Route::prefix('notificaciones/api')->name('notificaciones.api.')->group(function () {
     Route::get('/resumen',       [NotificacionController::class, 'resumen'])              ->name('resumen');
     Route::get('/contador',      [NotificacionController::class, 'contarNoLeidas'])       ->name('contador');
@@ -220,16 +197,10 @@ Route::prefix('notificaciones/api')->name('notificaciones.api.')->group(function
     })->name('localidades.por-provincia');
 });
 
-/* ════════════════════════════════════════
-   FORMULARIO DE CONTACTO (público)
-════════════════════════════════════════ */
+
 Route::post('/ayuda/contacto', [IndexController::class, 'contacto'])->name('ayuda.contacto');
 
-/* ════════════════════════════════════════
-   API RESOURCES
-   Rutas de API RESTful para los recursos del sistema.
-   Usadas por el frontend con fetch/AJAX.
-════════════════════════════════════════ */
+
 Route::prefix('api')
     ->middleware(['auth', 'verified'])
     ->group(function () {
@@ -247,7 +218,7 @@ Route::prefix('api')
         Route::post('/mensajes', [MensajeController::class, 'store'])
             ->name('mensajes.store'); 
 
-        // ── Recursos públicos que sí pueden necesitar auth ──
+        // ── Recursos públicos que sí pueden necesitar auth
         Route::apiResource('tickets', TicketSoporteController::class)
             ->only(['index', 'show', 'store', 'update', 'destroy']);
 
