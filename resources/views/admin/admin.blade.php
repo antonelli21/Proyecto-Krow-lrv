@@ -1591,10 +1591,27 @@ function inicializarFiltros(panelSelector) {
         const show = searchOk && filterOk;
         row.style.display = show ? '' : 'none';
         const detalle = document.getElementById('admin-det-' + row.dataset.id) ||
-                         document.getElementById('admin-det-e' + row.dataset.id) ||
-                         document.getElementById('admin-det-o' + row.dataset.id) ||
-                         document.getElementById('admin-det-rep' + row.dataset.id);
-        if (detalle && !show) detalle.classList.remove('open');
+                 document.getElementById('admin-det-e' + row.dataset.id) ||
+                 document.getElementById('admin-det-o' + row.dataset.id) ||
+                 document.getElementById('admin-det-rep' + row.dataset.id);
+
+        if (detalle) {
+
+        detalle.style.display = show ? '' : 'none';
+
+        if (!show && detalle.classList.contains('open')) {
+        const td = detalle.querySelector('td');
+        const inner = detalle.querySelector('.admin-detalle-inner');
+        if (td && inner) {
+          td.style.transition = 'none';
+          inner.style.transition = 'none';
+          td.style.padding = '0px';
+          inner.style.maxHeight = '0px';
+          inner.style.opacity = '0';
+          }
+        detalle.classList.remove('open');
+        }
+      }
         if (show) visibleCount++;
       });
       if (emptyEl) emptyEl.style.display = visibleCount === 0 ? 'block' : 'none';
