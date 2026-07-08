@@ -6,15 +6,30 @@
 @endpush
 
 @section('banner')
+<style>
+#banner-index::before{
+    content: "";
+    position: absolute;
+    inset: 0;
+
+    background: url("{{ asset('img/banner.jpg') }}") center top / cover no-repeat;
+
+    filter: blur(8px);
+    transform: scale(1.08);
+
+    z-index: 0;
+}
+
+#banner-index > *{
+    position: relative;
+    z-index: 1;
+}
+</style>
 <div id="banner-index" style="
     width:100%;
-    height: 600px;
+    height:600px;
     position:relative;
     overflow:hidden;
-    background-image: url('{{ asset('img/banner.jpg') }}');
-    background-size: cover;
-    background-position: top;
-    background-repeat: no-repeat;
     margin:0;
 ">
 
