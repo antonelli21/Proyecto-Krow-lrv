@@ -2909,6 +2909,7 @@ body {
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
+
 }
 
 .detalle-tag {
@@ -2916,7 +2917,8 @@ body {
   border-radius: 0px;
   font-size: 11.5px;
   border: 1px solid var(--border);
-  color: var(--muted);
+  color: var(--title);
+  background: var(--accent-dim);
 }
 
 .btn-ver-oferta {
