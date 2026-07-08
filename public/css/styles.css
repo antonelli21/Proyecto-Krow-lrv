@@ -3,6 +3,7 @@
   --surface: #ffffff;
   --primary: #3b594d;
   --accent: #077552;
+  --accent2:#034630;
   --filtro-limpiar: #0e3823;
   --text: #1f2937;
   --text_btn: #ffffff;
@@ -145,6 +146,7 @@
   --surface: #2C2C35;
   --primary: #D4A843;
   --accent: #D4A843;
+  --accent2:#D4A843;
   --filtro-limpiar: #D4A843;
   --gradient-start: rgb(208, 208, 208);
   --gradient-end: #ddad3d;
@@ -1852,7 +1854,7 @@ body {
 .badge-salary {
   background: var(--accent-dim);
   border: 1px solid var(--border-accent);
-  color: var(--accent);
+  color: var(--accent2);
   font-weight: 600;
 }
 
@@ -7011,9 +7013,10 @@ textarea.filter-input-text:focus {
 /* cards etiquetas */
 
 .badge-exp {
-  background: rgba(212, 168, 67, .10);
-  color: var(--accent);
+  background: var(--accent-dim);
+  color: var(--accent2);
   border: 1px solid rgba(212, 168, 67, .25);
+
 }
 
 .badge-modalidad {
@@ -7026,8 +7029,8 @@ textarea.filter-input-text:focus {
 }
 
 .badge-area {
-  background: rgba(212, 168, 67, .10);
-  color: var(--accent);
+  background: var(--accent-dim);
+  color: var(--accent2);
   border: 1px solid rgba(212, 168, 67, .25);
 }
 
