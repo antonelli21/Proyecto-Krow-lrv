@@ -398,17 +398,27 @@
                         <div class="info-item" style="flex: 1;">
                             <label class="info-label" for="linkedin">LinkedIn</label>
                             <input type="url" id="linkedin" name="linkedin"
-                                   class="filter-input-text"
+                                   class="filter-input-text {{ $errors->has('linkedin') ? 'input-error' : '' }}"
                                    placeholder="https://linkedin.com/in/usuario"
-                                   value="{{ old('linkedin', $estudiante->linkedin ?? '') }}">
+                                   value="{{ old('linkedin', $estudiante->linkedin ?? '') }}"
+                                   autocomplete="off">
+                            <span class="config-error" id="linkedin-client-error" style="display:none;">
+                                Ingresá un link válido de LinkedIn (ej: https://linkedin.com/in/usuario).
+                            </span>
+                            @error('linkedin') <span class="config-error">{{ $message }}</span> @enderror
                         </div>
 
                         <div class="info-item" style="flex: 1;">
                             <label class="info-label" for="github">GitHub</label>
                             <input type="url" id="github" name="github"
-                                   class="filter-input-text"
+                                   class="filter-input-text {{ $errors->has('github') ? 'input-error' : '' }}"
                                    placeholder="https://github.com/usuario"
-                                   value="{{ old('github', $estudiante->github ?? '') }}">
+                                   value="{{ old('github', $estudiante->github ?? '') }}"
+                                   autocomplete="off">
+                            <span class="config-error" id="github-client-error" style="display:none;">
+                                Ingresá un link válido de GitHub (ej: https://github.com/usuario).
+                            </span>
+                            @error('github') <span class="config-error">{{ $message }}</span> @enderror
                         </div>
                     </div>
 
@@ -1157,9 +1167,90 @@ function initHabilidadesTags() {
     });
 }
 
+/* ══════════════════════════════════════════════════
+   VALIDACIÓN DE LINKS — LinkedIn y GitHub
+   Chequea que la URL cargada pertenezca realmente al
+   dominio correspondiente y tenga un formato de perfil
+   válido antes de dejar enviar el formulario.
+══════════════════════════════════════════════════ */
+function initRedesValidation() {
+    const form = document.getElementById('formEditarPerfil');
+
+    const reglas = {
+        linkedin: {
+            input: document.getElementById('linkedin'),
+            error: document.getElementById('linkedin-client-error'),
+            // admite linkedin.com/in/usuario, /pub/usuario, con o sin www, http o https
+            regex: /^https?:\/\/([a-z]{2,3}\.)?linkedin\.com\/(in|pub)\/[a-zA-Z0-9\-_%.]+\/?$/i
+        },
+        github: {
+            input: document.getElementById('github'),
+            error: document.getElementById('github-client-error'),
+            // admite github.com/usuario o github.com/usuario/repo, con o sin www
+            regex: /^https?:\/\/(www\.)?github\.com\/[a-zA-Z0-9\-]+(\/[a-zA-Z0-9._\-]+)?\/?$/i
+        }
+    };
+
+    function validarCampo(clave) {
+        const regla = reglas[clave];
+        if (!regla.input) return true;
+
+        const valor = regla.input.value.trim();
+
+        // El campo es opcional: vacío es válido.
+        if (valor === '') {
+            regla.input.classList.remove('input-error');
+            regla.error.style.display = 'none';
+            return true;
+        }
+
+        const esValido = regla.regex.test(valor);
+
+        if (esValido) {
+            regla.input.classList.remove('input-error');
+            regla.error.style.display = 'none';
+        } else {
+            regla.input.classList.add('input-error');
+            regla.error.style.display = 'block';
+        }
+
+        return esValido;
+    }
+
+    Object.keys(reglas).forEach(function(clave) {
+        const regla = reglas[clave];
+        if (!regla.input) return;
+
+        regla.input.addEventListener('blur', function() {
+            validarCampo(clave);
+        });
+
+        regla.input.addEventListener('input', function() {
+            if (regla.input.classList.contains('input-error')) {
+                validarCampo(clave);
+            }
+        });
+    });
+
+    if (!form) return;
+
+    form.addEventListener('submit', function(e) {
+        const linkedinOk = validarCampo('linkedin');
+        const githubOk = validarCampo('github');
+
+        if (!linkedinOk || !githubOk) {
+            e.preventDefault();
+            const primerInvalido = !linkedinOk ? reglas.linkedin.input : reglas.github.input;
+            primerInvalido.focus();
+            primerInvalido.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+    });
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     initFechaNacimientoDatepicker();
     initHabilidadesTags();
+    initRedesValidation();
 });
 </script>
 

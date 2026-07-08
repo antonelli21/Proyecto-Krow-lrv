@@ -275,25 +275,40 @@
                         <div class="info-item" style="flex: 1;">
                             <label class="info-label" for="linkedin">LinkedIn</label>
                             <input type="url" id="linkedin" name="linkedin"
-                                   class="filter-input-text"
+                                   class="filter-input-text {{ $errors->has('linkedin') ? 'input-error' : '' }}"
                                    placeholder="https://linkedin.com/company/empresa"
-                                   value="{{ old('linkedin', $empresa->linkedin ?? '') }}">
+                                   value="{{ old('linkedin', $empresa->linkedin ?? '') }}"
+                                   autocomplete="off">
+                            <span class="config-error" id="linkedin-client-error" style="display:none;">
+                                Ingresá un link válido de LinkedIn (ej: https://linkedin.com/company/empresa).
+                            </span>
+                            @error('linkedin') <span class="config-error">{{ $message }}</span> @enderror
                         </div>
 
                         <div class="info-item" style="flex: 1;">
                             <label class="info-label" for="facebook">Facebook</label>
                             <input type="url" id="facebook" name="facebook"
-                                   class="filter-input-text"
+                                   class="filter-input-text {{ $errors->has('facebook') ? 'input-error' : '' }}"
                                    placeholder="https://facebook.com/empresa"
-                                   value="{{ old('facebook', $empresa->facebook ?? '') }}">
+                                   value="{{ old('facebook', $empresa->facebook ?? '') }}"
+                                   autocomplete="off">
+                            <span class="config-error" id="facebook-client-error" style="display:none;">
+                                Ingresá un link válido de Facebook (ej: https://facebook.com/empresa).
+                            </span>
+                            @error('facebook') <span class="config-error">{{ $message }}</span> @enderror
                         </div>
 
                         <div class="info-item" style="flex: 1;">
                             <label class="info-label" for="instagram">Instagram</label>
                             <input type="url" id="instagram" name="instagram"
-                                   class="filter-input-text"
+                                   class="filter-input-text {{ $errors->has('instagram') ? 'input-error' : '' }}"
                                    placeholder="https://instagram.com/empresa"
-                                   value="{{ old('instagram', $empresa->instagram ?? '') }}">
+                                   value="{{ old('instagram', $empresa->instagram ?? '') }}"
+                                   autocomplete="off">
+                            <span class="config-error" id="instagram-client-error" style="display:none;">
+                                Ingresá un link válido de Instagram (ej: https://instagram.com/empresa).
+                            </span>
+                            @error('instagram') <span class="config-error">{{ $message }}</span> @enderror
                         </div>
                     </div>
 
@@ -467,6 +482,94 @@ function previewLogo(input) {
     }
 }
 
+/* ══════════════════════════════════════════════════
+   VALIDACIÓN DE LINKS — Redes sociales conocidas
+   Chequea que la URL cargada pertenezca realmente al
+   dominio correspondiente y tenga un formato de perfil
+   válido antes de dejar enviar el formulario.
+══════════════════════════════════════════════════ */
+function initRedesValidation() {
+    const form = document.getElementById('formEditarEmpresa');
+
+    const reglas = {
+        linkedin: {
+            input: document.getElementById('linkedin'),
+            error: document.getElementById('linkedin-client-error'),
+            // admite /company/, /school/, /showcase/ o /in/, con o sin www, http o https
+            regex: /^https?:\/\/([a-z]{2,3}\.)?linkedin\.com\/(company|school|showcase|in)\/[a-zA-Z0-9\-_%.]+\/?$/i
+        },
+        facebook: {
+            input: document.getElementById('facebook'),
+            error: document.getElementById('facebook-client-error'),
+            // admite facebook.com/empresa, fb.com/empresa o profile.php?id=NNNN
+            regex: /^https?:\/\/(www\.)?(facebook|fb)\.com\/([a-zA-Z0-9.\-_]+|profile\.php\?id=\d+)\/?$/i
+        },
+        instagram: {
+            input: document.getElementById('instagram'),
+            error: document.getElementById('instagram-client-error'),
+            regex: /^https?:\/\/(www\.)?instagram\.com\/[a-zA-Z0-9._]+\/?$/i
+        }
+    };
+
+    function validarCampo(clave) {
+        const regla = reglas[clave];
+        if (!regla.input) return true;
+
+        const valor = regla.input.value.trim();
+
+        // Los campos son opcionales: vacío es válido.
+        if (valor === '') {
+            regla.input.classList.remove('input-error');
+            regla.error.style.display = 'none';
+            return true;
+        }
+
+        const esValido = regla.regex.test(valor);
+
+        if (esValido) {
+            regla.input.classList.remove('input-error');
+            regla.error.style.display = 'none';
+        } else {
+            regla.input.classList.add('input-error');
+            regla.error.style.display = 'block';
+        }
+
+        return esValido;
+    }
+
+    Object.keys(reglas).forEach(function(clave) {
+        const regla = reglas[clave];
+        if (!regla.input) return;
+
+        regla.input.addEventListener('blur', function() {
+            validarCampo(clave);
+        });
+
+        regla.input.addEventListener('input', function() {
+            if (regla.input.classList.contains('input-error')) {
+                validarCampo(clave);
+            }
+        });
+    });
+
+    if (!form) return;
+
+    form.addEventListener('submit', function(e) {
+        const resultados = Object.keys(reglas).map(validarCampo);
+        const todoOk = resultados.every(Boolean);
+
+        if (!todoOk) {
+            e.preventDefault();
+            const primeraClaveInvalida = Object.keys(reglas).find(function(clave) {
+                return !validarCampo(clave);
+            });
+            const primerInvalido = reglas[primeraClaveInvalida].input;
+            primerInvalido.focus();
+            primerInvalido.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+    });
+}
+
 document.getElementById('id_provincia').addEventListener('change', function () {
     const idProvincia = this.value;
     const selectLocalidad = document.getElementById('id_localidad');
@@ -492,6 +595,10 @@ document.getElementById('id_provincia').addEventListener('change', function () {
         .catch(() => {
             selectLocalidad.innerHTML = '<option value="">Error al cargar</option>';
         });
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+    initRedesValidation();
 });
 </script>
 
