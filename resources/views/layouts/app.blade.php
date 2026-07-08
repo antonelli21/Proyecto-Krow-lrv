@@ -21,6 +21,15 @@
   <link rel="stylesheet" href="{{ asset('css/styles.css') }}">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
   <link rel="preload" as="image" href="{{ asset('img/banner.jpg') }}">
+  <link rel="preload" as="image" href="{{ asset('img/cat/ingenieria.jpg') }}">
+  <link rel="preload" as="image" href="{{ asset('img/cat/diseno.jpg') }}">
+  <link rel="preload" as="image" href="{{ asset('img/cat/administracion.jpg') }}">
+  <link rel="preload" as="image" href="{{ asset('img/cat/finanzas.jpg') }}">
+  <link rel="preload" as="image" href="{{ asset('img/cat/marketing.jpg') }}">
+  <link rel="preload" as="image" href="{{ asset('img/cat/recursos-humanos.jpg') }}">
+  <link rel="preload" as="image" href="{{ asset('img/cat/tecnologia.jpg') }}">
+  <link rel="preload" as="image" href="{{ asset('img/cat/ventas.jpg') }}">
+  <link rel="preload" as="image" href="{{ asset('img/cat/industria-y-produccion.jpg') }}">
   <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Sora:wght@700;800&display=swap" rel="stylesheet">
