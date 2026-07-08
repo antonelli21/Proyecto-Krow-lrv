@@ -230,6 +230,7 @@ class EmpresaController extends Controller
             ->firstOrFail();
 
         $postulantes = Postulacion::where('id_oferta', $id)
+            ->where('oculta_empresa', false)
             ->with(['estudiante.carrera', 'estudiante.user'])
             ->get()
             ->map(function ($postulacion) {
@@ -237,7 +238,7 @@ class EmpresaController extends Controller
 
                 return (object)[
                     'id'                => $postulacion->id_postulacion,
-                    'id_usuario'        => $estudiante->id_usuario,       
+                    'id_usuario'        => $estudiante->id_usuario,
                     'id_estudiante'     => $estudiante->id_estudiante,
                     'nombre'            => trim($estudiante->nombre . ' ' . $estudiante->apellido),
                     'carrera'           => $estudiante->carrera->nombre ?? 'No especificada',
@@ -480,4 +481,24 @@ class EmpresaController extends Controller
 
         return response()->json(['success' => true]);
     }
+
+    public function eliminarPostulacion($id)
+        {
+            $postulacion = Postulacion::with('oferta')->findOrFail($id);
+
+            // Verificar que la postulación pertenezca a una oferta de la empresa logueada
+            if ($postulacion->oferta->id_empresa !== auth()->user()->empresa->id_empresa) {
+                abort(403, 'No autorizado');
+            }
+
+            $postulacion->estado = 'Rechazado';
+            $postulacion->oculta_empresa = true;
+            $postulacion->save();
+
+            return response()->json([
+                'success' => true,
+                'estado' => 'Rechazado',
+            ]);
+        }
+
 }

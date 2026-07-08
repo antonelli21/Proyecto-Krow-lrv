@@ -106,6 +106,7 @@ Route::prefix('empresa')
         Route::patch('/oferta/{id}/estado',         [EmpresaController::class, 'cambiarEstadoOferta'])->name('ofertas.estado');
         Route::delete('/oferta/{id}',               [EmpresaController::class, 'eliminarOferta'])->name('ofertas.destroy');
         Route::get('/oferta/{id_oferta}/preview',    [OfertaController::class, 'preview'])->name('ofertas.preview');
+        Route::delete('/postulacion/{id}', [EmpresaController::class, 'eliminarPostulacion'])->name('postulacion.destroy');
        
     });
 

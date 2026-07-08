@@ -21,6 +21,7 @@ class Postulacion extends Model
         'id_oferta',
         'estado',
         'fecha_postulacion',
+        'oculta_empresa',
 
     ];
 

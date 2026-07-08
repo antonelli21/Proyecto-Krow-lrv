@@ -271,6 +271,25 @@
         .action-buttons { flex-direction: column; }
         .btn-accept, .btn-reject, .btn-unreject { justify-content: center; }
     }
+
+
+    .btn-delete {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    border: none;
+    border-radius: 6px;
+    background: #b91c1c;
+    color: #fff;
+    cursor: pointer;
+    transition: .2s;
+}
+
+.btn-delete:hover {
+    background: #991b1b;
+}
 </style>
 
 <div class="postulantes-container">
@@ -382,6 +401,20 @@
                                 </svg>
                                 Rechazar
                             </button>
+                            
+                        <button class="btn-delete"
+                                title="Eliminar postulación"
+                                onclick="openConfirmDialog({{ $postulante->id }}, 'delete', '{{ $postulante->estado }}')">
+                            <svg width="16" height="16" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="3 6 5 6 21 6"/>
+                                <path d="M19 6l-1 14H6L5 6"/>
+                                <path d="M10 11v6"/>
+                                <path d="M14 11v6"/>
+                                <path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/>
+                            </svg>
+                        </button>
+                            
                         @else
                             <button class="btn-unreject"
                                     onclick="openConfirmDialog({{ $postulante->id }}, 'unreject', '{{ $postulante->estado }}')">
@@ -525,6 +558,12 @@ function openConfirmDialog(applicantId, action, estadoActual) {
         confirmBtn.className   = 'dialog-confirm-neutral';
         confirmBtn.textContent = 'Sí, volver';
     }
+    else if (action === 'delete') {
+    title.textContent = 'Eliminar postulante';
+    message.textContent = 'Esta acción eliminará definitivamente la postulación. ¿Deseás continuar?';
+    confirmBtn.className = 'dialog-confirm-reject';
+    confirmBtn.textContent = 'Eliminar';
+    }
 
     document.getElementById('confirmDialog').style.display = 'flex';
 }
@@ -549,6 +588,11 @@ document.getElementById('dialogConfirmBtn').addEventListener('click', function (
         nuevoEstado = 'Rechazado';
     } else if (action === 'unreject') {
         nuevoEstado = 'Postulado';
+    }
+    else if (action === 'delete') {
+    closeDialog();
+    eliminarPostulante(applicantId);
+    return;
     }
 
     closeDialog();
@@ -650,6 +694,7 @@ function actualizarEstado(applicantId, nuevoEstado, estadoAnterior) {
     .catch(() => alert('Error de red al actualizar el estado.'));
 }
 
+
 function actualizarContadores(estadoAnterior, estadoNuevo) {
     // Restar del estado anterior
     const spanAnterior = document.querySelector(`.counter[data-estado="${estadoAnterior}"]`);
@@ -699,5 +744,39 @@ filtros.forEach(btn => {
         filtrarPostulantes(this.getAttribute('data-estado'));
     });
 });
+
+
+    function eliminarPostulante(applicantId) {
+
+        fetch(`/empresa/postulacion/${applicantId}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            }
+        })
+        .then(res => res.json())
+        .then(data => {
+
+            if (!data.success) {
+                alert('No se pudo eliminar.');
+                return;
+            }
+
+            document.querySelector(`.applicant-card[data-id="${applicantId}"]`)?.remove();
+
+            const total = document.querySelector('.counter[data-estado="todos"]');
+            total.textContent = parseInt(total.textContent) - 1;
+
+            const estado = data.estado;
+            const contador = document.querySelector(`.counter[data-estado="${estado}"]`);
+            if (contador) {
+                contador.textContent = parseInt(contador.textContent) - 1;
+            }
+
+            filtrarPostulantes(document.querySelector('.filter-btn.active').dataset.estado);
+        })
+        .catch(() => alert('Error al eliminar.'));
+    }
 </script>
 @endsection
