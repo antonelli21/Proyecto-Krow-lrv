@@ -207,22 +207,33 @@ class EmpresaController extends Controller
         $empresaId = $empresa->id_empresa;
         $userId = auth()->id();
 
-        $ofertas = Oferta::where('id_empresa', $empresaId)->withCount('postulaciones')->get();
+        $ofertas = Oferta::where('id_empresa', $empresaId)
+            ->withCount(['postulaciones as postulaciones_count' => function ($query) {
+                $query->where(function ($q) {
+                    $q->where('oculta_empresa', false)
+                    ->orWhereNull('oculta_empresa');
+                });
+            }])
+            ->get();
 
         $totalPostulantes = $ofertas->sum('postulaciones_count');
         $totalVistas = $ofertas->sum('vistas') ?? 0;
 
-        
         $mensajesSinLeer = \App\Models\Mensaje::whereHas('chat', function($q) use ($userId) {
-                $q->where('id_usuario_1', $userId)->orWhere('id_usuario_2', $userId);
+                $q->where('id_usuario_1', $userId)
+                ->orWhere('id_usuario_2', $userId);
             })
             ->where('id_remitente', '!=', $userId)
             ->where('leido', false)
             ->count();
 
-        return view('empresa.home-empresa', compact('ofertas', 'totalPostulantes', 'totalVistas', 'mensajesSinLeer'));
+        return view('empresa.home-empresa', compact(
+            'ofertas',
+            'totalPostulantes',
+            'totalVistas',
+            'mensajesSinLeer'
+        ));
     }
-
     public function verPostulantes($id)
     {
         $oferta = Oferta::where('id_oferta', $id)
