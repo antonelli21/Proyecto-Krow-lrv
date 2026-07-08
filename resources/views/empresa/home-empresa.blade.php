@@ -52,9 +52,10 @@
     </div>
 </dialog>
 
-<div class="panel-page" style="position: relative; z-index: 5; margin-top: -560px !important; margin-bottom:80px;background-color:var(--bg) ;opacity: 0.95; border-radius: 8px; border:1px solid var(--accent); justify-content:start;box-shadow:
-0 20px 50px var(--shadow-color),
-0 0px 30px var(--shadow-glow);">
+<!-- Toast de confirmación -->
+<div id="toast-msg" class="toast-msg" role="status" aria-live="polite"></div>
+
+<div class="panel-page">
 
     <h1 class="panel-page-title">Panel de Empresa</h1>
     <p class="panel-page-sub">Gestiona tus ofertas laborales y revisá los postulantes</p>
@@ -155,12 +156,22 @@
     Cancelar
   </button>
 </div>
-    <div class="table-responsive-desktop">
+    <div class="table-responsive-desktop tabla-wrap">
         <table class="ofertas-table">
+            <colgroup>
+                <col style="width:36px;">
+                <col style="width:24%;">
+                <col style="width:19%;">
+                <col style="width:10%;">
+                <col style="width:17%;">
+                <col style="width:13%;">
+                <col style="width:11%;">
+                <col style="width:150px;">
+            </colgroup>
             <thead>
                 <tr>
                     <th style="width:36px;"><input type="checkbox" id="check-all-emp" class="check-all-emp"></th>
-                    <th>Puesto</th>
+                    <th class="th-left">Puesto</th>
                     <th>Ubicación</th>
                     <th>Tipo</th>
                     <th>Salario</th>
@@ -184,24 +195,27 @@
                         default   => 'estado-activa',
                     };
                     $bloqueadaPorAdmin = $oferta->pausada_por_admin && $oferta->estado === 'Pausada';
+                    $delayFila = min($loop->index, 8) * 0.035;
                 @endphp
-                <tr id="fila-oferta-{{ $oferta->id_oferta }}">
+                <tr id="fila-oferta-{{ $oferta->id_oferta }}" class="fade-in-row" style="animation-delay: {{ $delayFila }}s;">
                     <td><input type="checkbox" class="check-emp" data-id="{{ $oferta->id_oferta }}" data-pausada-admin="{{ $bloqueadaPorAdmin ? '1' : '0' }}"></td>
-                    <td class="td-puesto td-clickable"
+                    <td class="td-puesto td-clickable td-left"
                         onclick="abrirModalOferta({{ $oferta->id_oferta }})">
                         {{ $oferta->titulo }}
                     </td>
                     <td class="td-ubicacion">{{ $ubicacion }}</td>
                     <td><span class="badge-tipo">{{ $oferta->tipo_oferta }}</span></td>
-                    <td>{{ $salario }}</td>
+                    <td class="td-salario">{{ $salario }}</td>
                     <td>
-                        <span class="td-postulantes">
-                            <i class="bi bi-people-fill"></i> {{ $oferta->postulaciones_count ?? 0 }}
-                        </span>
-                        <a href="{{ route('empresa.ofertas.postulantes', $oferta->id_oferta) }}"
-                               class="link-accion">
-                                Postulantes →
-                            </a>
+                        <div class="td-postulantes-wrap">
+                            <span class="td-postulantes">
+                                <i class="bi bi-people-fill"></i> {{ $oferta->postulaciones_count ?? 0 }}
+                            </span>
+                            <a href="{{ route('empresa.ofertas.postulantes', $oferta->id_oferta) }}"
+                                   class="link-accion">
+                                    Postulantes →
+                                </a>
+                        </div>
                     </td>
                     <td>
                         <span class="badge-estado-oferta {{ $estadoClase }}"
@@ -209,7 +223,7 @@
                             {{ $oferta->estado }}
                         </span>
                     </td>
-                    <td>
+                    <td class="td-acciones-cell">
                         <div class="acciones-oferta">
                         @if($bloqueadaPorAdmin)
                             <button class="btn-toggle-estado"
@@ -226,17 +240,10 @@
                                 {{ $oferta->estado === 'Activa' ? 'Pausar' : 'Activar' }}
                             </button>
                         @endif
-                            <button class="btn-eliminar-oferta"
-                                    onclick="confirmarEliminar({{ $oferta->id_oferta }}, '{{ addslashes($oferta->titulo) }}')">
-                                <i class="bi bi-trash"></i>
-                            </button>    
-                        </div>
                         @if($bloqueadaPorAdmin)
                             <div style="margin-top:6px;">
                                 @if($oferta->motivo_pausa_admin)
                                     <small style="color:var(--muted); display:block; margin-bottom:6px; line-height:1.4;">
-
-                                        <br>
 
                                         <a href="{{ route('empresa.mensajes') }}" class="link-accion" style="font-size:.8rem;">
                                             Ver motivo →
@@ -245,6 +252,12 @@
                                 @endif
                             </div>
                         @endif
+                            <button class="btn-eliminar-oferta"
+                                    onclick="confirmarEliminar({{ $oferta->id_oferta }}, '{{ addslashes($oferta->titulo) }}')">
+                                <i class="bi bi-trash"></i>
+                            </button>    
+                        </div>
+                        
                     </td>
                 </tr>
                 @endforeach
@@ -268,8 +281,9 @@
                 default   => 'estado-activa',
             };
             $bloqueadaPorAdmin = $oferta->pausada_por_admin && $oferta->estado === 'Pausada';
+            $delayCard = min($loop->index, 8) * 0.035;
         @endphp
-        <div class="oferta-mobile-card" id="card-oferta-{{ $oferta->id_oferta }}">
+        <div class="oferta-mobile-card fade-in-row" id="card-oferta-{{ $oferta->id_oferta }}" style="animation-delay: {{ $delayCard }}s;">
             <div class="oferta-mobile-header">
                 <span class="oferta-mobile-titulo td-clickable"
                       onclick="abrirModalOferta({{ $oferta->id_oferta }})">
@@ -330,12 +344,11 @@
         @endforeach
     </div>
 
-    @else
-    <div style="text-align:center; padding:3rem; background:var(--surface); border:1px solid var(--border); border-radius:var(--radius);">
-        <p style="color:var(--muted);"> No tenés ofertas publicadas aún.</p>
-        <a href="{{ route('empresa.crear-oferta') }}" class="btn-accent"
-           style="display:inline-block; margin-top:1rem;">+ Crear primera oferta</a>
-    </div>
+    <div id="ofertas-empty-state" style="text-align:center; padding:3rem; background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); {{ (isset($ofertas) && count($ofertas) > 0) ? 'display:none;' : '' }}">
+    <p style="color:var(--muted);"> No tenés ofertas publicadas aún.</p>
+    <a href="{{ route('empresa.crear-oferta') }}" class="btn-accent"
+       style="display:inline-block; margin-top:1rem;">+ Crear primera oferta</a>
+</div>
     @endif
 
 </div>
@@ -379,6 +392,115 @@
     /* fix crítico: dialog cerrado no ocupa espacio */
     dialog:not([open]) { display: none !important; }
 
+    /* ── Contenedor principal ── */
+    .panel-page {
+        position: relative;
+        z-index: 5;
+        margin-top: -530px !important;
+        margin-bottom: 80px;
+        background-color: var(--bg);
+        opacity: 0.95;
+        border-radius: 8px;
+        border: 1px solid var(--accent);
+        box-shadow: 0 20px 50px var(--shadow-color), 0 0px 30px var(--shadow-glow);
+        max-width: 1320px;
+        width: calc(100% - 32px);
+        margin-left: auto;
+        margin-right: auto;
+        box-sizing: border-box;
+    }
+
+    /* ── Animación de entrada — misma sensación que el skeleton de estudiante,
+         acá los datos ya vienen renderizados por Blade así que en vez de
+         mostrar un loader falso, hacemos que el contenido real aparezca
+         prolijo y escalonado apenas carga la página. ── */
+    @keyframes fadeInUpPanel {
+        from { opacity: 0; transform: translateY(8px); }
+        to   { opacity: 1; transform: translateY(0); }
+    }
+    .stat-card {
+        animation: fadeInUpPanel .4s ease both;
+    }
+    .stat-card:nth-child(1) { animation-delay: .04s; }
+    .stat-card:nth-child(2) { animation-delay: .09s; }
+    .stat-card:nth-child(3) { animation-delay: .14s; }
+
+    .fade-in-row {
+        animation: fadeInUpPanel .35s ease both;
+    }
+
+    /* ── Tabla: ancho estable, columnas centradas salvo Puesto ── */
+    .tabla-wrap {
+        width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    .ofertas-table {
+        table-layout: fixed;
+        width: 100%;
+        min-width: 760px;
+        border-collapse: collapse;
+    }
+    .ofertas-table th,
+    .ofertas-table td {
+        text-align: center;
+        vertical-align: middle;
+        padding: 14px 10px;
+    }
+    .ofertas-table th.th-left,
+    .ofertas-table td.td-left {
+        text-align: left;
+    }
+    .ofertas-table td.td-ubicacion,
+    .ofertas-table td.td-salario {
+        white-space: normal;
+        word-break: break-word;
+        line-height: 1.35;
+    }
+    .td-postulantes-wrap {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 2px;
+    }
+
+    /* ── Toast de confirmación ── */
+    .toast-msg {
+        position: fixed;
+        bottom: 24px;
+        left: 50%;
+        transform: translateX(-50%) translateY(16px);
+        background: var(--surface);
+        border: 1px solid var(--border);
+        color: var(--text);
+        padding: 12px 20px;
+        border-radius: 8px;
+        font-size: 13.5px;
+        font-weight: 600;
+        box-shadow: 0 12px 30px rgba(0,0,0,.35);
+        opacity: 0;
+        pointer-events: none;
+        z-index: 9999;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        transition: opacity 0.25s ease, transform 0.25s ease;
+        max-width: 90vw;
+    }
+    .toast-msg.show {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+    }
+    .toast-msg .toast-icon {
+        font-size: 15px;
+        line-height: 1;
+        flex-shrink: 0;
+    }
+    .toast-msg.toast-success { border-color: rgba(46,204,154,.5); }
+    .toast-msg.toast-success .toast-icon { color: #2ECC9A; }
+    .toast-msg.toast-error { border-color: rgba(212,24,61,.5); }
+    .toast-msg.toast-error .toast-icon { color: #e05577; }
+
     /* ── td clickable ── */
     .td-clickable {
         cursor: pointer;
@@ -415,6 +537,7 @@
     .acciones-oferta {
         display: flex;
         align-items: center;
+        justify-content: center;
         gap: 8px;
         flex-wrap: wrap;
     }
@@ -549,9 +672,9 @@
     }
     .oferta-mobile-titulo { font-size: 15px; font-weight: 700; }
     .oferta-mobile-body   { display: flex; flex-direction: column; gap: 6px; }
-    .oferta-mobile-item   { display: flex; justify-content: space-between; font-size: 14px; padding: 4px 0; }
-    .oferta-mobile-item .item-label { color: var(--muted); font-weight: 500; }
-    .oferta-mobile-item .item-value { color: var(--text);  font-weight: 500; }
+    .oferta-mobile-item   { display: flex; justify-content: space-between; gap: 12px; font-size: 14px; padding: 4px 0; }
+    .oferta-mobile-item .item-label { color: var(--muted); font-weight: 500; flex-shrink: 0; }
+    .oferta-mobile-item .item-value { color: var(--text);  font-weight: 500; text-align: right; word-break: break-word; }
     .oferta-mobile-footer {
         padding-top: 10px;
         border-top: 1px solid var(--border);
@@ -567,23 +690,64 @@
         to   { opacity: 1; transform: translate(-50%, -50%) scale(1); }
     }
 
+    /* ── Responsive ── */
+
+    /* Tablet ancho: aliviana un poco antes de pasar a cards */
+    @media (max-width: 1100px) {
+        .ofertas-table th,
+        .ofertas-table td { padding: 12px 8px; font-size: 13px; }
+    }
+
+    /* Tablet: la columna Ubicación es la que menos se extraña si hay que
+       liberar espacio; se puede seguir viendo en el detalle de la oferta. */
+    @media (max-width: 1024px) {
+        .panel-page { width: calc(100% - 24px); }
+        .ofertas-table th:nth-child(3),
+        .ofertas-table td:nth-child(3) { display: none; }
+    }
+
     @media (max-width: 768px) {
+        .panel-page { width: calc(100% - 16px); padding: 20px 14px 48px; }
+        .panel-page-title { font-size: 22px; }
+        .panel-page-sub { font-size: 13px; margin-bottom: 22px; }
         .table-responsive-desktop { display: none; }
         .ofertas-mobile-cards     { display: flex; }
-        .stats-row        { grid-template-columns: 1fr 1fr; }
+        .stats-row        { grid-template-columns: 1fr 1fr; gap: 10px; }
+        .stat-card         { padding: 16px 18px; }
+        .stat-card-value   { font-size: 32px; }
         .section-header   { flex-direction: column; align-items: stretch; gap: 10px; }
         .section-actions  { display: flex; gap: 10px; }
         .section-actions .btn-outline,
-        .section-actions .btn-accent { flex: 1; justify-content: center; text-align: center; }
+        .section-actions .btn-accent { flex: 1; justify-content: center; text-align: center; padding: 10px 14px; font-size: 13.5px; }
+        .toast-msg { bottom: 16px; font-size: 13px; padding: 10px 16px; width: calc(100% - 32px); justify-content: center; }
     }
     @media (max-width: 480px) {
         .stats-row       { grid-template-columns: 1fr; }
         .section-actions { flex-direction: column; }
+        .oferta-mobile-card { padding: 14px; }
+        .oferta-mobile-titulo { font-size: 14px; }
+    }
+    @media (min-width: 1025px) and (max-width: 1360px) {
+        .panel-page { width: calc(100% - 40px); }
     }
    
 </style>
 
 <script>
+    // ── Toast ──────────────────────────────────────
+    let toastTimeout;
+    function mostrarToast(mensaje, tipo = 'success') {
+        const toast = document.getElementById('toast-msg');
+        if (!toast) return;
+        clearTimeout(toastTimeout);
+        const icono = tipo === 'success' ? '&#10003;' : '&#10005;';
+        toast.innerHTML = `<span class="toast-icon">${icono}</span><span>${mensaje}</span>`;
+        toast.className = `toast-msg toast-${tipo} show`;
+        toastTimeout = setTimeout(() => {
+            toast.classList.remove('show');
+        }, 3000);
+    }
+
     // ── Modal oferta ──────────────────────────────
     function abrirModalOferta(idOferta) {
         const iframe = document.getElementById('iframeOferta');
@@ -609,25 +773,18 @@
         }
     });
 
-    // ── Pausar / Activar ──────────────────────────
-    function toggleEstadoOferta(idOferta, estadoActual) {
-    const nuevoEstado = estadoActual === 'Activa' ? 'Pausada' : 'Activa';
+    // ── Helpers de estadísticas / DOM ──────────────
+    function actualizarStatsCards() {
+        document.querySelectorAll('.stat-card')[0]
+            .querySelector('.stat-card-value').textContent =
+            document.querySelectorAll('.badge-estado-oferta.estado-activa').length / 2;
 
-    fetch(`/empresa/oferta/${idOferta}/estado`, {
-        method: 'PATCH',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': '{{ csrf_token() }}'
-        },
-        body: JSON.stringify({ estado: nuevoEstado })
-    })
-    .then(r => r.json())
-    .then(data => {
-        if (!data.success) {
-            alert('Error al cambiar estado.');
-            return;
-        }
+        document.querySelectorAll('.stat-card')[2]
+            .querySelector('.stat-card-value').textContent =
+            document.querySelectorAll('.badge-estado-oferta.estado-pausada').length / 2;
+    }
 
+    function actualizarEstadoDOM(idOferta, nuevoEstado) {
         const claseMap = {
             Activa: 'estado-activa',
             Pausada: 'estado-pausada',
@@ -653,19 +810,57 @@
                     : 'Activar';
             });
 
-        // Actualizar estadísticas
-        document.querySelectorAll('.stat-card')[0]
-            .querySelector('.stat-card-value').textContent =
-            document.querySelectorAll('.badge-estado-oferta.estado-activa').length / 2;
+        actualizarStatsCards();
+    }
 
-        document.querySelectorAll('.stat-card')[2]
-            .querySelector('.stat-card-value').textContent =
-            document.querySelectorAll('.badge-estado-oferta.estado-pausada').length / 2;
-    })
-    .catch(() => alert('Error de red.'));
+    function eliminarOfertaDOM(idOferta) {
+    document.getElementById(`fila-oferta-${idOferta}`)?.remove();
+    document.getElementById(`card-oferta-${idOferta}`)?.remove();
+    actualizarStatsCards();
+    revisarEstadoVacio();
 }
 
-    // ── Eliminar ──────────────────────────────────
+function revisarEstadoVacio() {
+    const filasTabla = document.querySelectorAll('.ofertas-table tbody tr').length;
+    const emptyState = document.getElementById('ofertas-empty-state');
+    const tablaWrap = document.querySelector('.table-responsive-desktop');
+    const cardsWrap = document.querySelector('.ofertas-mobile-cards');
+    const bulkBar = document.getElementById('bulk-bar-emp');
+
+    if (filasTabla === 0) {
+        if (tablaWrap) tablaWrap.style.display = 'none';
+        if (cardsWrap) cardsWrap.style.display = 'none';
+        if (bulkBar) bulkBar.style.display = 'none';
+        if (emptyState) emptyState.style.display = 'block';
+    }
+}
+
+    // ── Pausar / Activar (individual) ──────────────
+    function toggleEstadoOferta(idOferta, estadoActual) {
+    const nuevoEstado = estadoActual === 'Activa' ? 'Pausada' : 'Activa';
+
+    fetch(`/empresa/oferta/${idOferta}/estado`, {
+        method: 'PATCH',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+        },
+        body: JSON.stringify({ estado: nuevoEstado })
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (!data.success) {
+            mostrarToast('Error al cambiar estado.', 'error');
+            return;
+        }
+
+        actualizarEstadoDOM(idOferta, nuevoEstado);
+        mostrarToast(nuevoEstado === 'Activa' ? 'Oferta activada' : 'Oferta pausada');
+    })
+    .catch(() => mostrarToast('Error de red.', 'error'));
+}
+
+    // ── Eliminar (individual) ───────────────────────
     let ofertaAEliminar = null;
 
     async function confirmarEliminar(idOferta, titulo) {
@@ -688,30 +883,21 @@
         .then(data => {
 
             if (!data.success) {
-                alert('Error al eliminar.');
+                mostrarToast('Error al eliminar.', 'error');
                 return;
             }
 
-            document.getElementById(`fila-oferta-${idOferta}`)?.remove();
-            document.getElementById(`card-oferta-${idOferta}`)?.remove();
-
-            // Recalculamos activas/pausadas contando el DOM (desktop + mobile duplican el badge, por eso /2)
-            const activas  = document.querySelectorAll('.badge-estado-oferta.estado-activa').length / 2;
-            const pausadas = document.querySelectorAll('.badge-estado-oferta.estado-pausada').length / 2;
-
-            document.querySelectorAll('.stat-card')[0]
-                .querySelector('.stat-card-value').textContent = activas;
-
-            document.querySelectorAll('.stat-card')[2]
-                .querySelector('.stat-card-value').textContent = pausadas;
+            eliminarOfertaDOM(idOferta);
 
             // Total postulantes: solo lo pisamos si el backend efectivamente lo mandó
             if (typeof data.totalPostulantes !== 'undefined') {
                 document.querySelectorAll('.stat-card')[1]
                     .querySelector('.stat-card-value').textContent = data.totalPostulantes;
             }
+
+            mostrarToast('Oferta eliminada correctamente');
         })
-        .catch(() => alert('Error de red.'));
+        .catch(() => mostrarToast('Error de red.', 'error'));
     }
     
 
@@ -758,6 +944,8 @@ function clearBulkEmp() {
   document.querySelectorAll('.check-emp, #check-all-emp').forEach(c => c.checked = false);
   updateBulkEmp();
 }
+
+// ── Cambiar estado en lote — sin recargar la página ──
 async function bulkEmpEstado(estado) {
   let ids = getSelectedEmp();
   if (!ids.length) return;
@@ -775,15 +963,34 @@ async function bulkEmpEstado(estado) {
     if (!ids.length) return;
   }
 
-  Promise.all(ids.map(id =>
+  const resultados = await Promise.all(ids.map(id =>
     fetch(`/empresa/oferta/${id}/estado`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
       body: JSON.stringify({ estado })
-    }).then(r => r.json())
-  )).then(() => location.reload());
+    }).then(r => r.json()).then(data => ({ id, data })).catch(() => ({ id, data: { success: false } }))
+  ));
+
+  let exitosas = 0;
+  resultados.forEach(({ id, data }) => {
+    if (data.success) {
+      actualizarEstadoDOM(id, estado);
+      exitosas++;
+    }
+  });
+
+  clearBulkEmp();
+
+  if (exitosas === ids.length) {
+    mostrarToast(`${exitosas} oferta${exitosas !== 1 ? 's' : ''} ${estado === 'Activa' ? 'activada' : 'pausada'}${exitosas !== 1 ? 's' : ''}`);
+  } else if (exitosas > 0) {
+    mostrarToast(`${exitosas} de ${ids.length} ofertas actualizadas`, 'error');
+  } else {
+    mostrarToast('Error al actualizar las ofertas.', 'error');
+  }
 }
 
+// ── Eliminar en lote — sin recargar la página ──
 async function bulkEmpEliminar() {
     const ids = getSelectedEmp();
     if (!ids.length) return;
@@ -795,12 +1002,39 @@ async function bulkEmpEliminar() {
     );
     if (!ok) return;
 
-    Promise.all(ids.map(id =>
+    const resultados = await Promise.all(ids.map(id =>
         fetch(`/empresa/oferta/${id}`, {
             method: 'DELETE',
             headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' }
-        }).then(r => r.json())
-    )).then(() => location.reload());
+        }).then(r => r.json()).then(data => ({ id, data })).catch(() => ({ id, data: { success: false } }))
+    ));
+
+    let exitosas = 0;
+    let ultimoTotalPostulantes;
+    resultados.forEach(({ id, data }) => {
+        if (data.success) {
+            eliminarOfertaDOM(id);
+            exitosas++;
+            if (typeof data.totalPostulantes !== 'undefined') {
+                ultimoTotalPostulantes = data.totalPostulantes;
+            }
+        }
+    });
+
+    if (typeof ultimoTotalPostulantes !== 'undefined') {
+        document.querySelectorAll('.stat-card')[1]
+            .querySelector('.stat-card-value').textContent = ultimoTotalPostulantes;
+    }
+
+    clearBulkEmp();
+
+    if (exitosas === ids.length) {
+        mostrarToast(`${exitosas} oferta${exitosas !== 1 ? 's' : ''} eliminada${exitosas !== 1 ? 's' : ''}`);
+    } else if (exitosas > 0) {
+        mostrarToast(`${exitosas} de ${ids.length} ofertas eliminadas`, 'error');
+    } else {
+        mostrarToast('Error al eliminar las ofertas.', 'error');
+    }
 }
 // Devuelve una Promise<boolean>, igual que el adminConfirm del admin
 function modalConfirm(titulo, mensaje, labelBoton = 'Confirmar') {
@@ -863,6 +1097,11 @@ function modalAviso(mensaje, titulo = 'Atención') {
         dialog.showModal();
     });
 }
+
+// Si el backend redirigió con un mensaje de sesión, también lo mostramos como toast
+@if(session('success'))
+    mostrarToast(@json(session('success')));
+@endif
 </script>
 
 @endsection

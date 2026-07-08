@@ -65,8 +65,6 @@ $ofertas = $ofertas ?? collect();
     </aside>
 
     {{-- MAIN --}}
-
-    {{-- MAIN --}}
 <main class="main-content" id="main-content">
 
     @if(request()->filled('empresa_id'))

@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use App\Models\Estudiante;
 use App\Models\Empresa;
 use App\Models\Oferta;
@@ -10,14 +12,22 @@ use App\Models\User;
 
 class AdminController extends Controller
 {
-    /* ════════════════════════════════════════
-       VISTAS
-    ════════════════════════════════════════ */
     public function home()
     {
         return redirect()->route('admin.estudiantes');
     }
 
+    private function respond(Request $request, bool $success, string $message, array $extra = [])
+    {
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json(array_merge([
+                'success' => $success,
+                'message' => $message,
+            ], $extra));
+        }
+
+        return redirect()->back()->with($success ? 'success' : 'error', $message);
+    }
 
     public function listarEstudiantes()
     {
@@ -71,7 +81,6 @@ class AdminController extends Controller
         $ofertasPendientes = Oferta::where('estado', 'pendiente')->count();
         $ofertasPausadas   = Oferta::where('estado', 'pausada')->count();
 
-
         $ofertas = Oferta::with('empresa')
             ->withCount('postulaciones')
             ->orderBy('fecha_publicacion', 'desc')
@@ -84,10 +93,6 @@ class AdminController extends Controller
         ));
     }
 
-    /* ════════════════════════════════════════
-       CAMBIOS DE ESTADO
-    ════════════════════════════════════════ */
-
     public function cambiarEstadoEstudiante(Request $request, $id)
     {
         $request->validate([
@@ -96,7 +101,9 @@ class AdminController extends Controller
 
         Estudiante::findOrFail($id)->update(['estado' => $request->estado]);
 
-        return redirect()->back()->with('success', 'Estado del estudiante actualizado.');
+        return $this->respond($request, true, 'Estado del estudiante actualizado.', [
+            'estado' => $request->estado,
+        ]);
     }
 
     public function cambiarEstadoEmpresa(Request $request, $id)
@@ -146,7 +153,7 @@ class AdminController extends Controller
             }
         }
 
-        // 🔥 SINCRONIZACIÓN AUTOMÁTICA DE OFERTAS
+    
         if (in_array($request->estado, ['suspendida', 'rechazada'])) {
             $empresa->ofertas()->update(['estado' => 'pausada']);
         }
@@ -155,7 +162,7 @@ class AdminController extends Controller
             $empresa->ofertas()->update(['estado' => 'activa']);
         }
 
-        // ✉️ ENVIAR CORREO DE NOTIFICACIÓN SI EL ESTADO CAMBIA
+       
         if ($estadoAnterior !== $request->estado && in_array($request->estado, ['aprobada', 'rechazada', 'suspendida'])) {
             if ($empresa->user && $empresa->user->email) {
                 config([
@@ -171,7 +178,9 @@ class AdminController extends Controller
             }
         }
 
-        return redirect()->back()->with('success', "Empresa actualizada a {$request->estado}.");
+        return $this->respond($request, true, "Empresa actualizada a {$request->estado}.", [
+            'estado' => $request->estado,
+        ]);
     }
 
     public function cambiarEstadoOferta(Request $request, $id)
@@ -184,7 +193,7 @@ class AdminController extends Controller
         $oferta = Oferta::with('empresa')->findOrFail($id);
 
         if ($request->estado === 'Pausada' && $oferta->estado === 'Pausada') {
-            return redirect()->back()->with('error', 'Esta oferta ya está pausada. No se puede volver a pausar.');
+            return $this->respond($request, false, 'Esta oferta ya está pausada. No se puede volver a pausar.');
         }
 
         if ($request->estado === 'Pausada') {
@@ -234,14 +243,14 @@ class AdminController extends Controller
             ]);
         }
 
-        return redirect()->back()->with('success', "Oferta actualizada a {$request->estado}.");
+        return $this->respond($request, true, "Oferta actualizada a {$request->estado}.", [
+            'estado' => $request->estado,
+        ]);
     }
 
-    /* ════════════════════════════════════════
-       ELIMINACIONES
-    ════════════════════════════════════════ */
+  
 
-    public function eliminarOferta($id)
+    public function eliminarOferta(Request $request, $id)
     {
         $oferta = Oferta::findOrFail($id);
 
@@ -251,7 +260,7 @@ class AdminController extends Controller
         // Luego hacer soft delete de la oferta
         $oferta->delete();
 
-        return redirect()->back()->with('success', 'Oferta y sus postulaciones movidas a papelera.');
+        return $this->respond($request, true, 'Oferta y sus postulaciones movidas a papelera.');
     }
 
     public function bulkEstadoEstudiantes(Request $request)
@@ -265,7 +274,10 @@ class AdminController extends Controller
         Estudiante::whereIn('id_estudiante', $request->ids)
             ->update(['estado' => $request->estado]);
 
-        return redirect()->back()->with('success', count($request->ids) . ' estudiantes actualizados a ' . $request->estado . '.');
+        return $this->respond($request, true, count($request->ids) . ' estudiantes actualizados a ' . $request->estado . '.', [
+            'ids' => $request->ids,
+            'estado' => $request->estado,
+        ]);
     }
 
     public function bulkEstadoEmpresas(Request $request)
@@ -289,7 +301,10 @@ class AdminController extends Controller
             }
         }
 
-        return redirect()->back()->with('success', count($request->ids) . ' empresas actualizadas.');
+        return $this->respond($request, true, count($request->ids) . ' empresas actualizadas.', [
+            'ids' => $request->ids,
+            'estado' => $request->estado,
+        ]);
     }
 
     public function bulkEstadoOfertas(Request $request)
@@ -303,7 +318,10 @@ class AdminController extends Controller
         Oferta::whereIn('id_oferta', $request->ids)
             ->update(['estado' => $request->estado]);
 
-        return redirect()->back()->with('success', count($request->ids) . ' ofertas actualizadas.');
+        return $this->respond($request, true, count($request->ids) . ' ofertas actualizadas.', [
+            'ids' => $request->ids,
+            'estado' => $request->estado,
+        ]);
     }
 
     public function bulkDestroyOfertas(Request $request)
@@ -313,7 +331,6 @@ class AdminController extends Controller
             'ids.*' => 'integer|exists:oferta,id_oferta',
         ]);
 
-       
         foreach ($request->ids as $id) {
             $oferta = Oferta::find($id);
             if ($oferta) {
@@ -322,10 +339,12 @@ class AdminController extends Controller
             }
         }
 
-        return redirect()->back()->with('success', count($request->ids) . ' ofertas y sus postulaciones movidas a papelera.');
+        return $this->respond($request, true, count($request->ids) . ' ofertas y sus postulaciones movidas a papelera.', [
+            'ids' => $request->ids,
+        ]);
     }
 
-    public function eliminarEstudiante($id)
+    public function eliminarEstudiante(Request $request, $id)
     {
         $estudiante = Estudiante::findOrFail($id);
         $idUsuario  = $estudiante->id_usuario;
@@ -338,7 +357,7 @@ class AdminController extends Controller
             $this->eliminarUserConDependencias($idUsuario);
         }
 
-        return redirect()->back()->with('success', 'Estudiante eliminado.');
+        return $this->respond($request, true, 'Estudiante eliminado.');
     }
 
     public function bulkDestroyEstudiantes(Request $request)
@@ -362,11 +381,12 @@ class AdminController extends Controller
             }
         }
 
-        return redirect()->back()->with('success', count($request->ids) . ' estudiantes eliminados.');
+        return $this->respond($request, true, count($request->ids) . ' estudiantes eliminados.', [
+            'ids' => $request->ids,
+        ]);
     }
 
-
-    public function eliminarEmpresa($id)
+    public function eliminarEmpresa(Request $request, $id)
     {
         $empresa   = Empresa::findOrFail($id);
         $idUsuario = $empresa->id_usuario;
@@ -376,14 +396,9 @@ class AdminController extends Controller
             ->pluck('id_oferta');
 
         if ($ofertaIds->isNotEmpty()) {
-            // Eliminar postulaciones (incluidas las eliminadas)
             \App\Models\Postulacion::withTrashed()->whereIn('id_oferta', $ofertaIds)->forceDelete();
-
-            // Eliminar tablas pivote
             \DB::table('oferta_habilidad')->whereIn('id_oferta', $ofertaIds)->delete();
             \DB::table('oferta_carrera')->whereIn('id_oferta', $ofertaIds)->delete();
-
-            // Eliminar ofertas (incluidas las eliminadas)
             Oferta::withTrashed()->whereIn('id_oferta', $ofertaIds)->forceDelete();
         }
 
@@ -393,9 +408,8 @@ class AdminController extends Controller
             $this->eliminarUserConDependencias($idUsuario);
         }
 
-        return redirect()->back()->with('success', 'Empresa, ofertas y postulantes eliminados.');
+        return $this->respond($request, true, 'Empresa, ofertas y postulantes eliminados.');
     }
-
 
     public function bulkDestroyEmpresas(Request $request)
     {
@@ -428,9 +442,10 @@ class AdminController extends Controller
             }
         }
 
-        return redirect()->back()->with('success', count($request->ids) . ' empresas eliminadas.');
+        return $this->respond($request, true, count($request->ids) . ' empresas eliminadas.', [
+            'ids' => $request->ids,
+        ]);
     }
-
 
     private function eliminarUserConDependencias(int $idUsuario): void
     {
@@ -448,9 +463,6 @@ class AdminController extends Controller
         User::where('id', $idUsuario)->delete();
     }
 
-    /* ════════════════════════════════════════
-       REPORTES
-    ════════════════════════════════════════ */
 
     public function listarReportes()
     {
@@ -478,18 +490,45 @@ class AdminController extends Controller
     {
         $request->validate(['estado' => 'required|in:Abierto,En Proceso,Resuelto']);
         \DB::table('ticket_soporte')->where('id_ticket', $id)->update(['estado' => $request->estado]);
-        return redirect()->back()->with('success', 'Ticket actualizado.');
+        return $this->respond($request, true, 'Ticket actualizado.', ['estado' => $request->estado]);
     }
 
-    public function eliminarReporte($id)
+    public function eliminarReporte(Request $request, $id)
     {
         \DB::table('ticket_soporte')->where('id_ticket', $id)->delete();
-        return redirect()->back()->with('success', 'Ticket eliminado.');
+        return $this->respond($request, true, 'Ticket eliminado.');
     }
 
-    /* ════════════════════════════════════════
-       PAPELERA
-    ════════════════════════════════════════ */
+    public function bulkEstadoReportes(Request $request)
+    {
+        $request->validate([
+            'ids'    => 'required|array',
+            'ids.*'  => 'integer|exists:ticket_soporte,id_ticket',
+            'estado' => 'required|in:Abierto,En Proceso,Resuelto',
+        ]);
+
+        \DB::table('ticket_soporte')->whereIn('id_ticket', $request->ids)->update(['estado' => $request->estado]);
+
+        return $this->respond($request, true, count($request->ids) . ' tickets actualizados.', [
+            'ids' => $request->ids,
+            'estado' => $request->estado,
+        ]);
+    }
+
+    public function bulkDestroyReportes(Request $request)
+    {
+        $request->validate([
+            'ids'   => 'required|array',
+            'ids.*' => 'integer|exists:ticket_soporte,id_ticket',
+        ]);
+
+        \DB::table('ticket_soporte')->whereIn('id_ticket', $request->ids)->delete();
+
+        return $this->respond($request, true, count($request->ids) . ' tickets eliminados.', [
+            'ids' => $request->ids,
+        ]);
+    }
+
 
     public function papelera()
     {
@@ -512,42 +551,129 @@ class AdminController extends Controller
         ));
     }
 
-    public function restaurarPostulacion($id)
+    public function restaurarPostulacion(Request $request, $id)
     {
         \App\Models\Postulacion::onlyTrashed()->findOrFail($id)->restore();
-        return redirect()->back()->with('success', 'Postulación restaurada.');
+        return $this->respond($request, true, 'Postulación restaurada.');
     }
 
-    public function restaurarOferta($id)
+    public function restaurarOferta(Request $request, $id)
     {
         $oferta = \App\Models\Oferta::onlyTrashed()->findOrFail($id);
         $oferta->restore();
+
+        // Guardamos qué postulaciones de esta oferta se restauran junto
+        // con ella, para poder informarle al frontend cuáles filas sacar
+        // de la tabla de "Postulaciones eliminadas" sin recargar la página.
+        $postulacionesRestauradas = $oferta->postulaciones()
+            ->onlyTrashed()
+            ->pluck('id_postulacion');
+
         $oferta->postulaciones()->onlyTrashed()->restore();
 
-        return redirect()->back()->with('success', 'Oferta restaurada.');
+        return $this->respond($request, true, 'Oferta restaurada.', [
+            'postulaciones_restauradas' => $postulacionesRestauradas,
+        ]);
     }
 
-    public function eliminarPostulacionDefinitivo($id)
+    public function eliminarPostulacionDefinitivo(Request $request, $id)
     {
         \App\Models\Postulacion::onlyTrashed()->findOrFail($id)->forceDelete();
-        return redirect()->back()->with('success', 'Postulación eliminada definitivamente.');
+        return $this->respond($request, true, 'Postulación eliminada definitivamente.');
     }
 
-
-    public function eliminarOfertaDefinitivo($id)
+    public function eliminarOfertaDefinitivo(Request $request, $id)
     {
         $oferta = \App\Models\Oferta::onlyTrashed()->findOrFail($id);
         $ofertaId = $oferta->id_oferta;
 
-        // Eliminar postulaciones (incluidas las eliminadas)
         \App\Models\Postulacion::withTrashed()->where('id_oferta', $ofertaId)->forceDelete();
-
-        // Eliminar tablas pivote
         \DB::table('oferta_habilidad')->where('id_oferta', $ofertaId)->delete();
         \DB::table('oferta_carrera')->where('id_oferta', $ofertaId)->delete();
 
         $oferta->forceDelete();
 
-        return redirect()->back()->with('success', 'Oferta eliminada definitivamente.');
+        return $this->respond($request, true, 'Oferta eliminada definitivamente.');
+    }
+
+    public function bulkRestaurarOfertasPapelera(Request $request)
+    {
+        $request->validate([
+            'ids'   => 'required|array',
+            'ids.*' => 'integer',
+        ]);
+
+        // Acumulamos los ids de todas las postulaciones que se restauran
+        // como consecuencia de restaurar sus ofertas, para poder sacarlas
+        // también de la tabla de postulaciones eliminadas en el frontend.
+        $postulacionesRestauradas = [];
+
+        foreach ($request->ids as $id) {
+            $oferta = \App\Models\Oferta::onlyTrashed()->find($id);
+            if (!$oferta) continue;
+            $oferta->restore();
+
+            $pids = $oferta->postulaciones()->onlyTrashed()->pluck('id_postulacion')->all();
+            $postulacionesRestauradas = array_merge($postulacionesRestauradas, $pids);
+
+            $oferta->postulaciones()->onlyTrashed()->restore();
+        }
+
+        return $this->respond($request, true, count($request->ids) . ' ofertas restauradas.', [
+            'ids' => $request->ids,
+            'postulaciones_restauradas' => $postulacionesRestauradas,
+        ]);
+    }
+
+    public function bulkDestroyOfertasPapelera(Request $request)
+    {
+        $request->validate([
+            'ids'   => 'required|array',
+            'ids.*' => 'integer',
+        ]);
+
+        foreach ($request->ids as $id) {
+            $oferta = \App\Models\Oferta::onlyTrashed()->find($id);
+            if (!$oferta) continue;
+            $ofertaId = $oferta->id_oferta;
+
+            \App\Models\Postulacion::withTrashed()->where('id_oferta', $ofertaId)->forceDelete();
+            \DB::table('oferta_habilidad')->where('id_oferta', $ofertaId)->delete();
+            \DB::table('oferta_carrera')->where('id_oferta', $ofertaId)->delete();
+
+            $oferta->forceDelete();
+        }
+
+        return $this->respond($request, true, count($request->ids) . ' ofertas eliminadas definitivamente.', [
+            'ids' => $request->ids,
+        ]);
+    }
+
+    public function bulkRestaurarPostulacionesPapelera(Request $request)
+    {
+        $request->validate([
+            'ids'   => 'required|array',
+            'ids.*' => 'integer',
+        ]);
+
+        \App\Models\Postulacion::onlyTrashed()->whereIn('id_postulacion', $request->ids)->restore();
+
+        return $this->respond($request, true, count($request->ids) . ' postulaciones restauradas.', [
+            'ids' => $request->ids,
+        ]);
+    }
+
+    public function bulkDestroyPostulacionesPapelera(Request $request)
+    {
+        $request->validate([
+            'ids'   => 'required|array',
+            'ids.*' => 'integer',
+        ]);
+
+        \App\Models\Postulacion::onlyTrashed()->whereIn('id_postulacion', $request->ids)->forceDelete();
+
+        return $this->respond($request, true, count($request->ids) . ' postulaciones eliminadas definitivamente.', [
+            'ids' => $request->ids,
+        ]);
     }
 }
